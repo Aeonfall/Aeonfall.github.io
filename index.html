@@ -104,17 +104,57 @@
         .currency-box { background: #fdfdfd; border: 1px solid #eee; border-radius: 6px; text-align: center; padding: 8px; }
 
         /* Beast Stat Block */
-        .beast-sheet-bg { background-color: #fdf5e6; color: #7A200D; font-family: 'Noto Sans', sans-serif; }
-        .beast-title { font-family: 'Cinzel', serif; color: #7A200D; font-weight: 900; border-bottom: 2px solid #7A200D; }
-        .beast-hr { height: 3px; background-color: #7A200D; margin: 8px 0; border: none; }
-        .beast-label { font-weight: 900; color: #7A200D; min-width: 110px; display: inline-block; font-size: 14px; }
-        .beast-input-right { flex: 1; border-bottom: 1px solid #dcd3c0; text-align: left; padding: 0 8px; font-weight: 400; color: #333; font-size: 13px; }
-        .beast-stat-label { font-weight: 900; font-size: 11px; color: #7A200D; text-transform: uppercase; }
-        .beast-stat-mod { font-size: 12px; font-weight: 700; margin-top: 2px; color: #333; }
-
-        input, textarea, select { background: transparent; border: none; border-bottom: 1px solid #bba; transition: border-color 0.2s; color: #333; width: 100%; }
-        input:focus, textarea:focus { outline: none; border-bottom: 2px solid #8b0000; }
-
+         .beast-sheet-bg { 
+        background-color: #fdf5e6; 
+        color: #7A200D; 
+        font-family: 'EB Garamond', serif; 
+        padding: 40px; 
+        border-top: 12px solid #7A200D; 
+        border-bottom: 12px solid #7A200D;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .beast-title { 
+        font-family: 'Cinzel', serif; 
+        color: #7A200D; 
+        font-weight: 900; 
+        border-bottom: 2px solid #7A200D; 
+        line-height: 1.2; 
+        text-transform: uppercase;
+    }
+    .beast-hr { height: 3px; background-color: #7A200D; margin: 8px 0; border: none; }
+    .beast-label { font-weight: 900; color: #7A200D; min-width: 110px; display: inline-block; font-size: 15px; }
+    .beast-input-right { 
+        flex: 1; 
+        border-bottom: 1px solid #dcd3c0; 
+        text-align: left; 
+        padding: 0 8px; 
+        font-weight: 400; 
+        color: #333; 
+        font-style: italic; 
+        font-size: 16px; 
+        background: transparent;
+        border-top: none;
+        border-left: none;
+        border-right: none;
+    }
+    .beast-stat-col { text-align: center; }
+    .beast-stat-label { 
+        font-family: 'Noto Sans', sans-serif; 
+        font-weight: 900; 
+        font-size: 11px; 
+        color: #7A200D; 
+        text-transform: uppercase; 
+    }
+    .beast-stat-input { 
+        width: 40px; 
+        text-align: center; 
+        font-weight: 700; 
+        color: #333; 
+        border: 1px solid #7A200D; 
+        border-radius: 3px; 
+        height: 28px; 
+    }
+    .beast-stat-mod { font-size: 12px; font-weight: 700; margin-top: 2px; color: #333; font-family: 'Noto Sans', sans-serif; }
         /* Dice Roll UI Refinement */
         .dice-btn { 
             width: 54px; height: 54px; 
@@ -429,42 +469,57 @@
                 </div>
 
                 <!-- BEAST STAT BLOCK LAYOUT -->
-                <div id="beast-sheet-layout" class="hidden-view p-8 beast-sheet-bg shadow-2xl max-w-4xl mx-auto border-t-[8px] border-b-[8px] border-[#7A200D]">
-                    <div class="mb-4">
-                        <input type="text" id="beast-name-field" class="w-full text-6xl beast-title bg-transparent border-none uppercase focus:border-none" placeholder="BEAST NAME" data-key="name">
-                        <input type="text" class="w-full text-sm italic font-serif text-gray-600 bg-transparent border-none p-0 focus:border-none" placeholder="Medium elemental, neutral" data-key="beastSubtitle">
-                    </div>
-                    <div class="my-6 border-2 border-dashed border-[#7A200D]/30 h-80 relative group overflow-hidden bg-white/10 text-center flex flex-col items-center justify-center">
-                         <img id="beast-portrait-preview" class="hidden absolute inset-0 w-full h-full object-cover">
-                         <input type="file" id="beast-portrait-input" class="hidden" accept="image/*" onchange="handleImageUpload(event, true)">
-                         <label for="beast-portrait-input" class="absolute inset-0 cursor-pointer flex flex-col items-center justify-center opacity-40">
-                             <span class="text-4xl mb-2">🐉</span><span class="text-[10px] font-black uppercase">Add Image</span>
-                         </label>
-                    </div>
-                    <div class="space-y-3 mb-6 border-t border-b border-[#7A200D]/20 py-4">
-                        <div class="flex items-center gap-4"><span class="beast-label">Armor Class</span> <input type="text" class="beast-input-right" placeholder="15" data-key="ac"></div>
-                        <div class="flex items-center gap-4"><span class="beast-label">Hit Points</span> <input type="text" class="beast-input-right" placeholder="90" data-key="hpMax"></div>
-                        <div class="flex items-center gap-4"><span class="beast-label">Speed</span> <input type="text" class="beast-input-right" placeholder="30 ft." data-key="speed"></div>
-                    </div>
-                    <div class="grid grid-cols-6 gap-2 text-center py-4 border-b border-[#7A200D]/20 mb-6" id="beast-stats"></div>
-                    <div class="space-y-2 mb-6">
-                        <div class="flex items-center gap-4"><span class="beast-label">Resistances</span> <input type="text" class="beast-input-right" data-key="beastRes"></div>
-                        <div class="flex items-center gap-4"><span class="beast-label">Immunities</span> <input type="text" class="beast-input-right" data-key="beastImm"></div>
-                        <div class="flex items-center gap-4"><span class="beast-label">Senses</span> <input type="text" class="beast-input-right" data-key="beastSenses"></div>
-                        <div class="flex items-center gap-4"><span class="beast-label">Languages</span> <input type="text" class="beast-input-right" data-key="beastLangs"></div>
-                        <div class="grid grid-cols-2 gap-8">
-                            <div class="flex items-center gap-2"><span class="beast-label">Challenge</span> <input type="text" class="beast-input-right" data-key="beastCr"></div>
-                            <div class="flex items-center gap-2"><span class="beast-label">XP</span> <input type="text" class="beast-input-right" data-key="beastXp"></div>
-                        </div>
-                    </div>
-                    <hr class="beast-hr">
-                    <div id="beast-traits" class="space-y-4 my-6"></div><button onclick="addBeastItem('traits')" class="text-xs uppercase font-black opacity-50">+ Add Trait</button>
-                    <h2 class="text-3xl beast-title border-b-2 mt-8 mb-4">Actions</h2>
-                    <div id="beast-actions" class="space-y-4 my-6"></div><button onclick="addBeastItem('actions')" class="text-xs uppercase font-black opacity-50">+ Add Action</button>
-                </div>
-            </div>
+               div id="beast-sheet-layout" class="p-8 beast-sheet-bg shadow-2xl max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="mb-4">
+        <input type="text" id="beast-name-field" class="w-full text-6xl beast-title bg-transparent border-none uppercase" placeholder="BEAST NAME" data-key="name">
+        <input type="text" class="w-full text-sm italic text-gray-600 bg-transparent border-none p-0 mt-1" placeholder="Size, Type, Alignment" data-key="beastSubtitle">
+    </div>
+
+    <!-- Image Area -->
+    <div class="my-6 border-2 border-dashed border-[#7A200D]/30 h-80 relative group bg-white/20 text-center flex flex-col items-center justify-center">
+         <img id="beast-portrait-preview" class="hidden absolute inset-0 w-full h-full object-cover">
+         <input type="file" id="beast-portrait-input" class="hidden" accept="image/*" onchange="handleImageUpload(event, true)">
+         <label for="beast-portrait-input" class="absolute inset-0 cursor-pointer flex flex-col items-center justify-center opacity-50">
+             <span class="text-5xl mb-2">🐉</span>
+             <span class="text-[10px] font-black uppercase font-sans tracking-widest">Add Image</span>
+         </label>
+    </div>
+
+    <!-- Vitals Section -->
+    <div class="space-y-3 mb-6 border-t-2 border-b-2 border-[#7A200D]/20 py-4 font-serif">
+        <div class="flex items-center gap-4"><span class="beast-label">Armor Class</span> <input type="text" class="beast-input-right" data-key="ac" placeholder="15"></div>
+        <div class="flex items-center gap-4"><span class="beast-label">Hit Points</span> <input type="text" class="beast-input-right" data-key="hpMax" placeholder="90"></div>
+        <div class="flex items-center gap-4"><span class="beast-label">Speed</span> <input type="text" class="beast-input-right" data-key="speed" placeholder="30 ft."></div>
+    </div>
+
+    <!-- Ability Scores Grid -->
+    <div class="grid grid-cols-6 gap-2 text-center py-4 border-b-2 border-[#7A200D]/20 mb-6" id="beast-stats">
+        <!-- Rendered via JS -->
+    </div>
+
+    <!-- Traits & Resistances -->
+    <div class="space-y-2 mb-6 font-serif">
+        <div class="flex items-center gap-4"><span class="beast-label">Resistances</span> <input type="text" class="beast-input-right" data-key="beastRes"></div>
+        <div class="flex items-center gap-4"><span class="beast-label">Senses</span> <input type="text" class="beast-input-right" data-key="beastSenses"></div>
+        <div class="flex items-center gap-4"><span class="beast-label">Languages</span> <input type="text" class="beast-input-right" data-key="beastLangs"></div>
+        <div class="grid grid-cols-2 gap-8">
+            <div class="flex items-center gap-2"><span class="beast-label">Challenge</span> <input type="text" class="beast-input-right" data-key="beastCr"></div>
+            <div class="flex items-center gap-2"><span class="beast-label">XP</span> <input type="text" class="beast-input-right" data-key="beastXp"></div>
         </div>
     </div>
+
+    <hr class="beast-hr">
+    
+    <!-- Dynamic Traits List -->
+    <div id="beast-traits" class="space-y-4 my-6"></div>
+    <button onclick="addBeastItem('traits')" class="text-xs font-black opacity-50 uppercase font-sans tracking-tighter">+ Add Trait</button>
+
+    <!-- Actions Section -->
+    <h2 class="text-4xl beast-title mt-8 mb-4">Actions</h2>
+    <div id="beast-actions" class="space-y-4 my-6"></div>
+    <button onclick="addBeastItem('actions')" class="text-xs font-black opacity-50 uppercase font-sans tracking-tighter">+ Add Action</button>
+</div>
 
     <!-- Delete Confirmation Modal -->
     <div id="delete-modal" class="fixed inset-0 bg-black/90 flex items-center justify-center z-[110] hidden">
@@ -826,6 +881,93 @@
         window.deleteParty = async (id) => { if(confirm("Delete this party?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'parties', id)); };
 
         initAuth();
+            // Constants used by the UI
+    const STATS_LIST = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+
+    /**
+     * Initializes the Beast Stat Grid
+     */
+    function initBeastUI() {
+        const bStats = document.getElementById('beast-stats');
+        if (bStats) {
+            bStats.innerHTML = '';
+            STATS_LIST.forEach(s => {
+                bStats.innerHTML += `
+                    <div class="beast-stat-col">
+                        <div class="beast-stat-label">${s}</div>
+                        <div class="flex flex-col items-center justify-center">
+                            <input type="number" class="beast-stat-input" value="10" data-key="${s}">
+                            <div class="beast-stat-mod" id="beast-mod-${s}">+0</div>
+                        </div>
+                    </div>`;
+            });
+        }
+    }
+
+    /**
+     * Adds a new Trait or Action item to the lists
+     */
+    window.addBeastItem = (type) => {
+        // Find current character in your local array
+        const char = characters.find(c => c.id === activeCharId); 
+        if(!char) return;
+
+        const key = type === 'traits' ? 'beastTraits' : 'beastActions';
+        if(!char[key]) char[key] = [];
+        
+        char[key].push({ name: '', desc: '' });
+        renderBeastList(type, char[key]);
+        
+        // Call your global save function
+        if(window.saveCurrentCharacter) window.saveCurrentCharacter();
+    };
+
+    /**
+     * Renders the Traits or Actions HTML
+     */
+    function renderBeastList(type, list) {
+        const cont = document.getElementById(`beast-${type}`);
+        if (!cont) return;
+        cont.innerHTML = '';
+        (list || []).forEach((item, index) => {
+            const d = document.createElement('div');
+            d.className = "pb-4 border-b border-[#7A200D]/10 relative group";
+            d.innerHTML = `
+                <div class="flex gap-2 items-center mb-1">
+                    <input type="text" class="font-bold italic text-[#7A200D] list-name text-lg" 
+                           value="${item.name || ''}" placeholder="Title">
+                    <button onclick="removeBeastItem('${type}', ${index})" 
+                            class="text-[9px] font-black font-sans uppercase text-red-400">✕</button>
+                </div>
+                <textarea class="text-base italic list-desc w-full bg-transparent border-none p-0 h-16" 
+                          placeholder="Description...">${item.desc || ''}</textarea>`;
+            cont.appendChild(d);
+        });
+    }
+
+    /**
+     * Removes an item from the Traits or Actions list
+     */
+    window.removeBeastItem = (type, index) => {
+        const char = characters.find(c => c.id === activeCharId);
+        if(!char) return;
+        const key = type === 'traits' ? 'beastTraits' : 'beastActions';
+        char[key].splice(index, 1);
+        renderBeastList(type, char[key]);
+        if(window.saveCurrentCharacter) window.saveCurrentCharacter();
+    }
+
+    /**
+     * Updates Stat Modifiers automatically
+     */
+    function updateBeastModifiers(charData) {
+        STATS_LIST.forEach(s => {
+            const val = parseInt(charData[s] || 10);
+            const mod = Math.floor((val - 10) / 2);
+            const el = document.getElementById(`beast-mod-${s}`);
+            if(el) el.textContent = (mod >= 0 ? '+' : '') + mod;
+        });
+    }
     </script>
 </body>
 </html>
