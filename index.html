@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,6 +13,10 @@
         .card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.7); }
         
         #sheet-container { background-color: #e8e0cd; min-height: 100vh; padding-bottom: 120px; color: #333; transition: filter 0.3s ease; }
+        
+        /* Status Themes */
+        #sheet-container.status-coma { background-color: #fef3c7 !important; }
+        #sheet-container.status-dead { filter: grayscale(1); background-color: #d1d5db !important; }
         
         .sheet-card {
             background-color: #fff;
@@ -38,126 +40,91 @@
             letter-spacing: 0.05em;
         }
         
-        /* Stress & Trauma UI */
-        .stress-box {
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            padding: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            margin-bottom: 12px;
+        .nav-link { color: #94a3b8; font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.2s; cursor: pointer; }
+        .nav-link.active { color: #f59e0b; border-bottom: 2px solid #f59e0b; padding-bottom: 4px; }
+
+        .vital-container { aspect-ratio: 1/1; display: flex; flex-direction: column; align-items: center; justify-content: center; background-size: 100% 100%; position: relative; transition: transform 0.2s; }
+        .vital-shield { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 5 L10 20 L10 50 C10 75 50 95 50 95 C50 95 90 75 90 50 L90 20 Z' fill='%23e0f2fe' stroke='%230369a1' stroke-width='4'/%3E%3C/svg%3E"); }
+        .vital-square-init { border: 3px solid #b45309; border-radius: 12px; background-color: #fef3c7; }
+        .vital-square-speed { border: 3px solid #15803d; border-radius: 12px; background-color: #dcfce7; }
+        .vital-label { font-size: 10px; font-weight: 900; text-transform: uppercase; position: absolute; top: 10%; color: #4b5563; }
+        .vital-input { width: 80%; text-align: center; font-size: 24px; font-weight: 900; background: transparent; border: none !important; color: #1a1a1a; margin-top: 10px; }
+
+        .floating-roller {
+            position: fixed; bottom: 24px; right: 24px; z-index: 100;
+            background: white; border-radius: 20px; border: 3px solid #1a1a1a;
+            padding: 16px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
+            width: 280px;
         }
-        .stress-divider { font-size: 32px; color: #dee2e6; font-weight: 100; }
-        .stress-val-container { text-align: center; }
-        .stress-label { font-size: 9px; font-weight: 900; text-transform: uppercase; color: #6c757d; margin-bottom: 4px; display: block; }
-        .stress-subtext { font-size: 8px; color: #adb5bd; font-weight: bold; text-transform: uppercase; }
+        .dice-grid-btn { 
+            width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
+            border: 3px solid; border-radius: 10px; font-weight: 900; font-size: 12px; transition: all 0.1s;
+        }
+        .dice-orange { background: #fffbeb; border-color: #d97706; color: #b45309; }
+        .dice-green { background: #f0fdf4; border-color: #16a34a; color: #166534; }
+        .dice-blue { background: #eff6ff; border-color: #2563eb; color: #1e40af; }
+        .dice-purple { background: #f5f3ff; border-color: #7c3aed; color: #5b21b6; }
+        .dice-red { background: #fef2f2; border-color: #dc2626; color: #991b1b; }
+        .dice-dark { background: #f9fafb; border-color: #374151; color: #111827; }
 
-        /* Death & Coma UI */
-        .death-coma-grid { display: grid; grid-template-columns: 1fr 1px 1fr; gap: 16px; align-items: center; }
-        .death-coma-divider { background-color: #e8e0cd; height: 80%; width: 1px; }
-        .ds-label { font-size: 10px; font-weight: 900; text-transform: uppercase; color: #6c757d; margin-bottom: 8px; text-align: center; }
-        .ds-container { display: flex; flex-direction: column; align-items: center; width: 100%; }
-        .ds-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; width: 100%; max-width: 130px; }
-        .ds-text { font-size: 10px; font-weight: 900; text-transform: capitalize; }
-        .ds-succ { color: #166534; }
-        .ds-fail { color: #991b1b; }
+        .mode-btn { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 900; border: 2px solid #cbd5e1; color: #64748b; background: #f1f5f9; }
+        .mode-btn.active { background: #374151; color: white; border-color: #374151; }
+
+        .ds-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid #ccc; cursor: pointer; transition: background 0.2s; }
+        .ds-dot.checked-succ { background: #16a34a; border-color: #166534; }
+        .ds-dot.checked-fail { background: #dc2626; border-color: #991b1b; }
+
+        .hidden-view { display: none !important; }
+        .rollable { cursor: pointer; transition: transform 0.1s; }
+        .rollable:hover { transform: scale(1.05); color: #8b0000; }
+        .tiny-label { font-size: 9px; text-transform: uppercase; color: #888; font-weight: 900; display: block; border-top: 1px solid #ddd; margin-top: 2px; }
         
-        .coma-rounds-container { text-align: center; }
-        .coma-rounds-val { display: flex; align-items: baseline; justify-content: center; gap: 4px; border-bottom: 1px solid #333; margin-top: 8px; width: 80%; margin-left: auto; margin-right: auto; }
-        .coma-rounds-input { width: 40px; text-align: center; font-size: 24px; font-weight: 900; border: none !important; padding: 0 !important; }
-        .coma-rounds-total { font-size: 14px; font-weight: 900; color: #999; }
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 12px 24px; border-radius: 30px; z-index: 1000; pointer-events: none; opacity: 0; transition: opacity 0.3s; }
+        
+        input, textarea, select { background: transparent; border: none; font-size: 13px; color: #333; width: 100%; }
+        input:focus { outline: none; border-bottom: 1px solid #d97706; }
 
-        /* Status Visuals */
-        .coma-card { border-color: #d97706 !important; background-color: #2b251a !important; filter: sepia(0.3); }
-        .coma-badge { background-color: #d97706; color: white; padding: 1px 5px; border-radius: 3px; font-size: 8px; font-weight: 900; text-transform: uppercase; }
-        .coma-active-filter { filter: sepia(0.4) contrast(0.9) brightness(1.05); }
-        .coma-status-bar { background: #d97706; color: white; text-align: center; font-weight: 900; font-size: 12px; padding: 8px; border-radius: 4px; margin-bottom: 24px; letter-spacing: 0.3em; }
+        #sync-indicator { position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.5); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 10px; opacity: 0; pointer-events: none; z-index: 9999; }
+        
+        .lvl-card { background: #fff; border: 1px solid #dcd3c0; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; min-height: 100px; }
+        .lvl-header { font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; border-bottom: 2px solid #e8e0cd; margin-bottom: 8px; padding-bottom: 4px; }
+        
+        .equip-header { background: #f8f9fa; font-size: 10px; font-weight: 900; color: #6c757d; text-transform: uppercase; padding: 4px 8px; border-radius: 4px; display: grid; grid-template-columns: 1fr 50px 70px 24px; gap: 4px; margin-bottom: 4px; }
 
-        /* Identity / Personality UI */
-        .personality-field { position: relative; margin-bottom: 12px; border-bottom: 1px solid #dee2e6; }
-        .personality-label { position: absolute; bottom: 0; right: 0; font-size: 8px; font-weight: 900; text-transform: uppercase; color: #adb5bd; pointer-events: none; }
-        .lang-tag { background: #f1f1f1; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; display: flex; align-items: center; gap: 4px; }
-
-        /* Vitals Layout */
-        .vitals-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
-        .vital-container {
-            aspect-ratio: 1/1;
+        .score-line-display {
             display: flex;
-            flex-direction: column;
+            justify-content: space-around;
             align-items: center;
-            justify-content: center;
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
+            border-bottom: 2px solid #374151;
+            padding: 8px 0;
+            margin: 10px 0;
+        }
+        .score-line-val {
+            font-family: 'Cinzel', serif;
+            font-size: 24px;
+            font-weight: 900;
+            color: #312e81;
             position: relative;
         }
-        .vital-shield { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 5 L10 20 L10 50 C10 75 50 95 50 95 C50 95 90 75 90 50 L90 20 Z' fill='none' stroke='%23333' stroke-width='3'/%3E%3C/svg%3E"); }
-        .vital-square { border: 2px solid #333; border-radius: 8px; }
-        .vital-label { font-size: 9px; font-weight: 900; text-transform: uppercase; position: absolute; top: 8px; }
-        .vital-input { width: 100%; text-align: center; font-size: 24px; font-weight: 900; background: transparent; border: none; outline: none; }
-
-        /* Equipment / Currencies */
-        .equip-header { background: #f8f9fa; font-size: 10px; font-weight: 900; color: #6c757d; text-transform: uppercase; padding: 6px 12px; border-radius: 4px; display: grid; grid-template-columns: 1fr 60px 100px 30px; gap: 8px; margin-bottom: 8px; }
-        .equip-row { display: grid; grid-template-columns: 1fr 60px 100px 30px; gap: 8px; align-items: center; padding: 4px 12px; border-bottom: 1px solid #f1f1f1; }
-        .prof-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; border-bottom: 1px solid #eee; }
-        .prof-cat { font-size: 11px; font-weight: 900; color: #666; min-width: 60px; text-transform: uppercase; }
-        .currency-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
-        .currency-box { background: #fdfdfd; border: 1px solid #eee; border-radius: 6px; text-align: center; padding: 8px; }
-
-        /* Beast Stat Block */
-        .beast-sheet-bg { background-color: #fdf5e6; color: #7A200D; font-family: 'Noto Sans', sans-serif; }
-        .beast-title { font-family: 'Cinzel', serif; color: #7A200D; font-weight: 900; border-bottom: 2px solid #7A200D; }
-        .beast-hr { height: 3px; background-color: #7A200D; margin: 8px 0; border: none; }
-        .beast-label { font-weight: 900; color: #7A200D; min-width: 110px; display: inline-block; font-size: 14px; }
-        .beast-input-right { flex: 1; border-bottom: 1px solid #dcd3c0; text-align: left; padding: 0 8px; font-weight: 400; color: #333; font-size: 13px; }
-        .beast-stat-label { font-weight: 900; font-size: 11px; color: #7A200D; text-transform: uppercase; }
-        .beast-stat-mod { font-size: 12px; font-weight: 700; margin-top: 2px; color: #333; }
-
-        input, textarea, select { background: transparent; border: none; border-bottom: 1px solid #bba; transition: border-color 0.2s; color: #333; width: 100%; }
-        input:focus, textarea:focus { outline: none; border-bottom: 2px solid #8b0000; }
-
-        /* Dice Roll UI Refinement */
-        .dice-btn { 
-            width: 54px; height: 54px; 
-            background: #fff; border: 3px solid #4b5563; 
-            border-radius: 14px; font-weight: 900; 
-            box-shadow: 0 4px 0 #4b5563; transition: all 0.1s;
+        .score-line-val::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #cbd5e1;
         }
-        .dice-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #4b5563; }
-        
-        .dice-d4 { background: #fffbeb; border-color: #fbbf24; color: #b45309; box-shadow: 0 4px 0 #fbbf24; }
-        .dice-d6 { background: #ecfdf5; border-color: #10b981; color: #047857; box-shadow: 0 4px 0 #10b981; }
-        .dice-d8 { background: #eff6ff; border-color: #3b82f6; color: #1d4ed8; box-shadow: 0 4px 0 #3b82f6; }
-        .dice-d10 { background: #eef2ff; border-color: #6366f1; color: #4338ca; box-shadow: 0 4px 0 #6366f1; }
-        .dice-d12 { background: #f5f3ff; border-color: #a855f7; color: #7e22ce; box-shadow: 0 4px 0 #a855f7; }
-        .dice-d20 { background: #fef2f2; border-color: #ef4444; color: #b91c1c; box-shadow: 0 4px 0 #ef4444; }
-        .dice-d100 { background: #f9fafb; border-color: #4b5563; color: #1f2937; box-shadow: 0 4px 0 #4b5563; }
-        
-        .mode-btn { padding: 6px 12px; font-size: 11px; font-weight: 900; border-radius: 6px; border: 2px solid #cbd5e1; color: #64748b; background: #f1f5f9; }
-        .mode-btn.active-norm { border-color: #475569; background: #475569; color: white; }
-        .mode-btn.active-adv { border-color: #166534; background: #166534; color: white; }
-        .mode-btn.active-dis { border-color: #991b1b; background: #991b1b; color: white; }
-        
-        .hidden-view { display: none !important; }
-        .rollable { cursor: pointer; }
-        .rollable:hover { color: #8b0000; text-decoration: underline; }
-        .tiny-label { font-size: 10px; text-transform: uppercase; color: #888; font-weight: bold; display: block; }
-        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 12px 24px; border-radius: 30px; z-index: 1000; pointer-events: none; opacity: 0; transition: opacity 0.3s; }
-        #dice-result-overlay { background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); }
-        #sync-indicator { position: fixed; bottom: 20px; right: 20px; font-size: 10px; font-weight: black; text-transform: uppercase; color: #22c55e; pointer-events: none; opacity: 0; transition: opacity 0.3s; z-index: 1000; }
-        .lvl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
-        .lvl-card { background: #f9f7f2; border: 1px solid #e1dccf; border-radius: 8px; padding: 12px; }
-        .lvl-header { font-family: 'Cinzel', serif; font-size: 11px; font-weight: 900; color: #888; border-bottom: 1px solid #ddd; margin-bottom: 8px; padding-bottom: 4px; }
 
-        /* DM OVERSIGHT PANEL */
-        .dm-oversight { background: #2d2a2e; border: 2px solid #5a5a5a; border-radius: 8px; padding: 16px; margin-bottom: 24px; color: #fff; }
-        .status-btn { padding: 8px 16px; border-radius: 6px; font-weight: 900; font-size: 11px; text-transform: uppercase; transition: all 0.2s; border: 1px solid transparent; }
-        .status-alive { background: #166534; color: white; border-color: #14532d; }
-        .status-coma { background: #333; color: #666; border-color: #444; }
-        .status-coma.active { background: #854d0e; color: white; border-color: #713f12; }
-        .status-dead { background: #333; color: #666; border-color: #444; }
-        .status-dead.active { background: #991b1b; color: white; border-color: #7f1d1d; }
+        .assign-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .assign-row { display: flex; align-items: center; justify-content: space-between; background: #f8fafc; padding: 6px 10px; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .assign-label { font-weight: 900; font-size: 10px; text-transform: uppercase; color: #64748b; }
+        .assign-select { width: 60px !important; text-align: center; font-weight: bold; border-bottom: 1px solid #cbd5e1 !important; color: #1e293b; }
+
+        /* DM Specific UI */
+        .dm-panel { background: #2d2a2e; color: #fff; padding: 16px; border-radius: 12px; margin-bottom: 24px; border: 2px solid #f59e0b; }
+        .dm-whisper-box { background: #fef2f2; border-left: 4px solid #ef4444; padding: 12px; border-radius: 4px; margin-bottom: 16px; }
+        .whisper-tag { font-size: 9px; font-weight: 900; color: #991b1b; text-transform: uppercase; margin-bottom: 4px; display: block; }
     </style>
 </head>
 <body class="min-h-screen">
@@ -165,112 +132,203 @@
     <div id="toast" class="toast">Message</div>
     <div id="sync-indicator">Cloud Synced</div>
 
-    <!-- DASHBOARD -->
+    <!-- MAIN DASHBOARD -->
     <div id="dashboard-screen" class="min-h-screen dashboard-bg p-4 md:p-8">
         <div class="max-w-6xl mx-auto">
             <header class="flex flex-col md:flex-row justify-between items-center mb-10 border-b border-gray-800 pb-8 gap-6">
-                <div class="text-center md:text-left">
-                    <h1 class="text-4xl md:text-6xl text-amber-500 font-bold mb-2 font-serif tracking-tight">Campaign Manager</h1>
-                    <p class="text-gray-500 text-xs md:text-sm uppercase tracking-widest font-bold">Cloud Synced & Shared</p>
+                <div>
+                    <h1 class="text-4xl md:text-6xl text-amber-500 font-bold mb-2 font-serif tracking-tight">Aeonfall</h1>
+                    <p class="text-gray-500 text-xs md:text-sm uppercase tracking-widest font-bold">Campaign Management Suite</p>
                 </div>
-                <div class="flex items-center gap-2 bg-gray-900 p-1 rounded-xl shadow-2xl">
-                    <button id="role-player-btn" onclick="setRole('player')" class="px-6 py-3 rounded-lg text-sm font-bold transition-all">Player</button>
-                    <button id="role-dm-btn" onclick="setRole('dm')" class="px-6 py-3 rounded-lg text-sm font-bold transition-all">DM</button>
+                <div class="flex flex-col items-center gap-4">
+                    <div class="flex items-center gap-2 bg-gray-900 p-1 rounded-xl shadow-2xl">
+                        <button id="role-player-btn" onclick="window.setRole('player')" class="px-6 py-3 rounded-lg text-sm font-bold transition-all bg-amber-600 text-white shadow-lg">Player</button>
+                        <button id="role-dm-btn" onclick="window.setRole('dm')" class="px-6 py-3 rounded-lg text-sm font-bold transition-all text-gray-500">DM</button>
+                    </div>
+                    <nav id="main-nav" class="flex gap-6">
+                        <button onclick="window.setView('party')" id="nav-party" class="nav-link active">Party</button>
+                        <button onclick="window.setView('npcs')" id="nav-npcs" class="nav-link">NPCs</button>
+                        <button onclick="window.setView('beasts')" id="nav-beasts" class="nav-link">Bestiary</button>
+                        <button onclick="window.setView('graveyard')" id="nav-graveyard" class="nav-link !text-red-900">Graveyard</button>
+                    </nav>
                 </div>
             </header>
 
-            <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-                <h2 id="view-title" class="text-2xl font-serif text-gray-400 tracking-widest uppercase font-bold">The Party</h2>
-                <div class="flex gap-3">
-                    <button onclick="openPartyModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-lg shadow-lg font-bold flex items-center gap-2 text-sm transition-colors">
-                        <span>⚑</span> New Party
+            <div class="flex justify-between items-center mb-8">
+                <h2 id="view-title" class="text-2xl font-serif text-gray-400 uppercase font-bold tracking-widest">The Party</h2>
+                <div id="create-actions" class="flex gap-2">
+                    <button onclick="window.openPartyModal()" class="bg-indigo-600 text-white px-4 py-2.5 rounded-lg text-sm font-bold shadow-lg">NEW PARTY</button>
+                    <button onclick="window.createChar('PC')" class="bg-green-700 text-white px-6 py-2.5 rounded-lg text-sm font-bold shadow-lg">+ NEW PC</button>
+                </div>
+            </div>
+
+            <div id="view-content" class="space-y-8">
+                <div id="party-view-container" class="space-y-8"></div>
+                <div id="npcs-view-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden-view"></div>
+                <div id="beasts-view-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden-view"></div>
+                <div id="graveyard-view-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden-view"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PARTY MODAL -->
+    <div id="party-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-[110] hidden">
+        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border-2 border-indigo-600 shadow-2xl text-center">
+            <h3 class="text-xl font-serif text-indigo-400 font-bold mb-4 uppercase">Create New Party</h3>
+            <input type="text" id="party-name-input" class="w-full bg-gray-900 text-white rounded-lg p-3 mb-6 border border-gray-700 font-serif" placeholder="Party Name...">
+            <div class="flex gap-2">
+                <button onclick="window.createParty()" class="flex-1 bg-indigo-600 text-white py-3 rounded-xl font-bold uppercase text-xs">Confirm</button>
+                <button onclick="document.getElementById('party-modal').classList.add('hidden')" class="flex-1 bg-gray-700 text-gray-300 py-3 rounded-xl font-bold uppercase text-xs">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PASSWORD MODAL -->
+    <div id="password-modal" class="fixed inset-0 bg-black/95 backdrop-blur-md flex items-center justify-center z-[200] hidden">
+        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border-2 border-amber-600 shadow-2xl text-center">
+            <h3 class="text-xl font-serif text-amber-500 font-bold mb-2">DM AUTHORIZATION</h3>
+            <input type="password" id="dm-password" class="w-full bg-gray-900 text-white text-center text-2xl tracking-widest rounded-lg p-3 mb-6 border border-gray-700 font-serif" placeholder="••••">
+            <div class="flex gap-2">
+                <button onclick="window.verifyDmPassword()" class="flex-1 bg-amber-600 text-white py-3 rounded-xl font-bold uppercase text-xs">Enter</button>
+                <button onclick="document.getElementById('password-modal')?.classList.add('hidden')" class="flex-1 bg-gray-700 text-gray-300 py-3 rounded-xl font-bold uppercase text-xs">Back</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DELETE CHARACTER MODAL (FIXED) -->
+    <div id="delete-modal" class="fixed inset-0 bg-black/90 flex items-center justify-center z-[160] hidden">
+        <div class="bg-white p-8 rounded-2xl w-full max-w-sm border-4 border-red-600 shadow-2xl text-center">
+            <div id="delete-stage-1">
+                <h3 class="text-2xl font-serif text-red-700 font-bold mb-4 uppercase">Manage Record</h3>
+                <p id="delete-modal-desc" class="text-gray-500 text-sm mb-8 leading-relaxed">Choose an action for this character record.</p>
+                <div class="flex flex-col gap-3">
+                    <button id="archive-btn" onclick="window.archiveCharacter()" class="bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-md transition-colors">
+                        Archive to Graveyard
                     </button>
-                    <div id="create-actions" class="flex gap-2"></div>
+                    <button id="restore-btn" onclick="window.restoreCharacter()" class="bg-green-600 hover:bg-green-500 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-md transition-colors hidden">
+                        Restore to Active Party
+                    </button>
+                    <button onclick="window.showPermDeleteConfirm()" class="bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-md transition-colors">
+                        Permanently Delete
+                    </button>
+                    <button onclick="document.getElementById('delete-modal').classList.add('hidden')" class="bg-gray-100 hover:bg-gray-200 text-gray-500 py-3 rounded-xl font-bold uppercase text-xs transition-colors">
+                        Cancel
+                    </button>
                 </div>
+            </div>
+            <div id="delete-stage-confirm" class="hidden">
+                <h3 class="text-2xl font-serif text-red-700 font-bold mb-4 uppercase">Are You Sure?</h3>
+                <p class="text-gray-500 text-sm mb-8 leading-relaxed">This will erase the character forever. This action CANNOT be undone.</p>
+                <div class="flex flex-col gap-3">
+                    <button onclick="window.executePermDelete()" class="bg-red-700 hover:bg-red-800 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-md transition-colors">
+                        Yes, Delete Forever
+                    </button>
+                    <button onclick="window.resetDeleteModal()" class="bg-gray-100 hover:bg-gray-200 text-gray-500 py-3 rounded-xl font-bold uppercase text-xs transition-colors">
+                        No, Go Back
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCORE GENERATOR MODAL -->
+    <div id="score-gen-modal" class="fixed inset-0 bg-black/90 flex items-center justify-center z-[150] hidden">
+        <div class="bg-white p-8 rounded-2xl w-full max-w-lg border-4 border-indigo-600 shadow-2xl text-center">
+            <h3 class="text-2xl font-serif text-indigo-700 font-bold mb-2 uppercase">Score Generator</h3>
+            <p class="text-gray-500 text-xs mb-6">Standard Array or Heroic Roll (1 reroll allowed).</p>
+            
+            <div id="gen-results-area" class="bg-gray-100 p-6 rounded-xl mb-6 hidden">
+                <div id="gen-numbers-display" class="score-line-display"></div>
+                <div class="text-[10px] text-gray-400 uppercase font-black tracking-widest mt-2">Available Scores Pool</div>
+                <div class="assign-grid" id="assign-grid"></div>
+                <button onclick="window.randomizeAssignment()" class="mt-6 w-full py-2 bg-gray-200 text-gray-700 rounded-lg text-[10px] font-black uppercase hover:bg-gray-300 transition-colors">
+                    Randomly Assign Numbers
+                </button>
             </div>
 
-            <div id="empty-state" class="hidden text-center py-20 opacity-30">
-                <div class="text-7xl mb-4">📜</div>
-                <h3 class="text-xl font-bold font-serif italic text-gray-500">No records found...</h3>
+            <div id="gen-controls" class="grid grid-cols-2 gap-4 mb-6">
+                <button id="btn-gen-standard" onclick="window.generateScores('standard')" class="bg-gray-800 text-white py-3 rounded-xl font-bold uppercase text-xs hover:bg-gray-700">Standard Array</button>
+                <button id="btn-gen-heroic" onclick="window.generateScores('heroic')" class="bg-indigo-600 text-white py-3 rounded-xl font-bold uppercase text-xs hover:bg-indigo-500">Heroic Roll</button>
             </div>
 
-            <div id="dashboard-content" class="space-y-12">
-                <div id="section-pc">
-                    <h3 class="text-2xl font-serif text-amber-600 mb-6 border-b border-gray-800 pb-2 flex items-center gap-3">
-                        <span>⚔️</span> Player Characters
-                    </h3>
-                    <div id="pc-container" class="space-y-8"></div>
-                </div>
-                <div id="section-npc-group" class="hidden-view">
-                    <h3 class="text-2xl font-serif text-purple-500 mb-6 border-b border-gray-800 pb-2 flex items-center gap-3">
-                        <span>🎭</span> NPCs & Minor Characters
-                    </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="grid-npc"></div>
-                </div>
-                <div id="section-beast-group" class="hidden-view">
-                    <h3 class="text-2xl font-serif text-red-500 mb-6 border-b border-gray-800 pb-2 flex items-center gap-3">
-                        <span>🐉</span> Monsters & Beasts
-                    </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="grid-beast"></div>
+            <div id="heroic-reroll-area" class="hidden mb-6">
+                <button id="btn-reroll" onclick="window.generateScores('heroic', true)" class="w-full bg-amber-500 text-white py-2 rounded-lg font-black uppercase text-[10px] shadow-sm">
+                    Use 1x Heroic Reroll
+                </button>
+            </div>
+
+            <div id="gen-apply-area" class="hidden space-y-4">
+                <div class="flex gap-2 border-t pt-4">
+                    <button onclick="window.applyScores()" class="flex-1 bg-green-600 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-lg hover:bg-green-500">Apply & Finalize</button>
+                    <button onclick="document.getElementById('score-gen-modal').classList.add('hidden')" class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-xl font-bold uppercase text-xs">Cancel</button>
                 </div>
             </div>
+            <button id="cancel-gen-btn" onclick="document.getElementById('score-gen-modal').classList.add('hidden')" class="w-full text-gray-400 text-[10px] font-black uppercase mt-4">Maybe Later</button>
         </div>
     </div>
 
     <!-- CHARACTER SHEET SCREEN -->
     <div id="sheet-screen" class="hidden-view">
         <div id="sheet-container">
-            <nav class="sticky top-0 z-50 bg-gray-900 p-3 shadow-2xl border-b border-gray-800">
-                <div class="max-w-5xl mx-auto flex justify-between items-center">
-                    <button onclick="closeSheet()" class="text-gray-400 hover:text-white font-bold flex items-center gap-2"><span>←</span> Dashboard</button>
+            <nav class="sticky top-0 z-[60] bg-gray-900 p-2 shadow-2xl border-b border-gray-800">
+                <div class="max-w-6xl mx-auto flex justify-between items-center text-white px-4">
+                    <button onclick="window.closeSheet()" class="text-gray-400 hover:text-white font-bold flex items-center gap-2"><span>←</span> Exit</button>
                     <div class="flex items-center gap-4">
-                        <span id="sheet-type-badge" class="bg-amber-600 px-3 py-1 rounded text-[10px] font-black text-white uppercase tracking-widest">PC</span>
-                        <div class="flex gap-2">
-                            <button onclick="saveCurrentCharacter(true)" class="bg-green-700 hover:bg-green-600 text-white px-4 py-1 rounded text-xs font-bold transition-colors">SYNC NOW</button>
-                            <button onclick="triggerDeleteModal()" class="bg-red-900 hover:bg-red-700 text-white px-3 py-1 rounded text-xs font-bold">🗑</button>
+                        <span id="sheet-type-badge" class="bg-amber-600 px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest">PC</span>
+                        <div class="flex items-center gap-1">
+                            <button onclick="window.saveCurrentCharacter(true)" class="bg-green-700 hover:bg-green-600 px-4 py-1 rounded text-[10px] font-black uppercase tracking-widest">SYNC</button>
+                            <button id="delete-char-btn" onclick="window.triggerDeleteModal()" class="bg-red-900 hover:bg-red-700 text-white px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest hidden">Manage</button>
                         </div>
                     </div>
                 </div>
             </nav>
 
             <div class="max-w-6xl mx-auto p-4 md:p-8">
-
-                <!-- Coma Signification Header -->
-                <div id="coma-indicator-header" class="coma-status-bar hidden-view">CHARACTER IS IN A COMA</div>
-
-                <!-- DM Oversight Panel -->
-                <div id="dm-oversight-panel" class="dm-oversight hidden-view">
-                    <div class="flex flex-col md:flex-row justify-between gap-6">
-                        <div class="flex-1">
-                            <h4 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-3">Whisper Note to Player</h4>
+                
+                <!-- DM OVERSIGHT PANEL -->
+                <div id="dm-oversight-panel" class="dm-panel hidden-view">
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                        <div class="flex-grow w-full">
+                            <h4 class="text-xs font-black uppercase text-amber-500 mb-2">DM Whisper</h4>
                             <div class="flex gap-2">
-                                <input type="text" id="dm-whisper-input" class="bg-black/40 border-none rounded p-2 text-white text-sm" placeholder="Secret DM note...">
-                                <button onclick="addDmWhisper()" class="bg-purple-700 hover:bg-purple-600 px-4 py-2 rounded text-xs font-black">WHISPER</button>
+                                <input type="text" id="dm-whisper-input" class="bg-black/40 border-none rounded p-2 text-white text-sm" placeholder="Secret note for player...">
+                                <button onclick="window.sendDmWhisper()" class="bg-purple-600 px-4 py-2 rounded text-xs font-black uppercase">Send</button>
                             </div>
                         </div>
                         <div class="flex flex-col items-center gap-2">
-                            <h4 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Set Character Status</h4>
+                            <h4 class="text-xs font-black uppercase text-amber-500">Character Status</h4>
                             <div class="flex gap-2">
-                                <button id="status-alive-btn" onclick="updateCharStatus('alive')" class="status-btn status-alive">Alive</button>
-                                <button id="status-coma-btn" onclick="updateCharStatus('coma')" class="status-btn status-coma">Coma</button>
-                                <button id="status-dead-btn" onclick="updateCharStatus('dead')" class="status-btn status-dead">Death</button>
+                                <button onclick="window.updateCharStatus('alive')" class="bg-green-900 text-green-400 px-4 py-2 rounded text-[10px] font-black uppercase border border-green-700">Alive</button>
+                                <button onclick="window.updateCharStatus('coma')" class="bg-amber-900 text-amber-400 px-4 py-2 rounded text-[10px] font-black uppercase border border-amber-700">Coma</button>
+                                <button onclick="window.updateCharStatus('dead')" class="bg-gray-700 text-gray-300 px-4 py-2 rounded text-[10px] font-black uppercase border border-gray-600">Death</button>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- PC Layout -->
                 <div id="pc-sheet-layout">
+                    <!-- HEADER -->
                     <header class="sheet-card mb-8">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div class="md:col-span-1">
-                                <input type="text" id="pc-name-field" class="text-3xl font-bold font-serif border-b-2 border-gray-300 w-full mb-1" placeholder="Character Name" data-key="name">
-                                <label class="tiny-label">Character Name</label>
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                            <div class="lg:col-span-4 flex flex-col gap-4">
+                                <div>
+                                    <input type="text" id="pc-name-field" class="text-3xl font-bold font-serif w-full mb-1" placeholder="Character Name" data-key="name">
+                                    <label class="tiny-label">Character Name</label>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div><input type="text" data-key="archetype" placeholder="Survivor"><label class="tiny-label">Archetype</label></div>
+                                    <div><input type="text" data-key="belief" placeholder="Belief"><label class="tiny-label">Belief</label></div>
+                                </div>
                             </div>
-                            <div class="md:col-span-2 grid grid-cols-2 md:grid-cols-3 gap-4">
+                            <div class="lg:col-span-8 grid grid-cols-2 md:grid-cols-3 gap-4">
                                 <div><input type="text" data-key="class" placeholder="Fighter"><label class="tiny-label">Class</label></div>
-                                <div><input type="number" data-key="level" placeholder="1"><label class="tiny-label">Level</label></div>
-                                <div><select id="char-party-id" class="cursor-pointer" data-key="partyId"></select><label class="tiny-label">Party</label></div>
+                                <div><input type="number" data-key="level" placeholder="1" onchange="window.updateLevelDependencies(this.value)"><label class="tiny-label">Level</label></div>
+                                <div>
+                                    <select id="party-select" data-key="partyId" class="cursor-pointer">
+                                        <option value="">Unassigned</option>
+                                    </select>
+                                    <label class="tiny-label">Party</label>
+                                </div>
                                 <div><input type="text" data-key="race" placeholder="Human"><label class="tiny-label">Race</label></div>
                                 <div><input type="text" data-key="background" placeholder="Noble"><label class="tiny-label">Background</label></div>
                                 <div><input type="text" data-key="alignment" placeholder="Neutral"><label class="tiny-label">Alignment</label></div>
@@ -278,555 +336,693 @@
                         </div>
                     </header>
 
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <!-- Stats Column -->
-                        <div class="space-y-6">
-                            <div class="sheet-card">
-                                <h3>Global Modifiers</h3>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <input type="number" data-key="profBonus" class="text-center text-xl font-black w-full" value="2" onchange="calcMods()">
-                                        <label class="tiny-label text-center">Proficiency</label>
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                        
+                        <!-- LEFT SIDE -->
+                        <div class="lg:col-span-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-6">
+                                <div class="sheet-card">
+                                    <h3 class="flex justify-between items-center">
+                                        Abilities & Modifiers
+                                        <button id="main-gen-btn" onclick="window.openScoreGenModal()" class="bg-blue-100 text-[8px] px-1.5 rounded text-blue-700 font-black hover:bg-blue-200">GENERATE</button>
+                                    </h3>
+                                    <div class="grid grid-cols-2 gap-4 mb-4">
+                                        <div class="text-center"><input type="number" data-key="profBonus" class="text-xl font-black text-center" value="2" onchange="window.calcMods()"><label class="tiny-label">Proficiency</label></div>
+                                        <div class="text-center"><input type="number" data-key="passivePerception" class="text-xl font-black text-center" value="10" onchange="window.calcMods()"><label class="tiny-label">Pass. Perception</label></div>
                                     </div>
-                                    <div>
-                                        <input type="number" data-key="passivePerception" class="text-center text-xl font-black w-full" value="10">
-                                        <label class="tiny-label text-center">Pass. Perception</label>
+                                    <div id="stats-container" class="space-y-3"></div>
+                                </div>
+                                <div class="sheet-card"><h3>Saves</h3><div id="saves-container" class="space-y-1"></div></div>
+                                <div class="sheet-card"><h3>Skills</h3><div id="skills-container" class="space-y-1 max-h-[300px] overflow-y-auto pr-2"></div></div>
+                            </div>
+
+                            <div class="space-y-6">
+                                <div class="grid grid-cols-3 gap-2">
+                                    <div class="vital-container vital-shield"><div class="vital-label">AC</div><input type="number" class="vital-input" data-key="ac" placeholder="10"></div>
+                                    <div class="vital-container vital-square-init"><div class="vital-label">INIT</div><input type="number" class="vital-input" data-key="init" placeholder="0"></div>
+                                    <div class="vital-container vital-square-speed"><div class="vital-label">Speed</div><input type="text" class="vital-input text-green-600" data-key="speed" placeholder="30FT"></div>
+                                </div>
+
+                                <div class="sheet-card text-center py-8">
+                                    <div class="flex justify-between px-2 mb-2 text-[10px] font-black uppercase text-gray-400">
+                                        <span>MAX HP: <input type="number" class="w-8" data-key="hpMax"></span>
+                                        <span>HD: <input type="text" class="w-12 text-right" data-key="hd" placeholder="1 / 1d10"></span>
+                                    </div>
+                                    <input type="number" class="text-7xl font-black text-center w-full mb-1" data-key="hpCurrent" placeholder="10">
+                                    <div class="text-[10px] font-black uppercase mt-4">Health Points</div>
+                                    <input type="number" class="text-xl font-bold text-center w-full border-b border-gray-100" data-key="tempHp" placeholder="Temp HP">
+                                    <div class="flex gap-2 justify-center mt-6">
+                                        <button onclick="window.rest('short')" class="bg-blue-100 text-blue-700 px-3 py-1 rounded text-[10px] font-black uppercase">Short Rest</button>
+                                        <button onclick="window.rest('long')" class="bg-blue-100 text-blue-700 px-3 py-1 rounded text-[10px] font-black uppercase">Long Rest</button>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="sheet-card">
-                                <h3>Abilities</h3>
-                                <div id="stats-container" class="space-y-3"></div>
-                            </div>
-                            <div class="sheet-card">
-                                <h3>Saves</h3>
-                                <div id="saves-container" class="space-y-1"></div>
-                            </div>
-                            <div class="sheet-card">
-                                <h3>Skills</h3>
-                                <div id="skills-container" class="space-y-1 max-h-[600px] overflow-y-auto pr-2"></div>
+
+                                <div class="sheet-card">
+                                    <h3>Death & Coma</h3>
+                                    <div class="text-center space-y-4">
+                                        <div class="uppercase text-[10px] font-black text-gray-400 tracking-widest">Death Saves</div>
+                                        <div class="flex flex-col items-center gap-2">
+                                            <div class="text-green-700 text-[10px] font-black">SUCCESS</div>
+                                            <div class="flex gap-2">
+                                                <div onclick="window.toggleDS('succ', 1)" id="ds-succ-1" class="ds-dot"></div>
+                                                <div onclick="window.toggleDS('succ', 2)" id="ds-succ-2" class="ds-dot"></div>
+                                                <div onclick="window.toggleDS('succ', 3)" id="ds-succ-3" class="ds-dot"></div>
+                                            </div>
+                                            <div class="text-red-700 text-[10px] font-black mt-2">FAILURE</div>
+                                            <div class="flex gap-2">
+                                                <div onclick="window.toggleDS('fail', 1)" id="ds-fail-1" class="ds-dot"></div>
+                                                <div onclick="window.toggleDS('fail', 2)" id="ds-fail-2" class="ds-dot"></div>
+                                                <div onclick="window.toggleDS('fail', 3)" id="ds-fail-3" class="ds-dot"></div>
+                                            </div>
+                                        </div>
+                                        <div class="pt-4 border-t border-gray-100 flex items-center justify-center gap-2">
+                                            <input type="checkbox" data-key="comaActive" class="w-4 h-4">
+                                            <span class="text-[10px] font-black uppercase text-amber-600">Active Coma</span>
+                                        </div>
+                                        <div class="flex items-center justify-center gap-1">
+                                            <input type="number" class="w-10 text-center text-xl font-black" data-key="comaRounds" value="0">
+                                            <span class="text-gray-400 font-black">/ 10</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="sheet-card">
+                                    <h3>Stress & Trauma</h3>
+                                    <div class="flex justify-around items-center mb-4">
+                                        <div class="text-center">
+                                            <input type="number" data-key="currentStress" class="text-2xl font-black text-center w-16" value="0">
+                                            <label class="tiny-label">Current Stress</label>
+                                        </div>
+                                        <div class="text-3xl text-gray-200 font-light">/</div>
+                                        <div class="text-center">
+                                            <input type="number" data-key="stressThreshold" class="text-2xl font-black text-center w-16" value="10">
+                                            <label class="tiny-label">Threshold</label>
+                                        </div>
+                                    </div>
+                                    <textarea data-key="trauma" class="text-xs italic font-serif h-12 w-full" placeholder="Scars and traumas..."></textarea>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Main Content Area -->
-                        <div class="lg:col-span-2 space-y-8">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div class="space-y-6">
-                                    <div class="vitals-grid">
-                                        <div class="vital-container vital-shield"><div class="vital-label">AC</div><input type="number" class="vital-input" data-key="ac" value="10"></div>
-                                        <div class="vital-container vital-square"><div class="vital-label">Init</div><input type="number" class="vital-input" data-key="init" value="0"></div>
-                                        <div class="vital-container vital-square"><div class="vital-label">Speed</div><input type="text" class="vital-input text-lg" data-key="speed" value="30ft"></div>
+                        <!-- RIGHT SIDE -->
+                        <div class="lg:col-span-6 space-y-6">
+                            <div id="whisper-display-box" class="hidden-view">
+                                <div class="sheet-card !bg-purple-50 !border-purple-200">
+                                    <h3 class="!text-purple-700 !border-purple-200">DM Whispers</h3>
+                                    <div id="whispers-list" class="space-y-3 max-h-[200px] overflow-y-auto pr-2"></div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="sheet-card h-64 flex flex-col items-center justify-center border-2 border-dashed bg-gray-50 group relative overflow-hidden">
+                                    <img id="portrait-preview" class="hidden absolute inset-0 w-full h-full object-cover">
+                                    <div id="portrait-placeholder" class="text-center opacity-40">
+                                        <span class="text-4xl">👤</span><br>
+                                        <span class="text-[10px] font-black uppercase">Add Portrait</span>
                                     </div>
-                                    <div class="sheet-card text-center py-8">
-                                        <div class="flex justify-between px-2 mb-2">
-                                            <span class="text-[9px] font-black uppercase text-gray-400">Max HP: <input type="number" class="w-10 text-center border-none" data-key="hpMax"></span>
-                                            <span class="text-[9px] font-black uppercase text-gray-400">HD: <input type="text" class="w-10 text-center border-none" data-key="hdTotal"></span>
-                                        </div>
-                                        <input type="number" class="w-full text-center text-7xl font-black text-gray-900 border-none h-20" data-key="hpCurrent" placeholder="0">
-                                        <div class="text-[10px] font-black uppercase mt-2 text-gray-400">Health Points</div>
-                                        <input type="number" class="w-full text-center text-2xl font-bold text-indigo-700 border-none mt-4" data-key="tempHp" placeholder="Temp HP">
-                                    </div>
-                                    <div class="sheet-card">
-                                        <h3>Death & Coma</h3>
-                                        <div class="death-coma-grid">
-                                            <div class="ds-container">
-                                                <div class="ds-label">Death Saves</div>
-                                                <div class="ds-row"><span class="ds-text ds-succ">Succ</span><div class="flex gap-1"><input type="checkbox" data-key="dsSucc1"><input type="checkbox" data-key="dsSucc2"><input type="checkbox" data-key="dsSucc3"></div></div>
-                                                <div class="ds-row"><span class="ds-text ds-fail">Fail</span><div class="flex gap-1"><input type="checkbox" data-key="dsFail1"><input type="checkbox" data-key="dsFail2"><input type="checkbox" data-key="dsFail3"></div></div>
-                                            </div>
-                                            <div class="death-coma-divider"></div>
-                                            <div class="coma-rounds-container">
-                                                <div class="ds-label">Coma Rounds</div>
-                                                <div class="flex items-center justify-center gap-2 mb-1"><input type="checkbox" data-key="comaActive"><span class="text-[10px] font-black uppercase">Active</span></div>
-                                                <div class="coma-rounds-val"><input type="number" class="coma-rounds-input" data-key="comaRounds" value="0"><span class="coma-rounds-total">/ 10</span></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="sheet-card">
-                                        <h3>Stress & Trauma</h3>
-                                        <div class="stress-box">
-                                            <div class="stress-val-container"><label class="stress-label">Current Stress</label><input type="number" class="w-16 text-center text-2xl font-black border-none" data-key="currentStress" value="0"></div>
-                                            <div class="stress-divider">/</div>
-                                            <div class="stress-val-container"><label class="stress-label">Threshold</label><input type="number" class="w-16 text-center text-2xl font-black border-none" data-key="stressThreshold" value="10"></div>
-                                        </div>
-                                        <textarea class="w-full text-xs p-2 bg-gray-50 rounded border-none font-serif italic min-h-[60px]" data-key="scarsTrauma" placeholder="Scars and traumas..."></textarea>
+                                    <input type="file" onchange="window.handleImageUpload(event)" class="absolute inset-0 opacity-0 cursor-pointer">
+                                </div>
+                                <div class="sheet-card h-64 flex flex-col">
+                                    <h3>Roll History</h3>
+                                    <div id="dice-log" class="flex-grow overflow-y-auto text-[10px] font-mono p-2 bg-gray-50 rounded">
+                                        <div class="text-gray-300 italic text-center py-10">No actions recorded.</div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <div class="space-y-6">
-                                    <div class="sheet-card h-64 flex items-center justify-center overflow-hidden bg-gray-100 border-2 border-dashed border-gray-300 relative group">
-                                        <img id="portrait-preview" class="hidden absolute inset-0 w-full h-full object-cover">
-                                        <div id="portrait-placeholder" class="text-center text-gray-400"><span class="text-4xl">👤</span><p class="text-[10px] font-black uppercase mt-2">Add Portrait</p></div>
-                                        <input type="file" id="portrait-input" class="hidden" accept="image/*" onchange="handleImageUpload(event)">
-                                        <label for="portrait-input" class="absolute inset-0 cursor-pointer"></label>
-                                    </div>
-                                    
-                                    <div class="sheet-card h-64 flex flex-col">
-                                        <h3>Roll History</h3>
-                                        <div id="dice-log" class="bg-gray-50 border border-gray-100 rounded p-4 flex-grow overflow-y-auto flex flex-col-reverse shadow-inner text-[11px] font-mono">
-                                            <div class="text-gray-300 italic text-center">No actions recorded.</div>
-                                        </div>
-                                    </div>
-
-                                    <div id="dm-whispers-box" class="sheet-card hidden-view">
-                                        <h3 class="!text-purple-600 !border-purple-200">DM Whispers</h3>
-                                        <div id="dm-whispers-list" class="space-y-2 text-xs italic font-serif text-purple-800"></div>
-                                    </div>
+                            <div class="sheet-card">
+                                <h3>Equipment & Weapons</h3>
+                                <div class="equip-header"><span>Name</span><span>Atk</span><span>Dmg</span><span></span></div>
+                                <div id="attacks-list" class="space-y-1 mb-4"></div>
+                                <button onclick="window.addAttackItem()" class="w-full py-2 border-2 border-dashed border-gray-200 text-[10px] font-black text-gray-400 uppercase rounded hover:border-amber-400">+ Add Weapon</button>
+                                <div class="grid grid-cols-4 gap-2 mt-6">
+                                    <div class="text-center"><input type="number" data-key="sc" value="0" class="text-center font-bold"><label class="tiny-label">SC</label></div>
+                                    <div class="text-center"><input type="number" data-key="cr" value="0" class="text-center font-bold"><label class="tiny-label">CR</label></div>
+                                    <div class="text-center"><input type="number" data-key="byt" value="0" class="text-center font-bold"><label class="tiny-label">BYT</label></div>
+                                    <div class="text-center"><input type="number" data-key="vt" value="0" class="text-center font-bold"><label class="tiny-label">VT</label></div>
                                 </div>
+                                <textarea data-key="equipment" class="mt-6 text-[12px] h-48 p-3 bg-gray-50 rounded font-mono" placeholder="Detailed Inventory list..."></textarea>
                             </div>
 
                             <div class="sheet-card">
                                 <h3>Identity & Features</h3>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div class="space-y-6">
                                     <div>
-                                        <div class="text-[10px] font-black text-gray-400 uppercase mb-2">Languages</div>
-                                        <div id="languages-list" class="flex flex-wrap gap-1 mb-2"></div>
+                                        <div class="text-[9px] font-black text-gray-400 uppercase mb-2">Languages</div>
+                                        <div id="languages-list" class="flex flex-wrap gap-2 mb-3"></div>
                                         <div class="flex gap-2">
-                                            <input type="text" id="lang-input-field" class="text-xs italic border-b border-gray-200" placeholder="Add Language...">
-                                            <button onclick="addLanguageItem()" class="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded text-[10px] font-black">ADD</button>
+                                            <input type="text" id="lang-input" class="text-xs border-b px-2 h-8" placeholder="Add Language...">
+                                            <button onclick="window.addLanguageItem()" class="bg-gray-200 px-4 rounded text-[9px] font-black h-8">ADD</button>
                                         </div>
                                     </div>
-                                    <div class="space-y-4">
-                                        <div class="text-[10px] font-black text-gray-400 uppercase">Personality</div>
-                                        <div class="personality-field"><input type="text" data-key="traits" class="text-xs font-serif italic py-1"><span class="personality-label">Traits</span></div>
-                                        <div class="personality-field"><input type="text" data-key="ideals" class="text-xs font-serif italic py-1"><span class="personality-label">Ideals</span></div>
-                                        <div class="personality-field"><input type="text" data-key="bonds" class="text-xs font-serif italic py-1"><span class="personality-label">Bonds</span></div>
-                                        <div class="personality-field"><input type="text" data-key="flaws" class="text-xs font-serif italic py-1"><span class="personality-label">Flaws</span></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="sheet-card">
-                                <h3>Weapons, Equipment & Proficiencies</h3>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
-                                    <div>
-                                        <div class="text-[10px] font-black text-gray-400 uppercase mb-2">Weapons & Tech Items</div>
-                                        <div class="equip-header"><span>Name</span><span>Atk</span><span>Dmg/Type</span><span></span></div>
-                                        <div id="attacks-list" class="space-y-1 mb-3"></div>
-                                        <button onclick="addAttackItem()" class="w-full py-2 border-2 border-dashed border-gray-200 text-gray-400 text-[10px] font-black uppercase rounded hover:border-amber-400">+ Add Weapon</button>
-                                        <div class="mt-6 border-t pt-4">
-                                            <div class="space-y-4">
-                                                <div class="prof-row"><span class="prof-cat">Armor</span><div id="prof-armor-list" class="flex-1 flex flex-wrap gap-1"></div><button onclick="addProfItem('armor')" class="text-green-600 font-bold">+</button></div>
-                                                <div class="prof-row"><span class="prof-cat">Weapons</span><div id="prof-weapons-list" class="flex-1 flex flex-wrap gap-1"></div><button onclick="addProfItem('weapons')" class="text-green-600 font-bold">+</button></div>
-                                                <div class="prof-row"><span class="prof-cat">Tools</span><div id="prof-tools-list" class="flex-1 flex flex-wrap gap-1"></div><button onclick="addProfItem('tools')" class="text-green-600 font-bold">+</button></div>
-                                            </div>
-                                        </div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+                                        <div><input type="text" data-key="traits" class="border-b h-8"><label class="tiny-label">Personality Traits</label></div>
+                                        <div><input type="text" data-key="ideals" class="border-b h-8"><label class="tiny-label">Ideals</label></div>
+                                        <div><input type="text" data-key="bonds" class="border-b h-8"><label class="tiny-label">Bonds</label></div>
+                                        <div><input type="text" data-key="flaws" class="border-b h-8"><label class="tiny-label">Flaws</label></div>
                                     </div>
                                     <div>
-                                        <div class="currency-grid">
-                                            <div class="currency-box"><div class="tiny-label">SC</div><input type="number" data-key="currencySc" class="text-center font-bold border-none p-0 text-sm" value="0"></div>
-                                            <div class="currency-box"><div class="tiny-label">CR</div><input type="number" data-key="currencyCr" class="text-center font-bold border-none p-0 text-sm" value="0"></div>
-                                            <div class="currency-box"><div class="tiny-label">BYT</div><input type="number" data-key="currencyByt" class="text-center font-bold border-none p-0 text-sm" value="0"></div>
-                                            <div class="currency-box"><div class="tiny-label">VT</div><input type="number" data-key="currencyVt" class="text-center font-bold border-none p-0 text-sm" value="0"></div>
-                                        </div>
-                                        <textarea class="w-full text-xs p-3 bg-gray-50 rounded border-none font-serif h-72" data-key="equipment" placeholder="Inventory details..."></textarea>
+                                        <div class="text-[9px] font-black text-gray-400 uppercase mb-2">Notes & Features</div>
+                                        <textarea data-key="notes" class="text-[12px] h-48 p-3 bg-gray-50 rounded leading-relaxed font-serif" placeholder="Lore..."></textarea>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
                     </div>
 
-                    <div class="mt-8"><div class="sheet-card"><h3>Feature Moves</h3><div id="features-lvl-grid" class="lvl-grid"></div></div></div>
-                    <div class="mt-8"><div class="sheet-card"><h3>Scriptcasting</h3><div id="scriptcasting-lvl-grid" class="lvl-grid"></div></div></div>
-                </div>
-
-                <!-- BEAST STAT BLOCK LAYOUT -->
-                <div id="beast-sheet-layout" class="hidden-view p-8 beast-sheet-bg shadow-2xl max-w-4xl mx-auto border-t-[8px] border-b-[8px] border-[#7A200D]">
-                    <div class="mb-4">
-                        <input type="text" id="beast-name-field" class="w-full text-6xl beast-title bg-transparent border-none uppercase focus:border-none" placeholder="BEAST NAME" data-key="name">
-                        <input type="text" class="w-full text-sm italic font-serif text-gray-600 bg-transparent border-none p-0 focus:border-none" placeholder="Medium elemental, neutral" data-key="beastSubtitle">
-                    </div>
-                    <div class="my-6 border-2 border-dashed border-[#7A200D]/30 h-80 relative group overflow-hidden bg-white/10 text-center flex flex-col items-center justify-center">
-                         <img id="beast-portrait-preview" class="hidden absolute inset-0 w-full h-full object-cover">
-                         <input type="file" id="beast-portrait-input" class="hidden" accept="image/*" onchange="handleImageUpload(event, true)">
-                         <label for="beast-portrait-input" class="absolute inset-0 cursor-pointer flex flex-col items-center justify-center opacity-40">
-                             <span class="text-4xl mb-2">🐉</span><span class="text-[10px] font-black uppercase">Add Image</span>
-                         </label>
-                    </div>
-                    <div class="space-y-3 mb-6 border-t border-b border-[#7A200D]/20 py-4">
-                        <div class="flex items-center gap-4"><span class="beast-label">Armor Class</span> <input type="text" class="beast-input-right" placeholder="15" data-key="ac"></div>
-                        <div class="flex items-center gap-4"><span class="beast-label">Hit Points</span> <input type="text" class="beast-input-right" placeholder="90" data-key="hpMax"></div>
-                        <div class="flex items-center gap-4"><span class="beast-label">Speed</span> <input type="text" class="beast-input-right" placeholder="30 ft." data-key="speed"></div>
-                    </div>
-                    <div class="grid grid-cols-6 gap-2 text-center py-4 border-b border-[#7A200D]/20 mb-6" id="beast-stats"></div>
-                    <div class="space-y-2 mb-6">
-                        <div class="flex items-center gap-4"><span class="beast-label">Resistances</span> <input type="text" class="beast-input-right" data-key="beastRes"></div>
-                        <div class="flex items-center gap-4"><span class="beast-label">Immunities</span> <input type="text" class="beast-input-right" data-key="beastImm"></div>
-                        <div class="flex items-center gap-4"><span class="beast-label">Senses</span> <input type="text" class="beast-input-right" data-key="beastSenses"></div>
-                        <div class="flex items-center gap-4"><span class="beast-label">Languages</span> <input type="text" class="beast-input-right" data-key="beastLangs"></div>
-                        <div class="grid grid-cols-2 gap-8">
-                            <div class="flex items-center gap-2"><span class="beast-label">Challenge</span> <input type="text" class="beast-input-right" data-key="beastCr"></div>
-                            <div class="flex items-center gap-2"><span class="beast-label">XP</span> <input type="text" class="beast-input-right" data-key="beastXp"></div>
+                    <div class="mt-8">
+                        <div class="sheet-card">
+                            <div class="flex justify-between items-center border-b-2 border-gray-100 pb-2 mb-6">
+                                <h2 class="font-serif font-bold text-lg uppercase tracking-wider">Character Moves</h2>
+                                <div class="flex items-center gap-2">
+                                    <label class="text-[10px] font-black uppercase text-gray-400">Viewing:</label>
+                                    <select id="moves-selector" onchange="window.renderMovesGrid()" class="text-[10px] font-black uppercase border rounded px-2 py-1 bg-blue-500 text-white border-none cursor-pointer">
+                                        <option value="features">Feature Moves</option>
+                                        <option value="scriptcasting">Scriptcasting</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div id="features-lvl-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
                         </div>
                     </div>
-                    <hr class="beast-hr">
-                    <div id="beast-traits" class="space-y-4 my-6"></div><button onclick="addBeastItem('traits')" class="text-xs uppercase font-black opacity-50">+ Add Trait</button>
-                    <h2 class="text-3xl beast-title border-b-2 mt-8 mb-4">Actions</h2>
-                    <div id="beast-actions" class="space-y-4 my-6"></div><button onclick="addBeastItem('actions')" class="text-xs uppercase font-black opacity-50">+ Add Action</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
-    <div id="delete-modal" class="fixed inset-0 bg-black/90 flex items-center justify-center z-[110] hidden">
-        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border-2 border-red-600 text-center text-white">
-            <h3 class="text-xl font-serif text-red-500 font-bold mb-4">DELETE CHARACTER?</h3>
-            <p class="text-gray-400 text-sm mb-8">This action is permanent.</p>
-            <div class="flex gap-2">
-                <button onclick="confirmDelete()" class="flex-1 bg-red-600 py-3 rounded-xl font-bold">YES, DELETE</button>
-                <button onclick="document.getElementById('delete-modal').classList.add('hidden')" class="flex-1 bg-gray-700 py-3 rounded-xl font-bold">CANCEL</button>
+    <!-- Quick Roller -->
+    <div id="quick-roll-bar" class="hidden-view floating-roller">
+        <div class="flex items-center justify-between mb-4 border-b pb-2">
+            <div class="flex items-center gap-2">
+                <input type="number" id="roll-count" value="1" min="1" class="w-8 text-center font-black bg-gray-100 rounded">
+                <div class="h-4 w-px bg-gray-200 mx-1"></div>
+                <button onclick="window.setRollMode('normal')" class="mode-btn roll-mode active" id="mode-norm">Norm</button>
+                <button onclick="window.setRollMode('adv')" class="mode-btn roll-mode" id="mode-adv">Adv</button>
+                <button onclick="window.setRollMode('dis')" class="mode-btn roll-mode" id="mode-dis">Dis</button>
             </div>
         </div>
-    </div>
-
-    <div id="party-modal" class="fixed inset-0 bg-black/90 backdrop-blur flex items-center justify-center z-[60] hidden">
-        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border border-gray-700 shadow-2xl">
-            <h3 class="text-xl font-serif text-indigo-400 font-bold mb-6">Create New Party</h3>
-            <input type="text" id="party-name-input" class="w-full bg-gray-900 text-white rounded-lg p-3 mb-6 border border-gray-700" placeholder="Party Name">
-            <div class="flex gap-2"><button onclick="createParty()" class="flex-1 bg-indigo-600 text-white py-3 rounded-xl font-bold">CREATE</button><button onclick="document.getElementById('party-modal').classList.add('hidden')" class="flex-1 bg-gray-700 text-gray-300 py-3 rounded-xl font-bold">CANCEL</button></div>
+        <div class="grid grid-cols-4 gap-2">
+            <button onclick="window.rollDice(4)" class="dice-grid-btn dice-orange">d4</button>
+            <button onclick="window.rollDice(6)" class="dice-grid-btn dice-green">d6</button>
+            <button onclick="window.rollDice(8)" class="dice-grid-btn dice-blue">d8</button>
+            <button onclick="window.rollDice(10)" class="dice-grid-btn dice-purple">d10</button>
+            <button onclick="window.rollDice(12)" class="dice-grid-btn dice-purple">d12</button>
+            <button onclick="window.rollDice(20)" class="dice-grid-btn dice-red">d20</button>
+            <button onclick="window.rollDice(100)" class="dice-grid-btn dice-dark">d100</button>
         </div>
     </div>
 
-    <div id="password-modal" class="fixed inset-0 bg-black/95 backdrop-blur-md flex items-center justify-center z-[200] hidden">
-        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border-2 border-amber-600 shadow-2xl text-center">
-            <h3 class="text-xl font-serif text-amber-500 font-bold mb-2">DM AUTHORIZATION</h3>
-            <input type="password" id="dm-password" class="w-full bg-gray-900 text-white text-center text-2xl tracking-widest rounded-lg p-3 mb-6 border border-gray-700 font-serif" placeholder="••••">
-            <div class="flex gap-2"><button onclick="verifyDmPassword()" class="flex-1 bg-amber-600 text-white py-3 rounded-xl font-bold">ENTER</button><button onclick="document.getElementById('password-modal').classList.add('hidden')" class="flex-1 bg-gray-700 text-gray-300 py-3 rounded-xl font-bold">BACK</button></div>
-        </div>
-    </div>
-
-    <!-- Quick Dice Bar -->
-    <div id="quick-roll-bar" class="hidden-view fixed bottom-6 right-6 z-50 flex flex-col items-center gap-4 bg-white p-4 rounded-3xl shadow-2xl border-4 border-gray-800 transition-transform">
-        <div class="flex gap-2 items-center bg-gray-100 p-2 rounded-xl">
-            <input type="number" id="roll-count" value="1" min="1" class="w-10 text-center font-black bg-transparent border-none text-xl">
-            <div class="flex gap-1">
-                <button onclick="setRollMode('normal')" id="btn-mode-normal" class="mode-btn active-norm">Norm</button>
-                <button onclick="setRollMode('adv')" id="btn-mode-adv" class="mode-btn">Adv</button>
-                <button onclick="setRollMode('dis')" id="btn-mode-dis" class="mode-btn">Dis</button>
-            </div>
-        </div>
-        <div class="grid grid-cols-4 gap-3">
-            <button onclick="rollDice(4)" class="dice-btn dice-d4">d4</button>
-            <button onclick="rollDice(6)" class="dice-btn dice-d6">d6</button>
-            <button onclick="rollDice(8)" class="dice-btn dice-d8">d8</button>
-            <button onclick="rollDice(10)" class="dice-btn dice-d10">d10</button>
-            <button onclick="rollDice(12)" class="dice-btn dice-d12">d12</button>
-            <button onclick="rollDice(20)" class="dice-btn dice-d20">d20</button>
-            <button onclick="rollDice(100)" class="dice-btn dice-d100 text-xs">d100</button>
-        </div>
-    </div>
-
-    <div id="dice-result-overlay" class="fixed inset-0 flex items-center justify-center z-[100] hidden">
-        <div class="text-center text-white" onclick="document.getElementById('dice-result-overlay').classList.add('hidden')">
-            <div id="roll-label" class="text-amber-500 font-serif text-xl mb-2 uppercase tracking-widest">ROLL</div>
-            <div id="roll-total" class="text-9xl font-black mb-4 animate-bounce">20</div>
-            <div id="roll-breakdown" class="text-gray-400 font-mono text-sm"></div>
+    <!-- Roll Result Overlay -->
+    <div id="dice-result-overlay" class="fixed inset-0 bg-black/90 flex items-center justify-center z-[200] hidden" onclick="this.classList.add('hidden')">
+        <div class="text-center text-white p-12">
+            <div id="roll-label" class="text-amber-500 font-serif text-2xl mb-2 uppercase tracking-widest">ROLL</div>
+            <div id="roll-total" class="text-9xl font-black mb-4">20</div>
+            <div id="roll-breakdown" class="text-gray-300 font-mono text-lg bg-black/40 px-6 py-2 rounded-full inline-block"></div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, deleteDoc, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot, addDoc, query, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Firebase Configuration (FALLBACK FOR EXTERNAL)
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-            apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI",
-            authDomain: "aeonfall-523c1.firebaseapp.com",
-            projectId: "aeonfall-523c1",
-            storageBucket: "aeonfall-523c1.firebasestorage.app",
-            messagingSenderId: "716207733913",
-            appId: "1:716207733913:web:7aac43906a70e2b5f50c08"
-        };
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "" };
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'aeonfall-manager';
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        
+        let db, auth, user;
+        try {
+            const app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+        } catch (e) { console.warn("Firebase restricted mode active"); }
 
-        let user = null, characters = [], parties = [], activeCharId = null, activeRole = 'player', rollMode = 'normal', autoSaveTimer = null;
+        let characters = [];
+        let parties = [];
+        let activeCharId = null;
+        let activeRole = 'player';
+        let rollMode = 'normal';
+        let autoSaveTimer = null;
+        let lastGeneratedScores = [];
+        let sessionRerollUsed = false;
+
         const STATS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
-        const SKILLS = [{n:'Acrobatics', s:'dex'},{n:'Animal Handling', s:'wis'},{n:'Arcana', s:'int'},{n:'Athletics', s:'str'},{n:'Deception', s:'cha'},{n:'History', s:'int'},{n:'Insight', s:'wis'},{n:'Intimidation', s:'cha'},{n:'Investigation', s:'int'},{n:'Medicine', s:'wis'},{n:'Nature', s:'int'},{n:'Perception', s:'wis'},{n:'Performance', s:'cha'},{n:'Persuasion', s:'cha'},{n:'Religion', s:'int'},{n:'Sleight of Hand', s:'dex'},{n:'Stealth', s:'dex'},{n:'Survival', s:'wis'}];
+        const SKILLS = [
+            {n:'Acrobatics', s:'dex'}, {n:'Animal Handling', s:'wis'}, {n:'Arcana', s:'int'},
+            {n:'Athletics', s:'str'}, {n:'Deception', s:'cha'}, {n:'History', s:'int'},
+            {n:'Insight', s:'wis'}, {n:'Intimidation', s:'cha'}, {n:'Investigation', s:'int'},
+            {n:'Medicine', s:'wis'}, {n:'Nature', s:'int'}, {n:'Perception', s:'wis'},
+            {n:'Performance', s:'cha'}, {n:'Persuasion', s:'cha'}, {n:'Religion', s:'int'},
+            {n:'Sleight of Hand', s:'dex'}, {n:'Stealth', s:'dex'}, {n:'Survival', s:'wis'}
+        ];
 
-        window.setRole = (r) => { if (r === 'dm') { document.getElementById('password-modal')?.classList.remove('hidden'); document.getElementById('dm-password').value = ''; } else { activeRole = 'player'; updateRoleUI(); } };
-        window.verifyDmPassword = () => { if (document.getElementById('dm-password').value === 'Rew4994') { activeRole = 'dm'; document.getElementById('password-modal')?.classList.add('hidden'); updateRoleUI(); showToast("DM Access Granted"); } else { showToast("Denied"); } };
-        window.openPartyModal = () => document.getElementById('party-modal')?.classList.remove('hidden');
-        window.createParty = async () => { const n = document.getElementById('party-name-input')?.value.trim(); if(n && user) { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'parties'), { name: n }); document.getElementById('party-modal')?.classList.add('hidden'); } };
-        window.createChar = async (t) => { if (!user) return; const ref = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), { type: t, name: `New ${t}`, status: 'alive', profBonus: 2, passivePerception: 10, stressThreshold: 10, createdAt: new Date().toISOString(), profs: { armor:[], weapons:[], tools:[] }, languages: [], dmNotes: [] }); window.openSheet(ref.id); };
-        window.openSheet = (id) => { activeCharId = id; document.getElementById('dashboard-screen')?.classList.add('hidden-view'); document.getElementById('sheet-screen')?.classList.remove('hidden-view'); document.getElementById('quick-roll-bar')?.classList.remove('hidden-view'); initSheetUI(); syncSheetData(); };
-        window.closeSheet = () => { activeCharId = null; document.getElementById('sheet-screen')?.classList.add('hidden-view'); document.getElementById('dashboard-screen')?.classList.remove('hidden-view'); document.getElementById('quick-roll-bar')?.classList.add('hidden-view'); };
-
-        window.saveCurrentCharacter = async (notif = false) => {
-            if (!user || !activeCharId) return;
-            const char = characters.find(c => c.id === activeCharId);
-            if (!char) return;
-            const layout = char.type === 'Beast' ? '#beast-sheet-layout' : '#pc-sheet-layout';
-            const data = { type: char.type };
-            document.querySelectorAll(`${layout} [data-key]`).forEach(inp => { data[inp.dataset.key] = inp.type === 'checkbox' ? inp.checked : inp.value; });
-            if(char.type !== 'Beast') {
-                data.attacks = Array.from(document.querySelectorAll('#attacks-list > div')).map(d => ({ name: d.querySelector('.atk-name').value, bonus: d.querySelector('.atk-bonus').value, dmg: d.querySelector('.atk-dmg').value }));
-                data.features = getLvlList('features'); data.scripts = getLvlList('scriptcasting');
-                data.languages = Array.from(document.querySelectorAll('#languages-list .lang-text')).map(s => s.innerText);
-                data.profs = { armor: Array.from(document.querySelectorAll('#prof-armor-list input')).map(i => i.value), weapons: Array.from(document.querySelectorAll('#prof-weapons-list input')).map(i => i.value), tools: Array.from(document.querySelectorAll('#prof-tools-list input')).map(i => i.value) };
-            } else {
-                data.beastTraits = Array.from(document.querySelectorAll('#beast-traits > div')).map(d => ({ name: d.querySelector('.list-name').value, desc: d.querySelector('.list-desc').value }));
-                data.beastActions = Array.from(document.querySelectorAll('#beast-actions > div')).map(d => ({ name: d.querySelector('.list-name').value, desc: d.querySelector('.list-desc').value }));
-            }
-            data.imageSrc = char.imageSrc || '';
-            try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), data); if (notif) showToast("Synced"); showSyncIndicator(); } catch (err) { console.error(err); }
-        };
-
-        window.addLanguageItem = () => {
-            const input = document.getElementById('lang-input-field');
-            const val = input?.value.trim(); if(!val) return;
-            const char = characters.find(c => c.id === activeCharId);
-            if(!char.languages) char.languages = []; char.languages.push(val); if(input) input.value = '';
-            renderLanguages(char.languages); window.saveCurrentCharacter();
-        };
-
-        function renderLanguages(list) {
-            const cont = document.getElementById('languages-list'); if(!cont) return; cont.innerHTML = '';
-            (list || []).forEach((l) => {
-                const tag = document.createElement('div'); tag.className = 'lang-tag';
-                tag.innerHTML = `<span class="lang-text">${l}</span><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-400">×</button>`;
-                cont.appendChild(tag);
-            });
-        }
-
-        window.addProfItem = (cat) => {
-            const cont = document.getElementById(`prof-${cat}-list`); if(!cont) return;
-            const wrap = document.createElement('div'); wrap.className = "bg-gray-100 px-2 py-0.5 rounded flex items-center gap-1 text-[10px]";
-            wrap.innerHTML = `<input type="text" class="bg-transparent border-none p-0 w-16 text-[10px] font-bold" value="New Item"><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-400">×</button>`;
-            cont.appendChild(wrap); window.saveCurrentCharacter();
-        };
-
-        window.addAttackItem = () => {
-            const cont = document.getElementById('attacks-list'); if(!cont) return;
-            const d = document.createElement('div'); d.className = "equip-row";
-            d.innerHTML = `<input type="text" class="atk-name font-bold text-xs" placeholder="Weapon"><input type="text" class="atk-bonus text-center text-xs" placeholder="+0"><input type="text" class="atk-dmg text-center text-xs" placeholder="1d6"><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-300">✕</button>`;
-            cont.appendChild(d); window.saveCurrentCharacter();
-        };
-
-        window.rollAtk = (idx) => { const char = characters.find(c => c.id === activeCharId); const atk = char.attacks[idx]; performRoll(atk.name, 20, parseInt(atk.bonus) || 0, 1, rollMode); };
-        window.rollCheck = (s) => { const char = characters.find(c => c.id === activeCharId); const val = parseInt(char[s]) || 10; const mod = Math.floor((val - 10) / 2); performRoll(`${s.toUpperCase()} Check`, 20, mod, 1, rollMode); };
-        window.rollDice = (s) => { const c = parseInt(document.getElementById('roll-count').value) || 1; performRoll(`D${s}`, s, 0, c, rollMode); };
-        window.setRollMode = (m) => { rollMode = m; document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active-norm','active-adv','active-dis')); document.getElementById(`btn-mode-${m}`)?.classList.add(`active-${m==='normal'?'norm':m}`); };
-
-        window.calcMods = () => {
-            const char = characters.find(c => c.id === activeCharId); if (!char) return;
-            const prof = parseInt(char.profBonus) || 2;
-            STATS.forEach(s => {
-                const val = parseInt(char[s] || 10); const mod = Math.floor((val - 10) / 2);
-                if(document.getElementById(`mod-${s}`)) document.getElementById(`mod-${s}`).textContent = (mod>=0?'+':'')+mod;
-                if(document.getElementById(`beast-mod-${s}`)) document.getElementById(`beast-mod-${s}`).textContent = (mod>=0?'+':'')+mod;
-                if(document.getElementById(`save-mod-${s}`)) document.getElementById(`save-mod-${s}`).textContent = (mod+(char[`save_prof_${s}`]?prof:0)>=0?'+':'')+(mod+(char[`save_prof_${s}`]?prof:0));
-                SKILLS.filter(sk => sk.s === s).forEach(sk => {
-                    const el = document.getElementById(`skill-mod-${sk.n.replace(/ /g,'_')}`);
-                    if(el) el.textContent = (mod+(char[`prof_${sk.n.toLowerCase().replace(/ /g,'_')}`]?prof:0)>=0?'+':'')+(mod+(char[`prof_${sk.n.toLowerCase().replace(/ /g,'_')}`]?prof:0));
-                });
-            });
-        };
-
-        window.addDmWhisper = async () => {
-            const input = document.getElementById('dm-whisper-input'); const note = input?.value.trim();
-            if(!note || !activeCharId) return;
-            const char = characters.find(c => c.id === activeCharId); const notes = char.dmNotes || []; notes.push(note);
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { dmNotes: notes });
-            if(input) input.value = '';
-        };
-
-        window.removeDmWhisper = async (idx) => {
-            const char = characters.find(c => c.id === activeCharId); const notes = char.dmNotes || []; notes.splice(idx, 1);
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { dmNotes: notes });
-        };
-
-        window.updateCharStatus = async (status) => {
-            if (!activeCharId) return;
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { status });
-            showToast(`Status updated to ${status.toUpperCase()}`);
-        };
-
-        function getLvlList(t) { return Array.from(document.querySelectorAll(`#${t}-lvl-grid .lvl-item-row`)).map(r => ({ id: r.dataset.id, level: parseInt(r.closest('.lvl-card').querySelector('.lvl-header').innerText.replace(/[^0-9]/g,''))||0, name: r.querySelector('.item-name').value, roll: r.querySelector('.item-roll').value, desc: r.querySelector('.item-desc').value })); }
-
-        function renderLvlSection(t) {
-            const grid = document.getElementById(`${t}-lvl-grid`); if(!grid) return; grid.innerHTML = '';
-            const char = characters.find(c => c.id === activeCharId), data = (t==='features'?char?.features:char?.scripts) || [];
-            (t==='features'?[1,2,3,4,5,6,7,8,9]:[0,1,2,3,4,5,6,7,8,9]).forEach(lvl => {
-                const card = document.createElement('div'); card.className = "lvl-card";
-                card.innerHTML = `<div class="lvl-header">${lvl===0?'TRICKS (0)':'LEVEL '+lvl}</div><div id="${t}-list-lvl-${lvl}" class="space-y-3"></div><button onclick="addLvlItem('${t}', ${lvl})" class="w-full text-[9px] text-gray-400 font-bold uppercase mt-2 tracking-widest">+ Add</button>`;
-                grid.appendChild(card);
-                const sublist = card.querySelector(`#${t}-list-lvl-${lvl}`);
-                data.filter(i => i.level === lvl).forEach(i => {
-                    const row = document.createElement('div'); row.className = "p-2 bg-white border border-gray-200 rounded-lg shadow-sm group lvl-item-row"; row.dataset.id = i.id;
-                    row.innerHTML = `<div class="flex gap-1 items-center mb-1"><input type="text" class="lvl-input flex-grow text-[11px] font-bold p-0 border-none bg-transparent item-name" value="${i.name||''}" placeholder="Name"><input type="text" class="lvl-input w-12 text-[10px] text-center bg-gray-100 rounded border-none item-roll" value="${i.roll||''}" placeholder="1d20"><button onclick="this.parentElement.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-300 hover:text-red-500 font-bold text-xs opacity-0 group-hover:opacity-100 transition-opacity">✕</button></div><textarea class="lvl-input w-full text-[10px] bg-transparent resize-none border-none p-0 italic text-gray-500 h-10 item-desc" placeholder="Details...">${i.desc||''}</textarea>`;
-                    sublist?.appendChild(row);
-                });
-            });
-        }
-
-        window.addLvlItem = (t, l) => {
-            const char = characters.find(c => c.id === activeCharId); const key = t === 'features' ? 'features' : 'scripts';
-            if(!char[key]) char[key] = []; char[key].push({ id: Date.now().toString(), level: l, name:'', desc:'', roll:'' });
-            renderLvlSection(t); window.saveCurrentCharacter();
-        };
-
-        window.addBeastItem = (type) => {
-            const char = characters.find(c => c.id === activeCharId); const key = type === 'traits' ? 'beastTraits' : 'beastActions';
-            if(!char[key]) char[key] = []; char[key].push({ name:'', desc:'' });
-            renderBeastList(type, char[key]); window.saveCurrentCharacter();
-        };
-
-        function renderBeastList(type, list) {
-            const cont = document.getElementById(`beast-${type}`); if (!cont) return; cont.innerHTML = '';
-            (list || []).forEach((item) => {
-                const d = document.createElement('div'); d.className = "pb-4 border-b border-[#7A200D]/10";
-                d.innerHTML = `<div class="flex gap-2 items-center mb-1"><input type="text" class="font-black italic text-[#7A200D] list-name" value="${item.name || ''}" placeholder="Title"><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-[9px] font-black">✕</button></div><textarea class="text-sm italic list-desc w-full bg-transparent border-none p-0 h-12" placeholder="Description...">${item.desc || ''}</textarea>`;
-                cont.appendChild(d);
-            });
-        }
-
-        function syncSheetData() {
-            if (!activeCharId) return;
-            const char = characters.find(c => c.id === activeCharId); if (!char) return;
-            const layout = char.type === 'Beast' ? '#beast-sheet-layout' : '#pc-sheet-layout';
-            document.querySelectorAll(`${layout} [data-key]`).forEach(inp => { 
-                const v = char[inp.dataset.key]; 
-                if (inp.type === 'checkbox') inp.checked = !!v; 
-                else if (document.activeElement !== inp) inp.value = v === undefined ? '' : v; 
-            });
-
-            document.getElementById('status-alive-btn')?.classList.toggle('status-alive', char.status === 'alive');
-            document.getElementById('status-coma-btn')?.classList.toggle('active', char.status === 'coma');
-            document.getElementById('status-dead-btn')?.classList.toggle('active', char.status === 'dead');
-
-            // Signify Coma
-            const container = document.getElementById('sheet-container');
-            const comaHeader = document.getElementById('coma-indicator-header');
-            if (char.status === 'coma') {
-                container?.classList.add('coma-active-filter');
-                comaHeader?.classList.remove('hidden-view');
-            } else {
-                container?.classList.remove('coma-active-filter');
-                comaHeader?.classList.add('hidden-view');
-            }
-
-            const prev = char.type === 'Beast' ? document.getElementById('beast-portrait-preview') : document.getElementById('portrait-preview');
-            const placeholder = document.getElementById('portrait-placeholder');
-            if (prev) { if (char.imageSrc) { prev.src = char.imageSrc; prev.classList.remove('hidden'); placeholder?.classList.add('hidden'); } else { prev.classList.add('hidden'); placeholder?.classList.remove('hidden'); } }
-            
-            if(char.type !== 'Beast') {
-                const atkCont = document.getElementById('attacks-list'); if(atkCont) atkCont.innerHTML = '';
-                (char.attacks||[]).forEach((atk) => {
-                    const d = document.createElement('div'); d.className = "equip-row";
-                    d.innerHTML = `<input type="text" class="atk-name font-bold text-xs" value="${atk.name||''}" placeholder="Name"><input type="text" class="atk-bonus text-center text-xs" value="${atk.bonus||''}" placeholder="+0"><input type="text" class="atk-dmg text-center text-xs" value="${atk.dmg||''}" placeholder="1d6"><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-300">✕</button>`;
-                    atkCont?.appendChild(d);
-                });
-                renderLanguages(char.languages);
-                ['armor','weapons','tools'].forEach(cat => {
-                    const ccont = document.getElementById(`prof-${cat}-list`); if(!ccont) return; ccont.innerHTML = '';
-                    (char.profs?.[cat]||[]).forEach(item => {
-                        const wrap = document.createElement('div'); wrap.className = "bg-gray-100 px-2 py-0.5 rounded flex items-center gap-1 text-[10px]";
-                        wrap.innerHTML = `<input type="text" class="bg-transparent border-none p-0 w-16 text-[10px] font-bold" value="${item}"><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-400">×</button>`;
-                        cont.appendChild(wrap);
-                    });
-                });
-                const whisBox = document.getElementById('dm-whispers-box'); const whisList = document.getElementById('dm-whispers-list');
-                if(whisBox && whisList) {
-                    const notes = char.dmNotes || []; whisBox.classList.toggle('hidden-view', notes.length === 0);
-                    whisList.innerHTML = notes.map((n, idx) => `<div class="flex justify-between items-start gap-2 border-b border-purple-100 pb-1">${n} ${activeRole === 'dm' ? `<button onclick="removeDmWhisper(${idx})" class="text-red-400 font-bold">×</button>` : ''}</div>`).join('');
-                }
-                if (document.activeElement && !document.activeElement.classList.contains('lvl-input')) { renderLvlSection('features'); renderLvlSection('scriptcasting'); }
-            } else {
-                renderBeastList('traits', char.beastTraits || []);
-                renderBeastList('actions', char.beastActions || []);
-            }
-            window.calcMods();
-        }
-
-        function initSheetUI() {
-            const sCont = document.getElementById('stats-container'), svCont = document.getElementById('saves-container'), skCont = document.getElementById('skills-container'), bStats = document.getElementById('beast-stats');
-            if (sCont) sCont.innerHTML = ''; if (svCont) svCont.innerHTML = ''; if (skCont) skCont.innerHTML = ''; if (bStats) bStats.innerHTML = '';
-            STATS.forEach(s => {
-                if (sCont) sCont.innerHTML += `<div class="flex items-center gap-3"><div class="w-16 h-16 bg-gray-100 rounded-xl flex flex-col items-center justify-center border-2 border-gray-300 rollable" onclick="rollCheck('${s}')"><span class="text-[8px] font-black uppercase text-gray-400">${s}</span><span class="text-xl font-black" id="mod-${s}">+0</span></div><div class="flex-1"><input type="number" class="text-center text-lg font-bold w-full" data-key="${s}" value="10"><label class="tiny-label text-center">Score</label></div></div>`;
-                if (svCont) svCont.innerHTML += `<div class="flex items-center gap-2 border-b border-gray-100 pb-1"><input type="checkbox" data-key="save_prof_${s}" class="w-3 h-3"><span class="text-[10px] font-bold uppercase text-gray-500">${s}</span><span class="ml-auto text-xs font-black" id="save-mod-${s}">+0</span></div>`;
-                if (bStats) bStats.innerHTML += `<div><div class="beast-stat-label">${s}</div><div class="flex flex-col items-center justify-center"><input type="number" class="w-10 text-center font-black bg-transparent border-none p-0" value="10" data-key="${s}"><div class="beast-stat-mod" id="beast-mod-${s}">+0</div></div></div>`;
-            });
-            SKILLS.forEach(sk => { if (skCont) skCont.innerHTML += `<div class="flex items-center gap-2 border-b border-gray-50 py-1"><input type="checkbox" data-key="prof_${sk.n.toLowerCase().replace(/ /g,'_')}" class="w-3 h-3"><span class="text-[10px] font-bold text-gray-600 uppercase">${sk.n}</span><span class="ml-auto text-[10px] font-black text-gray-900" id="skill-mod-${sk.n.replace(/ /g,'_')}">+0</span></div>`; });
-        }
-
-        window.triggerDeleteModal = () => document.getElementById('delete-modal')?.classList.remove('hidden');
-        window.confirmDelete = async () => { if (!activeCharId) return; await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId)); document.getElementById('delete-modal')?.classList.add('hidden'); window.closeSheet(); showToast("Record Erased"); };
-        window.handleImageUpload = async (e) => { const file = e.target.files[0]; if(!file) return; const reader = new FileReader(); reader.onload = (ev) => { const char = characters.find(c => c.id === activeCharId); if(char) { char.imageSrc = ev.target.result; window.saveCurrentCharacter(); } }; reader.readAsDataURL(file); };
-
-        function performRoll(l, s, m, c, mode) {
-            const getOne = () => { let r = 0; for(let i=0; i<c; i++) r += Math.floor(Math.random() * s) + 1; return r; };
-            let r1 = getOne(), f = r1 + m, b = `[${r1}] + ${m}`;
-            if (mode === 'adv' || mode === 'dis') {
-                let r2 = getOne(); if (mode === 'adv') { f = Math.max(r1, r2) + m; b = `Adv: Max([${r1}], [${r2}]) + ${m}`; } else { f = Math.min(r1, r2) + m; b = `Dis: Min([${r1}], [${r2}]) + ${m}`; }
-            }
-            const lbl = document.getElementById('roll-label'), tot = document.getElementById('roll-total'), brk = document.getElementById('roll-breakdown');
-            if(lbl) lbl.textContent = l; if(tot) tot.textContent = f; if(brk) brk.textContent = b;
-            document.getElementById('dice-result-overlay')?.classList.remove('hidden');
-            const log = document.getElementById('dice-log'); if (log) { const entry = document.createElement('div'); entry.className = "py-1 border-b border-gray-100 flex justify-between"; entry.innerHTML = `<span>${l}</span> <span class="font-black text-amber-700">${f}</span>`; log.prepend(entry); if (log.children.length > 30) log.lastElementChild.remove(); }
-        }
-
-        function updatePartyDropdown() { const sel = document.getElementById('char-party-id'); if(!sel) return; sel.innerHTML = '<option value="">Unassigned</option>'; parties.forEach(p => { sel.innerHTML += `<option value="${p.id}">${p.name}</option>`; }); }
-        function showToast(m) { const t = document.getElementById('toast'); if(t) { t.textContent = m; t.style.opacity = 1; setTimeout(() => t.style.opacity = 0, 3000); } }
-        function showSyncIndicator() { const i = document.getElementById('sync-indicator'); if(i) { i.style.opacity = '1'; setTimeout(() => { i.style.opacity = '0'; }, 1000); } }
-
-        document.addEventListener('input', (e) => { if (e.target.dataset.key || e.target.classList.contains('list-name') || e.target.classList.contains('lvl-input') || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') { if (autoSaveTimer) clearTimeout(autoSaveTimer); autoSaveTimer = setTimeout(() => window.saveCurrentCharacter(), 1000); } });
-        document.addEventListener('change', (e) => { if (e.target.type === 'checkbox' || e.target.tagName === 'SELECT') window.saveCurrentCharacter(); });
-
-        const initAuth = async () => { try { // Rule 3: Auth first
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token); 
-            else await signInAnonymously(auth); 
-        } catch (err) { console.error("Auth failed:", err); } };
+        window.showToast = (m) => { const t = document.getElementById('toast'); t.textContent = m; t.style.opacity = 1; setTimeout(() => t.style.opacity = 0, 3000); };
         
-        onAuthStateChanged(auth, (u) => { user = u; if (user) setupRealtimeListeners(); updateRoleUI(); });
-        
-        const setupRealtimeListeners = () => {
-            if(!user) return;
-            // Rule 1: Strict paths
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), (snap) => { characters = snap.docs.map(d => ({id: d.id, ...d.data()})); renderDashboard(); if (activeCharId) syncSheetData(); });
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'parties'), (snap) => { parties = snap.docs.map(d => ({id: d.id, ...d.data()})); renderDashboard(); updatePartyDropdown(); });
+        window.setRole = (r) => { 
+            if (r === 'dm') { document.getElementById('password-modal').classList.remove('hidden'); }
+            else { activeRole = 'player'; updateRoleUI(); }
+        };
+
+        window.verifyDmPassword = () => {
+            const pwInput = document.getElementById('dm-password');
+            if (pwInput && pwInput.value === 'Rew4994') {
+                activeRole = 'dm';
+                document.getElementById('password-modal').classList.add('hidden');
+                updateRoleUI();
+                window.showToast("DM Access Granted");
+            } else {
+                window.showToast("Access Denied");
+            }
         };
 
         function updateRoleUI() {
             const isDM = activeRole === 'dm';
-            const pb = document.getElementById('role-player-btn'), dbn = document.getElementById('role-dm-btn');
-            if(pb) pb.className = !isDM ? 'px-6 py-3 rounded-lg text-sm font-bold bg-amber-600 text-white shadow-lg' : 'px-6 py-3 rounded-lg text-sm font-bold text-gray-500';
-            if(dbn) dbn.className = isDM ? 'px-6 py-3 rounded-lg text-sm font-bold bg-amber-600 text-white shadow-lg' : 'px-6 py-3 rounded-lg text-sm font-bold text-gray-500';
-            const acts = document.getElementById('create-actions');
-            if(acts) acts.innerHTML = isDM ? `<button onclick="createChar('PC')" class="bg-amber-600 text-white px-4 py-2 rounded-lg text-xs font-bold shadow-md">+PC</button><button onclick="createChar('NPC')" class="bg-purple-700 text-white px-4 py-2 rounded-lg text-xs font-bold shadow-md">+NPC</button><button onclick="createChar('Beast')" class="bg-red-800 text-white px-4 py-2 rounded-lg text-xs font-bold shadow-md">+Beast</button>` : `<button onclick="createChar('PC')" class="bg-green-700 text-white px-6 py-2.5 rounded-lg text-sm font-bold shadow-lg">+ PC</button>`;
-            const dmO = document.getElementById('dm-oversight-panel'); if(dmO) dmO.classList.toggle('hidden-view', !isDM);
-            const npcSection = document.getElementById('section-npc-group'), beastSection = document.getElementById('section-beast-group');
-            if (npcSection) npcSection.classList.toggle('hidden-view', !isDM);
-            if (beastSection) beastSection.classList.toggle('hidden-view', !isDM);
+            const pb = document.getElementById('role-player-btn'), dbBtn = document.getElementById('role-dm-btn');
+            if (pb) pb.className = !isDM ? 'px-6 py-3 rounded-lg text-sm font-bold bg-amber-600 text-white shadow-lg' : 'px-6 py-3 text-gray-500';
+            if (dbBtn) dbBtn.className = isDM ? 'px-6 py-3 rounded-lg text-sm font-bold bg-amber-600 text-white shadow-lg' : 'px-6 py-3 text-gray-500';
+            document.getElementById('dm-oversight-panel')?.classList.toggle('hidden-view', !isDM);
             renderDashboard();
+            if (activeCharId) syncSheetData();
         }
+
+        window.setView = (v) => {
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            const nBtn = document.getElementById(`nav-${v}`); if (nBtn) nBtn.classList.add('active');
+            ['party','npcs','beasts','graveyard'].forEach(view => {
+                const el = document.getElementById(`${view}-view-container`);
+                if (el) el.classList.toggle('hidden-view', view !== v);
+            });
+            document.getElementById('view-title').textContent = v === 'party' ? 'The Party' : (v === 'npcs' ? 'NPCs' : (v === 'beasts' ? 'Bestiary' : 'Graveyard'));
+            renderDashboard();
+        };
+
+        // --- CHARACTER MANAGEMENT ---
+        window.triggerDeleteModal = () => {
+            const char = characters.find(c => c.id === activeCharId);
+            if (!char) return;
+            window.resetDeleteModal();
+            const isArchived = !!char.isDeleted;
+            document.getElementById('archive-btn').classList.toggle('hidden', isArchived);
+            document.getElementById('restore-btn').classList.toggle('hidden', !isArchived);
+            document.getElementById('delete-modal-desc').textContent = isArchived 
+                ? "This record is archived. Restore it to active play or erase it permanently."
+                : "Archive this character to the Graveyard or erase them permanently.";
+            document.getElementById('delete-modal').classList.remove('hidden');
+        };
+
+        window.showPermDeleteConfirm = () => {
+            document.getElementById('delete-stage-1').classList.add('hidden');
+            document.getElementById('delete-stage-confirm').classList.remove('hidden');
+        };
+
+        window.resetDeleteModal = () => {
+            document.getElementById('delete-stage-1').classList.remove('hidden');
+            document.getElementById('delete-stage-confirm').classList.add('hidden');
+        };
+
+        window.archiveCharacter = async () => {
+            if (!activeCharId || !db) return;
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { isDeleted: true, status: 'dead' });
+            document.getElementById('delete-modal').classList.add('hidden');
+            window.closeSheet();
+            window.showToast("Archived to Graveyard");
+        };
+
+        window.restoreCharacter = async () => {
+            if (!activeCharId || !db) return;
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { isDeleted: false, status: 'alive' });
+            document.getElementById('delete-modal').classList.add('hidden');
+            window.showToast("Character Recovered!");
+            syncSheetData();
+        };
+
+        window.executePermDelete = async () => {
+            if (!activeCharId || !db) return;
+            try {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId));
+                document.getElementById('delete-modal').classList.add('hidden');
+                window.closeSheet();
+                window.showToast("Record Deleted Forever");
+            } catch (err) {
+                console.error("Delete failed:", err);
+                window.showToast("Error deleting document.");
+            }
+        };
+
+        window.updateCharStatus = async (status) => {
+            if (!activeCharId || !db) return;
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { status });
+            window.showToast(`Character set to ${status.toUpperCase()}`);
+        };
+
+        window.sendDmWhisper = async () => {
+            const input = document.getElementById('dm-whisper-input');
+            if (!input.value || !activeCharId || !db) return;
+            const char = characters.find(c => c.id === activeCharId);
+            const whispers = char.dmWhispers || [];
+            whispers.push({ text: input.value, timestamp: Date.now() });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { dmWhispers: whispers });
+            input.value = '';
+            window.showToast("Whisper Sent");
+        };
+
+        window.openPartyModal = () => document.getElementById('party-modal').classList.remove('hidden');
+        
+        window.createParty = async () => {
+            if (!db) return;
+            const name = document.getElementById('party-name-input').value;
+            if (!name) return;
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'parties'), { name, createdAt: Date.now() });
+            document.getElementById('party-modal').classList.add('hidden');
+            document.getElementById('party-name-input').value = '';
+            window.showToast("Party Created!");
+        };
+
+        window.openScoreGenModal = () => {
+            sessionRerollUsed = false;
+            document.getElementById('score-gen-modal').classList.remove('hidden');
+            document.getElementById('gen-results-area').classList.add('hidden');
+            document.getElementById('gen-apply-area').classList.add('hidden');
+            document.getElementById('heroic-reroll-area').classList.add('hidden');
+            document.getElementById('gen-controls').classList.remove('hidden');
+            document.getElementById('cancel-gen-btn').classList.remove('hidden');
+        };
+
+        window.generateScores = (method, isReroll = false) => {
+            if (method === 'standard') {
+                lastGeneratedScores = [15, 14, 13, 12, 10, 8];
+                document.getElementById('heroic-reroll-area').classList.add('hidden');
+            } else {
+                if (isReroll) sessionRerollUsed = true;
+                lastGeneratedScores = [];
+                for (let i = 0; i < 6; i++) {
+                    const rolls = [Math.floor(Math.random()*6)+1, Math.floor(Math.random()*6)+1, Math.floor(Math.random()*6)+1, Math.floor(Math.random()*6)+1];
+                    rolls.sort((a,b)=>b-a);
+                    lastGeneratedScores.push(rolls[0]+rolls[1]+rolls[2]);
+                }
+                lastGeneratedScores.sort((a,b)=>b-a);
+                if (!sessionRerollUsed) document.getElementById('heroic-reroll-area').classList.remove('hidden');
+                else document.getElementById('heroic-reroll-area').classList.add('hidden');
+            }
+            document.getElementById('gen-numbers-display').innerHTML = lastGeneratedScores.map(n => `<span class="score-line-val">${n}</span>`).join('');
+            document.getElementById('assign-grid').innerHTML = STATS.map(stat => `<div class="assign-row"><span class="assign-label">${stat}</span><select class="assign-select" data-assign-stat="${stat}"><option value="">-</option>${lastGeneratedScores.map((n, i) => `<option value="${i}">${n}</option>`).join('')}</select></div>`).join('');
+            document.getElementById('gen-results-area').classList.remove('hidden');
+            document.getElementById('gen-apply-area').classList.remove('hidden');
+            document.getElementById('gen-controls').classList.add('hidden');
+            document.getElementById('cancel-gen-btn').classList.add('hidden');
+        };
+
+        window.randomizeAssignment = () => {
+            if (!lastGeneratedScores || lastGeneratedScores.length < 6) return;
+            const selects = Array.from(document.querySelectorAll('[data-assign-stat]'));
+            const poolIndices = [0, 1, 2, 3, 4, 5];
+            for (let i = 5; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [poolIndices[i], poolIndices[j]] = [poolIndices[j], poolIndices[i]]; }
+            selects.forEach((s, i) => s.value = poolIndices[i]);
+        };
+
+        window.applyScores = async () => {
+            if (!activeCharId || !db) return;
+            const selects = Array.from(document.querySelectorAll('[data-assign-stat]'));
+            const chosenIndices = selects.map(s => s.value).filter(v => v !== "");
+            if (chosenIndices.length < 6) { window.showToast("Assign all 6 scores."); return; }
+            if (new Set(chosenIndices).size < 6) { window.showToast("Pool numbers must be unique."); return; }
+            const updates = { scoresGenerated: true };
+            selects.forEach(s => { const stat = s.dataset.assignStat; updates[stat] = lastGeneratedScores[parseInt(s.value)]; });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), updates);
+            window.calcMods();
+            document.getElementById('score-gen-modal').classList.add('hidden');
+            window.showToast("Scores Applied");
+        };
+
+        window.createChar = async (type) => {
+            if (!db) return;
+            const ref = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), {
+                type, name: `New ${type}`, ownerId: user?.uid || 'anon', isDeleted: false,
+                status: 'alive', hpMax: 10, hpCurrent: 10, level: 1, str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10,
+                profBonus: 2, passivePerception: 10, stressThreshold: 10, dmWhispers: [], scoresGenerated: false
+            });
+            window.openSheet(ref.id);
+        };
+
+        window.openSheet = (id) => {
+            activeCharId = id;
+            document.getElementById('dashboard-screen').classList.add('hidden-view');
+            document.getElementById('sheet-screen').classList.remove('hidden-view');
+            document.getElementById('quick-roll-bar').classList.remove('hidden-view');
+            initSheetUI();
+            syncSheetData();
+        };
+
+        window.closeSheet = () => {
+            activeCharId = null;
+            document.getElementById('sheet-screen').classList.add('hidden-view');
+            document.getElementById('dashboard-screen').classList.remove('hidden-view');
+            document.getElementById('quick-roll-bar').classList.add('hidden-view');
+        };
+
+        window.updateLevelDependencies = (val) => {
+            const lvl = parseInt(val) || 1;
+            let bonus = (lvl >= 17) ? 6 : (lvl >= 13) ? 5 : (lvl >= 9) ? 4 : (lvl >= 5) ? 3 : 2;
+            const profInput = document.querySelector('[data-key="profBonus"]');
+            if (profInput) { profInput.value = bonus; window.calcMods(); }
+            window.saveCurrentCharacter();
+        };
+
+        window.rest = async (type) => {
+            if (!activeCharId || !db) return;
+            const char = characters.find(c => c.id === activeCharId);
+            if (type === 'long') {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { 
+                    dsSucc: 0, dsFail: 0, hpCurrent: parseInt(char.hpMax) || 10, tempHp: 0 
+                });
+                window.showToast("Long Rest Complete");
+            } else window.showToast("Short Rest Function Ready");
+        };
+
+        window.calcMods = () => {
+            const prof = parseInt(document.querySelector('[data-key="profBonus"]')?.value) || 2;
+            STATS.forEach(s => {
+                const val = parseInt(document.querySelector(`[data-key="${s}"]`)?.value) || 10;
+                const mod = Math.floor((val - 10) / 2);
+                const modEl = document.getElementById(`mod-${s}`);
+                if (modEl) modEl.textContent = (mod >= 0 ? '+' : '') + mod;
+                const isProf = document.querySelector(`[data-key="save_prof_${s}"]`)?.checked;
+                const saveModEl = document.getElementById(`save-mod-${s}`);
+                if (saveModEl) saveModEl.textContent = (mod + (isProf ? prof : 0) >= 0 ? '+' : '') + (mod + (isProf ? prof : 0));
+            });
+            SKILLS.forEach(sk => {
+                const mod = Math.floor(((parseInt(document.querySelector(`[data-key="${sk.s}"]`)?.value) || 10) - 10) / 2);
+                const isProf = document.querySelector(`[data-key="prof_${sk.n.toLowerCase().replace(/ /g,'_')}"]`)?.checked;
+                const skillModEl = document.getElementById(`skill-mod-${sk.n.replace(/ /g,'_')}`);
+                if (skillModEl) skillModEl.textContent = (mod + (isProf ? prof : 0) >= 0 ? '+' : '') + (mod + (isProf ? prof : 0));
+            });
+        };
+
+        window.toggleDS = (type, num) => {
+            const char = characters.find(c => c.id === activeCharId);
+            if (!char) return;
+            const key = type === 'succ' ? 'dsSucc' : 'dsFail';
+            const newVal = char[key] === num ? num - 1 : num;
+            updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { [key]: newVal });
+        };
+
+        window.setRollMode = (m) => {
+            rollMode = m;
+            document.querySelectorAll('.roll-mode').forEach(b => b.classList.remove('active'));
+            document.getElementById(`mode-${m}`).classList.add('active');
+        };
+
+        function executeRoll(label, bonus) {
+            const r1 = Math.floor(Math.random() * 20) + 1, r2 = Math.floor(Math.random() * 20) + 1;
+            let finalDie = r1, breakdown = `(${r1})`;
+            if (rollMode === 'adv') { finalDie = Math.max(r1, r2); breakdown = `Adv: Max(${r1}, ${r2})`; }
+            else if (rollMode === 'dis') { finalDie = Math.min(r1, r2); breakdown = `Dis: Min(${r1}, ${r2})`; }
+            const total = finalDie + bonus;
+            document.getElementById('roll-label').textContent = label;
+            document.getElementById('roll-total').textContent = total;
+            document.getElementById('roll-breakdown').textContent = `${breakdown} + ${bonus}`;
+            document.getElementById('dice-result-overlay').classList.remove('hidden');
+            const log = document.getElementById('dice-log');
+            const item = document.createElement('div');
+            item.className = "flex justify-between border-b border-gray-100 py-1";
+            item.innerHTML = `<span>${label}</span><span class="font-bold">${total}</span>`;
+            log.prepend(item);
+        }
+
+        window.rollStat = (s) => { const mod = parseInt(document.getElementById(`mod-${s}`).textContent) || 0; executeRoll(`${s.toUpperCase()} Check`, mod); };
+        window.rollSave = (s) => { const mod = parseInt(document.getElementById(`save-mod-${s}`).textContent) || 0; executeRoll(`${s.toUpperCase()} Save`, mod); };
+        window.rollSkill = (name) => { const mod = parseInt(document.getElementById(`skill-mod-${name.replace(/ /g,'_')}`).textContent) || 0; executeRoll(`${name} Check`, mod); };
+
+        window.rollDice = (sides) => {
+            const count = parseInt(document.getElementById('roll-count').value) || 1, rolls = [];
+            for(let i=0; i<count; i++) rolls.push(Math.floor(Math.random() * sides) + 1);
+            const total = rolls.reduce((a, b) => a + b, 0);
+            document.getElementById('roll-label').textContent = `${count}d${sides} Roll`;
+            document.getElementById('roll-total').textContent = total;
+            document.getElementById('roll-breakdown').textContent = rolls.length > 1 ? `(${rolls.join('+')})` : `(${total})`;
+            document.getElementById('dice-result-overlay').classList.remove('hidden');
+            const log = document.getElementById('dice-log');
+            const item = document.createElement('div');
+            item.className = "flex justify-between border-b border-gray-100 py-1";
+            item.innerHTML = `<span>${count}d${sides}</span><span class="font-bold">${total}</span>`;
+            log.prepend(item);
+        };
+
+        window.handleImageUpload = (e) => {
+            const file = e.target.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                document.getElementById('portrait-preview').src = ev.target.result;
+                document.getElementById('portrait-preview').classList.remove('hidden');
+                document.getElementById('portrait-placeholder').classList.add('hidden');
+                window.saveCurrentCharacter();
+            };
+            reader.readAsDataURL(file);
+        };
+
+        window.addAttackItem = () => {
+            const cont = document.getElementById('attacks-list'), div = document.createElement('div');
+            div.className = "equip-row";
+            div.innerHTML = `<input type="text" class="atk-name font-bold flex-1" placeholder="Weapon"><input type="text" class="atk-bonus w-10 text-center" placeholder="+0"><input type="text" class="atk-dmg w-12 text-center" placeholder="1d8"><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-300">×</button>`;
+            cont.appendChild(div);
+        };
+
+        window.addLanguageItem = () => {
+            const inp = document.getElementById('lang-input'); if (!inp.value) return;
+            const cont = document.getElementById('languages-list'), tag = document.createElement('div');
+            tag.className = "bg-gray-100 px-2 py-0.5 rounded text-[10px] flex items-center gap-1 font-bold";
+            tag.innerHTML = `<span>${inp.value}</span><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-400">×</button>`;
+            cont.appendChild(tag);
+            inp.value = ''; window.saveCurrentCharacter();
+        };
+
+        window.saveCurrentCharacter = (manual) => {
+            if (!activeCharId || !db) return;
+            const data = {};
+            document.querySelectorAll('[data-key]').forEach(el => data[el.dataset.key] = el.type === 'checkbox' ? el.checked : el.value);
+            data.imageSrc = document.getElementById('portrait-preview').src || "";
+            data.languages = Array.from(document.querySelectorAll('#languages-list span')).map(s => s.textContent);
+            data.attacks = Array.from(document.querySelectorAll('#attacks-list > div')).map(row => ({
+                name: row.querySelector('.atk-name')?.value || "",
+                bonus: row.querySelector('.atk-bonus')?.value || "",
+                dmg: row.querySelector('.atk-dmg')?.value || ""
+            }));
+            updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), data);
+            if (manual) window.showToast("Synced to Cloud");
+            document.getElementById('sync-indicator').style.opacity = 1;
+            setTimeout(() => document.getElementById('sync-indicator').style.opacity = 0, 1000);
+        };
 
         function renderDashboard() {
-            const pcCont = document.getElementById('pc-container'), npcCont = document.getElementById('grid-npc'), beastCont = document.getElementById('grid-beast');
-            if (!pcCont) return; pcCont.innerHTML = ''; npcCont.innerHTML = ''; beastCont.innerHTML = '';
+            const partyC = document.getElementById('party-view-container'), npcContainer = document.getElementById('npcs-view-container'), beastContainer = document.getElementById('beasts-view-container'), graveContainer = document.getElementById('graveyard-view-container');
+            if (!partyC) return;
+            partyC.innerHTML = ''; npcContainer.innerHTML = ''; beastContainer.innerHTML = ''; graveContainer.innerHTML = '';
+            const pcs = characters.filter(c => c.type === 'PC' && !c.isDeleted);
             parties.forEach(p => {
-                const d = document.createElement('div'); d.className = "bg-gray-900/40 p-5 rounded-2xl border border-gray-800 shadow-xl mb-8";
-                d.innerHTML = `<div class="flex justify-between items-center mb-6 border-b border-gray-800 pb-3"><h4 class="text-indigo-400 font-serif font-bold uppercase tracking-widest text-sm">${p.name}</h4>${activeRole === 'dm' ? `<button onclick="window.deleteParty('${p.id}')" class="text-[10px] text-red-500/50 hover:text-red-500 font-black">DELETE PARTY</button>` : ''}</div><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="party-grid-${p.id}"></div>`;
-                pcCont.appendChild(d);
+                const section = document.createElement('div'); section.className = "space-y-4 bg-gray-900/40 p-6 rounded-2xl border border-gray-800 shadow-xl mb-8";
+                section.innerHTML = `<h3 class="text-indigo-400 font-serif font-bold uppercase tracking-widest text-sm border-b border-gray-800 pb-2 mb-4">${p.name}</h3><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="party-grid-${p.id}"></div>`;
+                partyC.appendChild(section);
+                const grid = section.querySelector(`#party-grid-${p.id}`);
+                pcs.filter(c => c.partyId === p.id).forEach(c => grid.appendChild(createCard(c)));
             });
-            const unassignedDiv = document.createElement('div'); unassignedDiv.id = "party-grid-none"; unassignedDiv.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"; pcCont.appendChild(unassignedDiv);
-            characters.forEach(c => {
-                const card = document.createElement('div'); 
-                card.className = `bg-gray-800 p-5 rounded-xl card border-l-4 shadow-xl ${c.status === 'dead' ? 'opacity-40 grayscale' : c.status === 'coma' ? 'coma-card' : ''}`;
-                card.style.borderColor = c.type === 'PC' ? '#d97706' : (c.type === 'NPC' ? '#7c3aed' : '#b91c1c');
-                card.onclick = () => window.openSheet(c.id);
-                card.innerHTML = `<div class="flex items-center gap-4 mb-4"><div class="w-12 h-12 rounded-lg bg-gray-700 overflow-hidden flex-shrink-0">${c.imageSrc ? `<img src="${c.imageSrc}" class="w-full h-full object-cover">` : '<div class="w-full h-full flex items-center justify-center text-xl">👤</div>'}</div><div><h5 class="text-amber-500 font-serif font-bold">${c.name || 'Unnamed'}</h5><p class="text-[10px] text-gray-400 uppercase font-black">${c.class || 'Level'} ${c.level || 1}</p></div></div><div class="flex justify-between items-center"><span class="text-[9px] font-bold text-gray-500">${c.status === 'dead' ? 'DECEASED' : c.status === 'coma' ? '<span class="coma-badge">IN COMA</span>' : 'ACTIVE'}</span><div class="flex items-center gap-2"><span class="text-xs font-bold text-green-500">HP ${c.hpCurrent || 0}/${c.hpMax || 0}</span></div></div>`;
-                if (c.type === 'NPC') npcCont.appendChild(card); else if (c.type === 'Beast') beastCont.appendChild(card); else (document.getElementById(`party-grid-${c.partyId}`) || unassignedDiv).appendChild(card);
-            });
-            const emp = document.getElementById('empty-state'); if(emp) emp.classList.toggle('hidden', characters.length > 0 || parties.length > 0);
+            const unassigned = pcs.filter(c => !c.partyId);
+            if (unassigned.length > 0) {
+                const section = document.createElement('div'); section.className = "space-y-4";
+                section.innerHTML = `<h3 class="text-gray-500 font-serif font-bold uppercase tracking-widest text-sm border-b border-gray-800 pb-2 mb-4">Unassigned Adventurers</h3><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="unassigned-grid"></div>`;
+                partyC.appendChild(section);
+                const grid = section.querySelector('#unassigned-grid');
+                unassigned.forEach(c => grid.appendChild(createCard(c)));
+            }
+            characters.filter(c => c.type === 'NPC' && !c.isDeleted).forEach(c => npcContainer.appendChild(createCard(c)));
+            characters.filter(c => c.type === 'Beast' && !c.isDeleted).forEach(c => beastContainer.appendChild(createCard(c)));
+            characters.filter(c => c.isDeleted).forEach(c => graveContainer.appendChild(createCard(c)));
         }
 
-        window.deleteParty = async (id) => { if(confirm("Delete this party?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'parties', id)); };
+        function createCard(c) {
+            const card = document.createElement('div');
+            card.className = `bg-gray-800 p-5 rounded-xl card border-l-4 shadow-xl ${c.status === 'dead' ? 'opacity-50' : ''}`;
+            card.style.borderColor = (c.status === 'coma') ? '#f59e0b' : (c.status === 'dead') ? '#4b5563' : '#10b981';
+            card.onclick = () => window.openSheet(c.id);
+            card.innerHTML = `<div class="flex items-center gap-4 mb-4"><div class="w-12 h-12 rounded-lg bg-gray-700 overflow-hidden flex-shrink-0">${c.imageSrc ? `<img src="${c.imageSrc}" class="w-full h-full object-cover">` : '<div class="w-full h-full flex items-center justify-center text-xl">👤</div>'}</div><div><h5 class="text-amber-500 font-serif font-bold">${c.name || 'Unnamed'}</h5><p class="text-[10px] text-gray-400 uppercase font-black">${c.class || 'Class'} ${c.level || 1}</p></div></div><div class="flex justify-between items-center text-[10px] font-black uppercase text-gray-400"><span>${c.status || 'ACTIVE'}</span><span class="text-green-500">HP ${c.hpCurrent || 0}/${c.hpMax || 0}</span></div>`;
+            return card;
+        }
 
+        function initSheetUI() {
+            const sC = document.getElementById('stats-container'), svC = document.getElementById('saves-container'), skC = document.getElementById('skills-container');
+            sC.innerHTML = ''; svC.innerHTML = ''; skC.innerHTML = '';
+            STATS.forEach(s => {
+                sC.innerHTML += `<div class="flex items-center gap-3"><div class="w-12 h-12 bg-gray-100 rounded-lg flex flex-col items-center justify-center border-2 border-gray-300 font-black rollable" onclick="window.rollStat('${s}')"><span class="text-[8px] uppercase text-gray-400">${s}</span><span id="mod-${s}">+0</span></div><div class="flex-grow flex items-center gap-2"><input type="number" data-key="${s}" class="w-10 text-center font-bold" value="10" onchange="window.calcMods()"><label class="tiny-label flex-grow">Score</label></div></div>`;
+                svC.innerHTML += `<div class="flex items-center gap-2 text-[10px] border-b border-gray-50 pb-1"><input type="checkbox" data-key="save_prof_${s}" class="w-3 h-3" onchange="window.calcMods()"><span class="font-bold uppercase text-gray-400">${s}</span><span class="ml-auto font-black rollable" id="save-mod-${s}" onclick="window.rollSave('${s}')">+0</span></div>`;
+            });
+            SKILLS.forEach(sk => {
+                const id = `skill-mod-${sk.n.replace(/ /g,'_')}`;
+                skC.innerHTML += `<div class="flex items-center gap-2 text-[10px] border-b border-gray-50 py-1"><input type="checkbox" data-key="prof_${sk.n.toLowerCase().replace(/ /g,'_')}" class="w-3 h-3" onchange="window.calcMods()"><span class="font-bold text-gray-600 uppercase">${sk.n}</span><span class="ml-auto font-black rollable" id="${id}" onclick="window.rollSkill('${sk.n}')">+0</span></div>`;
+            });
+            window.renderMovesGrid();
+        }
+
+        window.renderMovesGrid = () => {
+            const type = document.getElementById('moves-selector').value, grid = document.getElementById('features-lvl-grid');
+            grid.innerHTML = '';
+            let levels = (type === 'features') ? ['Level 1', 'Level 2', 'Level 3', 'Level 4', 'Level 5', 'Level 6', 'Level 7', 'Level 8', 'Level 9'] : ['Tricks (0)', 'Level 1', 'Level 2', 'Level 3', 'Level 4', 'Level 5', 'Level 6', 'Level 7', 'Level 8', 'Level 9'];
+            levels.forEach(lvl => { grid.innerHTML += `<div class="lvl-card"><div class="lvl-header">${lvl.toUpperCase()}</div><div class="flex-grow"></div><button class="text-[9px] font-black uppercase text-blue-500 text-center mt-2">+ ADD</button></div>`; });
+        };
+
+        async function syncSheetData() {
+            const char = characters.find(c => c.id === activeCharId); if (!char) return;
+            const partySelect = document.getElementById('party-select'); if (partySelect) { partySelect.innerHTML = '<option value="">Unassigned</option>'; parties.forEach(p => partySelect.innerHTML += `<option value="${p.id}">${p.name}</option>`); }
+            document.querySelectorAll('[data-key]').forEach(el => {
+                if (el.type === 'checkbox') el.checked = !!char[el.dataset.key];
+                else {
+                    const dbVal = char[el.dataset.key];
+                    if ((el.dataset.key === 'passivePerception' || el.dataset.key === 'stressThreshold') && (dbVal === undefined || dbVal === "")) el.value = 10;
+                    else el.value = dbVal || (el.type === 'number' ? 0 : '');
+                }
+            });
+
+            // Status Styling
+            const sheet = document.getElementById('sheet-container');
+            sheet.className = char.status === 'coma' ? 'status-coma' : char.status === 'dead' ? 'status-dead' : '';
+
+            // Whisper & Manage Logic
+            const isDM = activeRole === 'dm', isOwner = char.ownerId === user?.uid;
+            document.getElementById('whisper-display-box')?.classList.toggle('hidden-view', !(isDM || isOwner));
+            document.getElementById('delete-char-btn')?.classList.toggle('hidden', !(isDM || isOwner));
+            
+            const wList = document.getElementById('whispers-list'); if (wList) wList.innerHTML = (char.dmWhispers || []).map(w => `<div class="dm-whisper-box"><span class="whisper-tag">From the Void</span><p class="text-xs font-serif italic">${w.text}</p></div>`).reverse().join('');
+
+            if (document.getElementById('main-gen-btn')) document.getElementById('main-gen-btn').classList.toggle('hidden', !!char.scoresGenerated);
+            if (char.imageSrc) { const pr = document.getElementById('portrait-preview'); pr.src = char.imageSrc; pr.classList.remove('hidden'); document.getElementById('portrait-placeholder').classList.add('hidden'); }
+            for(let i=1; i<=3; i++) {
+                const sEl = document.getElementById(`ds-succ-${i}`), fEl = document.getElementById(`ds-fail-${i}`);
+                if (sEl) sEl.className = `ds-dot ${char.dsSucc >= i ? 'checked-succ' : ''}`;
+                if (fEl) fEl.className = `ds-dot ${char.dsFail >= i ? 'checked-fail' : ''}`;
+            }
+            const langC = document.getElementById('languages-list'); if (langC) langC.innerHTML = '';
+            (char.languages || []).forEach(l => { const t = document.createElement('div'); t.className = "bg-gray-100 px-2 py-0.5 rounded text-[10px] flex items-center gap-1 font-bold"; t.innerHTML = `<span>${l}</span><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-400">×</button>`; langC.appendChild(t); });
+            const atkC = document.getElementById('attacks-list'); if (atkC) atkC.innerHTML = '';
+            (char.attacks || []).forEach(atk => { 
+                const d = document.createElement('div'); 
+                d.className = "equip-row"; 
+                d.innerHTML = `<input type="text" class="atk-name font-bold flex-1" value="${atk.name}"><input type="text" class="atk-bonus w-10 text-center" value="${atk.bonus}"><input type="text" class="atk-dmg w-12 text-center" value="${atk.dmg}"><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-300">×</button>`; 
+                atkC.appendChild(d); 
+            });
+            window.calcMods();
+        }
+
+        const initAuth = async () => {
+            if (!auth) return;
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token); else await signInAnonymously(auth);
+            onAuthStateChanged(auth, (u) => {
+                user = u;
+                if (user && db) {
+                    onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), (snap) => { characters = snap.docs.map(d => ({id: d.id, ...d.data()})); renderDashboard(); if (activeCharId) syncSheetData(); });
+                    onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'parties'), (snap) => { parties = snap.docs.map(d => ({id: d.id, ...d.data()})); renderDashboard(); if (activeCharId) syncSheetData(); });
+                }
+            });
+        };
+
+        document.addEventListener('input', (e) => { if (e.target.dataset.key || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') { if (autoSaveTimer) clearTimeout(autoSaveTimer); autoSaveTimer = setTimeout(() => window.saveCurrentCharacter(), 1000); } });
         initAuth();
     </script>
 </body>
