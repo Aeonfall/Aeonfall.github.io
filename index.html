@@ -77,24 +77,24 @@
         .assign-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
         .assign-row { display: flex; align-items: center; justify-content: space-between; background: #f8fafc; padding: 6px 10px; border-radius: 8px; border: 1px solid #e2e8f0; }
 
+        /* Robust Skills/Saves Layout */
+        .stat-row { display: flex; align-items: center; gap: 8px; padding: 4px 8px; border-bottom: 1px solid #f1f1f1; font-size: 11px; height: 36px; width: 100%; }
+        .stat-row input[type="checkbox"] { flex-shrink: 0; width: 14px; height: 14px; cursor: pointer; }
+        .stat-label-text { flex-grow: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #4b5563; font-weight: 600; font-family: 'Noto Sans', sans-serif; }
+        .stat-mod-box { flex-shrink: 0; min-width: 38px; text-align: right; font-weight: 900; color: #111; font-family: 'Roboto Slab', serif; }
+
+        .dm-panel { background: #2d2a2e; color: #fff; padding: 16px; border-radius: 12px; margin-bottom: 24px; border: 2px solid #f59e0b; }
+        .dm-whisper-box { background: #fef2f2; border-left: 4px solid #ef4444; padding: 12px; border-radius: 4px; margin-bottom: 16px; color: #333; }
+        .whisper-tag { font-size: 9px; font-weight: 900; color: #991b1b; text-transform: uppercase; margin-bottom: 4px; display: block; }
+        
+        .equip-header { background: #f8f9fa; font-size: 10px; font-weight: 900; color: #6c757d; text-transform: uppercase; padding: 4px 8px; border-radius: 4px; display: grid; grid-template-columns: 1fr 50px 70px 24px; gap: 4px; margin-bottom: 4px; }
+        .equip-row { display: grid; grid-template-columns: 1fr 50px 70px 24px; gap: 4px; align-items: center; padding: 4px 8px; border-bottom: 1px solid #f1f1f1; }
+        
         .mode-btn { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 900; border: 2px solid #cbd5e1; color: #64748b; background: #f1f5f9; }
         .mode-btn.active { background: #374151; color: white; border-color: #374151; }
 
         .lvl-card { background: #fff; border: 1px solid #dcd3c0; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; min-height: 100px; }
         .lvl-header { font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; border-bottom: 2px solid #e8e0cd; margin-bottom: 8px; padding-bottom: 4px; }
-
-        .dm-panel { background: #2d2a2e; color: #fff; padding: 16px; border-radius: 12px; margin-bottom: 24px; border: 2px solid #f59e0b; }
-        .dm-whisper-box { background: #fef2f2; border-left: 4px solid #ef4444; padding: 12px; border-radius: 4px; margin-bottom: 16px; }
-        .whisper-tag { font-size: 9px; font-weight: 900; color: #991b1b; text-transform: uppercase; margin-bottom: 4px; display: block; }
-        
-        .equip-header { background: #f8f9fa; font-size: 10px; font-weight: 900; color: #6c757d; text-transform: uppercase; padding: 4px 8px; border-radius: 4px; display: grid; grid-template-columns: 1fr 50px 70px 24px; gap: 4px; margin-bottom: 4px; }
-        .equip-row { display: grid; grid-template-columns: 1fr 50px 70px 24px; gap: 4px; align-items: center; padding: 4px 8px; border-bottom: 1px solid #f1f1f1; }
-
-        /* Robust Skills/Saves Layout */
-        .stat-row { display: flex; align-items: center; gap: 8px; padding: 4px; border-bottom: 1px solid #f1f1f1; font-size: 11px; height: 32px; }
-        .stat-row input[type="checkbox"] { flex-shrink: 0; width: 14px; height: 14px; cursor: pointer; }
-        .stat-label-text { flex-grow: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #4b5563; font-weight: 500; font-family: 'Noto Sans', sans-serif; }
-        .stat-mod-box { flex-shrink: 0; min-width: 36px; text-align: right; font-weight: 900; color: #111; font-family: 'Roboto Slab', serif; }
     </style>
 </head>
 <body class="min-h-screen">
@@ -103,7 +103,7 @@
     <div id="sync-indicator">Cloud Synced</div>
 
     <!-- MAIN DASHBOARD -->
-    <div id="dashboard-screen" class="min-h-screen dashboard-bg p-4 md:p-8">
+    <div id="dashboard-screen" class="min-h-screen dashboard-bg p-4 md:p-8 text-white">
         <div class="max-w-6xl mx-auto">
             <header class="flex flex-col md:flex-row justify-between items-center mb-10 border-b border-gray-800 pb-8 gap-6">
                 <div>
@@ -142,8 +142,8 @@
     </div>
 
     <!-- MODALS -->
-    <div id="password-modal" class="fixed inset-0 bg-black/95 backdrop-blur-md flex items-center justify-center z-[200] hidden">
-        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border-2 border-amber-600 shadow-2xl text-center text-white">
+    <div id="password-modal" class="fixed inset-0 bg-black/95 backdrop-blur-md flex items-center justify-center z-[200] hidden text-white">
+        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border-2 border-amber-600 shadow-2xl text-center">
             <h3 class="text-xl font-serif text-amber-500 font-bold mb-2">DM AUTHORIZATION</h3>
             <input type="password" id="dm-password" class="w-full bg-gray-900 text-white text-center text-2xl tracking-widest rounded-lg p-3 mb-6 border border-gray-700 font-serif" placeholder="••••">
             <button onclick="window.verifyDmPassword()" class="w-full bg-amber-600 text-white py-3 rounded-xl font-bold uppercase text-xs">Enter</button>
@@ -151,8 +151,8 @@
         </div>
     </div>
 
-    <div id="party-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-[110] hidden">
-        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border-2 border-indigo-600 shadow-2xl text-center text-white">
+    <div id="party-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-[110] hidden text-white">
+        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border-2 border-indigo-600 shadow-2xl text-center">
             <h3 class="text-xl font-serif text-indigo-400 font-bold mb-4 uppercase">Create New Party</h3>
             <input type="text" id="party-name-input" class="w-full bg-gray-900 text-white rounded-lg p-3 mb-6 border border-gray-700 font-serif" placeholder="Party Name...">
             <div class="flex gap-2">
@@ -166,9 +166,9 @@
         <div class="bg-white p-8 rounded-2xl w-full max-w-lg border-4 border-indigo-600 shadow-2xl text-center">
             <h3 class="text-2xl font-serif text-indigo-700 font-bold mb-2 uppercase">Score Generator</h3>
             <div id="gen-results-area" class="bg-gray-100 p-6 rounded-xl mb-6 hidden">
-                <div id="gen-numbers-display" class="score-line-display"></div>
+                <div id="gen-numbers-display" class="flex justify-center gap-4 mb-4"></div>
                 <div class="assign-grid" id="assign-grid"></div>
-                <button onclick="window.randomizeAssignment()" class="mt-6 w-full py-2 bg-gray-200 text-gray-700 rounded-lg text-[10px] font-black uppercase hover:bg-gray-300">Randomly Assign Numbers</button>
+                <button onclick="window.randomizeAssignment()" class="mt-6 w-full py-2 bg-gray-200 text-gray-700 rounded-lg text-[10px] font-black uppercase hover:bg-gray-300 transition-colors">Randomly Assign Numbers</button>
             </div>
             <div id="gen-controls" class="grid grid-cols-2 gap-4 mb-6">
                 <button onclick="window.generateScores('standard')" class="bg-gray-800 text-white py-3 rounded-xl font-bold uppercase text-xs">Standard Array</button>
@@ -182,8 +182,8 @@
         </div>
     </div>
 
-    <div id="delete-modal" class="fixed inset-0 bg-black/90 flex items-center justify-center z-[160] hidden">
-        <div class="bg-white p-8 rounded-2xl w-full max-w-sm border-4 border-red-600 shadow-2xl text-center text-gray-800">
+    <div id="delete-modal" class="fixed inset-0 bg-black/90 flex items-center justify-center z-[160] hidden text-gray-800">
+        <div class="bg-white p-8 rounded-2xl w-full max-w-sm border-4 border-red-600 shadow-2xl text-center">
             <div id="delete-stage-1">
                 <h3 class="text-2xl font-serif text-red-700 font-bold mb-4 uppercase">Manage Record</h3>
                 <p id="delete-modal-desc" class="text-gray-500 text-sm mb-8 leading-relaxed text-left">Choose an action for this character record.</p>
@@ -208,8 +208,8 @@
     <!-- SHEET SCREEN -->
     <div id="sheet-screen" class="hidden-view">
         <div id="sheet-container">
-            <nav class="sticky top-0 z-[60] bg-gray-900 p-2 shadow-2xl border-b border-gray-800">
-                <div class="max-w-6xl mx-auto flex justify-between items-center text-white px-4">
+            <nav class="sticky top-0 z-[60] bg-gray-900 p-2 shadow-2xl border-b border-gray-800 text-white">
+                <div class="max-w-6xl mx-auto flex justify-between items-center px-4">
                     <button onclick="window.closeSheet()" class="text-gray-400 hover:text-white font-bold flex items-center gap-2"><span>←</span> Exit</button>
                     <div class="flex items-center gap-4">
                         <span id="sheet-type-badge" class="bg-amber-600 px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest">PC</span>
@@ -223,7 +223,7 @@
 
             <div class="max-w-6xl mx-auto p-4 md:p-8">
                 <div id="dm-oversight-panel" class="dm-panel hidden-view">
-                    <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-6 text-white">
                         <div class="flex-grow w-full">
                             <h4 class="text-xs font-black uppercase text-amber-500 mb-2">DM Whisper</h4>
                             <div class="flex gap-2">
@@ -252,7 +252,7 @@
                                     <div><input type="text" data-key="belief" placeholder="Belief"><label class="tiny-label">Belief</label></div>
                                 </div>
                             </div>
-                            <div class="lg:col-span-8 grid grid-cols-2 md:grid-cols-3 gap-4">
+                            <div class="lg:col-span-8 grid grid-cols-2 md:grid-cols-3 gap-4 text-gray-800">
                                 <div><input type="text" data-key="class" placeholder="Fighter"><label class="tiny-label">Class</label></div>
                                 <div><input type="number" data-key="level" placeholder="1" onchange="window.updateLevelDependencies(this.value)"><label class="tiny-label">Level</label></div>
                                 <div><select id="party-select" data-key="partyId" class="cursor-pointer"><option value="">Unassigned</option></select><label class="tiny-label">Party</label></div>
@@ -263,7 +263,7 @@
                         </div>
                     </header>
 
-                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 text-gray-800">
                         <div class="lg:col-span-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="space-y-6">
                                 <div class="sheet-card">
@@ -281,7 +281,7 @@
                                 <div class="grid grid-cols-3 gap-2">
                                     <div class="vital-container vital-shield"><div class="vital-label">AC</div><input type="number" class="vital-input" data-key="ac" placeholder="10"></div>
                                     <div class="vital-container vital-square-init"><div class="vital-label">INIT</div><input type="number" class="vital-input" data-key="init" placeholder="0"></div>
-                                    <div class="vital-container vital-square-speed"><div class="vital-label">Speed</div><input type="text" class="vital-input" data-key="speed" placeholder="30FT"></div>
+                                    <div class="vital-container vital-square-speed"><div class="vital-label">Speed</div><input type="text" class="vital-input text-green-600" data-key="speed" placeholder="30FT"></div>
                                 </div>
                                 <div class="sheet-card text-center py-8">
                                     <div class="flex justify-between px-2 mb-2 text-[10px] font-black uppercase text-gray-400"><span>MAX HP: <input type="number" class="w-8" data-key="hpMax"></span><span>HD: <input type="text" class="w-12 text-right" data-key="hd" placeholder="1 / 1d10"></span></div>
@@ -301,26 +301,26 @@
                             <div id="whisper-display-box" class="hidden-view"><div class="sheet-card !bg-purple-50 !border-purple-200"><h3 class="!text-purple-700 !border-purple-200">DM Whispers</h3><div id="whispers-list" class="space-y-3 max-h-[200px] overflow-y-auto pr-2"></div></div></div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div class="sheet-card h-64 flex flex-col items-center justify-center border-2 border-dashed bg-gray-50 group relative overflow-hidden"><img id="portrait-preview" class="hidden absolute inset-0 w-full h-full object-cover"><div id="portrait-placeholder" class="text-center opacity-40"><span class="text-4xl">👤</span><br><span class="text-[10px] font-black uppercase">Add Portrait</span></div><input type="file" onchange="window.handleImageUpload(event)" class="absolute inset-0 opacity-0 cursor-pointer"></div>
-                                <div class="sheet-card h-64 flex flex-col"><h3>Roll History</h3><div id="dice-log" class="flex-grow overflow-y-auto text-[10px] font-mono p-2 space-y-1 bg-gray-50 rounded"></div></div>
+                                <div class="sheet-card h-64 flex flex-col text-gray-800"><h3>Roll History</h3><div id="dice-log" class="flex-grow overflow-y-auto text-[10px] font-mono p-2 space-y-1 bg-gray-50 rounded"></div></div>
                             </div>
-                            <div class="sheet-card">
+                            <div class="sheet-card text-gray-800">
                                 <h3>Equipment & Weapons</h3>
                                 <div class="equip-header"><span>Name</span><span>Atk</span><span>Dmg</span><span></span></div>
-                                <div id="attacks-list" class="space-y-1 mb-4"></div>
+                                <div id="attacks-list" class="space-y-1 mb-4 text-xs"></div>
                                 <button onclick="window.addAttackItem()" class="w-full py-2 border-2 border-dashed border-gray-200 text-[10px] font-black text-gray-400 uppercase rounded hover:border-amber-400">+ Add Weapon</button>
                                 <textarea data-key="equipment" class="mt-6 text-[12px] h-48 p-3 bg-gray-50 rounded font-mono" placeholder="Detailed Inventory list..."></textarea>
                             </div>
-                            <div class="sheet-card"><h3>Identity & Features</h3><div class="space-y-6"><div><div class="text-[9px] font-black text-gray-400 uppercase mb-2">Languages</div><div id="languages-list" class="flex flex-wrap gap-2 mb-3 text-xs font-bold"></div><div class="flex gap-2"><input type="text" id="lang-input" class="text-xs border-b px-2 h-8" placeholder="Add Language..."><button onclick="window.addLanguageItem()" class="bg-gray-200 px-4 rounded text-[9px] font-black h-8">ADD</button></div></div><div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4"><div><input type="text" data-key="traits" class="border-b h-8"><label class="tiny-label">Personality Traits</label></div><div><input type="text" data-key="ideals" class="border-b h-8"><label class="tiny-label">Ideals</label></div><div><input type="text" data-key="bonds" class="border-b h-8"><label class="tiny-label">Bonds</label></div><div><input type="text" data-key="flaws" class="border-b h-8"><label class="tiny-label">Flaws</label></div></div><textarea data-key="notes" class="text-[12px] h-48 p-3 bg-gray-50 rounded leading-relaxed font-serif mt-4" placeholder="Lore..."></textarea></div></div>
+                            <div class="sheet-card text-gray-800"><h3>Identity & Features</h3><div class="space-y-6 text-xs"><div><div class="text-[9px] font-black text-gray-400 uppercase mb-2">Languages</div><div id="languages-list" class="flex flex-wrap gap-2 mb-3 text-xs font-bold"></div><div class="flex gap-2"><input type="text" id="lang-input" class="text-xs border-b px-2 h-8" placeholder="Add Language..."><button onclick="window.addLanguageItem()" class="bg-gray-200 px-4 rounded text-[9px] font-black h-8">ADD</button></div></div><div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4"><div><input type="text" data-key="traits" class="border-b h-8"><label class="tiny-label">Personality Traits</label></div><div><input type="text" data-key="ideals" class="border-b h-8"><label class="tiny-label">Ideals</label></div><div><input type="text" data-key="bonds" class="border-b h-8"><label class="tiny-label">Bonds</label></div><div><input type="text" data-key="flaws" class="border-b h-8"><label class="tiny-label">Flaws</label></div></div><textarea data-key="notes" class="text-[12px] h-48 p-3 bg-gray-50 rounded leading-relaxed font-serif mt-4" placeholder="Lore..."></textarea></div></div>
                         </div>
                     </div>
 
                     <div class="mt-8">
                         <div class="sheet-card">
                             <div class="flex justify-between items-center border-b-2 border-gray-100 pb-2 mb-6">
-                                <h2 class="font-serif font-bold text-lg uppercase tracking-wider">Character Moves</h2>
+                                <h2 class="font-serif font-bold text-lg uppercase tracking-wider text-gray-800">Character Moves</h2>
                                 <div class="flex items-center gap-2"><label class="text-[10px] font-black uppercase text-gray-400">Viewing:</label><select id="moves-selector" onchange="window.renderMovesGrid()" class="text-[10px] font-black uppercase border rounded px-2 py-1 bg-blue-500 text-white border-none cursor-pointer"><option value="features">Feature Moves</option><option value="scriptcasting">Scriptcasting</option></select></div>
                             </div>
-                            <div id="features-lvl-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                            <div id="features-lvl-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-gray-800"></div>
                         </div>
                     </div>
                 </div>
@@ -333,11 +333,11 @@
         <div class="text-center text-white p-12">
             <div id="roll-label" class="text-amber-500 font-serif text-2xl mb-2 uppercase tracking-widest">ROLL</div>
             <div id="roll-total" class="text-9xl font-black mb-4">20</div>
-            <div id="roll-breakdown" class="text-gray-300 font-mono text-lg bg-black/40 px-6 py-2 rounded-full inline-block"></div>
+            <div id="roll-breakdown" class="text-gray-300 font-mono text-lg bg-black/40 px-6 py-2 rounded-full inline-block text-center"></div>
         </div>
     </div>
 
-    <!-- ROLLER BAR -->
+    <!-- QUICK ROLLER -->
     <div id="quick-roll-bar" class="hidden-view floating-roller">
         <div class="flex items-center justify-between mb-4 border-b pb-2 text-gray-800">
             <div class="flex items-center gap-2">
@@ -391,15 +391,18 @@
             {n:'Sleight of Hand (Dex)', s:'dex'},{n:'Stealth (Dex)', s:'dex'},{n:'Survival (Wis)', s:'wis'}
         ];
 
-        // --- DEFINE WINDOW FUNCTIONS FIRST TO PREVENT UNDEFINED ERRORS ---
-        window.renderMovesGrid = () => {
+        // --- CORE UI FUNCTIONS DECLARED AND ASSIGNED EARLY ---
+
+        const showToast = (m) => { const t = document.getElementById('toast'); if(t){t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 3000);} };
+        
+        const renderMovesGrid = () => {
             const s = document.getElementById('moves-selector'); if (!s) return;
             const t = s.value, g = document.getElementById('features-lvl-grid'); if (!g) return; g.innerHTML = '';
             let l = (t === 'features') ? ['Level 1','Level 2','Level 3','Level 4','Level 5','Level 6','Level 7','Level 8','Level 9'] : ['Tricks (0)','Level 1','Level 2','Level 3','Level 4','Level 5','Level 6','Level 7','Level 8','Level 9'];
             l.forEach(lvl => g.innerHTML += `<div class="lvl-card"><div class="lvl-header">${lvl.toUpperCase()}</div><div class="flex-grow"></div><button class="text-[9px] font-black uppercase text-blue-500 text-center mt-2">+ ADD</button></div>`);
         };
 
-        window.calcMods = () => {
+        const calcMods = () => {
             const p = parseInt(document.querySelector('[data-key="profBonus"]')?.value) || 2;
             STATS.forEach(s => {
                 const vValue = document.querySelector(`[data-key="${s}"]`)?.value;
@@ -412,109 +415,29 @@
             SKILLS.forEach(sk => {
                 const attrVal = parseInt(document.querySelector(`[data-key="${sk.s}"]`)?.value) || 10;
                 const m = Math.floor((attrVal - 10) / 2);
-                const safeName = sk.n.toLowerCase().replace(/ /g,'_').replace(/[()]/g,'');
-                const sp = document.querySelector(`[data-key="prof_${safeName}"]`)?.checked;
-                const sel = document.getElementById(`skill-mod-${safeName}`); 
+                const safeKey = sk.n.toLowerCase().replace(/ /g,'_').replace(/[()]/g,'');
+                const sp = document.querySelector(`[data-key="prof_${safeKey}"]`)?.checked;
+                const sel = document.getElementById(`skill-mod-${safeKey}`); 
                 if (sel) sel.textContent = (m + (sp ? p : 0) >= 0 ? '+' : '') + (m + (sp ? p : 0));
             });
         };
 
-        window.openSheet = (id) => {
-            activeCharId = id;
-            document.getElementById('dashboard-screen')?.classList.add('hidden-view');
-            document.getElementById('sheet-screen')?.classList.remove('hidden-view');
-            document.getElementById('quick-roll-bar')?.classList.remove('hidden-view');
-            initSheetUI();
-            syncSheetData();
-        };
-
-        window.closeSheet = () => {
-            activeCharId = null;
-            document.getElementById('sheet-screen')?.classList.add('hidden-view');
-            document.getElementById('dashboard-screen')?.classList.remove('hidden-view');
-            document.getElementById('quick-roll-bar')?.classList.add('hidden-view');
-        };
-
-        window.setRole = (r) => {
-            if (r === 'dm') document.getElementById('password-modal')?.classList.remove('hidden');
-            else { activeRole = 'player'; updateRoleUI(); }
-        };
-
-        window.verifyDmPassword = () => {
-            if (document.getElementById('dm-password').value === 'Rew4994') {
-                activeRole = 'dm';
-                document.getElementById('password-modal')?.classList.add('hidden');
-                updateRoleUI();
-            } else window.showToast("Denied");
-        };
-
-        window.showToast = (m) => { const t = document.getElementById('toast'); if(t){t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 3000);} };
-
-        function updateRoleUI() {
-            const isDM = activeRole === 'dm';
-            document.getElementById('role-player-btn').className = !isDM ? 'px-6 py-3 rounded-lg text-sm font-bold bg-amber-600 text-white shadow-lg' : 'px-6 py-3 text-gray-500';
-            document.getElementById('role-dm-btn').className = isDM ? 'px-6 py-3 rounded-lg text-sm font-bold bg-amber-600 text-white shadow-lg' : 'px-6 py-3 text-gray-500';
-            document.getElementById('dm-oversight-panel')?.classList.toggle('hidden-view', !isDM);
-            renderDashboard();
-            if (activeCharId) syncSheetData();
-        }
-
-        window.setView = (v) => {
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            document.getElementById(`nav-${v}`)?.classList.add('active');
-            ['party','npcs','beasts','graveyard'].forEach(view => document.getElementById(`${view}-view-container`)?.classList.toggle('hidden-view', view !== v));
-            renderDashboard();
-        };
-
-        window.createChar = async (type) => {
-            if (!db || !user) return;
-            const ref = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), {
-                type, name: `New ${type}`, ownerId: user.uid, isDeleted: false, status: 'alive', hpMax: 10, hpCurrent: 10, level: 1,
-                str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10, profBonus: 2, scoresGenerated: false, languages: [], attacks: [], dmWhispers: []
-            });
-            window.openSheet(ref.id);
-        };
-
-        function initSheetUI() {
+        const initSheetUI = () => {
             const sC = document.getElementById('stats-container'), svC = document.getElementById('saves-container'), skC = document.getElementById('skills-container');
             if (!sC) return; sC.innerHTML = ''; svC.innerHTML = ''; skC.innerHTML = '';
             STATS.forEach(s => {
-                sC.innerHTML += `<div class="flex items-center gap-3"><div class="w-12 h-12 bg-gray-100 rounded-lg flex flex-col items-center justify-center border-2 border-gray-300 font-black rollable" onclick="window.rollStat('${s}')"><span class="text-[8px] uppercase text-gray-400">${s}</span><span id="mod-${s}">+0</span></div><input type="number" data-key="${s}" class="w-10 text-center font-bold" value="10" onchange="window.calcMods()"></div>`;
-                svC.innerHTML += `<div class="stat-row"><input type="checkbox" data-key="save_prof_${s}" onchange="window.calcMods()"><span class="stat-label-text uppercase">${s}</span><span class="stat-mod-box rollable" id="save-mod-${s}" onclick="window.rollSave('${s}')">+0</span></div>`;
+                sC.innerHTML += `<div class="flex items-center gap-3 text-gray-800"><div class="w-12 h-12 bg-gray-100 rounded-lg flex flex-col items-center justify-center border-2 border-gray-300 font-black rollable" onclick="window.rollStat('${s}')"><span class="text-[8px] uppercase text-gray-400">${s}</span><span id="mod-${s}">+0</span></div><input type="number" data-key="${s}" class="w-10 text-center font-bold" value="10" onchange="window.calcMods()"></div>`;
+                svC.innerHTML += `<div class="stat-row"><input type="checkbox" data-key="save_prof_${s}" onchange="window.calcMods()"><span class="stat-label-text uppercase text-gray-700">${s}</span><span class="stat-mod-box rollable" id="save-mod-${s}" onclick="window.rollSave('${s}')">+0</span></div>`;
             });
             SKILLS.forEach(sk => {
-                const safeName = sk.n.toLowerCase().replace(/ /g,'_').replace(/[()]/g,'');
-                const id = `skill-mod-${safeName}`;
-                skC.innerHTML += `<div class="stat-row"><input type="checkbox" data-key="prof_${safeName}" onchange="window.calcMods()"><span class="stat-label-text">${sk.n}</span><span class="stat-mod-box rollable" id="${id}" onclick="window.rollSkill('${sk.n}')">+0</span></div>`;
+                const safeKey = sk.n.toLowerCase().replace(/ /g,'_').replace(/[()]/g,'');
+                const id = `skill-mod-${safeKey}`;
+                skC.innerHTML += `<div class="stat-row"><input type="checkbox" data-key="prof_${safeKey}" onchange="window.calcMods()"><span class="stat-label-text text-gray-700">${sk.n}</span><span class="stat-mod-box rollable" id="${id}" onclick="window.rollSkill('${sk.n}')">+0</span></div>`;
             });
-            window.renderMovesGrid();
-        }
+            renderMovesGrid();
+        };
 
-        async function syncSheetData() {
-            const char = characters.find(c => c.id === activeCharId); if (!char) return;
-            const ps = document.getElementById('party-select'); if (ps) { ps.innerHTML = '<option value="">Unassigned</option>'; parties.forEach(p => ps.innerHTML += `<option value="${p.id}">${p.name}</option>`); }
-            document.querySelectorAll('[data-key]').forEach(el => {
-                if (el.type === 'checkbox') el.checked = !!char[el.dataset.key];
-                else { const v = char[el.dataset.key]; el.value = ((el.dataset.key === 'passivePerception' || el.dataset.key === 'stressThreshold') && (v === undefined || v === "")) ? 10 : (v || (el.type === 'number' ? 0 : '')); }
-            });
-            const sCont = document.getElementById('sheet-container'); if (sCont) sCont.className = char.status === 'coma' ? 'status-coma' : char.status === 'dead' ? 'status-dead' : '';
-            const isU = activeRole === 'dm' || char.ownerId === user?.uid;
-            document.getElementById('delete-char-btn')?.classList.toggle('hidden', !isU);
-            document.getElementById('whisper-display-box')?.classList.toggle('hidden-view', !isU);
-            const wl = document.getElementById('whispers-list'); if (wl) wl.innerHTML = (char.dmWhispers || []).map(w => `<div class="dm-whisper-box"><p class="text-xs italic">${w.text}</p></div>`).reverse().join('');
-            const gBtn = document.getElementById('main-gen-btn'); if (gBtn) gBtn.classList.toggle('hidden', !!char.scoresGenerated);
-            if (char.imageSrc) { const p = document.getElementById('portrait-preview'); if(p) { p.src = char.imageSrc; p.classList.remove('hidden'); } document.getElementById('portrait-placeholder')?.classList.add('hidden'); }
-            for(let i=1; i<=3; i++) {
-                const s = document.getElementById(`ds-succ-${i}`), f = document.getElementById(`ds-fail-${i}`);
-                if (s) s.className = `ds-dot ${char.dsSucc >= i ? 'checked-succ' : ''}`;
-                if (f) f.className = `ds-dot ${char.dsFail >= i ? 'checked-fail' : ''}`;
-            }
-            const lc = document.getElementById('languages-list'); if (lc) { lc.innerHTML = ''; (char.languages || []).forEach(l => { const d = document.createElement('div'); d.className = "bg-gray-100 px-2 py-0.5 rounded text-[10px] flex items-center gap-1 font-bold"; d.innerHTML = `<span>${l}</span><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-400">×</button>`; lc.appendChild(d); }); }
-            const ac = document.getElementById('attacks-list'); if (ac) { ac.innerHTML = ''; (char.attacks || []).forEach(a => { const d = document.createElement('div'); d.className = "equip-row"; d.innerHTML = `<input type="text" class="atk-name font-bold flex-1" value="${a.name}"><input type="text" class="atk-bonus w-10 text-center" value="${a.bonus}"><input type="text" class="atk-dmg w-12 text-center" value="${a.dmg}"><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-300">×</button>`; ac.appendChild(d); }); }
-            window.calcMods();
-        }
-
-        window.saveCurrentCharacter = (m) => {
+        const saveCurrentCharacter = (m) => {
             if (!activeCharId || !db) return;
             const data = {};
             document.querySelectorAll('[data-key]').forEach(el => data[el.dataset.key] = el.type === 'checkbox' ? el.checked : el.value);
@@ -524,10 +447,38 @@
                 name: r.querySelector('.atk-name')?.value || "", bonus: r.querySelector('.atk-bonus')?.value || "", dmg: r.querySelector('.atk-dmg')?.value || ""
             }));
             updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), data);
-            if (m) window.showToast("Synced");
+            if (m) showToast("Synced");
             const si = document.getElementById('sync-indicator'); if (si) { si.style.opacity = 1; setTimeout(()=>si.style.opacity = 0, 1000); }
         };
 
+        const handleImageUpload = (e) => {
+            const f = e.target.files[0]; if (!f) return;
+            const reader = new FileReader(); reader.onload = (ev) => {
+                const p = document.getElementById('portrait-preview'); if (p) { p.src = ev.target.result; p.classList.remove('hidden'); }
+                document.getElementById('portrait-placeholder')?.classList.add('hidden'); saveCurrentCharacter();
+            }; reader.readAsDataURL(f);
+        };
+
+        const openSheet = (id) => {
+            activeCharId = id;
+            document.getElementById('dashboard-screen')?.classList.add('hidden-view');
+            document.getElementById('sheet-screen')?.classList.remove('hidden-view');
+            document.getElementById('quick-roll-bar')?.classList.remove('hidden-view');
+            initSheetUI();
+            syncSheetData();
+        };
+
+        // --- ATTACH ALL TO WINDOW IMMEDIATELY ---
+        window.showToast = showToast;
+        window.renderMovesGrid = renderMovesGrid;
+        window.calcMods = calcMods;
+        window.initSheetUI = initSheetUI;
+        window.saveCurrentCharacter = saveCurrentCharacter;
+        window.handleImageUpload = handleImageUpload;
+        window.openSheet = openSheet;
+
+        // --- REMAINING HELPER DEFINITIONS ---
+        
         function execRoll(label, bonus) {
             const r1 = Math.floor(Math.random()*20)+1, r2 = Math.floor(Math.random()*20)+1;
             let f = r1, btxt = `(${r1})`;
@@ -542,161 +493,27 @@
             const log = document.getElementById('dice-log'); if (log) { const d = document.createElement('div'); d.className="flex justify-between border-b py-1"; d.innerHTML=`<span>${label}</span><b>${total}</b>`; log.prepend(d); }
         }
 
-        window.rollStat = (s) => execRoll(`${s.toUpperCase()} Check`, parseInt(document.getElementById(`mod-${s}`).textContent) || 0);
-        window.rollSave = (s) => execRoll(`${s.toUpperCase()} Save`, parseInt(document.getElementById(`save-mod-${s}`).textContent) || 0);
-        window.rollSkill = (n) => execRoll(`${n} Check`, parseInt(document.getElementById(`skill-mod-${n.toLowerCase().replace(/ /g,'_').replace(/[()]/g,'')}`).textContent) || 0);
-        
-        window.rollDice = (s) => {
-            const c = parseInt(document.getElementById('roll-count').value) || 1, r = Array.from({length: c}, () => Math.floor(Math.random()*s)+1);
-            const total = r.reduce((a,b)=>a+b,0);
-            const lEl = document.getElementById('roll-label'), tEl = document.getElementById('roll-total'), bEl = document.getElementById('roll-breakdown');
-            if (lEl) lEl.textContent = `${c}d${s} Roll`;
-            if (tEl) tEl.textContent = total;
-            if (bEl) bEl.textContent = `(${r.join('+')})`;
-            document.getElementById('dice-result-overlay')?.classList.remove('hidden');
-        };
-
-        window.handleImageUpload = (e) => {
-            const f = e.target.files[0]; if (!f) return;
-            const reader = new FileReader(); reader.onload = (ev) => {
-                const p = document.getElementById('portrait-preview'); if (p) { p.src = ev.target.result; p.classList.remove('hidden'); }
-                document.getElementById('portrait-placeholder')?.classList.add('hidden'); window.saveCurrentCharacter();
-            }; reader.readAsDataURL(f);
-        };
-
-        window.addAttackItem = () => {
-            const c = document.getElementById('attacks-list'); if (!c) return;
-            const d = document.createElement('div'); d.className = "equip-row";
-            d.innerHTML = `<input type="text" class="atk-name font-bold flex-1" placeholder="Weapon"><input type="text" class="atk-bonus w-10 text-center" placeholder="+0"><input type="text" class="atk-dmg w-12 text-center" placeholder="1d8"><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-300">×</button>`;
-            c.appendChild(d);
-        };
-
-        window.addLanguageItem = () => {
-            const i = document.getElementById('lang-input'); if (!i || !i.value) return;
-            const c = document.getElementById('languages-list'), t = document.createElement('div');
-            t.className = "bg-gray-100 px-2 py-0.5 rounded text-[10px] flex items-center gap-1 font-bold";
-            t.innerHTML = `<span>${i.value}</span><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-400">×</button>`;
-            if (c) c.appendChild(t); i.value = ''; window.saveCurrentCharacter();
-        };
-
-        window.triggerDeleteModal = () => {
-            const char = characters.find(c => c.id === activeCharId);
-            if (!char) return;
-            window.resetDeleteModal();
-            const isArchived = !!char.isDeleted;
-            document.getElementById('archive-btn')?.classList.toggle('hidden', isArchived);
-            document.getElementById('restore-btn')?.classList.toggle('hidden', !isArchived);
-            document.getElementById('delete-modal')?.classList.remove('hidden');
-        };
-
-        window.showPermDeleteConfirm = () => {
-            document.getElementById('delete-stage-1')?.classList.add('hidden');
-            document.getElementById('delete-stage-confirm')?.classList.remove('hidden');
-        };
-
-        window.resetDeleteModal = () => {
-            document.getElementById('delete-stage-1')?.classList.remove('hidden');
-            document.getElementById('delete-stage-confirm')?.classList.add('hidden');
-        };
-
-        window.archiveCharacter = async () => {
-            if (!activeCharId || !db) return;
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { isDeleted: true, status: 'dead' });
-            document.getElementById('delete-modal')?.classList.add('hidden');
-            window.closeSheet();
-        };
-
-        window.restoreCharacter = async () => {
-            if (!activeCharId || !db) return;
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { isDeleted: false, status: 'alive' });
-            document.getElementById('delete-modal')?.classList.add('hidden');
-            window.showToast("Recovered");
-            syncSheetData();
-        };
-
-        window.executePermDelete = async () => {
-            if (!activeCharId || !db) return;
-            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId));
-            document.getElementById('delete-modal')?.classList.add('hidden');
-            window.closeSheet();
-        };
-
-        window.updateCharStatus = async (s) => { if (!activeCharId || !db) return; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { status: s }); window.showToast(s.toUpperCase()); };
-        window.sendDmWhisper = async () => { const i = document.getElementById('dm-whisper-input'); if (!i || !i.value || !activeCharId || !db) return; const c = characters.find(x => x.id === activeCharId), w = c.dmWhispers || []; w.push({text: i.value, timestamp: Date.now()}); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), {dmWhispers: w}); i.value = ''; window.showToast("Sent"); };
-        window.openPartyModal = () => document.getElementById('party-modal')?.classList.remove('hidden');
-        window.createParty = async () => { const n = document.getElementById('party-name-input'); if (!n || !n.value || !db) return; await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'parties'), {name: n.value, createdAt: Date.now()}); document.getElementById('party-modal')?.classList.add('hidden'); n.value = ''; window.showToast("Party Formed"); };
-        window.setRollMode = (m) => { rollMode = m; document.querySelectorAll('.roll-mode').forEach(b => b.classList.remove('active')); document.getElementById(`mode-${m}`)?.classList.add('active'); };
-        window.openScoreGenModal = () => { sessionRerollUsed = false; document.getElementById('score-gen-modal')?.classList.remove('hidden'); document.getElementById('gen-results-area')?.classList.add('hidden'); document.getElementById('gen-apply-area')?.classList.add('hidden'); document.getElementById('gen-controls')?.classList.remove('hidden'); };
-
-        window.updateLevelDependencies = (v) => {
-            const l = parseInt(v) || 1;
-            const b = l >= 17 ? 6 : l >= 13 ? 5 : l >= 9 ? 4 : l >= 5 ? 3 : 2;
-            const pi = document.querySelector('[data-key="profBonus"]'); if (pi) pi.value = b;
-            window.calcMods(); window.saveCurrentCharacter();
-        };
-
-        window.rest = async (t) => {
-            if (!activeCharId || !db) return;
-            const c = characters.find(x => x.id === activeCharId);
-            if (t === 'long') await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { dsSucc: 0, dsFail: 0, hpCurrent: parseInt(c.hpMax) || 10, tempHp: 0 });
-            else window.showToast("Ready");
-        };
-
-        window.toggleDS = async (type, num) => {
-            const char = characters.find(c => c.id === activeCharId); if (!char) return;
-            const key = type === 'succ' ? 'dsSucc' : 'dsFail';
-            const newVal = char[key] === num ? num - 1 : num;
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { [key]: newVal });
-        };
-
-        window.generateScores = (method, isReroll = false) => {
-            if (method === 'standard') lastGeneratedScores = [15, 14, 13, 12, 10, 8];
-            else {
-                if (isReroll) sessionRerollUsed = true;
-                lastGeneratedScores = Array.from({length: 6}, () => {
-                    const r = [Math.floor(Math.random()*6)+1, Math.floor(Math.random()*6)+1, Math.floor(Math.random()*6)+1, Math.floor(Math.random()*6)+1];
-                    r.sort((a,b)=>b-a); return r[0]+r[1]+r[2];
-                }).sort((a,b)=>b-a);
-            }
-            document.getElementById('gen-numbers-display').innerHTML = lastGeneratedScores.map(n => `<span class="score-line-val">${n}</span>`).join('');
-            document.getElementById('assign-grid').innerHTML = STATS.map(s => `<div class="assign-row"><span class="assign-label font-bold">${s.toUpperCase()}</span><select class="assign-select" data-assign-stat="${s}"><option value="">-</option>${lastGeneratedScores.map((n, i) => `<option value="${i}">${n}</option>`).join('')}</select></div>`).join('');
-            document.getElementById('gen-results-area')?.classList.remove('hidden');
-            document.getElementById('gen-apply-area')?.classList.remove('hidden');
-            document.getElementById('gen-controls')?.classList.add('hidden');
-            document.getElementById('heroic-reroll-area')?.classList.toggle('hidden', method !== 'heroic' || sessionRerollUsed);
-        };
-
-        window.applyScores = async () => {
-            if (!activeCharId || !db) return;
-            const selects = Array.from(document.querySelectorAll('[data-assign-stat]'));
-            const chosen = selects.map(s => s.value).filter(v => v !== "");
-            if (chosen.length < 6 || new Set(chosen).size < 6) return window.showToast("Assign unique values");
-            const updates = { scoresGenerated: true };
-            selects.forEach(s => updates[s.dataset.assignStat] = lastGeneratedScores[parseInt(s.value)]);
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), updates);
-            document.getElementById('score-gen-modal')?.classList.add('hidden');
-            window.calcMods();
-        };
-
-        window.randomizeAssignment = () => {
-            const p = [0,1,2,3,4,5].sort(()=>Math.random()-0.5);
-            Array.from(document.querySelectorAll('[data-assign-stat]')).forEach((s,i)=>s.value=p[i]);
-        };
+        function createCard(c) {
+            const d = document.createElement('div'); d.className = `bg-gray-800 p-5 rounded-xl card border-l-4 shadow-xl border-amber-600 text-white`;
+            d.onclick = () => window.openSheet(c.id);
+            d.innerHTML = `<div class="flex items-center gap-4 mb-4 text-white"><div class="w-12 h-12 rounded-lg bg-gray-700 overflow-hidden">${c.imageSrc ? `<img src="${c.imageSrc}" class="w-full h-full object-cover">` : '<div class="w-full h-full flex items-center justify-center text-xl">👤</div>'}</div><div><h5 class="text-amber-500 font-serif font-bold">${c.name}</h5><p class="text-[10px] text-gray-400 uppercase">${c.class || 'Class'} Lvl ${c.level || 1}</p></div></div>`;
+            return d;
+        }
 
         function renderDashboard() {
             const pcC = document.getElementById('party-view-container'), grC = document.getElementById('graveyard-view-container');
             if (!pcC || !grC) return; pcC.innerHTML = ''; grC.innerHTML = '';
             const activePCs = characters.filter(c => c.type === 'PC' && !c.isDeleted);
             parties.forEach(p => {
-                const s = document.createElement('div'); s.className = "bg-gray-900/40 p-6 rounded-2xl border border-gray-800 shadow-xl mb-8";
+                const s = document.createElement('div'); s.className = "bg-gray-900/40 p-6 rounded-2xl border border-gray-800 shadow-xl mb-8 text-white";
                 s.innerHTML = `<h3 class="text-indigo-400 font-serif font-bold uppercase text-sm mb-4">${p.name}</h3><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="party-grid-${p.id}"></div>`;
                 pcC.appendChild(s);
                 const g = s.querySelector(`#party-grid-${p.id}`); activePCs.filter(c => c.partyId === p.id).forEach(c => g.appendChild(createCard(c)));
             });
             const unassigned = activePCs.filter(c => !c.partyId);
             if (unassigned.length > 0) {
-                const s = document.createElement('div'); s.className = "space-y-4 mb-8";
-                s.innerHTML = `<h3 class="text-gray-500 font-serif font-bold uppercase text-sm mb-4">Unassigned Adventurers</h3><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="unassigned-grid"></div>`;
+                const s = document.createElement('div'); s.className = "space-y-4 mb-8 text-white";
+                s.innerHTML = `<h3 class="text-gray-500 font-serif font-bold uppercase text-sm mb-4">Adventurers</h3><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="unassigned-grid"></div>`;
                 pcC.appendChild(s);
                 const g = s.querySelector('#unassigned-grid'); unassigned.forEach(c => g.appendChild(createCard(c)));
             }
@@ -706,14 +523,40 @@
             if (bstC) { bstC.innerHTML = ''; characters.filter(c => c.type === 'Beast' && !c.isDeleted).forEach(c => bstC.appendChild(createCard(c))); }
         }
 
-        function createCard(c) {
-            const d = document.createElement('div'); d.className = `bg-gray-800 p-5 rounded-xl card border-l-4 shadow-xl border-amber-600`;
-            d.onclick = () => window.openSheet(c.id);
-            d.innerHTML = `<div class="flex items-center gap-4 mb-4"><div class="w-12 h-12 rounded-lg bg-gray-700 overflow-hidden">${c.imageSrc ? `<img src="${c.imageSrc}" class="w-full h-full object-cover">` : '<div class="w-full h-full flex items-center justify-center text-xl">👤</div>'}</div><div><h5 class="text-amber-500 font-serif font-bold">${c.name}</h5><p class="text-[10px] text-gray-400 uppercase">${c.class || 'Class'} Lvl ${c.level || 1}</p></div></div>`;
-            return d;
+        async function syncSheetData() {
+            const char = characters.find(c => c.id === activeCharId); if (!char) return;
+            const ps = document.getElementById('party-select'); if (ps) { ps.innerHTML = '<option value="">Unassigned</option>'; parties.forEach(p => ps.innerHTML += `<option value="${p.id}">${p.name}</option>`); }
+            document.querySelectorAll('[data-key]').forEach(el => {
+                if (el.type === 'checkbox') el.checked = !!char[el.dataset.key];
+                else { const v = char[el.dataset.key]; el.value = ((el.dataset.key === 'passivePerception' || el.dataset.key === 'stressThreshold') && (v === undefined || v === "")) ? 10 : (v || (el.type === 'number' ? 0 : '')); }
+            });
+            const sCont = document.getElementById('sheet-container'); if (sCont) sCont.className = char.status === 'coma' ? 'status-coma' : char.status === 'dead' ? 'status-dead' : '';
+            const isU = activeRole === 'dm' || char.ownerId === user?.uid;
+            document.getElementById('delete-char-btn')?.classList.toggle('hidden', !isU);
+            document.getElementById('whisper-display-box')?.classList.toggle('hidden-view', !isU);
+            const wl = document.getElementById('whispers-list'); if (wl) {
+                const whispers = char.dmWhispers || [];
+                wl.innerHTML = whispers.map((w, idx) => `
+                    <div class="dm-whisper-box flex justify-between items-start">
+                        <p class="text-xs italic text-gray-800">${w.text}</p>
+                        ${activeRole === 'dm' ? `<button onclick="window.deleteWhisper(${idx})" class="text-red-500 font-bold ml-2 hover:text-red-700">×</button>` : ''}
+                    </div>
+                `).reverse().join('');
+            }
+            const gBtn = document.getElementById('main-gen-btn'); if (gBtn) gBtn.classList.toggle('hidden', !!char.scoresGenerated);
+            if (char.imageSrc) { 
+                const p = document.getElementById('portrait-preview'); 
+                if(p) { p.src = char.imageSrc; p.classList.remove('hidden'); } 
+                document.getElementById('portrait-placeholder')?.classList.add('hidden'); 
+            } else {
+                document.getElementById('portrait-preview')?.classList.add('hidden');
+                document.getElementById('portrait-placeholder')?.classList.remove('hidden');
+            }
+            calcMods();
         }
 
-        const setupListeners = () => {
+        // --- DATA LISTENERS ---
+        function setupListeners() {
             if (!user) return;
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), (snap) => {
                 characters = snap.docs.map(d => ({id: d.id, ...d.data()}));
@@ -726,9 +569,79 @@
                 renderDashboard();
                 if (activeCharId) syncSheetData();
             });
+        }
+
+        // --- GLOBAL ACTIONS ---
+        window.closeSheet = () => { activeCharId = null; document.getElementById('sheet-screen')?.classList.add('hidden-view'); document.getElementById('dashboard-screen')?.classList.remove('hidden-view'); document.getElementById('quick-roll-bar')?.classList.add('hidden-view'); };
+        window.setRole = (r) => { if (r === 'dm') document.getElementById('password-modal')?.classList.remove('hidden'); else { activeRole = 'player'; updateRoleUI(); } };
+        window.verifyDmPassword = () => { if (document.getElementById('dm-password').value === 'Rew4994') { activeRole = 'dm'; document.getElementById('password-modal')?.classList.add('hidden'); updateRoleUI(); } else showToast("Denied"); };
+        window.setView = (v) => { document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active')); document.getElementById(`nav-${v}`)?.classList.add('active'); ['party','npcs','beasts','graveyard'].forEach(view => document.getElementById(`${view}-view-container`)?.classList.toggle('hidden-view', view !== v)); renderDashboard(); };
+        window.createChar = async (type) => { if (!db || !user) return; try { const ref = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), { type, name: `New ${type}`, ownerId: user.uid, isDeleted: false, status: 'alive', hpMax: 10, hpCurrent: 10, level: 1, str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10, profBonus: 2, scoresGenerated: false, languages: [], attacks: [], dmWhispers: [] }); window.openSheet(ref.id); } catch (err) { showToast("Creation failed."); } };
+        window.archiveCharacter = async () => { if (!activeCharId || !db) return; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { isDeleted: true, status: 'dead' }); document.getElementById('delete-modal')?.classList.add('hidden'); window.closeSheet(); };
+        window.restoreCharacter = async () => { if (!activeCharId || !db) return; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { isDeleted: false, status: 'alive' }); document.getElementById('delete-modal')?.classList.add('hidden'); showToast("Restored"); syncSheetData(); };
+        window.executePermDelete = async () => { if (!activeCharId || !db) return; await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId)); document.getElementById('delete-modal')?.classList.add('hidden'); window.closeSheet(); };
+        window.updateCharStatus = async (s) => { if (!activeCharId || !db) return; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { status: s }); showToast(s.toUpperCase()); };
+        window.sendDmWhisper = async () => { const i = document.getElementById('dm-whisper-input'); if (!i || !i.value || !activeCharId || !db) return; const c = characters.find(x => x.id === activeCharId), w = c.dmWhispers || []; w.push({text: i.value, timestamp: Date.now()}); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), {dmWhispers: w}); i.value = ''; showToast("Sent"); };
+        window.deleteWhisper = async (idx) => { if (!activeCharId || activeRole !== 'dm') return; const char = characters.find(c => c.id === activeCharId); if (!char) return; const whispers = [...(char.dmWhispers || [])]; whispers.splice(idx, 1); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { dmWhispers: whispers }); showToast("Removed"); };
+        window.openPartyModal = () => document.getElementById('party-modal')?.classList.remove('hidden');
+        window.createParty = async () => { const n = document.getElementById('party-name-input'); if (!n || !n.value || !db) return; await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'parties'), {name: n.value, createdAt: Date.now()}); document.getElementById('party-modal')?.classList.add('hidden'); n.value = ''; showToast("Party Formed"); };
+        window.setRollMode = (m) => { rollMode = m; document.querySelectorAll('.roll-mode').forEach(b => b.classList.remove('active')); document.getElementById(`mode-${m}`)?.classList.add('active'); };
+        window.openScoreGenModal = () => { sessionRerollUsed = false; document.getElementById('score-gen-modal')?.classList.remove('hidden'); document.getElementById('gen-results-area')?.classList.add('hidden'); document.getElementById('gen-apply-area')?.classList.add('hidden'); document.getElementById('gen-controls')?.classList.remove('hidden'); };
+        window.updateLevelDependencies = (v) => { const l = parseInt(v) || 1; const b = l >= 17 ? 6 : l >= 13 ? 5 : l >= 9 ? 4 : l >= 5 ? 3 : 2; const pi = document.querySelector('[data-key="profBonus"]'); if (pi) pi.value = b; calcMods(); window.saveCurrentCharacter(); };
+        window.rest = async (t) => { if (!activeCharId || !db) return; const c = characters.find(x => x.id === activeCharId); if (t === 'long') await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { dsSucc: 0, dsFail: 0, hpCurrent: parseInt(c.hpMax) || 10, tempHp: 0 }); else showToast("Ready"); };
+        window.toggleDS = async (type, num) => { const char = characters.find(c => c.id === activeCharId); if (!char) return; const key = type === 'succ' ? 'dsSucc' : 'dsFail'; const newVal = char[key] === num ? num - 1 : num; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { [key]: newVal }); };
+        window.randomizeAssignment = () => { const p = [0,1,2,3,4,5].sort(()=>Math.random()-0.5); Array.from(document.querySelectorAll('[data-assign-stat]')).forEach((s,i)=>s.value=p[i]); };
+        window.triggerDeleteModal = () => { const char = characters.find(c => c.id === activeCharId); if (!char) return; window.resetDeleteModal(); const isArchived = !!char.isDeleted; document.getElementById('archive-btn')?.classList.toggle('hidden', isArchived); document.getElementById('restore-btn')?.classList.toggle('hidden', !isArchived); document.getElementById('delete-modal')?.classList.remove('hidden'); };
+        window.showPermDeleteConfirm = () => { document.getElementById('delete-stage-1')?.classList.add('hidden'); document.getElementById('delete-stage-confirm')?.classList.remove('hidden'); };
+        window.resetDeleteModal = () => { document.getElementById('delete-stage-1')?.classList.remove('hidden'); document.getElementById('delete-stage-confirm')?.classList.add('hidden'); };
+        window.rollStat = (s) => { const v = parseInt(document.querySelector(`[data-key="${s}"]`)?.value) || 10; execRoll(`${s.toUpperCase()} Check`, Math.floor((v - 10) / 2)); };
+        window.rollSave = (s) => { const v = parseInt(document.querySelector(`[data-key="${s}"]`)?.value) || 10; const m = Math.floor((v - 10) / 2); const p = parseInt(document.querySelector('[data-key="profBonus"]')?.value) || 2; const sp = document.querySelector(`[data-key="save_prof_${s}"]`)?.checked; execRoll(`${s.toUpperCase()} Save`, m + (sp ? p : 0)); };
+        window.rollSkill = (n) => { const skillObj = SKILLS.find(x => x.n === n); const v = parseInt(document.querySelector(`[data-key="${skillObj.s}"]`)?.value) || 10; const m = Math.floor((v - 10) / 2); const p = parseInt(document.querySelector('[data-key="profBonus"]')?.value) || 2; const safeKey = n.toLowerCase().replace(/ /g,'_').replace(/[()]/g,''); const sp = document.querySelector(`[data-key="prof_${safeKey}"]`)?.checked; execRoll(`${n} Check`, m + (sp ? p : 0)); };
+        window.addAttackItem = () => { const c = document.getElementById('attacks-list'); if (!c) return; const d = document.createElement('div'); d.className = "equip-row"; d.innerHTML = `<input type="text" class="atk-name font-bold flex-1" placeholder="Weapon"><input type="text" class="atk-bonus w-10 text-center" placeholder="+0"><input type="text" class="atk-dmg w-12 text-center" placeholder="1d8"><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-300">×</button>`; c.appendChild(d); };
+        window.addLanguageItem = () => { const i = document.getElementById('lang-input'); if (!i || !i.value) return; const c = document.getElementById('languages-list'), t = document.createElement('div'); t.className = "bg-gray-100 px-2 py-0.5 rounded text-[10px] flex items-center gap-1 font-bold text-gray-700"; t.innerHTML = `<span>${i.value}</span><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-400">×</button>`; if (c) c.appendChild(t); i.value = ''; window.saveCurrentCharacter(); };
+
+        window.rollDice = (s) => {
+            const cCount = parseInt(document.getElementById('roll-count').value) || 1;
+            function getRolls(count, sides) {
+                const rolls = Array.from({length: count}, () => Math.floor(Math.random() * sides) + 1);
+                return { rolls, sum: rolls.reduce((a, b) => a + b, 0) };
+            }
+            let finalTotal, breakdownTxt, label;
+            if (rollMode === 'normal') {
+                const result = getRolls(cCount, s);
+                finalTotal = result.sum; label = `${cCount}d${s} Roll`;
+                breakdownTxt = cCount > 1 ? `${result.rolls.join(' + ')} = ${finalTotal}` : `(${result.rolls[0]})`;
+            } else {
+                const res1 = getRolls(cCount, s), res2 = getRolls(cCount, s), isAdv = rollMode === 'adv';
+                if (isAdv) { finalTotal = Math.max(res1.sum, res2.sum); label = `${cCount}d${s} w/ Advantage`; } 
+                else { finalTotal = Math.min(res1.sum, res2.sum); label = `${cCount}d${s} w/ Disadvantage`; }
+                const s1Str = res1.rolls.length > 1 ? `(${res1.rolls.join('+')}=${res1.sum})` : `${res1.sum}`;
+                const s2Str = res2.rolls.length > 1 ? `(${res2.rolls.join('+')}=${res2.sum})` : `${res2.sum}`;
+                breakdownTxt = `${isAdv ? 'Max' : 'Min'}[ ${s1Str}, ${s2Str} ]`;
+            }
+            const lEl = document.getElementById('roll-label'), tEl = document.getElementById('roll-total'), bEl = document.getElementById('roll-breakdown');
+            if (lEl) lEl.textContent = label; if (tEl) tEl.textContent = finalTotal; if (bEl) bEl.textContent = breakdownTxt;
+            document.getElementById('dice-result-overlay')?.classList.remove('hidden');
         };
 
-        const initAuth = async () => {
+        window.generateScores = (method, isReroll = false) => {
+            if (method === 'standard') lastGeneratedScores = [15, 14, 13, 12, 10, 8];
+            else { if (isReroll) sessionRerollUsed = true; lastGeneratedScores = Array.from({length: 6}, () => { const r = [Math.floor(Math.random()*6)+1, Math.floor(Math.random()*6)+1, Math.floor(Math.random()*6)+1, Math.floor(Math.random()*6)+1]; r.sort((a,b)=>b-a); return r[0]+r[1]+r[2]; }).sort((a,b)=>b-a); }
+            document.getElementById('gen-numbers-display').innerHTML = lastGeneratedScores.map(n => `<span class="score-line-val text-gray-800">${n}</span>`).join('');
+            document.getElementById('assign-grid').innerHTML = STATS.map(s => `<div class="assign-row text-gray-800"><span class="assign-label font-bold">${s.toUpperCase()}</span><select class="assign-select" data-assign-stat="${s}"><option value="">-</option>${lastGeneratedScores.map((n, i) => `<option value="${i}">${n}</option>`).join('')}</select></div>`).join('');
+            document.getElementById('gen-results-area')?.classList.remove('hidden'); document.getElementById('gen-apply-area')?.classList.remove('hidden'); document.getElementById('gen-controls')?.classList.add('hidden'); document.getElementById('heroic-reroll-area')?.classList.toggle('hidden', method !== 'heroic' || sessionRerollUsed);
+        };
+
+        function updateRoleUI() {
+            const isDM = activeRole === 'dm';
+            document.getElementById('role-player-btn').className = !isDM ? 'px-6 py-3 rounded-lg text-sm font-bold bg-amber-600 text-white shadow-lg' : 'px-6 py-3 text-gray-500';
+            document.getElementById('role-dm-btn').className = isDM ? 'px-6 py-3 rounded-lg text-sm font-bold bg-amber-600 text-white shadow-lg' : 'px-6 py-3 text-gray-500';
+            document.getElementById('dm-oversight-panel')?.classList.toggle('hidden-view', !isDM);
+            renderDashboard();
+            if (activeCharId) syncSheetData();
+        }
+
+        async function initAuth() {
             try {
                 let signedIn = false;
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -740,9 +653,17 @@
                     if (user) setupListeners();
                 });
             } catch (err) { console.error("Firebase Auth failed:", err); }
-        };
+        }
 
-        document.addEventListener('input', (e) => { if (e.target.dataset.key || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') { if (autoSaveTimer) clearTimeout(autoSaveTimer); autoSaveTimer = setTimeout(() => window.saveCurrentCharacter(), 1000); } });
+        document.addEventListener('input', (e) => { 
+            if (e.target.dataset.key || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') { 
+                if (autoSaveTimer) clearTimeout(autoSaveTimer); 
+                autoSaveTimer = setTimeout(() => {
+                    if (typeof window.saveCurrentCharacter === 'function') window.saveCurrentCharacter();
+                }, 1000); 
+            } 
+        });
+        
         initAuth();
     </script>
 </body>
