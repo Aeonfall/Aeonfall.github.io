@@ -13,6 +13,8 @@
         .card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.7); }
         
         #sheet-container { background-color: #e8e0cd; min-height: 100vh; padding-bottom: 120px; color: #333; transition: filter 0.3s ease; }
+        
+        /* Status Themes */
         #sheet-container.status-coma { background-color: #fef3c7 !important; }
         #sheet-container.status-dead { filter: grayscale(1); background-color: #d1d5db !important; }
         
@@ -24,6 +26,7 @@
             padding: 16px;
             margin-bottom: 16px;
             position: relative;
+            overflow: hidden;
         }
         .sheet-card h3 {
             font-family: 'Cinzel', serif; font-weight: 700; text-align: center; font-size: 0.85rem; color: #222;
@@ -58,8 +61,8 @@
         .ds-dot.checked-fail { background: #dc2626; border-color: #991b1b; }
 
         .hidden-view { display: none !important; }
-        .rollable { cursor: pointer; transition: transform 0.1s; }
-        .rollable:hover { transform: scale(1.05); color: #8b0000; }
+        .rollable { cursor: pointer; transition: transform 0.1s; padding: 2px; border-radius: 4px; }
+        .rollable:hover { background-color: rgba(0,0,0,0.05); color: #8b0000; }
         .tiny-label { font-size: 9px; text-transform: uppercase; color: #888; font-weight: 900; display: block; border-top: 1px solid #ddd; margin-top: 2px; }
         
         .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 12px 24px; border-radius: 30px; z-index: 1000; pointer-events: none; opacity: 0; transition: opacity 0.3s; }
@@ -86,6 +89,12 @@
         
         .equip-header { background: #f8f9fa; font-size: 10px; font-weight: 900; color: #6c757d; text-transform: uppercase; padding: 4px 8px; border-radius: 4px; display: grid; grid-template-columns: 1fr 50px 70px 24px; gap: 4px; margin-bottom: 4px; }
         .equip-row { display: grid; grid-template-columns: 1fr 50px 70px 24px; gap: 4px; align-items: center; padding: 4px 8px; border-bottom: 1px solid #f1f1f1; }
+
+        /* Robust Skills/Saves Layout */
+        .stat-row { display: flex; align-items: center; gap: 8px; padding: 4px; border-bottom: 1px solid #f1f1f1; font-size: 11px; height: 32px; }
+        .stat-row input[type="checkbox"] { flex-shrink: 0; width: 14px; height: 14px; cursor: pointer; }
+        .stat-label-text { flex-grow: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #4b5563; font-weight: 500; font-family: 'Noto Sans', sans-serif; }
+        .stat-mod-box { flex-shrink: 0; min-width: 36px; text-align: right; font-weight: 900; color: #111; font-family: 'Roboto Slab', serif; }
     </style>
 </head>
 <body class="min-h-screen">
@@ -108,7 +117,6 @@
                     </div>
                     <nav id="main-nav" class="flex gap-6">
                         <button onclick="window.setView('party')" id="nav-party" class="nav-link active">Party</button>
-                        <!-- Updated Redirection Buttons -->
                         <button onclick="window.location.href='NPCs.html'" id="nav-npcs" class="nav-link">NPCs</button>
                         <button onclick="window.location.href='Beasts.html'" id="nav-beasts" class="nav-link">Bestiary</button>
                         <button onclick="window.setView('graveyard')" id="nav-graveyard" class="nav-link !text-red-900">Graveyard</button>
@@ -126,7 +134,6 @@
 
             <div id="view-content" class="space-y-8">
                 <div id="party-view-container" class="space-y-8"></div>
-                <!-- NPCs and Beasts containers are still here as fallbacks, but nav redirects to standalone pages -->
                 <div id="npcs-view-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden-view"></div>
                 <div id="beasts-view-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden-view"></div>
                 <div id="graveyard-view-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden-view"></div>
@@ -134,10 +141,71 @@
         </div>
     </div>
 
-    <!-- Modals for Party, Password, Deletion, etc. go here (consistent with previous versions) -->
-    <!-- ... Rest of UI sections (sheet-screen, etc) same as last working version ... -->
+    <!-- MODALS -->
+    <div id="password-modal" class="fixed inset-0 bg-black/95 backdrop-blur-md flex items-center justify-center z-[200] hidden">
+        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border-2 border-amber-600 shadow-2xl text-center text-white">
+            <h3 class="text-xl font-serif text-amber-500 font-bold mb-2">DM AUTHORIZATION</h3>
+            <input type="password" id="dm-password" class="w-full bg-gray-900 text-white text-center text-2xl tracking-widest rounded-lg p-3 mb-6 border border-gray-700 font-serif" placeholder="••••">
+            <button onclick="window.verifyDmPassword()" class="w-full bg-amber-600 text-white py-3 rounded-xl font-bold uppercase text-xs">Enter</button>
+            <button onclick="document.getElementById('password-modal').classList.add('hidden')" class="w-full text-gray-500 mt-4 text-[10px] uppercase font-bold">Back</button>
+        </div>
+    </div>
 
-    <!-- CHARACTER SHEET SCREEN -->
+    <div id="party-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-[110] hidden">
+        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border-2 border-indigo-600 shadow-2xl text-center text-white">
+            <h3 class="text-xl font-serif text-indigo-400 font-bold mb-4 uppercase">Create New Party</h3>
+            <input type="text" id="party-name-input" class="w-full bg-gray-900 text-white rounded-lg p-3 mb-6 border border-gray-700 font-serif" placeholder="Party Name...">
+            <div class="flex gap-2">
+                <button onclick="window.createParty()" class="flex-1 bg-indigo-600 text-white py-3 rounded-xl font-bold uppercase text-xs">Confirm</button>
+                <button onclick="document.getElementById('party-modal').classList.add('hidden')" class="flex-1 bg-gray-700 text-gray-300 py-3 rounded-xl font-bold uppercase text-xs">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="score-gen-modal" class="fixed inset-0 bg-black/90 flex items-center justify-center z-[150] hidden text-gray-800">
+        <div class="bg-white p-8 rounded-2xl w-full max-w-lg border-4 border-indigo-600 shadow-2xl text-center">
+            <h3 class="text-2xl font-serif text-indigo-700 font-bold mb-2 uppercase">Score Generator</h3>
+            <div id="gen-results-area" class="bg-gray-100 p-6 rounded-xl mb-6 hidden">
+                <div id="gen-numbers-display" class="score-line-display"></div>
+                <div class="assign-grid" id="assign-grid"></div>
+                <button onclick="window.randomizeAssignment()" class="mt-6 w-full py-2 bg-gray-200 text-gray-700 rounded-lg text-[10px] font-black uppercase hover:bg-gray-300">Randomly Assign Numbers</button>
+            </div>
+            <div id="gen-controls" class="grid grid-cols-2 gap-4 mb-6">
+                <button onclick="window.generateScores('standard')" class="bg-gray-800 text-white py-3 rounded-xl font-bold uppercase text-xs">Standard Array</button>
+                <button onclick="window.generateScores('heroic')" class="bg-indigo-600 text-white py-3 rounded-xl font-bold uppercase text-xs">Heroic Roll</button>
+            </div>
+            <div id="gen-apply-area" class="hidden space-y-4">
+                <div id="heroic-reroll-area" class="hidden"><button id="btn-reroll" onclick="window.generateScores('heroic', true)" class="w-full bg-amber-500 text-white py-2 rounded-lg font-black uppercase text-[10px]">Use 1x Heroic Reroll</button></div>
+                <div class="flex gap-2 pt-4"><button onclick="window.applyScores()" class="flex-1 bg-green-600 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-lg hover:bg-green-500">Apply & Finalize</button></div>
+            </div>
+            <button onclick="document.getElementById('score-gen-modal').classList.add('hidden')" class="mt-4 text-[10px] font-bold text-gray-400 uppercase">Close</button>
+        </div>
+    </div>
+
+    <div id="delete-modal" class="fixed inset-0 bg-black/90 flex items-center justify-center z-[160] hidden">
+        <div class="bg-white p-8 rounded-2xl w-full max-w-sm border-4 border-red-600 shadow-2xl text-center text-gray-800">
+            <div id="delete-stage-1">
+                <h3 class="text-2xl font-serif text-red-700 font-bold mb-4 uppercase">Manage Record</h3>
+                <p id="delete-modal-desc" class="text-gray-500 text-sm mb-8 leading-relaxed text-left">Choose an action for this character record.</p>
+                <div class="flex flex-col gap-3">
+                    <button id="archive-btn" onclick="window.archiveCharacter()" class="bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-md transition-colors">Archive to Graveyard</button>
+                    <button id="restore-btn" onclick="window.restoreCharacter()" class="bg-green-600 hover:bg-green-500 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-md transition-colors hidden">Restore to Active Party</button>
+                    <button onclick="window.showPermDeleteConfirm()" class="bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-md transition-colors">Permanently Delete</button>
+                    <button onclick="document.getElementById('delete-modal').classList.add('hidden')" class="bg-gray-100 hover:bg-gray-200 text-gray-500 py-3 rounded-xl font-bold uppercase text-xs transition-colors">Cancel</button>
+                </div>
+            </div>
+            <div id="delete-stage-confirm" class="hidden">
+                <h3 class="text-2xl font-serif text-red-700 font-bold mb-4 uppercase">Confirm Erase</h3>
+                <p class="text-gray-500 text-sm mb-8 leading-relaxed">This action CANNOT be undone. Erase record completely?</p>
+                <div class="flex flex-col gap-3">
+                    <button onclick="window.executePermDelete()" class="bg-red-700 hover:bg-red-800 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-md transition-colors">Yes, Delete Forever</button>
+                    <button onclick="window.resetDeleteModal()" class="bg-gray-100 py-3 rounded-xl font-bold uppercase text-xs transition-colors">No, Go Back</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SHEET SCREEN -->
     <div id="sheet-screen" class="hidden-view">
         <div id="sheet-container">
             <nav class="sticky top-0 z-[60] bg-gray-900 p-2 shadow-2xl border-b border-gray-800">
@@ -154,8 +222,140 @@
             </nav>
 
             <div class="max-w-6xl mx-auto p-4 md:p-8">
-                <!-- DM Oversight and Parchment Sheet Layout internals same as previous turn -->
+                <div id="dm-oversight-panel" class="dm-panel hidden-view">
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                        <div class="flex-grow w-full">
+                            <h4 class="text-xs font-black uppercase text-amber-500 mb-2">DM Whisper</h4>
+                            <div class="flex gap-2">
+                                <input type="text" id="dm-whisper-input" class="bg-black/40 border-none rounded p-2 text-white text-sm" placeholder="Secret note...">
+                                <button onclick="window.sendDmWhisper()" class="bg-purple-600 px-4 py-2 rounded text-xs font-black uppercase">Send</button>
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-center gap-2">
+                            <h4 class="text-xs font-black uppercase text-amber-500">Character Status</h4>
+                            <div class="flex gap-2">
+                                <button onclick="window.updateCharStatus('alive')" class="bg-green-900 text-green-400 px-4 py-2 rounded text-[10px] font-black uppercase">Alive</button>
+                                <button onclick="window.updateCharStatus('coma')" class="bg-amber-900 text-amber-400 px-4 py-2 rounded text-[10px] font-black uppercase">Coma</button>
+                                <button onclick="window.updateCharStatus('dead')" class="bg-gray-700 text-gray-300 px-4 py-2 rounded text-[10px] font-black uppercase">Death</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="pc-sheet-layout">
+                    <header class="sheet-card mb-8">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                            <div class="lg:col-span-4 flex flex-col gap-4">
+                                <div><input type="text" id="pc-name-field" class="text-3xl font-bold font-serif w-full mb-1" placeholder="Character Name" data-key="name"><label class="tiny-label">Character Name</label></div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div><input type="text" data-key="archetype" placeholder="Survivor"><label class="tiny-label">Archetype</label></div>
+                                    <div><input type="text" data-key="belief" placeholder="Belief"><label class="tiny-label">Belief</label></div>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-8 grid grid-cols-2 md:grid-cols-3 gap-4">
+                                <div><input type="text" data-key="class" placeholder="Fighter"><label class="tiny-label">Class</label></div>
+                                <div><input type="number" data-key="level" placeholder="1" onchange="window.updateLevelDependencies(this.value)"><label class="tiny-label">Level</label></div>
+                                <div><select id="party-select" data-key="partyId" class="cursor-pointer"><option value="">Unassigned</option></select><label class="tiny-label">Party</label></div>
+                                <div><input type="text" data-key="race" placeholder="Human"><label class="tiny-label">Race</label></div>
+                                <div><input type="text" data-key="background" placeholder="Noble"><label class="tiny-label">Background</label></div>
+                                <div><input type="text" data-key="alignment" placeholder="Neutral"><label class="tiny-label">Alignment</label></div>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                        <div class="lg:col-span-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-6">
+                                <div class="sheet-card">
+                                    <h3 class="flex justify-between items-center">Abilities & Modifiers <button id="main-gen-btn" onclick="window.openScoreGenModal()" class="bg-blue-100 text-[8px] px-1.5 rounded text-blue-700 font-black">GENERATE</button></h3>
+                                    <div class="grid grid-cols-2 gap-4 mb-4">
+                                        <div class="text-center"><input type="number" data-key="profBonus" class="text-xl font-black text-center" value="2" onchange="window.calcMods()"><label class="tiny-label">Proficiency</label></div>
+                                        <div class="text-center"><input type="number" data-key="passivePerception" class="text-xl font-black text-center" value="10" onchange="window.calcMods()"><label class="tiny-label">Pass. Perception</label></div>
+                                    </div>
+                                    <div id="stats-container" class="space-y-3"></div>
+                                </div>
+                                <div class="sheet-card"><h3>Saves</h3><div id="saves-container" class="space-y-1"></div></div>
+                                <div class="sheet-card"><h3>Skills</h3><div id="skills-container" class="space-y-0.5 max-h-[500px] overflow-y-auto pr-1"></div></div>
+                            </div>
+                            <div class="space-y-6">
+                                <div class="grid grid-cols-3 gap-2">
+                                    <div class="vital-container vital-shield"><div class="vital-label">AC</div><input type="number" class="vital-input" data-key="ac" placeholder="10"></div>
+                                    <div class="vital-container vital-square-init"><div class="vital-label">INIT</div><input type="number" class="vital-input" data-key="init" placeholder="0"></div>
+                                    <div class="vital-container vital-square-speed"><div class="vital-label">Speed</div><input type="text" class="vital-input" data-key="speed" placeholder="30FT"></div>
+                                </div>
+                                <div class="sheet-card text-center py-8">
+                                    <div class="flex justify-between px-2 mb-2 text-[10px] font-black uppercase text-gray-400"><span>MAX HP: <input type="number" class="w-8" data-key="hpMax"></span><span>HD: <input type="text" class="w-12 text-right" data-key="hd" placeholder="1 / 1d10"></span></div>
+                                    <input type="number" class="text-7xl font-black text-center w-full mb-1" data-key="hpCurrent" placeholder="10"><div class="text-[10px] font-black uppercase mt-4">Health Points</div>
+                                    <input type="number" class="text-xl font-bold text-center w-full border-b mt-4" data-key="tempHp" placeholder="Temp HP">
+                                    <div class="flex gap-2 justify-center mt-6">
+                                        <button onclick="window.rest('short')" class="bg-blue-100 text-blue-700 px-3 py-1 rounded text-[10px] font-black uppercase">Short Rest</button>
+                                        <button onclick="window.rest('long')" class="bg-blue-100 text-blue-700 px-3 py-1 rounded text-[10px] font-black uppercase">Long Rest</button>
+                                    </div>
+                                </div>
+                                <div class="sheet-card"><h3>Death & Coma</h3><div class="text-center space-y-4"><div class="uppercase text-[10px] font-black text-gray-400 tracking-widest">Death Saves</div><div class="flex flex-col items-center gap-2"><div class="text-green-700 text-[10px] font-black">SUCCESS</div><div class="flex gap-2"><div onclick="window.toggleDS('succ', 1)" id="ds-succ-1" class="ds-dot"></div><div onclick="window.toggleDS('succ', 2)" id="ds-succ-2" class="ds-dot"></div><div onclick="window.toggleDS('succ', 3)" id="ds-succ-3" class="ds-dot"></div></div><div class="text-red-700 text-[10px] font-black mt-2">FAILURE</div><div class="flex gap-2"><div onclick="window.toggleDS('fail', 1)" id="ds-fail-1" class="ds-dot"></div><div onclick="window.toggleDS('fail', 2)" id="ds-fail-2" class="ds-dot"></div><div onclick="window.toggleDS('fail', 3)" id="ds-fail-3" class="ds-dot"></div></div></div><div class="pt-4 border-t border-gray-100 flex items-center justify-center gap-2"><input type="checkbox" data-key="comaActive" class="w-4 h-4"><span class="text-[10px] font-black uppercase text-amber-600">Active Coma</span></div><div class="flex items-center justify-center gap-1"><input type="number" class="w-10 text-center text-xl font-black" data-key="comaRounds" value="0"><span class="text-gray-400 font-black">/ 10</span></div></div></div>
+                                <div class="sheet-card"><h3>Stress & Trauma</h3><div class="flex justify-around items-center mb-4"><div class="text-center"><input type="number" data-key="currentStress" class="text-2xl font-black text-center w-16" value="0"><label class="tiny-label">Current Stress</label></div><div class="text-3xl text-gray-200 font-light">/</div><div class="text-center"><input type="number" data-key="stressThreshold" class="text-2xl font-black text-center w-16" value="10"><label class="tiny-label">Threshold</label></div></div><textarea data-key="trauma" class="text-xs italic font-serif h-12 w-full" placeholder="Scars and traumas..."></textarea></div>
+                            </div>
+                        </div>
+
+                        <div class="lg:col-span-6 space-y-6">
+                            <div id="whisper-display-box" class="hidden-view"><div class="sheet-card !bg-purple-50 !border-purple-200"><h3 class="!text-purple-700 !border-purple-200">DM Whispers</h3><div id="whispers-list" class="space-y-3 max-h-[200px] overflow-y-auto pr-2"></div></div></div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="sheet-card h-64 flex flex-col items-center justify-center border-2 border-dashed bg-gray-50 group relative overflow-hidden"><img id="portrait-preview" class="hidden absolute inset-0 w-full h-full object-cover"><div id="portrait-placeholder" class="text-center opacity-40"><span class="text-4xl">👤</span><br><span class="text-[10px] font-black uppercase">Add Portrait</span></div><input type="file" onchange="window.handleImageUpload(event)" class="absolute inset-0 opacity-0 cursor-pointer"></div>
+                                <div class="sheet-card h-64 flex flex-col"><h3>Roll History</h3><div id="dice-log" class="flex-grow overflow-y-auto text-[10px] font-mono p-2 space-y-1 bg-gray-50 rounded"></div></div>
+                            </div>
+                            <div class="sheet-card">
+                                <h3>Equipment & Weapons</h3>
+                                <div class="equip-header"><span>Name</span><span>Atk</span><span>Dmg</span><span></span></div>
+                                <div id="attacks-list" class="space-y-1 mb-4"></div>
+                                <button onclick="window.addAttackItem()" class="w-full py-2 border-2 border-dashed border-gray-200 text-[10px] font-black text-gray-400 uppercase rounded hover:border-amber-400">+ Add Weapon</button>
+                                <textarea data-key="equipment" class="mt-6 text-[12px] h-48 p-3 bg-gray-50 rounded font-mono" placeholder="Detailed Inventory list..."></textarea>
+                            </div>
+                            <div class="sheet-card"><h3>Identity & Features</h3><div class="space-y-6"><div><div class="text-[9px] font-black text-gray-400 uppercase mb-2">Languages</div><div id="languages-list" class="flex flex-wrap gap-2 mb-3 text-xs font-bold"></div><div class="flex gap-2"><input type="text" id="lang-input" class="text-xs border-b px-2 h-8" placeholder="Add Language..."><button onclick="window.addLanguageItem()" class="bg-gray-200 px-4 rounded text-[9px] font-black h-8">ADD</button></div></div><div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4"><div><input type="text" data-key="traits" class="border-b h-8"><label class="tiny-label">Personality Traits</label></div><div><input type="text" data-key="ideals" class="border-b h-8"><label class="tiny-label">Ideals</label></div><div><input type="text" data-key="bonds" class="border-b h-8"><label class="tiny-label">Bonds</label></div><div><input type="text" data-key="flaws" class="border-b h-8"><label class="tiny-label">Flaws</label></div></div><textarea data-key="notes" class="text-[12px] h-48 p-3 bg-gray-50 rounded leading-relaxed font-serif mt-4" placeholder="Lore..."></textarea></div></div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8">
+                        <div class="sheet-card">
+                            <div class="flex justify-between items-center border-b-2 border-gray-100 pb-2 mb-6">
+                                <h2 class="font-serif font-bold text-lg uppercase tracking-wider">Character Moves</h2>
+                                <div class="flex items-center gap-2"><label class="text-[10px] font-black uppercase text-gray-400">Viewing:</label><select id="moves-selector" onchange="window.renderMovesGrid()" class="text-[10px] font-black uppercase border rounded px-2 py-1 bg-blue-500 text-white border-none cursor-pointer"><option value="features">Feature Moves</option><option value="scriptcasting">Scriptcasting</option></select></div>
+                            </div>
+                            <div id="features-lvl-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </div>
+    </div>
+
+    <!-- ROLL OVERLAY -->
+    <div id="dice-result-overlay" class="fixed inset-0 bg-black/90 flex items-center justify-center z-[200] hidden" onclick="this.classList.add('hidden')">
+        <div class="text-center text-white p-12">
+            <div id="roll-label" class="text-amber-500 font-serif text-2xl mb-2 uppercase tracking-widest">ROLL</div>
+            <div id="roll-total" class="text-9xl font-black mb-4">20</div>
+            <div id="roll-breakdown" class="text-gray-300 font-mono text-lg bg-black/40 px-6 py-2 rounded-full inline-block"></div>
+        </div>
+    </div>
+
+    <!-- ROLLER BAR -->
+    <div id="quick-roll-bar" class="hidden-view floating-roller">
+        <div class="flex items-center justify-between mb-4 border-b pb-2 text-gray-800">
+            <div class="flex items-center gap-2">
+                <input type="number" id="roll-count" value="1" min="1" class="w-8 text-center font-black bg-gray-100 rounded">
+                <div class="h-4 w-px bg-gray-200 mx-1"></div>
+                <button onclick="window.setRollMode('normal')" class="mode-btn roll-mode active" id="mode-norm">Norm</button>
+                <button onclick="window.setRollMode('adv')" class="mode-btn roll-mode" id="mode-adv">Adv</button>
+                <button onclick="window.setRollMode('dis')" class="mode-btn roll-mode" id="mode-dis">Dis</button>
+            </div>
+        </div>
+        <div class="grid grid-cols-4 gap-2">
+            <button onclick="window.rollDice(4)" class="dice-grid-btn dice-orange">d4</button>
+            <button onclick="window.rollDice(6)" class="dice-grid-btn dice-green">d6</button>
+            <button onclick="window.rollDice(8)" class="dice-grid-btn dice-blue">d8</button>
+            <button onclick="window.rollDice(10)" class="dice-grid-btn dice-purple">d10</button>
+            <button onclick="window.rollDice(12)" class="dice-grid-btn dice-purple">d12</button>
+            <button onclick="window.rollDice(20)" class="dice-grid-btn dice-red">d20</button>
+            <button onclick="window.rollDice(100)" class="dice-grid-btn dice-dark">d100</button>
         </div>
     </div>
 
@@ -164,61 +364,325 @@
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot, addDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Firebase Config and appId here (placeholders)
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "" };
+        const firebaseConfig = {
+            apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI",
+            authDomain: "aeonfall-523c1.firebaseapp.com",
+            projectId: "aeonfall-523c1",
+            storageBucket: "aeonfall-523c1.firebasestorage.app",
+            messagingSenderId: "716207733913",
+            appId: "1:716207733913:web:7aac43906a70e2b5f50c08"
+        };
+
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'aeonfall-manager';
-        
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        let characters = [], parties = [], user = null, activeCharId = null, activeRole = 'player';
-        // ... Variables and Core Logic same as working turn ...
+        let characters = [], parties = [], user = null, activeCharId = null, activeRole = 'player', rollMode = 'normal';
+        let autoSaveTimer = null, lastGeneratedScores = [], sessionRerollUsed = false;
 
-        // Ensure listeners start AFTER Auth
-        const initAuth = async () => {
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-                onAuthStateChanged(auth, (u) => {
-                    user = u;
-                    if (user) setupListeners();
-                });
-            } catch (err) { console.error("Auth Init Error:", err); }
+        const STATS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+        const SKILLS = [
+            {n:'Acrobatics (Dex)', s:'dex'},{n:'Animal Handling (Wis)', s:'wis'},{n:'Arcana (Int)', s:'int'},
+            {n:'Athletics (Str)', s:'str'},{n:'Deception (Cha)', s:'cha'},{n:'History (Int)', s:'int'},
+            {n:'Insight (Wis)', s:'wis'},{n:'Intimidation (Cha)', s:'cha'},{n:'Investigation (Int)', s:'int'},
+            {n:'Medicine (Wis)', s:'wis'},{n:'Nature (Int)', s:'int'},{n:'Perception (Wis)', s:'wis'},
+            {n:'Performance (Cha)', s:'cha'},{n:'Persuasion (Cha)', s:'cha'},{n:'Religion (Int)', s:'int'},
+            {n:'Sleight of Hand (Dex)', s:'dex'},{n:'Stealth (Dex)', s:'dex'},{n:'Survival (Wis)', s:'wis'}
+        ];
+
+        // --- DEFINE WINDOW FUNCTIONS FIRST TO PREVENT UNDEFINED ERRORS ---
+        window.renderMovesGrid = () => {
+            const s = document.getElementById('moves-selector'); if (!s) return;
+            const t = s.value, g = document.getElementById('features-lvl-grid'); if (!g) return; g.innerHTML = '';
+            let l = (t === 'features') ? ['Level 1','Level 2','Level 3','Level 4','Level 5','Level 6','Level 7','Level 8','Level 9'] : ['Tricks (0)','Level 1','Level 2','Level 3','Level 4','Level 5','Level 6','Level 7','Level 8','Level 9'];
+            l.forEach(lvl => g.innerHTML += `<div class="lvl-card"><div class="lvl-header">${lvl.toUpperCase()}</div><div class="flex-grow"></div><button class="text-[9px] font-black uppercase text-blue-500 text-center mt-2">+ ADD</button></div>`);
         };
 
-        const setupListeners = () => {
-            if (!user) return;
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), (snap) => {
-                characters = snap.docs.map(d => ({id: d.id, ...d.data()}));
-                renderDashboard();
-                if (activeCharId) syncSheetData();
-            }, (err) => console.error("Permission error on characters:", err));
-
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'parties'), (snap) => {
-                parties = snap.docs.map(d => ({id: d.id, ...d.data()}));
-                renderDashboard();
-                if (activeCharId) syncSheetData();
-            }, (err) => console.error("Permission error on parties:", err));
+        window.calcMods = () => {
+            const p = parseInt(document.querySelector('[data-key="profBonus"]')?.value) || 2;
+            STATS.forEach(s => {
+                const vValue = document.querySelector(`[data-key="${s}"]`)?.value;
+                const v = parseInt(vValue) || 10;
+                const m = Math.floor((v - 10) / 2);
+                const el = document.getElementById(`mod-${s}`); if (el) el.textContent = (m >= 0 ? '+' : '') + m;
+                const sp = document.querySelector(`[data-key="save_prof_${s}"]`)?.checked;
+                const sel = document.getElementById(`save-mod-${s}`); if (sel) sel.textContent = (m + (sp ? p : 0) >= 0 ? '+' : '') + (m + (sp ? p : 0));
+            });
+            SKILLS.forEach(sk => {
+                const attrVal = parseInt(document.querySelector(`[data-key="${sk.s}"]`)?.value) || 10;
+                const m = Math.floor((attrVal - 10) / 2);
+                const safeName = sk.n.toLowerCase().replace(/ /g,'_').replace(/[()]/g,'');
+                const sp = document.querySelector(`[data-key="prof_${safeName}"]`)?.checked;
+                const sel = document.getElementById(`skill-mod-${safeName}`); 
+                if (sel) sel.textContent = (m + (sp ? p : 0) >= 0 ? '+' : '') + (m + (sp ? p : 0));
+            });
         };
 
-        // UI Handlers (setView, setRole, verifyDmPassword, etc) same as previous ...
+        window.openSheet = (id) => {
+            activeCharId = id;
+            document.getElementById('dashboard-screen')?.classList.add('hidden-view');
+            document.getElementById('sheet-screen')?.classList.remove('hidden-view');
+            document.getElementById('quick-roll-bar')?.classList.remove('hidden-view');
+            initSheetUI();
+            syncSheetData();
+        };
+
+        window.closeSheet = () => {
+            activeCharId = null;
+            document.getElementById('sheet-screen')?.classList.add('hidden-view');
+            document.getElementById('dashboard-screen')?.classList.remove('hidden-view');
+            document.getElementById('quick-roll-bar')?.classList.add('hidden-view');
+        };
+
+        window.setRole = (r) => {
+            if (r === 'dm') document.getElementById('password-modal')?.classList.remove('hidden');
+            else { activeRole = 'player'; updateRoleUI(); }
+        };
+
+        window.verifyDmPassword = () => {
+            if (document.getElementById('dm-password').value === 'Rew4994') {
+                activeRole = 'dm';
+                document.getElementById('password-modal')?.classList.add('hidden');
+                updateRoleUI();
+            } else window.showToast("Denied");
+        };
+
+        window.showToast = (m) => { const t = document.getElementById('toast'); if(t){t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 3000);} };
+
+        function updateRoleUI() {
+            const isDM = activeRole === 'dm';
+            document.getElementById('role-player-btn').className = !isDM ? 'px-6 py-3 rounded-lg text-sm font-bold bg-amber-600 text-white shadow-lg' : 'px-6 py-3 text-gray-500';
+            document.getElementById('role-dm-btn').className = isDM ? 'px-6 py-3 rounded-lg text-sm font-bold bg-amber-600 text-white shadow-lg' : 'px-6 py-3 text-gray-500';
+            document.getElementById('dm-oversight-panel')?.classList.toggle('hidden-view', !isDM);
+            renderDashboard();
+            if (activeCharId) syncSheetData();
+        }
+
         window.setView = (v) => {
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            const nBtn = document.getElementById(`nav-${v}`); if (nBtn) nBtn.classList.add('active');
-            ['party','npcs','beasts','graveyard'].forEach(view => {
-                const el = document.getElementById(`${view}-view-container`);
-                if (el) el.classList.toggle('hidden-view', view !== v);
-            });
-            const vt = document.getElementById('view-title');
-            if (vt) vt.textContent = v === 'party' ? 'The Party' : (v === 'graveyard' ? 'The Graveyard' : v.toUpperCase());
+            document.getElementById(`nav-${v}`)?.classList.add('active');
+            ['party','npcs','beasts','graveyard'].forEach(view => document.getElementById(`${view}-view-container`)?.classList.toggle('hidden-view', view !== v));
             renderDashboard();
         };
 
-        // Dashboard Rendering Logic
+        window.createChar = async (type) => {
+            if (!db || !user) return;
+            const ref = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), {
+                type, name: `New ${type}`, ownerId: user.uid, isDeleted: false, status: 'alive', hpMax: 10, hpCurrent: 10, level: 1,
+                str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10, profBonus: 2, scoresGenerated: false, languages: [], attacks: [], dmWhispers: []
+            });
+            window.openSheet(ref.id);
+        };
+
+        function initSheetUI() {
+            const sC = document.getElementById('stats-container'), svC = document.getElementById('saves-container'), skC = document.getElementById('skills-container');
+            if (!sC) return; sC.innerHTML = ''; svC.innerHTML = ''; skC.innerHTML = '';
+            STATS.forEach(s => {
+                sC.innerHTML += `<div class="flex items-center gap-3"><div class="w-12 h-12 bg-gray-100 rounded-lg flex flex-col items-center justify-center border-2 border-gray-300 font-black rollable" onclick="window.rollStat('${s}')"><span class="text-[8px] uppercase text-gray-400">${s}</span><span id="mod-${s}">+0</span></div><input type="number" data-key="${s}" class="w-10 text-center font-bold" value="10" onchange="window.calcMods()"></div>`;
+                svC.innerHTML += `<div class="stat-row"><input type="checkbox" data-key="save_prof_${s}" onchange="window.calcMods()"><span class="stat-label-text uppercase">${s}</span><span class="stat-mod-box rollable" id="save-mod-${s}" onclick="window.rollSave('${s}')">+0</span></div>`;
+            });
+            SKILLS.forEach(sk => {
+                const safeName = sk.n.toLowerCase().replace(/ /g,'_').replace(/[()]/g,'');
+                const id = `skill-mod-${safeName}`;
+                skC.innerHTML += `<div class="stat-row"><input type="checkbox" data-key="prof_${safeName}" onchange="window.calcMods()"><span class="stat-label-text">${sk.n}</span><span class="stat-mod-box rollable" id="${id}" onclick="window.rollSkill('${sk.n}')">+0</span></div>`;
+            });
+            window.renderMovesGrid();
+        }
+
+        async function syncSheetData() {
+            const char = characters.find(c => c.id === activeCharId); if (!char) return;
+            const ps = document.getElementById('party-select'); if (ps) { ps.innerHTML = '<option value="">Unassigned</option>'; parties.forEach(p => ps.innerHTML += `<option value="${p.id}">${p.name}</option>`); }
+            document.querySelectorAll('[data-key]').forEach(el => {
+                if (el.type === 'checkbox') el.checked = !!char[el.dataset.key];
+                else { const v = char[el.dataset.key]; el.value = ((el.dataset.key === 'passivePerception' || el.dataset.key === 'stressThreshold') && (v === undefined || v === "")) ? 10 : (v || (el.type === 'number' ? 0 : '')); }
+            });
+            const sCont = document.getElementById('sheet-container'); if (sCont) sCont.className = char.status === 'coma' ? 'status-coma' : char.status === 'dead' ? 'status-dead' : '';
+            const isU = activeRole === 'dm' || char.ownerId === user?.uid;
+            document.getElementById('delete-char-btn')?.classList.toggle('hidden', !isU);
+            document.getElementById('whisper-display-box')?.classList.toggle('hidden-view', !isU);
+            const wl = document.getElementById('whispers-list'); if (wl) wl.innerHTML = (char.dmWhispers || []).map(w => `<div class="dm-whisper-box"><p class="text-xs italic">${w.text}</p></div>`).reverse().join('');
+            const gBtn = document.getElementById('main-gen-btn'); if (gBtn) gBtn.classList.toggle('hidden', !!char.scoresGenerated);
+            if (char.imageSrc) { const p = document.getElementById('portrait-preview'); if(p) { p.src = char.imageSrc; p.classList.remove('hidden'); } document.getElementById('portrait-placeholder')?.classList.add('hidden'); }
+            for(let i=1; i<=3; i++) {
+                const s = document.getElementById(`ds-succ-${i}`), f = document.getElementById(`ds-fail-${i}`);
+                if (s) s.className = `ds-dot ${char.dsSucc >= i ? 'checked-succ' : ''}`;
+                if (f) f.className = `ds-dot ${char.dsFail >= i ? 'checked-fail' : ''}`;
+            }
+            const lc = document.getElementById('languages-list'); if (lc) { lc.innerHTML = ''; (char.languages || []).forEach(l => { const d = document.createElement('div'); d.className = "bg-gray-100 px-2 py-0.5 rounded text-[10px] flex items-center gap-1 font-bold"; d.innerHTML = `<span>${l}</span><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-400">×</button>`; lc.appendChild(d); }); }
+            const ac = document.getElementById('attacks-list'); if (ac) { ac.innerHTML = ''; (char.attacks || []).forEach(a => { const d = document.createElement('div'); d.className = "equip-row"; d.innerHTML = `<input type="text" class="atk-name font-bold flex-1" value="${a.name}"><input type="text" class="atk-bonus w-10 text-center" value="${a.bonus}"><input type="text" class="atk-dmg w-12 text-center" value="${a.dmg}"><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-300">×</button>`; ac.appendChild(d); }); }
+            window.calcMods();
+        }
+
+        window.saveCurrentCharacter = (m) => {
+            if (!activeCharId || !db) return;
+            const data = {};
+            document.querySelectorAll('[data-key]').forEach(el => data[el.dataset.key] = el.type === 'checkbox' ? el.checked : el.value);
+            const p = document.getElementById('portrait-preview'); if (p) data.imageSrc = p.src || "";
+            data.languages = Array.from(document.querySelectorAll('#languages-list span')).map(s => s.textContent);
+            data.attacks = Array.from(document.querySelectorAll('#attacks-list > div')).map(r => ({
+                name: r.querySelector('.atk-name')?.value || "", bonus: r.querySelector('.atk-bonus')?.value || "", dmg: r.querySelector('.atk-dmg')?.value || ""
+            }));
+            updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), data);
+            if (m) window.showToast("Synced");
+            const si = document.getElementById('sync-indicator'); if (si) { si.style.opacity = 1; setTimeout(()=>si.style.opacity = 0, 1000); }
+        };
+
+        function execRoll(label, bonus) {
+            const r1 = Math.floor(Math.random()*20)+1, r2 = Math.floor(Math.random()*20)+1;
+            let f = r1, btxt = `(${r1})`;
+            if (rollMode === 'adv') { f = Math.max(r1, r2); btxt = `Adv: Max(${r1}, ${r2})`; }
+            else if (rollMode === 'dis') { f = Math.min(r1, r2); btxt = `Dis: Min(${r1}, ${r2})`; }
+            const total = f + bonus;
+            const lEl = document.getElementById('roll-label'), tEl = document.getElementById('roll-total'), bEl = document.getElementById('roll-breakdown');
+            if (lEl) lEl.textContent = label;
+            if (tEl) tEl.textContent = total;
+            if (bEl) bEl.textContent = `${btxt} + ${bonus}`;
+            document.getElementById('dice-result-overlay')?.classList.remove('hidden');
+            const log = document.getElementById('dice-log'); if (log) { const d = document.createElement('div'); d.className="flex justify-between border-b py-1"; d.innerHTML=`<span>${label}</span><b>${total}</b>`; log.prepend(d); }
+        }
+
+        window.rollStat = (s) => execRoll(`${s.toUpperCase()} Check`, parseInt(document.getElementById(`mod-${s}`).textContent) || 0);
+        window.rollSave = (s) => execRoll(`${s.toUpperCase()} Save`, parseInt(document.getElementById(`save-mod-${s}`).textContent) || 0);
+        window.rollSkill = (n) => execRoll(`${n} Check`, parseInt(document.getElementById(`skill-mod-${n.toLowerCase().replace(/ /g,'_').replace(/[()]/g,'')}`).textContent) || 0);
+        
+        window.rollDice = (s) => {
+            const c = parseInt(document.getElementById('roll-count').value) || 1, r = Array.from({length: c}, () => Math.floor(Math.random()*s)+1);
+            const total = r.reduce((a,b)=>a+b,0);
+            const lEl = document.getElementById('roll-label'), tEl = document.getElementById('roll-total'), bEl = document.getElementById('roll-breakdown');
+            if (lEl) lEl.textContent = `${c}d${s} Roll`;
+            if (tEl) tEl.textContent = total;
+            if (bEl) bEl.textContent = `(${r.join('+')})`;
+            document.getElementById('dice-result-overlay')?.classList.remove('hidden');
+        };
+
+        window.handleImageUpload = (e) => {
+            const f = e.target.files[0]; if (!f) return;
+            const reader = new FileReader(); reader.onload = (ev) => {
+                const p = document.getElementById('portrait-preview'); if (p) { p.src = ev.target.result; p.classList.remove('hidden'); }
+                document.getElementById('portrait-placeholder')?.classList.add('hidden'); window.saveCurrentCharacter();
+            }; reader.readAsDataURL(f);
+        };
+
+        window.addAttackItem = () => {
+            const c = document.getElementById('attacks-list'); if (!c) return;
+            const d = document.createElement('div'); d.className = "equip-row";
+            d.innerHTML = `<input type="text" class="atk-name font-bold flex-1" placeholder="Weapon"><input type="text" class="atk-bonus w-10 text-center" placeholder="+0"><input type="text" class="atk-dmg w-12 text-center" placeholder="1d8"><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-300">×</button>`;
+            c.appendChild(d);
+        };
+
+        window.addLanguageItem = () => {
+            const i = document.getElementById('lang-input'); if (!i || !i.value) return;
+            const c = document.getElementById('languages-list'), t = document.createElement('div');
+            t.className = "bg-gray-100 px-2 py-0.5 rounded text-[10px] flex items-center gap-1 font-bold";
+            t.innerHTML = `<span>${i.value}</span><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-400">×</button>`;
+            if (c) c.appendChild(t); i.value = ''; window.saveCurrentCharacter();
+        };
+
+        window.triggerDeleteModal = () => {
+            const char = characters.find(c => c.id === activeCharId);
+            if (!char) return;
+            window.resetDeleteModal();
+            const isArchived = !!char.isDeleted;
+            document.getElementById('archive-btn')?.classList.toggle('hidden', isArchived);
+            document.getElementById('restore-btn')?.classList.toggle('hidden', !isArchived);
+            document.getElementById('delete-modal')?.classList.remove('hidden');
+        };
+
+        window.showPermDeleteConfirm = () => {
+            document.getElementById('delete-stage-1')?.classList.add('hidden');
+            document.getElementById('delete-stage-confirm')?.classList.remove('hidden');
+        };
+
+        window.resetDeleteModal = () => {
+            document.getElementById('delete-stage-1')?.classList.remove('hidden');
+            document.getElementById('delete-stage-confirm')?.classList.add('hidden');
+        };
+
+        window.archiveCharacter = async () => {
+            if (!activeCharId || !db) return;
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { isDeleted: true, status: 'dead' });
+            document.getElementById('delete-modal')?.classList.add('hidden');
+            window.closeSheet();
+        };
+
+        window.restoreCharacter = async () => {
+            if (!activeCharId || !db) return;
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { isDeleted: false, status: 'alive' });
+            document.getElementById('delete-modal')?.classList.add('hidden');
+            window.showToast("Recovered");
+            syncSheetData();
+        };
+
+        window.executePermDelete = async () => {
+            if (!activeCharId || !db) return;
+            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId));
+            document.getElementById('delete-modal')?.classList.add('hidden');
+            window.closeSheet();
+        };
+
+        window.updateCharStatus = async (s) => { if (!activeCharId || !db) return; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { status: s }); window.showToast(s.toUpperCase()); };
+        window.sendDmWhisper = async () => { const i = document.getElementById('dm-whisper-input'); if (!i || !i.value || !activeCharId || !db) return; const c = characters.find(x => x.id === activeCharId), w = c.dmWhispers || []; w.push({text: i.value, timestamp: Date.now()}); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), {dmWhispers: w}); i.value = ''; window.showToast("Sent"); };
+        window.openPartyModal = () => document.getElementById('party-modal')?.classList.remove('hidden');
+        window.createParty = async () => { const n = document.getElementById('party-name-input'); if (!n || !n.value || !db) return; await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'parties'), {name: n.value, createdAt: Date.now()}); document.getElementById('party-modal')?.classList.add('hidden'); n.value = ''; window.showToast("Party Formed"); };
+        window.setRollMode = (m) => { rollMode = m; document.querySelectorAll('.roll-mode').forEach(b => b.classList.remove('active')); document.getElementById(`mode-${m}`)?.classList.add('active'); };
+        window.openScoreGenModal = () => { sessionRerollUsed = false; document.getElementById('score-gen-modal')?.classList.remove('hidden'); document.getElementById('gen-results-area')?.classList.add('hidden'); document.getElementById('gen-apply-area')?.classList.add('hidden'); document.getElementById('gen-controls')?.classList.remove('hidden'); };
+
+        window.updateLevelDependencies = (v) => {
+            const l = parseInt(v) || 1;
+            const b = l >= 17 ? 6 : l >= 13 ? 5 : l >= 9 ? 4 : l >= 5 ? 3 : 2;
+            const pi = document.querySelector('[data-key="profBonus"]'); if (pi) pi.value = b;
+            window.calcMods(); window.saveCurrentCharacter();
+        };
+
+        window.rest = async (t) => {
+            if (!activeCharId || !db) return;
+            const c = characters.find(x => x.id === activeCharId);
+            if (t === 'long') await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { dsSucc: 0, dsFail: 0, hpCurrent: parseInt(c.hpMax) || 10, tempHp: 0 });
+            else window.showToast("Ready");
+        };
+
+        window.toggleDS = async (type, num) => {
+            const char = characters.find(c => c.id === activeCharId); if (!char) return;
+            const key = type === 'succ' ? 'dsSucc' : 'dsFail';
+            const newVal = char[key] === num ? num - 1 : num;
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { [key]: newVal });
+        };
+
+        window.generateScores = (method, isReroll = false) => {
+            if (method === 'standard') lastGeneratedScores = [15, 14, 13, 12, 10, 8];
+            else {
+                if (isReroll) sessionRerollUsed = true;
+                lastGeneratedScores = Array.from({length: 6}, () => {
+                    const r = [Math.floor(Math.random()*6)+1, Math.floor(Math.random()*6)+1, Math.floor(Math.random()*6)+1, Math.floor(Math.random()*6)+1];
+                    r.sort((a,b)=>b-a); return r[0]+r[1]+r[2];
+                }).sort((a,b)=>b-a);
+            }
+            document.getElementById('gen-numbers-display').innerHTML = lastGeneratedScores.map(n => `<span class="score-line-val">${n}</span>`).join('');
+            document.getElementById('assign-grid').innerHTML = STATS.map(s => `<div class="assign-row"><span class="assign-label font-bold">${s.toUpperCase()}</span><select class="assign-select" data-assign-stat="${s}"><option value="">-</option>${lastGeneratedScores.map((n, i) => `<option value="${i}">${n}</option>`).join('')}</select></div>`).join('');
+            document.getElementById('gen-results-area')?.classList.remove('hidden');
+            document.getElementById('gen-apply-area')?.classList.remove('hidden');
+            document.getElementById('gen-controls')?.classList.add('hidden');
+            document.getElementById('heroic-reroll-area')?.classList.toggle('hidden', method !== 'heroic' || sessionRerollUsed);
+        };
+
+        window.applyScores = async () => {
+            if (!activeCharId || !db) return;
+            const selects = Array.from(document.querySelectorAll('[data-assign-stat]'));
+            const chosen = selects.map(s => s.value).filter(v => v !== "");
+            if (chosen.length < 6 || new Set(chosen).size < 6) return window.showToast("Assign unique values");
+            const updates = { scoresGenerated: true };
+            selects.forEach(s => updates[s.dataset.assignStat] = lastGeneratedScores[parseInt(s.value)]);
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), updates);
+            document.getElementById('score-gen-modal')?.classList.add('hidden');
+            window.calcMods();
+        };
+
+        window.randomizeAssignment = () => {
+            const p = [0,1,2,3,4,5].sort(()=>Math.random()-0.5);
+            Array.from(document.querySelectorAll('[data-assign-stat]')).forEach((s,i)=>s.value=p[i]);
+        };
+
         function renderDashboard() {
             const pcC = document.getElementById('party-view-container'), grC = document.getElementById('graveyard-view-container');
             if (!pcC || !grC) return; pcC.innerHTML = ''; grC.innerHTML = '';
@@ -237,17 +701,48 @@
                 const g = s.querySelector('#unassigned-grid'); unassigned.forEach(c => g.appendChild(createCard(c)));
             }
             characters.filter(c => c.isDeleted).forEach(c => grC.appendChild(createCard(c)));
+            const npcC = document.getElementById('npcs-view-container'), bstC = document.getElementById('beasts-view-container');
+            if (npcC) { npcC.innerHTML = ''; characters.filter(c => c.type === 'NPC' && !c.isDeleted).forEach(c => npcC.appendChild(createCard(c))); }
+            if (bstC) { bstC.innerHTML = ''; characters.filter(c => c.type === 'Beast' && !c.isDeleted).forEach(c => bstC.appendChild(createCard(c))); }
         }
 
         function createCard(c) {
-            const d = document.createElement('div'); d.className = `bg-gray-800 p-5 rounded-xl card border-l-4 shadow-xl ${c.status === 'dead' ? 'opacity-50' : ''}`;
-            d.style.borderColor = c.status === 'coma' ? '#f59e0b' : c.status === 'dead' ? '#4b5563' : '#10b981';
+            const d = document.createElement('div'); d.className = `bg-gray-800 p-5 rounded-xl card border-l-4 shadow-xl border-amber-600`;
             d.onclick = () => window.openSheet(c.id);
-            d.innerHTML = `<div class="flex items-center gap-4 mb-4"><div class="w-12 h-12 rounded-lg bg-gray-700 overflow-hidden">${c.imageSrc ? `<img src="${c.imageSrc}" class="w-full h-full object-cover">` : '<div class="w-full h-full flex items-center justify-center text-xl">👤</div>'}</div><div><h5 class="text-amber-500 font-serif font-bold">${c.name}</h5><p class="text-[10px] text-gray-400 uppercase font-black">${c.class || 'Class'} Lvl ${c.level || 1}</p></div></div>`;
+            d.innerHTML = `<div class="flex items-center gap-4 mb-4"><div class="w-12 h-12 rounded-lg bg-gray-700 overflow-hidden">${c.imageSrc ? `<img src="${c.imageSrc}" class="w-full h-full object-cover">` : '<div class="w-full h-full flex items-center justify-center text-xl">👤</div>'}</div><div><h5 class="text-amber-500 font-serif font-bold">${c.name}</h5><p class="text-[10px] text-gray-400 uppercase">${c.class || 'Class'} Lvl ${c.level || 1}</p></div></div>`;
             return d;
         }
 
-        // ... Rest of character logic from previous turn ...
+        const setupListeners = () => {
+            if (!user) return;
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), (snap) => {
+                characters = snap.docs.map(d => ({id: d.id, ...d.data()}));
+                renderDashboard();
+                if (activeCharId) syncSheetData();
+            }, (err) => console.error("Snapshot error:", err));
+
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'parties'), (snap) => {
+                parties = snap.docs.map(d => ({id: d.id, ...d.data()}));
+                renderDashboard();
+                if (activeCharId) syncSheetData();
+            });
+        };
+
+        const initAuth = async () => {
+            try {
+                let signedIn = false;
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    try { await signInWithCustomToken(auth, __initial_auth_token); signedIn = true; } catch (e) {}
+                }
+                if (!signedIn) await signInAnonymously(auth);
+                onAuthStateChanged(auth, (u) => {
+                    user = u;
+                    if (user) setupListeners();
+                });
+            } catch (err) { console.error("Firebase Auth failed:", err); }
+        };
+
+        document.addEventListener('input', (e) => { if (e.target.dataset.key || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') { if (autoSaveTimer) clearTimeout(autoSaveTimer); autoSaveTimer = setTimeout(() => window.saveCurrentCharacter(), 1000); } });
         initAuth();
     </script>
 </body>
