@@ -38,12 +38,13 @@
         .header-name-val { font-size: 32px; font-weight: 900; color: #1e293b; font-family: 'Noto Sans', sans-serif; width: 100%; border:none; outline:none; background:transparent; }
         .header-input-val { font-size: 14px; font-weight: 700; color: #334155; width: 100%; background:transparent; border:none; outline:none; font-family: 'Noto Sans', sans-serif; }
 
-        /* ATTRIBUTE BOXES (Screenshot 5 Match) */
+        /* SPECIAL FIELD STYLE (Proficiency/Passives) */
         .special-field-group { display: flex; flex-direction: column; align-items: center; width: 100%; }
         .special-field-input-wrapper { display: flex; align-items: center; border-bottom: 2px solid #cbd5e1; width: 100%; padding-bottom: 2px; }
         .special-field-val { font-size: 28px; font-weight: 900; color: #1e293b; text-align: center; font-family: 'Noto Sans', sans-serif; width: 100%; border: none; background: transparent; }
         .special-field-label { font-size: 9px; font-weight: 900; color: #94a3b8; text-transform: uppercase; margin-top: 4px; text-align: center; width: 100%; font-family: 'Noto Sans', sans-serif; }
 
+        /* ATTRIBUTE BOXES */
         .attr-item { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
         .attr-mod-box {
             width: 54px; height: 54px;
@@ -57,7 +58,7 @@
         .attr-mod-box .modifier { font-size: 18px; font-weight: 900; color: #1e293b; font-family: 'Noto Sans', sans-serif; }
         .attr-score-val { font-size: 22px; font-weight: 800; color: #334155; width: 50px; text-align: center; font-family: 'Noto Sans', sans-serif; }
 
-        /* VITALS BADGES (Screenshot 7 Match) */
+        /* VITALS BADGES */
         .vital-badge { aspect-ratio: 1/1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; width: 65px; height: 65px; margin: 0 auto; }
         .vital-shield { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 5 L10 20 L10 50 C10 75 50 95 50 95 C50 95 90 75 90 50 L90 20 Z' fill='%23eff6ff' stroke='%233b82f6' stroke-width='4'/%3E%3C/svg%3E"); background-size: 100% 100%; }
         .vital-square-init { border: 3px solid #d97706; border-radius: 12px; background-color: #fffbeb; }
@@ -65,7 +66,7 @@
         .vital-label { font-size: 7px; font-weight: 900; text-transform: uppercase; position: absolute; top: 10%; color: #64748b; width: 100%; text-align: center; font-family: 'Noto Sans', sans-serif; }
         .vital-input { width: 90%; text-align: center; font-size: 18px; font-weight: 900; background: transparent; border: none !important; color: #1e293b; margin-top: 8px; font-family: 'Noto Sans', sans-serif; }
 
-        /* DEATH & COMA (Screenshot 9 Match) */
+        /* DEATH & COMA */
         .death-saves-label { font-size: 9px; font-weight: 900; color: #94a3b8; text-transform: uppercase; font-family: 'Noto Sans', sans-serif; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 4px; display: block; width: 100%; }
         .ds-status-label { font-size: 10px; font-weight: 900; text-transform: uppercase; margin-bottom: 6px; font-family: 'Noto Sans', sans-serif; }
         .ds-dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #cbd5e1; cursor: pointer; transition: all 0.2s; background: white; }
@@ -73,7 +74,7 @@
         .ds-dot.checked-fail { background: #dc2626; border-color: #7f1d1d; box-shadow: inset 0 0 0 3px white; }
         .rounds-val { font-size: 48px; font-weight: 900; color: #1e293b; font-family: 'Noto Sans', sans-serif; width: 80px; text-align: center; border-bottom: 2px solid #cbd5e1; }
 
-        /* WEAPON TABLE (Fixed Grid) */
+        /* WEAPON TABLE */
         .equip-table-header { 
             font-size: 8px; font-weight: 900; color: #94a3b8; text-transform: uppercase; 
             display: grid; grid-template-columns: 2fr 1fr 1.5fr 30px; gap: 8px; 
@@ -85,7 +86,7 @@
         }
         .atk-input { font-family: 'Noto Sans', sans-serif; font-size: 11px; font-weight: 700; color: #1e293b; border: none; background: transparent; width: 100%; }
 
-        /* STRESS & TRAUMA (Screenshot 6 Match) */
+        /* STRESS & TRAUMA */
         .stress-container { border-bottom: 2px solid #e2e8f0; padding-bottom: 4px; display: inline-block; }
         .stress-input-val { font-size: 44px; font-weight: 900; color: #1e293b; text-align: center; width: 75px; font-family: 'Noto Sans', sans-serif; }
         .stress-sub-label { font-size: 9px; font-weight: 900; color: #94a3b8; text-transform: uppercase; margin-top: 4px; font-family: 'Noto Sans', sans-serif; }
@@ -96,16 +97,13 @@
         .currency-label { font-size: 8px; font-weight: 900; color: #94a3b8; display: block; font-family: 'Noto Sans', sans-serif; margin-bottom: 2px; }
         .currency-input { font-size: 15px; font-weight: 900; text-align: center; color: #1e293b; width: 100%; font-family: 'Noto Sans', sans-serif; border: none; background: transparent; }
 
-        /* DYNAMIC MOVES (Screenshot 8) */
+        /* DYNAMIC MOVES */
         .lvl-card { background: #fdfaf3; border: 1px solid #dcd3c0; border-radius: 8px; padding: 16px; display: flex; flex-direction: column; min-height: 140px; box-shadow: inset 0 0 10px rgba(0,0,0,0.02); }
         .lvl-header { font-family: 'Cinzel', serif; font-size: 11px; font-weight: 900; border-bottom: 2px solid #e8e0cd; margin-bottom: 12px; padding-bottom: 6px; color: #222; text-transform: uppercase; letter-spacing: 0.05em; text-align: left; }
         .move-entry { border-bottom: 1px solid #e8e0cd; padding: 10px 0; position: relative; }
         .move-entry:last-child { border-bottom: none; }
         .move-delete { position: absolute; top: 10px; right: 0; color: #ef4444; font-size: 14px; cursor: pointer; opacity: 0.4; transition: opacity 0.2s; }
         .move-delete:hover { opacity: 1; }
-        .move-input-name { font-weight: 900; font-size: 11px; color: #1e293b; text-transform: uppercase; font-family: 'Noto Sans', sans-serif; width: 100%; }
-        .move-input-dice { font-weight: 700; font-size: 10px; color: #3b82f6; font-family: 'Noto Sans', sans-serif; width: 100%; }
-        .move-input-desc { font-size: 10px; color: #64748b; line-height: 1.4; width: 100%; height: 50px; resize: none; border: none; background: transparent; }
         .add-move-btn { font-family: 'Noto Sans', sans-serif; font-size: 10px; font-weight: 900; color: #3b82f6; text-transform: uppercase; margin-top: auto; padding-top: 12px; cursor: pointer; text-align: center; }
 
         .floating-roller { position: fixed; bottom: 24px; right: 24px; z-index: 100; background: white; border-radius: 24px; border: 3px solid #1a1a1a; padding: 16px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); width: 300px; }
@@ -127,8 +125,6 @@
         .stat-row { display: flex; align-items: center; gap: 12px; padding: 10px 8px; border-bottom: 1px solid #f3f4f6; font-size: 11px; height: 42px; }
         .circle-check { appearance: none; width: 18px; height: 18px; border: 2px solid #9ca3af; border-radius: 50%; cursor: pointer; transition: all 0.2s; flex-shrink: 0; background-color: white; }
         .circle-check:checked { background-color: #333; border-color: #333; box-shadow: inset 0 0 0 3px white; }
-        .stat-label-text { flex-grow: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #374151; font-weight: 700; font-family: 'Noto Sans', sans-serif; text-transform: uppercase; }
-        .stat-mod-box { flex-shrink: 0; min-width: 35px; text-align: right; font-weight: 900; color: #000; font-size: 13px; font-family: 'Noto Sans', sans-serif; }
 
         .gen-num-badge { display: inline-block; background: #f3f4f6; color: #1e293b; font-weight: 900; padding: 4px 10px; border-radius: 6px; margin: 0 4px; font-family: 'Noto Sans', sans-serif; font-size: 16px; border: 1px solid #e2e8f0; }
         .assign-row { display: grid; grid-template-columns: 80px 1fr; gap: 12px; align-items: center; margin-bottom: 8px; text-align: left; }
@@ -177,14 +173,15 @@
                     <div class="flex items-center gap-2">
                         <span id="sheet-type-badge" class="bg-amber-600 px-3 py-1 rounded text-[9px] font-black uppercase font-sans">PC</span>
                         <button onclick="window.saveCurrentCharacter(true)" class="bg-green-700 hover:bg-green-600 px-4 py-1 rounded text-[10px] font-black uppercase tracking-widest text-white font-sans">SYNC</button>
-                        <button id="delete-char-btn" onclick="window.triggerDeleteModal()" class="bg-red-900 px-3 py-1 rounded text-[10px] font-black uppercase hidden text-white font-sans">Manage</button>
+                        <!-- UNHIDDEN MANAGE BUTTON -->
+                        <button id="delete-char-btn" onclick="window.triggerDeleteModal()" class="bg-red-900 px-3 py-1 rounded text-[10px] font-black uppercase text-white font-sans">Manage</button>
                     </div>
                 </div>
             </nav>
 
             <div class="max-w-7xl mx-auto p-4 md:p-8">
-                <!-- DM Oversight Panel -->
-                <div id="dm-oversight-panel" class="hidden-view mb-8 bg-gray-800 p-4 border-2 border-amber-500 rounded-lg">
+                <!-- DM Oversight -->
+                <div id="dm-oversight-panel" class="dm-panel hidden-view mb-8 bg-gray-800 p-4 border-2 border-amber-500 rounded-lg">
                     <div class="flex flex-col md:flex-row justify-between items-end gap-6">
                         <div class="flex-grow w-full">
                             <h4 class="text-[10px] font-black uppercase text-amber-500 mb-2 font-sans">DM Whisper Tool</h4>
@@ -202,7 +199,7 @@
                 </div>
 
                 <div id="pc-sheet-layout">
-                    <!-- HEADER -->
+                    <!-- HEADER BLOCK -->
                     <div class="sheet-card mb-6">
                         <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start text-gray-800">
                             <div class="md:col-span-12 grid grid-cols-4 gap-y-6 gap-x-8">
@@ -222,9 +219,10 @@
                                     <div class="header-input-group"><select id="party-select" data-key="partyId" class="header-input-val font-bold"><option value="">Unassigned</option></select></div>
                                     <label class="header-label">Party</label>
                                 </div>
-                                <div class="col-span-1"><div class="header-input-group"><input type="text" data-key="archetype" class="header-input-val" placeholder="Archetype"></div><label class="header-label">Archetype</label></div>
+                                <!-- Row 2 -->
+                                <div class="col-span-1"><div class="header-input-group"><input type="text" data-key="archetype" class="header-input-val" placeholder="Survivor"></div><label class="header-label">Archetype</label></div>
                                 <div class="col-span-1"><div class="header-input-group"><input type="text" data-key="belief" class="header-input-val" placeholder="Belief"></div><label class="header-label">Belief</label></div>
-                                <div class="col-span-1"><div class="header-input-group"><input type="text" data-key="race" class="header-input-val" placeholder="Race"></div><label class="header-label">Race</label></div>
+                                <div class="col-span-1"><div class="header-input-group"><input type="text" data-key="race" class="header-input-val" placeholder="Human"></div><label class="header-label">Race</label></div>
                                 <div class="col-span-1 flex gap-4">
                                     <div class="flex-1"><div class="header-input-group"><input type="text" data-key="background" class="header-input-val"></div><label class="header-label">Background</label></div>
                                     <div class="flex-1"><div class="header-input-group"><input type="text" data-key="alignment" class="header-input-val"></div><label class="header-label">Alignment</label></div>
@@ -234,7 +232,7 @@
                     </div>
 
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                        <!-- Column 1: Attributes & Saves -->
+                        <!-- Column 1 -->
                         <div class="lg:col-span-3 space-y-6">
                             <div class="sheet-card text-gray-800">
                                 <h3 class="flex justify-between items-center text-gray-800 font-black">Abilities & Modifiers <button onclick="window.openScoreGenModal()" class="bg-blue-100 text-[8px] px-2 py-0.5 rounded text-blue-700 font-black">GENERATE</button></h3>
@@ -254,7 +252,7 @@
                             <div class="sheet-card !p-0"><h3 class="pt-3 font-black">Skills</h3><div id="skills-container" class="max-h-[500px] overflow-y-auto pr-1 text-gray-800 pb-2 px-2"></div></div>
                         </div>
 
-                        <!-- Column 2: Health, Vitals, Recovery, Stress -->
+                        <!-- Column 2 -->
                         <div class="lg:col-span-4 space-y-4">
                             <div class="flex justify-center gap-6">
                                 <div class="vital-badge vital-shield"><div class="vital-label">AC</div><input type="number" class="vital-input" data-key="ac" placeholder="10"></div>
@@ -319,7 +317,7 @@
                             </div>
                         </div>
 
-                        <!-- Column 3: Equipment & Identity -->
+                        <!-- Column 3 -->
                         <div class="lg:col-span-5 space-y-4 text-gray-800">
                             <div class="sheet-card h-48 flex flex-col items-center justify-center border-2 border-dashed bg-gray-50 rounded-lg relative overflow-hidden">
                                 <img id="portrait-preview" class="hidden absolute inset-0 w-full h-full object-cover">
@@ -327,21 +325,16 @@
                                 <input type="file" onchange="window.handleImageUpload(event)" class="absolute inset-0 opacity-0 cursor-pointer">
                             </div>
 
-                            <div id="whisper-display-box" class="hidden-view">
-                                <div class="sheet-card !bg-purple-50 !border-purple-200">
-                                    <h3 class="!text-purple-700 font-black">Secret Whispers</h3>
-                                    <div id="whispers-list" class="space-y-2"></div>
-                                </div>
-                            </div>
+                            <div id="whisper-display-box" class="hidden-view"><div class="sheet-card !bg-purple-50 !border-purple-200 text-gray-800"><h3 class="!text-purple-700 font-black">Secret Whispers</h3><div id="whispers-list" class="space-y-1"></div></div></div>
 
                             <div class="sheet-card text-gray-800">
-                                <h3 class="!text-[11px] font-black !mb-4">Weapons & Tech Items</h3>
+                                <h3 class="!text-[11px] font-black !mb-4">Weapons & tech</h3>
                                 <div class="space-y-6">
                                     <div>
                                         <div class="equip-table-header"><span>Name</span><span class="text-center">Atk</span><span class="text-center">Dmg/Type</span><span></span></div>
                                         <div id="attacks-list" class="space-y-1 my-1"></div>
                                         <button onclick="window.addAttackItem()" class="w-full py-2 border-2 border-dashed text-[9px] font-black text-gray-400 uppercase hover:border-amber-400 transition-all font-sans font-bold">+ ADD WEAPON/ITEM</button>
-                                        <textarea data-key="combatNotes" class="w-full mt-3 h-14 p-2 bg-gray-50 rounded text-[11px]" placeholder="Attack notes, ammo..."></textarea>
+                                        <textarea data-key="combatNotes" class="w-full mt-3 h-14 p-2 bg-gray-50 rounded text-[11px]" placeholder="Attack notes..."></textarea>
                                     </div>
                                     <div class="prof-group">
                                         <label class="text-[9px] font-black uppercase text-gray-500 mb-2 block font-black">Proficiencies</label>
@@ -354,25 +347,19 @@
                                 </div>
                             </div>
 
-                            <!-- EQUIPMENT & INVENTORY SECTION -->
                             <div class="sheet-card text-gray-800">
-                                <h3 class="font-black">Equipment & Inventory</h3>
-                                <div class="prof-group">
-                                    <label class="text-[9px] font-black uppercase text-gray-500 mb-2 block font-black font-sans">Currency & Credits</label>
-                                    <div class="currency-grid">
-                                        <div class="currency-box"><span class="currency-label">SC</span><input type="number" data-key="cp" class="currency-input"></div>
-                                        <div class="currency-box"><span class="currency-label">CR</span><input type="number" data-key="sp" class="currency-input"></div>
-                                        <div class="currency-box"><span class="currency-label">BYT</span><input type="number" data-key="ep" class="currency-input"></div>
-                                        <div class="currency-box"><span class="currency-label">VT</span><input type="number" data-key="gp" class="currency-input"></div>
-                                    </div>
-                                    <label class="text-[9px] font-black uppercase text-gray-500 mb-2 block font-black font-sans">Bag & Inventory</label>
-                                    <textarea data-key="equipment" class="w-full h-32 p-3 bg-gray-50 rounded font-serif text-[11px] leading-relaxed" placeholder="Detailed Inventory..."></textarea>
+                                <h3 class="font-black">Equipment & Currency</h3>
+                                <div class="currency-grid">
+                                    <div class="currency-box"><span class="currency-label">SC</span><input type="number" data-key="cp" class="currency-input"></div>
+                                    <div class="currency-box"><span class="currency-label">CR</span><input type="number" data-key="sp" class="currency-input"></div>
+                                    <div class="currency-box"><span class="currency-label">BYT</span><input type="number" data-key="ep" class="currency-input"></div>
+                                    <div class="currency-box"><span class="currency-label">VT</span><input type="number" data-key="gp" class="currency-input"></div>
                                 </div>
+                                <textarea data-key="equipment" class="w-full h-32 p-3 bg-gray-50 rounded font-serif text-[11px] leading-relaxed" placeholder="Detailed Inventory..."></textarea>
                             </div>
 
-                            <!-- IDENTITY & FEATURES SECTION -->
                             <div class="sheet-card text-gray-800">
-                                <h3 class="font-black">Identity & Features</h3>
+                                <h3>Identity & Lore</h3>
                                 <div class="space-y-4">
                                     <div class="grid grid-cols-2 gap-4">
                                         <div class="header-input-group"><input type="text" data-key="traits" class="header-input-val"><label class="header-label">Personality Traits</label></div>
@@ -445,22 +432,34 @@
         </div>
     </div>
 
+    <div id="party-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-[300] hidden text-white">
+        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border-2 border-indigo-600 shadow-2xl text-center">
+            <h3 class="text-xl font-serif text-indigo-400 font-bold mb-4 uppercase tracking-widest">New Party</h3>
+            <input type="text" id="party-name-input" class="w-full bg-gray-900 text-white rounded-lg p-3 mb-6 border border-gray-700 font-sans" placeholder="Name...">
+            <div class="flex gap-2">
+                <button onclick="window.createParty()" class="flex-1 bg-indigo-600 text-white py-3 rounded-xl font-bold uppercase text-xs">Form</button>
+                <button onclick="document.getElementById('party-modal').classList.add('hidden')" class="flex-1 bg-gray-700 text-gray-300 py-3 rounded-xl font-bold uppercase text-xs font-bold">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MANAGE MODAL -->
     <div id="delete-modal" class="fixed inset-0 bg-black/90 flex items-center justify-center z-[300] hidden text-gray-800">
         <div class="bg-white p-8 rounded-2xl w-full max-w-sm border-4 border-red-600 shadow-2xl text-center font-sans">
             <div id="delete-stage-1">
                 <h3 class="text-2xl font-serif text-red-700 font-bold mb-4 uppercase font-black">Manage Record</h3>
                 <div class="flex flex-col gap-3">
-                    <button id="archive-btn" onclick="window.archiveCharacter()" class="bg-indigo-600 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-md font-bold">Archive (Bury)</button>
-                    <button id="restore-btn" onclick="window.restoreCharacter()" class="bg-green-600 text-white py-3 rounded-xl font-bold uppercase text-xs hidden font-bold">Restore to Party</button>
-                    <button onclick="window.showPermDeleteConfirm()" class="bg-red-600 text-white py-3 rounded-xl font-bold uppercase text-xs font-bold">Delete Forever</button>
-                    <button onclick="document.getElementById('delete-modal').classList.add('hidden')" class="bg-gray-100 py-3 rounded-xl font-bold uppercase text-xs font-bold">Cancel</button>
+                    <button id="archive-btn" onclick="window.archiveCharacter()" class="bg-indigo-600 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-md font-bold font-sans">Archive (Bury)</button>
+                    <button id="restore-btn" onclick="window.restoreCharacter()" class="bg-green-600 text-white py-3 rounded-xl font-bold uppercase text-xs hidden font-bold font-sans">Restore to Party</button>
+                    <button onclick="window.showPermDeleteConfirm()" class="bg-red-600 text-white py-3 rounded-xl font-bold uppercase text-xs font-bold font-sans">Delete Forever</button>
+                    <button onclick="document.getElementById('delete-modal').classList.add('hidden')" class="bg-gray-100 py-3 rounded-xl font-bold uppercase text-xs font-bold font-sans">Cancel</button>
                 </div>
             </div>
             <div id="delete-stage-confirm" class="hidden">
-                <h3 class="text-2xl font-serif text-red-700 font-bold mb-4 uppercase font-black">Confirm Delete?</h3>
+                <h3 class="text-2xl font-serif text-red-700 font-bold mb-4 uppercase font-black">Confirm Erase?</h3>
                 <div class="flex flex-col gap-3">
-                    <button onclick="window.executePermDelete()" class="bg-red-700 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-lg font-bold">Confirm Delete</button>
-                    <button onclick="window.resetDeleteModal()" class="bg-gray-100 py-3 rounded-xl font-bold uppercase text-xs font-bold">No</button>
+                    <button onclick="window.executePermDelete()" class="bg-red-700 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-lg font-bold font-sans">Confirm Delete</button>
+                    <button onclick="window.resetDeleteModal()" class="bg-gray-100 py-3 rounded-xl font-bold uppercase text-xs font-bold font-sans">No, Go Back</button>
                 </div>
             </div>
         </div>
@@ -487,18 +486,6 @@
         </div>
     </div>
 
-    <!-- PARTY MODAL -->
-    <div id="party-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-[300] hidden text-white">
-        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border-2 border-indigo-600 shadow-2xl text-center">
-            <h3 class="text-xl font-serif text-indigo-400 font-bold mb-4 uppercase tracking-widest">New Party</h3>
-            <input type="text" id="party-name-input" class="w-full bg-gray-900 text-white rounded-lg p-3 mb-6 border border-gray-700 font-sans" placeholder="Name...">
-            <div class="flex gap-2">
-                <button onclick="window.createParty()" class="flex-1 bg-indigo-600 text-white py-3 rounded-xl font-bold uppercase text-xs">Form</button>
-                <button onclick="document.getElementById('party-modal').classList.add('hidden')" class="flex-1 bg-gray-700 text-gray-300 py-3 rounded-xl font-bold uppercase text-xs font-bold">Cancel</button>
-            </div>
-        </div>
-    </div>
-
     <!-- ROLL RESULT OVERLAY -->
     <div id="dice-result-overlay" class="fixed inset-0 bg-black/90 flex items-center justify-center z-[500] hidden text-white" onclick="this.classList.add('hidden')">
         <div class="text-center p-12">
@@ -511,7 +498,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, updateDoc, deleteDoc, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, doc, updateDoc, deleteDoc, onSnapshot, addDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI",
@@ -532,6 +519,7 @@
 
         const STATS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
         const STAT_NAMES_SHORT = { str: 'STR', dex: 'DEX', con: 'CON', int: 'INT', wis: 'WIS', cha: 'CHA' };
+        
         const SKILLS = [
             {n:'Acrobatics (Dex)', s:'dex'},{n:'Animal Handling (Wis)', s:'wis'},{n:'Arcana (Int)', s:'int'},
             {n:'Athletics (Str)', s:'str'},{n:'Deception (Cha)', s:'cha'},{n:'History (Int)', s:'int'},
@@ -541,14 +529,15 @@
             {n:'Sleight of Hand (Dex)', s:'dex'},{n:'Stealth (Dex)', s:'dex'},{n:'Survival (Wis)', s:'wis'}
         ];
 
-        // --- GLOBAL HOISTED FUNCTIONS ---
+        // --- HOISTED UI FUNCTIONS ---
 
-        window.showToast = function(m) {
+        function showToast(m) {
             const t = document.getElementById('toast');
             if (t) { t.textContent = m; t.style.opacity = 1; setTimeout(() => t.style.opacity = 0, 3000); }
-        };
+        }
+        window.showToast = showToast;
 
-        window.calcMods = function() {
+        function calcMods() {
             STATS.forEach(s => {
                 const el = document.querySelector(`[data-key="${s}"]`);
                 const v = parseInt(el?.value) || 10;
@@ -567,9 +556,10 @@
                 const sel = document.getElementById(`skill-mod-${safeKey}`); 
                 if (sel) sel.textContent = (m + (sp ? p : 0) >= 0 ? '+' : '') + (m + (sp ? p : 0));
             });
-        };
+        }
+        window.calcMods = calcMods;
 
-        window.renderDashboard = function() {
+        function renderDashboard() {
             const pcC = document.getElementById('party-view-container'), grC = document.getElementById('graveyard-view-container');
             if (!pcC || !grC) return; pcC.innerHTML = ''; grC.innerHTML = '';
             const activePCs = characters.filter(c => c.type === 'PC' && !c.isDeleted);
@@ -587,9 +577,10 @@
                 const g = s.querySelector('#unassigned-grid'); unassigned.forEach(c => g.appendChild(window.createCard(c)));
             }
             characters.filter(c => c.isDeleted).forEach(c => grC.appendChild(window.createCard(c)));
-        };
+        }
+        window.renderDashboard = renderDashboard;
 
-        window.createCard = function(c) {
+        function createCard(c) {
             const d = document.createElement('div'); d.className = `bg-gray-800 p-4 rounded-xl card border-l-4 shadow-xl border-amber-600 text-white`;
             d.onclick = () => window.openSheet(c.id);
             const status = c.status || 'alive';
@@ -607,9 +598,10 @@
                 </div>
             `;
             return d;
-        };
+        }
+        window.createCard = createCard;
 
-        window.initSheetUI = function() {
+        function initSheetUI() {
             const sC = document.getElementById('stats-container'), svC = document.getElementById('saves-container'), skC = document.getElementById('skills-container');
             if (!sC) return; sC.innerHTML = ''; svC.innerHTML = ''; skC.innerHTML = '';
             STATS.forEach(s => {
@@ -622,9 +614,10 @@
                 skC.innerHTML += `<div class="stat-row"><input type="checkbox" class="circle-check" data-key="prof_${safeKey}" onchange="window.calcMods()"><span class="stat-label-text text-gray-700 font-bold font-sans">${sk.n}</span><span class="stat-mod-box rollable" id="${id}" onclick="window.rollSkill('${sk.n}')">+0</span></div>`;
             });
             window.renderMovesGrid();
-        };
+        }
+        window.initSheetUI = initSheetUI;
 
-        window.syncSheetData = async function() {
+        async function syncSheetData() {
             const char = characters.find(c => c.id === activeCharId); if (!char) return;
             const ps = document.getElementById('party-select'); if (ps) { ps.innerHTML = '<option value="">Unassigned</option>'; parties.forEach(p => ps.innerHTML += `<option value="${p.id}">${p.name}</option>`); }
             document.querySelectorAll('#pc-sheet-layout [data-key]').forEach(el => {
@@ -634,7 +627,7 @@
             
             const sCont = document.getElementById('sheet-container'); 
             if (sCont) sCont.className = char.status === 'coma' ? 'status-coma' : char.status === 'dead' ? 'status-dead' : '';
-            
+
             const whisperList = document.getElementById('whispers-list');
             if (whisperList) {
                 const whispers = char.dmWhispers || [];
@@ -687,6 +680,7 @@
             }
             window.renderMovesGrid();
         };
+        window.syncSheetData = syncSheetData;
 
         window.openSheet = function(id) { 
             activeCharId = id; 
