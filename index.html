@@ -38,7 +38,7 @@
         .header-name-val { font-size: 32px; font-weight: 900; color: #1e293b; font-family: 'Noto Sans', sans-serif; width: 100%; border:none; outline:none; background:transparent; }
         .header-input-val { font-size: 14px; font-weight: 700; color: #334155; width: 100%; background:transparent; border:none; outline:none; font-family: 'Noto Sans', sans-serif; }
 
-        /* SPECIAL FIELD STYLE (Proficiency/Passives) */
+        /* SPECIAL FIELD STYLE */
         .special-field-group { display: flex; flex-direction: column; align-items: center; width: 100%; }
         .special-field-input-wrapper { display: flex; align-items: center; border-bottom: 2px solid #cbd5e1; width: 100%; padding-bottom: 2px; }
         .special-field-val { font-size: 28px; font-weight: 900; color: #1e293b; text-align: center; font-family: 'Noto Sans', sans-serif; width: 100%; border: none; background: transparent; }
@@ -74,7 +74,7 @@
         .ds-dot.checked-fail { background: #dc2626; border-color: #7f1d1d; box-shadow: inset 0 0 0 3px white; }
         .rounds-val { font-size: 48px; font-weight: 900; color: #1e293b; font-family: 'Noto Sans', sans-serif; width: 80px; text-align: center; border-bottom: 2px solid #cbd5e1; }
 
-        /* WEAPON TABLE */
+        /* WEAPON TABLE (Fixed Alignment) */
         .equip-table-header { 
             font-size: 8px; font-weight: 900; color: #94a3b8; text-transform: uppercase; 
             display: grid; grid-template-columns: 2fr 1fr 1.5fr 30px; gap: 8px; 
@@ -86,12 +86,12 @@
         }
         .atk-input { font-family: 'Noto Sans', sans-serif; font-size: 11px; font-weight: 700; color: #1e293b; border: none; background: transparent; width: 100%; }
 
-        /* STRESS & TRAUMA */
+        /* STRESS & TRAUMA (Screenshot 6 Match) */
         .stress-container { border-bottom: 2px solid #e2e8f0; padding-bottom: 4px; display: inline-block; }
         .stress-input-val { font-size: 44px; font-weight: 900; color: #1e293b; text-align: center; width: 75px; font-family: 'Noto Sans', sans-serif; }
         .stress-sub-label { font-size: 9px; font-weight: 900; color: #94a3b8; text-transform: uppercase; margin-top: 4px; font-family: 'Noto Sans', sans-serif; }
 
-        /* CURRENCY & INVENTORY */
+        /* CURRENCY */
         .currency-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; }
         .currency-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 4px; text-align: center; }
         .currency-label { font-size: 8px; font-weight: 900; color: #94a3b8; display: block; font-family: 'Noto Sans', sans-serif; margin-bottom: 2px; }
@@ -106,6 +106,7 @@
         .move-delete:hover { opacity: 1; }
         .add-move-btn { font-family: 'Noto Sans', sans-serif; font-size: 10px; font-weight: 900; color: #3b82f6; text-transform: uppercase; margin-top: auto; padding-top: 12px; cursor: pointer; text-align: center; }
 
+        /* QUICK ROLLER Panel */
         .floating-roller { position: fixed; bottom: 24px; right: 24px; z-index: 100; background: white; border-radius: 24px; border: 3px solid #1a1a1a; padding: 16px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); width: 300px; }
         .roll-mode.active { background: #374151 !important; color: white !important; border-color: #374151 !important; }
         .dice-grid-btn { width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border: 3px solid; border-radius: 14px; font-weight: 900; font-size: 15px; transition: transform 0.1s; cursor: pointer; font-family: 'Noto Sans', sans-serif; }
@@ -116,7 +117,7 @@
         .badge-coma { background: #fef3c7; color: #92400e; }
         .badge-dead { background: #f3f4f6; color: #4b5563; }
 
-        .card { transition: all 0.2s; border-left-width: 6px; cursor: pointer; border-radius: 12px; }
+        .card { transition: all 0.2s; border-left-width: 6px; cursor: pointer; border-radius: 12px; position: relative; }
         .card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.5); }
         .hidden-view { display: none !important; }
         input, textarea, select { background: transparent; border: none; font-size: 13px; color: #333; width: 100%; }
@@ -125,11 +126,16 @@
         .stat-row { display: flex; align-items: center; gap: 12px; padding: 10px 8px; border-bottom: 1px solid #f3f4f6; font-size: 11px; height: 42px; }
         .circle-check { appearance: none; width: 18px; height: 18px; border: 2px solid #9ca3af; border-radius: 50%; cursor: pointer; transition: all 0.2s; flex-shrink: 0; background-color: white; }
         .circle-check:checked { background-color: #333; border-color: #333; box-shadow: inset 0 0 0 3px white; }
+        .stat-label-text { flex-grow: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #374151; font-weight: 700; font-family: 'Noto Sans', sans-serif; text-transform: uppercase; }
+        .stat-mod-box { flex-shrink: 0; min-width: 35px; text-align: right; font-weight: 900; color: #000; font-size: 13px; font-family: 'Noto Sans', sans-serif; }
 
         .gen-num-badge { display: inline-block; background: #f3f4f6; color: #1e293b; font-weight: 900; padding: 4px 10px; border-radius: 6px; margin: 0 4px; font-family: 'Noto Sans', sans-serif; font-size: 16px; border: 1px solid #e2e8f0; }
         .assign-row { display: grid; grid-template-columns: 80px 1fr; gap: 12px; align-items: center; margin-bottom: 8px; text-align: left; }
         .assign-label { font-weight: 900; color: #64748b; font-size: 10px; text-transform: uppercase; }
         .assign-select { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 8px; padding: 4px 8px; font-weight: 900; color: #1e293b; }
+        
+        .whisper-box { background: #f5f3ff; border-left: 4px solid #7c3aed; padding: 10px 12px; margin-top: 8px; border-radius: 4px; display: flex; justify-content: space-between; align-items: flex-start; color: #111; font-style: italic; }
+        .whisper-delete { color: #ef4444; font-weight: 900; cursor: pointer; padding-left: 10px; font-style: normal; }
     </style>
 </head>
 <body class="min-h-screen">
@@ -159,6 +165,14 @@
                 </div>
             </header>
 
+            <div class="flex justify-between items-center mb-8">
+                <h2 id="view-title" class="text-2xl font-serif text-gray-400 uppercase font-bold tracking-widest">Active Party</h2>
+                <div class="flex gap-2">
+                    <button onclick="window.openPartyModal()" class="bg-indigo-700 text-white px-4 py-2.5 rounded-lg text-xs font-black uppercase shadow-lg font-sans">+ NEW PARTY</button>
+                    <button id="btn-create-pc-main" onclick="window.createChar('PC')" class="bg-green-700 text-white px-6 py-2.5 rounded-lg text-xs font-black uppercase shadow-lg font-sans">+ NEW PC</button>
+                </div>
+            </div>
+
             <div id="party-view-container" class="space-y-12"></div>
             <div id="graveyard-view-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden-view"></div>
         </div>
@@ -173,15 +187,14 @@
                     <div class="flex items-center gap-2">
                         <span id="sheet-type-badge" class="bg-amber-600 px-3 py-1 rounded text-[9px] font-black uppercase font-sans">PC</span>
                         <button onclick="window.saveCurrentCharacter(true)" class="bg-green-700 hover:bg-green-600 px-4 py-1 rounded text-[10px] font-black uppercase tracking-widest text-white font-sans">SYNC</button>
-                        <!-- UNHIDDEN MANAGE BUTTON -->
-                        <button id="delete-char-btn" onclick="window.triggerDeleteModal()" class="bg-red-900 px-3 py-1 rounded text-[10px] font-black uppercase text-white font-sans">Manage</button>
+                        <button id="manage-char-btn" onclick="window.triggerDeleteModal()" class="bg-red-900 px-3 py-1 rounded text-[10px] font-black uppercase text-white font-sans">Manage</button>
                     </div>
                 </div>
             </nav>
 
             <div class="max-w-7xl mx-auto p-4 md:p-8">
-                <!-- DM Oversight -->
-                <div id="dm-oversight-panel" class="dm-panel hidden-view mb-8 bg-gray-800 p-4 border-2 border-amber-500 rounded-lg">
+                <!-- DM Oversight Panel -->
+                <div id="dm-oversight-panel" class="hidden-view mb-8 bg-gray-800 p-4 border-2 border-amber-500 rounded-lg">
                     <div class="flex flex-col md:flex-row justify-between items-end gap-6">
                         <div class="flex-grow w-full">
                             <h4 class="text-[10px] font-black uppercase text-amber-500 mb-2 font-sans">DM Whisper Tool</h4>
@@ -219,10 +232,9 @@
                                     <div class="header-input-group"><select id="party-select" data-key="partyId" class="header-input-val font-bold"><option value="">Unassigned</option></select></div>
                                     <label class="header-label">Party</label>
                                 </div>
-                                <!-- Row 2 -->
-                                <div class="col-span-1"><div class="header-input-group"><input type="text" data-key="archetype" class="header-input-val" placeholder="Survivor"></div><label class="header-label">Archetype</label></div>
+                                <div class="col-span-1"><div class="header-input-group"><input type="text" data-key="archetype" class="header-input-val" placeholder="Archetype"></div><label class="header-label">Archetype</label></div>
                                 <div class="col-span-1"><div class="header-input-group"><input type="text" data-key="belief" class="header-input-val" placeholder="Belief"></div><label class="header-label">Belief</label></div>
-                                <div class="col-span-1"><div class="header-input-group"><input type="text" data-key="race" class="header-input-val" placeholder="Human"></div><label class="header-label">Race</label></div>
+                                <div class="col-span-1"><div class="header-input-group"><input type="text" data-key="race" class="header-input-val" placeholder="Race"></div><label class="header-label">Race</label></div>
                                 <div class="col-span-1 flex gap-4">
                                     <div class="flex-1"><div class="header-input-group"><input type="text" data-key="background" class="header-input-val"></div><label class="header-label">Background</label></div>
                                     <div class="flex-1"><div class="header-input-group"><input type="text" data-key="alignment" class="header-input-val"></div><label class="header-label">Alignment</label></div>
@@ -232,7 +244,7 @@
                     </div>
 
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                        <!-- Column 1 -->
+                        <!-- Column 1: Attributes, Saves, Skills -->
                         <div class="lg:col-span-3 space-y-6">
                             <div class="sheet-card text-gray-800">
                                 <h3 class="flex justify-between items-center text-gray-800 font-black">Abilities & Modifiers <button onclick="window.openScoreGenModal()" class="bg-blue-100 text-[8px] px-2 py-0.5 rounded text-blue-700 font-black">GENERATE</button></h3>
@@ -246,13 +258,13 @@
                                         <label class="special-field-label">Pass. Perception</label>
                                     </div>
                                 </div>
-                                <div id="stats-container" class="space-y-4 px-2"></div>
+                                <div id="stats-container" class="space-y-4 px-2 text-gray-800"></div>
                             </div>
                             <div class="sheet-card !p-0"><h3 class="pt-3 font-black">Saves</h3><div id="saves-container" class="text-gray-800 pb-2 px-2"></div></div>
                             <div class="sheet-card !p-0"><h3 class="pt-3 font-black">Skills</h3><div id="skills-container" class="max-h-[500px] overflow-y-auto pr-1 text-gray-800 pb-2 px-2"></div></div>
                         </div>
 
-                        <!-- Column 2 -->
+                        <!-- Column 2: Vitals & Restoration -->
                         <div class="lg:col-span-4 space-y-4">
                             <div class="flex justify-center gap-6">
                                 <div class="vital-badge vital-shield"><div class="vital-label">AC</div><input type="number" class="vital-input" data-key="ac" placeholder="10"></div>
@@ -272,8 +284,8 @@
                                     <label class="text-[8px] font-black uppercase text-gray-400 mt-1 font-sans">Temporary Points</label>
                                 </div>
                                 <div class="flex gap-4 justify-center mt-8">
-                                    <button onclick="window.rest('short')" class="bg-blue-50 text-blue-700 px-6 py-2 rounded-lg text-[9px] font-black uppercase shadow-sm font-sans">Short Rest</button>
-                                    <button onclick="window.rest('long')" class="bg-blue-600 text-white px-6 py-2 rounded-lg text-[10px] font-black uppercase shadow-lg font-sans">Long Rest</button>
+                                    <button onclick="window.rest('short')" class="bg-blue-50 text-blue-700 px-6 py-2 rounded-lg text-[9px] font-black uppercase shadow-sm">Short Rest</button>
+                                    <button onclick="window.rest('long')" class="bg-blue-600 text-white px-6 py-2 rounded-lg text-[10px] font-black uppercase shadow-lg">Long Rest</button>
                                 </div>
                             </div>
 
@@ -317,7 +329,7 @@
                             </div>
                         </div>
 
-                        <!-- Column 3 -->
+                        <!-- Column 3: Equipment & Identity -->
                         <div class="lg:col-span-5 space-y-4 text-gray-800">
                             <div class="sheet-card h-48 flex flex-col items-center justify-center border-2 border-dashed bg-gray-50 rounded-lg relative overflow-hidden">
                                 <img id="portrait-preview" class="hidden absolute inset-0 w-full h-full object-cover">
@@ -428,7 +440,7 @@
                 <button onclick="window.generateScores('heroic')" class="bg-indigo-600 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-md">Heroic</button>
             </div>
             <div id="gen-apply-area" class="hidden space-y-4 mt-6"><button onclick="window.applyScores()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-lg">Apply Stats</button></div>
-            <button onclick="document.getElementById('score-gen-modal').classList.add('hidden')" class="mt-4 text-[10px] font-bold text-gray-400 uppercase font-black">Close</button>
+            <button onclick="document.getElementById('score-gen-modal').classList.add('hidden')" class="mt-4 text-[10px] font-bold text-gray-400 uppercase font-black font-bold">Close</button>
         </div>
     </div>
 
@@ -443,7 +455,6 @@
         </div>
     </div>
 
-    <!-- MANAGE MODAL -->
     <div id="delete-modal" class="fixed inset-0 bg-black/90 flex items-center justify-center z-[300] hidden text-gray-800">
         <div class="bg-white p-8 rounded-2xl w-full max-w-sm border-4 border-red-600 shadow-2xl text-center font-sans">
             <div id="delete-stage-1">
@@ -465,6 +476,7 @@
         </div>
     </div>
 
+    <!-- QUICK ROLLER -->
     <div id="quick-roll-bar" class="hidden-view floating-roller text-gray-800">
         <div class="flex items-center justify-between mb-4 border-b pb-3">
             <div class="flex items-center gap-2">
@@ -529,15 +541,14 @@
             {n:'Sleight of Hand (Dex)', s:'dex'},{n:'Stealth (Dex)', s:'dex'},{n:'Survival (Wis)', s:'wis'}
         ];
 
-        // --- HOISTED UI FUNCTIONS ---
+        // --- GLOBAL HOISTED FUNCTIONS ---
 
-        function showToast(m) {
+        window.showToast = function(m) {
             const t = document.getElementById('toast');
             if (t) { t.textContent = m; t.style.opacity = 1; setTimeout(() => t.style.opacity = 0, 3000); }
-        }
-        window.showToast = showToast;
+        };
 
-        function calcMods() {
+        window.calcMods = function() {
             STATS.forEach(s => {
                 const el = document.querySelector(`[data-key="${s}"]`);
                 const v = parseInt(el?.value) || 10;
@@ -556,16 +567,15 @@
                 const sel = document.getElementById(`skill-mod-${safeKey}`); 
                 if (sel) sel.textContent = (m + (sp ? p : 0) >= 0 ? '+' : '') + (m + (sp ? p : 0));
             });
-        }
-        window.calcMods = calcMods;
+        };
 
-        function renderDashboard() {
+        window.renderDashboard = function() {
             const pcC = document.getElementById('party-view-container'), grC = document.getElementById('graveyard-view-container');
             if (!pcC || !grC) return; pcC.innerHTML = ''; grC.innerHTML = '';
             const activePCs = characters.filter(c => c.type === 'PC' && !c.isDeleted);
             parties.forEach(p => {
                 const s = document.createElement('div'); s.className = "bg-gray-900/40 p-4 rounded-xl border border-gray-800 shadow-xl mb-6 text-white";
-                s.innerHTML = `<h3 class="text-indigo-400 font-serif font-bold uppercase text-[9px] mb-3 tracking-widest px-2 font-black">${p.name}</h3><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="party-grid-${p.id}"></div>`;
+                s.innerHTML = `<h3 class="text-indigo-400 font-serif font-bold uppercase text-[9px] mb-3 tracking-widest px-2 font-black font-serif">${p.name}</h3><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="party-grid-${p.id}"></div>`;
                 pcC.appendChild(s);
                 const g = s.querySelector(`#party-grid-${p.id}`); activePCs.filter(c => c.partyId === p.id).forEach(c => g.appendChild(window.createCard(c)));
             });
@@ -577,16 +587,15 @@
                 const g = s.querySelector('#unassigned-grid'); unassigned.forEach(c => g.appendChild(window.createCard(c)));
             }
             characters.filter(c => c.isDeleted).forEach(c => grC.appendChild(window.createCard(c)));
-        }
-        window.renderDashboard = renderDashboard;
+        };
 
-        function createCard(c) {
+        window.createCard = function(c) {
             const d = document.createElement('div'); d.className = `bg-gray-800 p-4 rounded-xl card border-l-4 shadow-xl border-amber-600 text-white`;
             d.onclick = () => window.openSheet(c.id);
             const status = c.status || 'alive';
             const badgeClass = status === 'alive' ? 'badge-alive' : status === 'coma' ? 'badge-coma' : 'badge-dead';
             d.innerHTML = `
-                <div class="flex items-center gap-3 text-white">
+                <div class="flex items-center gap-3">
                     <div class="w-12 h-12 rounded bg-gray-700 overflow-hidden flex items-center justify-center text-sm font-sans flex-shrink-0">
                         ${c.imageSrc ? `<img src="${c.imageSrc}" class="w-full h-full object-cover">` : '👤'}
                     </div>
@@ -598,14 +607,13 @@
                 </div>
             `;
             return d;
-        }
-        window.createCard = createCard;
+        };
 
-        function initSheetUI() {
+        window.initSheetUI = function() {
             const sC = document.getElementById('stats-container'), svC = document.getElementById('saves-container'), skC = document.getElementById('skills-container');
             if (!sC) return; sC.innerHTML = ''; svC.innerHTML = ''; skC.innerHTML = '';
             STATS.forEach(s => {
-                sC.innerHTML += `<div class="attr-item"><div class="attr-mod-box"><span class="shorthand">${s}</span><span id="mod-${s}" class="modifier">+0</span></div><input type="number" data-key="${s}" class="attr-score-val" value="10" onchange="window.calcMods()"></div>`;
+                sC.innerHTML += `<div class="attr-item"><div class="attr-mod-box"><span class="shorthand font-sans">${s}</span><span id="mod-${s}" class="modifier font-sans">+0</span></div><input type="number" data-key="${s}" class="attr-score-val font-sans" value="10" onchange="window.calcMods()"></div>`;
                 svC.innerHTML += `<div class="stat-row"><input type="checkbox" class="circle-check" data-key="save_prof_${s}" onchange="window.calcMods()"><span class="stat-label-text uppercase text-gray-700 font-black font-sans font-bold">${STAT_NAMES_SHORT[s]}</span><span class="stat-mod-box rollable" id="save-mod-${s}" onclick="window.rollSave('${s}')">+0</span></div>`;
             });
             SKILLS.forEach(sk => {
@@ -614,31 +622,18 @@
                 skC.innerHTML += `<div class="stat-row"><input type="checkbox" class="circle-check" data-key="prof_${safeKey}" onchange="window.calcMods()"><span class="stat-label-text text-gray-700 font-bold font-sans">${sk.n}</span><span class="stat-mod-box rollable" id="${id}" onclick="window.rollSkill('${sk.n}')">+0</span></div>`;
             });
             window.renderMovesGrid();
-        }
-        window.initSheetUI = initSheetUI;
+        };
 
-        async function syncSheetData() {
+        window.syncSheetData = async function() {
             const char = characters.find(c => c.id === activeCharId); if (!char) return;
             const ps = document.getElementById('party-select'); if (ps) { ps.innerHTML = '<option value="">Unassigned</option>'; parties.forEach(p => ps.innerHTML += `<option value="${p.id}">${p.name}</option>`); }
             document.querySelectorAll('#pc-sheet-layout [data-key]').forEach(el => {
                 if (el.type === 'checkbox') el.checked = !!char[el.dataset.key];
                 else if (document.activeElement !== el) el.value = char[el.dataset.key] || (el.type === 'number' ? 0 : '');
             });
-            
             const sCont = document.getElementById('sheet-container'); 
             if (sCont) sCont.className = char.status === 'coma' ? 'status-coma' : char.status === 'dead' ? 'status-dead' : '';
-
-            const whisperList = document.getElementById('whispers-list');
-            if (whisperList) {
-                const whispers = char.dmWhispers || [];
-                whisperList.innerHTML = whispers.map((w, idx) => `
-                    <div class="whisper-box">
-                        <div class="flex-grow">${w.text}</div>
-                        ${activeRole === 'dm' ? `<span class="whisper-delete" onclick="window.deleteWhisper(${idx})">×</span>` : ''}
-                    </div>`).reverse().join('');
-                document.getElementById('whisper-display-box').classList.toggle('hidden-view', whispers.length === 0);
-            }
-
+            
             const pPreview = document.getElementById('portrait-preview');
             const pPlaceholder = document.getElementById('portrait-placeholder');
             if (char.imageSrc) { if(pPreview) { pPreview.src = char.imageSrc; pPreview.classList.remove('hidden'); } pPlaceholder?.classList.add('hidden'); }
@@ -680,7 +675,6 @@
             }
             window.renderMovesGrid();
         };
-        window.syncSheetData = syncSheetData;
 
         window.openSheet = function(id) { 
             activeCharId = id; 
@@ -708,34 +702,21 @@
             input.value = ''; window.showToast("Whisper Sent");
         };
 
-        window.deleteWhisper = async function(idx) {
-            if (!activeCharId || activeRole !== 'dm') return;
-            const char = characters.find(c => c.id === activeCharId);
-            if (!char) return;
-            const whispers = [...(char.dmWhispers || [])];
-            whispers.splice(idx, 1);
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { dmWhispers: whispers });
-        };
-
-        window.updateCharStatus = async function(s) { if (!activeCharId || !db) return; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { status: s }); window.showToast(`Status Updated: ${s.toUpperCase()}`); };
+        window.updateCharStatus = async function(s) { if (!activeCharId || !db) return; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { status: s }); window.showToast(`Status: ${s.toUpperCase()}`); };
         
         window.archiveCharacter = async function() { 
             if (!activeCharId || !db) return; 
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { isDeleted: true, status: 'dead' }); 
-            document.getElementById('delete-modal').classList.add('hidden'); 
-            window.closeSheet(); 
-            window.showToast("Character Buried in Graveyard");
+            document.getElementById('delete-modal').classList.add('hidden'); window.closeSheet(); window.showToast("Bury Complete");
         };
 
         window.restoreCharacter = async function() { 
             if (!activeCharId || !db) return; 
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { isDeleted: false, status: 'alive' }); 
-            document.getElementById('delete-modal').classList.add('hidden'); 
-            window.syncSheetData(); 
-            window.showToast("Character Restored to Active Party");
+            document.getElementById('delete-modal').classList.add('hidden'); window.syncSheetData(); window.showToast("Restored");
         };
 
-        window.executePermDelete = async function() { if (!activeCharId || !db) return; await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId)); document.getElementById('delete-modal').classList.add('hidden'); window.closeSheet(); window.showToast("Character Erased Forever"); };
+        window.executePermDelete = async function() { if (!activeCharId || !db) return; await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId)); document.getElementById('delete-modal').classList.add('hidden'); window.closeSheet(); window.showToast("Erased Forever"); };
 
         window.triggerDeleteModal = function() { 
             const char = characters.find(c => c.id === activeCharId);
