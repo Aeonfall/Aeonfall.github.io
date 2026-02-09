@@ -41,7 +41,7 @@
         /* SPECIAL FIELD STYLE */
         .special-field-group { display: flex; flex-direction: column; align-items: center; width: 100%; }
         .special-field-input-wrapper { display: flex; align-items: center; border-bottom: 2px solid #cbd5e1; width: 100%; padding-bottom: 2px; }
-        .special-field-val { font-size: 28px; font-weight: 900; color: #1e293b; text-align: center; font-family: 'Noto Sans', sans-serif; width: 100%; border: none; background: transparent; }
+        .special-field-val { font-size: 28px; font-weight: 900; color: #1e293b; text-align: center; font-family: 'Noto Sans', sans-serif; width: 100%; border: none; background: transparent; padding-right: 10px; }
         .special-field-label { font-size: 9px; font-weight: 900; color: #94a3b8; text-transform: uppercase; margin-top: 4px; text-align: center; width: 100%; font-family: 'Noto Sans', sans-serif; }
 
         /* ATTRIBUTE BOXES */
@@ -73,9 +73,11 @@
         .ds-dot.checked-succ { background: #16a34a; border-color: #14532d; box-shadow: inset 0 0 0 3px white; }
         .ds-dot.checked-fail { background: #dc2626; border-color: #7f1d1d; box-shadow: inset 0 0 0 3px white; }
         .coma-label { font-size: 10px; font-weight: 900; color: #d97706; text-transform: uppercase; font-family: 'Noto Sans', sans-serif; }
-        .rounds-val { font-size: 44px; font-weight: 900; color: #1e293b; font-family: 'Noto Sans', sans-serif; width: 90px; text-align: center; border-bottom: 2px solid #cbd5e1; padding-right: 4px; }
+        
+        /* Expansion and padding added here to prevent clipping */
+        .rounds-val { font-size: 44px; font-weight: 900; color: #1e293b; font-family: 'Noto Sans', sans-serif; width: 120px; text-align: center; border-bottom: 2px solid #cbd5e1; padding-right: 20px; }
 
-        /* WEAPON TABLE (Fixed Alignment) */
+        /* WEAPON TABLE */
         .equip-table-header { 
             font-size: 8px; font-weight: 900; color: #94a3b8; text-transform: uppercase; 
             display: grid; grid-template-columns: 2fr 1fr 1.5fr 30px; gap: 8px; 
@@ -91,7 +93,7 @@
         .stress-container { border-bottom: 2px solid #e2e8f0; padding-bottom: 4px; display: inline-block; }
         .stress-input-val { 
             font-size: 44px; font-weight: 900; color: #1e293b; text-align: center; 
-            width: 110px; font-family: 'Noto Sans', sans-serif; padding-right: 15px;
+            width: 130px; font-family: 'Noto Sans', sans-serif; padding-right: 20px;
         }
         .stress-sub-label { font-size: 9px; font-weight: 900; color: #94a3b8; text-transform: uppercase; margin-top: 4px; font-family: 'Noto Sans', sans-serif; }
 
@@ -114,6 +116,12 @@
         .roll-mode.active { background: #374151 !important; color: white !important; border-color: #374151 !important; }
         .dice-grid-btn { width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border: 3px solid; border-radius: 14px; font-weight: 900; font-size: 15px; transition: transform 0.1s; cursor: pointer; font-family: 'Noto Sans', sans-serif; }
 
+        /* DASHBOARD STATUS BADGES */
+        .card-status-badge { font-size: 7px; font-weight: 900; padding: 1px 4px; border-radius: 4px; text-transform: uppercase; margin-top: 4px; display: inline-block; }
+        .badge-alive { background: #dcfce7; color: #166534; }
+        .badge-coma { background: #fef3c7; color: #92400e; }
+        .badge-dead { background: #f3f4f6; color: #4b5563; }
+
         .card { transition: all 0.2s; border-left-width: 6px; cursor: pointer; border-radius: 12px; position: relative; }
         .card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.5); }
         .hidden-view { display: none !important; }
@@ -123,9 +131,17 @@
         .stat-row { display: flex; align-items: center; gap: 12px; padding: 10px 8px; border-bottom: 1px solid #f3f4f6; font-size: 11px; height: 42px; }
         .circle-check { appearance: none; width: 18px; height: 18px; border: 2px solid #9ca3af; border-radius: 50%; cursor: pointer; transition: all 0.2s; flex-shrink: 0; background-color: white; }
         .circle-check:checked { background-color: #333; border-color: #333; box-shadow: inset 0 0 0 3px white; }
+        .stat-label-text { flex-grow: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #374151; font-weight: 700; font-family: 'Noto Sans', sans-serif; text-transform: uppercase; }
+        .stat-mod-box { flex-shrink: 0; min-width: 35px; text-align: right; font-weight: 900; color: #000; font-size: 13px; font-family: 'Noto Sans', sans-serif; }
 
+        .gen-num-badge { display: inline-block; background: #f3f4f6; color: #1e293b; font-weight: 900; padding: 4px 10px; border-radius: 6px; margin: 0 4px; font-family: 'Noto Sans', sans-serif; font-size: 16px; border: 1px solid #e2e8f0; }
+        .assign-row { display: grid; grid-template-columns: 80px 1fr; gap: 12px; align-items: center; margin-bottom: 8px; text-align: left; }
+        .assign-label { font-weight: 900; color: #64748b; font-size: 10px; text-transform: uppercase; }
+        .assign-select { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 8px; padding: 4px 8px; font-weight: 900; color: #1e293b; }
+        
         .dm-panel { background: #2d2a2e; color: #fff; padding: 16px; border-radius: 12px; border: 2px solid #f59e0b; }
         .whisper-box { background: #fef2f2; border-left: 4px solid #ef4444; padding: 10px; border-radius: 4px; margin-bottom: 8px; color: #333; display: flex; justify-content: space-between; align-items: flex-start; }
+        .whisper-delete { color: #ef4444; font-weight: 900; cursor: pointer; padding-left: 10px; font-family: 'Noto Sans', sans-serif; }
     </style>
 </head>
 <body class="min-h-screen">
@@ -177,14 +193,14 @@
                     <div class="flex items-center gap-2">
                         <span id="sheet-type-badge" class="bg-amber-600 px-3 py-1 rounded text-[9px] font-black uppercase font-sans">PC</span>
                         <button onclick="window.saveCurrentCharacter(true)" class="bg-green-700 hover:bg-green-600 px-4 py-1 rounded text-[10px] font-black uppercase tracking-widest text-white font-sans">SYNC</button>
-                        <button id="manage-char-btn" onclick="window.triggerDeleteModal()" class="bg-red-900 px-3 py-1 rounded text-[10px] font-black uppercase text-white font-sans">Manage</button>
+                        <button id="delete-char-btn" onclick="window.triggerDeleteModal()" class="bg-red-900 px-3 py-1 rounded text-[10px] font-black uppercase text-white font-sans">Manage</button>
                     </div>
                 </div>
             </nav>
 
             <div class="max-w-7xl mx-auto p-4 md:p-8">
                 <!-- DM Oversight Panel -->
-                <div id="dm-oversight-panel" class="dm-panel hidden-view mb-8">
+                <div id="dm-oversight-panel" class="dm-panel hidden-view mb-8 bg-gray-800 p-4 border-2 border-amber-500 rounded-lg">
                     <div class="flex flex-col md:flex-row justify-between items-end gap-6">
                         <div class="flex-grow w-full">
                             <h4 class="text-[10px] font-black uppercase text-amber-500 mb-2 font-sans">DM Whisper Tool</h4>
@@ -202,7 +218,6 @@
                 </div>
 
                 <div id="pc-sheet-layout">
-                    <!-- HEADER -->
                     <div class="sheet-card mb-6">
                         <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start text-gray-800">
                             <div class="md:col-span-12 grid grid-cols-4 gap-y-6 gap-x-8">
@@ -211,7 +226,7 @@
                                     <label class="header-label">Character Name</label>
                                 </div>
                                 <div class="col-span-1">
-                                    <div class="header-input-group"><input type="text" data-key="class" class="header-input-val" placeholder="Class"></div>
+                                    <div class="header-input-group"><input type="text" data-key="class" class="header-input-val" placeholder="Fighter"></div>
                                     <label class="header-label">Class</label>
                                 </div>
                                 <div class="col-span-1">
@@ -224,7 +239,7 @@
                                 </div>
                                 <div class="col-span-1"><div class="header-input-group"><input type="text" data-key="archetype" class="header-input-val" placeholder="Archetype"></div><label class="header-label">Archetype</label></div>
                                 <div class="col-span-1"><div class="header-input-group"><input type="text" data-key="belief" class="header-input-val" placeholder="Belief"></div><label class="header-label">Belief</label></div>
-                                <div class="col-span-1"><div class="header-input-group"><input type="text" data-key="race" class="header-input-val" placeholder="Race"></div><label class="header-label">Race</label></div>
+                                <div class="col-span-1"><div class="header-input-group"><input type="text" data-key="race" class="header-input-val" placeholder="Human"></div><label class="header-label">Race</label></div>
                                 <div class="col-span-1 flex gap-4">
                                     <div class="flex-1"><div class="header-input-group"><input type="text" data-key="background" class="header-input-val"></div><label class="header-label">Background</label></div>
                                     <div class="flex-1"><div class="header-input-group"><input type="text" data-key="alignment" class="header-input-val"></div><label class="header-label">Alignment</label></div>
@@ -237,7 +252,7 @@
                         <!-- Column 1 -->
                         <div class="lg:col-span-3 space-y-6">
                             <div class="sheet-card text-gray-800">
-                                <h3 class="flex justify-between items-center text-gray-800 font-black">Attributes</h3>
+                                <h3 class="flex justify-between items-center text-gray-800 font-black">Abilities & Modifiers <button onclick="window.openScoreGenModal()" class="bg-blue-100 text-[8px] px-2 py-0.5 rounded text-blue-700 font-black">GENERATE</button></h3>
                                 <div class="grid grid-cols-2 gap-8 mt-6 px-4 mb-8">
                                     <div class="special-field-group">
                                         <div class="special-field-input-wrapper"><input type="number" data-key="profBonus" class="special-field-val" value="2" onchange="window.calcMods()"></div>
@@ -286,12 +301,30 @@
                                 <div class="py-4 px-4">
                                     <span class="death-saves-label">Death Saves</span>
                                     <div class="grid grid-cols-2 gap-4 mb-6">
-                                        <div><div class="ds-status-label text-green-700 font-black">Success</div><div class="flex justify-center gap-3"><div onclick="window.toggleDS('succ', 1)" id="ds-succ-1" class="ds-dot"></div><div onclick="window.toggleDS('succ', 2)" id="ds-succ-2" class="ds-dot"></div><div onclick="window.toggleDS('succ', 3)" id="ds-succ-3" class="ds-dot"></div></div></div>
-                                        <div><div class="ds-status-label text-red-700 font-black">Failure</div><div class="flex justify-center gap-3"><div onclick="window.toggleDS('fail', 1)" id="ds-fail-1" class="ds-dot"></div><div onclick="window.toggleDS('fail', 2)" id="ds-fail-2" class="ds-dot"></div><div onclick="window.toggleDS('fail', 3)" id="ds-fail-3" class="ds-dot"></div></div></div>
+                                        <div>
+                                            <div class="ds-status-label text-green-700 font-black">Success</div>
+                                            <div class="flex justify-center gap-3">
+                                                <div onclick="window.toggleDS('succ', 1)" id="ds-succ-1" class="ds-dot"></div>
+                                                <div onclick="window.toggleDS('succ', 2)" id="ds-succ-2" class="ds-dot"></div>
+                                                <div onclick="window.toggleDS('succ', 3)" id="ds-succ-3" class="ds-dot"></div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="ds-status-label text-red-700 font-black">Failure</div>
+                                            <div class="flex justify-center gap-3">
+                                                <div onclick="window.toggleDS('fail', 1)" id="ds-fail-1" class="ds-dot"></div>
+                                                <div onclick="window.toggleDS('fail', 2)" id="ds-fail-2" class="ds-dot"></div>
+                                                <div onclick="window.toggleDS('fail', 3)" id="ds-fail-3" class="ds-dot"></div>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="pt-4 border-t border-gray-100 flex flex-col items-center">
                                         <div class="flex items-center gap-3 mb-2"><input type="checkbox" data-key="comaActive" class="w-5 h-5 rounded"><span class="coma-label font-black font-sans">Active Coma</span></div>
-                                        <div class="flex items-center justify-center"><input type="number" data-key="comaRounds" class="rounds-val" value="0"><span class="text-3xl text-gray-300 mx-2 font-light">/</span><span class="text-3xl font-black text-gray-400">10</span></div>
+                                        <div class="flex items-center justify-center">
+                                            <input type="number" data-key="comaRounds" class="rounds-val" value="0">
+                                            <span class="text-3xl text-gray-300 mx-2 font-light">/</span>
+                                            <span class="text-3xl font-black text-gray-400">10</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -321,14 +354,16 @@
                                 <input type="file" onchange="window.handleImageUpload(event)" class="absolute inset-0 opacity-0 cursor-pointer">
                             </div>
 
+                            <div id="whisper-display-box" class="hidden-view"><div class="sheet-card !bg-purple-50 !border-purple-200 text-gray-800"><h3 class="!text-purple-700 font-black">Secret Whispers</h3><div id="whispers-list" class="space-y-1"></div></div></div>
+
                             <div class="sheet-card text-gray-800">
-                                <h3 class="!text-[11px] font-black !mb-4">Weapons & tech</h3>
+                                <h3 class="!text-[11px] font-black !mb-4">Weapons, Equipment & Proficiencies</h3>
                                 <div class="space-y-6">
                                     <div>
                                         <div class="equip-table-header"><span>Name</span><span class="text-center">Atk</span><span class="text-center">Dmg/Type</span><span></span></div>
                                         <div id="attacks-list" class="space-y-1 my-1"></div>
                                         <button onclick="window.addAttackItem()" class="w-full py-2 border-2 border-dashed text-[9px] font-black text-gray-400 uppercase hover:border-amber-400 transition-all font-sans font-bold">+ ADD WEAPON/ITEM</button>
-                                        <textarea data-key="combatNotes" class="w-full mt-3 h-14 p-2 bg-gray-50 rounded text-[11px]" placeholder="Combat notes..."></textarea>
+                                        <textarea data-key="combatNotes" class="w-full mt-3 h-14 p-2 bg-gray-50 rounded text-[11px]" placeholder="Attack notes, ammo..."></textarea>
                                     </div>
                                     <div class="prof-group">
                                         <label class="text-[9px] font-black uppercase text-gray-500 mb-2 block font-black">Proficiencies</label>
@@ -342,18 +377,18 @@
                             </div>
 
                             <div class="sheet-card text-gray-800">
-                                <h3 class="font-black">Equipment & Currency</h3>
+                                <h3 class="font-black">Inventory & Currency</h3>
                                 <div class="currency-grid">
                                     <div class="currency-box"><span class="currency-label">SC</span><input type="number" data-key="cp" class="currency-input"></div>
                                     <div class="currency-box"><span class="currency-label">CR</span><input type="number" data-key="sp" class="currency-input"></div>
                                     <div class="currency-box"><span class="currency-label">BYT</span><input type="number" data-key="ep" class="currency-input"></div>
                                     <div class="currency-box"><span class="currency-label">VT</span><input type="number" data-key="gp" class="currency-input"></div>
                                 </div>
-                                <textarea data-key="equipment" class="w-full h-32 p-3 bg-gray-50 rounded font-serif text-[11px] leading-relaxed" placeholder="Inventory list..."></textarea>
+                                <textarea data-key="equipment" class="w-full h-32 p-3 bg-gray-50 rounded font-serif text-[11px] leading-relaxed" placeholder="Detailed Inventory..."></textarea>
                             </div>
 
                             <div class="sheet-card text-gray-800">
-                                <h3>Identity & Lore</h3>
+                                <h3 class="font-black">Identity & Features</h3>
                                 <div class="space-y-4">
                                     <div class="grid grid-cols-2 gap-4">
                                         <div class="header-input-group"><input type="text" data-key="traits" class="header-input-val"><label class="header-label">Personality Traits</label></div>
@@ -372,6 +407,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="sheet-card h-40 flex flex-col text-gray-800"><h3>History Log</h3><div id="dice-log" class="flex-grow overflow-y-auto text-[10px] font-mono p-1 bg-gray-50 rounded"></div></div>
                         </div>
                     </div>
 
@@ -421,12 +457,12 @@
                 <button onclick="window.generateScores('heroic')" class="bg-indigo-600 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-md">Heroic</button>
             </div>
             <div id="gen-apply-area" class="hidden space-y-4 mt-6"><button onclick="window.applyScores()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-lg">Apply Stats</button></div>
-            <button onclick="document.getElementById('score-gen-modal').classList.add('hidden')" class="mt-4 text-[10px] font-bold text-gray-400 uppercase font-black">Close</button>
+            <button onclick="document.getElementById('score-gen-modal').classList.add('hidden')" class="mt-4 text-[10px] font-bold text-gray-400 uppercase font-black font-bold">Close</button>
         </div>
     </div>
 
     <div id="party-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-[300] hidden text-white">
-        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border-2 border-indigo-600 shadow-2xl text-center">
+        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border-2 border-indigo-600 shadow-2xl text-center font-sans">
             <h3 class="text-xl font-serif text-indigo-400 font-bold mb-4 uppercase tracking-widest">New Party</h3>
             <input type="text" id="party-name-input" class="w-full bg-gray-900 text-white rounded-lg p-3 mb-6 border border-gray-700 font-sans" placeholder="Name...">
             <div class="flex gap-2">
@@ -436,7 +472,6 @@
         </div>
     </div>
 
-    <!-- MANAGE MODAL -->
     <div id="delete-modal" class="fixed inset-0 bg-black/90 flex items-center justify-center z-[300] hidden text-gray-800">
         <div class="bg-white p-8 rounded-2xl w-full max-w-sm border-4 border-red-600 shadow-2xl text-center font-sans">
             <div id="delete-stage-1">
@@ -455,37 +490,6 @@
                     <button onclick="window.resetDeleteModal()" class="bg-gray-100 py-3 rounded-xl font-bold uppercase text-xs font-bold font-sans">No, Go Back</button>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- QUICK ROLLER -->
-    <div id="quick-roll-bar" class="hidden-view floating-roller text-gray-800">
-        <div class="flex items-center justify-between mb-4 border-b pb-3">
-            <div class="flex items-center gap-2">
-                <input type="number" id="roll-count" value="1" min="1" class="w-12 h-10 text-center font-black bg-gray-100 rounded-lg text-lg">
-                <div class="h-6 w-px bg-gray-200 mx-1"></div>
-                <button onclick="window.setRollMode('normal')" class="mode-btn roll-mode active" id="mode-norm">Norm</button>
-                <button onclick="window.setRollMode('adv')" class="mode-btn roll-mode" id="mode-adv">Adv</button>
-                <button onclick="window.setRollMode('dis')" class="mode-btn roll-mode" id="mode-dis">Dis</button>
-            </div>
-        </div>
-        <div class="grid grid-cols-4 gap-2">
-            <button onclick="window.rollDice(4)" class="dice-grid-btn dice-d4" style="background: #fffbeb; border-color: #d97706; color: #92400e;">d4</button>
-            <button onclick="window.rollDice(6)" class="dice-grid-btn dice-d6" style="background: #f0fdf4; border-color: #16a34a; color: #14532d;">d6</button>
-            <button onclick="window.rollDice(8)" class="dice-grid-btn dice-d8" style="background: #eff6ff; border-color: #2563eb; color: #1e3a8a;">d8</button>
-            <button onclick="window.rollDice(10)" class="dice-grid-btn dice-d10" style="background: #f5f3ff; border-color: #7c3aed; color: #4c1d95;">d10</button>
-            <button onclick="window.rollDice(12)" class="dice-grid-btn dice-d12" style="background: #f5f3ff; border-color: #7c3aed; color: #4c1d95;">d12</button>
-            <button onclick="window.rollDice(20)" class="dice-grid-btn dice-d20" style="background: #fef2f2; border-color: #dc2626; color: #7f1d1d;">d20</button>
-            <button onclick="window.rollDice(100)" class="dice-grid-btn dice-d100" style="background: #f9fafb; border-color: #374151; color: #111827;">d100</button>
-        </div>
-    </div>
-
-    <!-- ROLL RESULT OVERLAY -->
-    <div id="dice-result-overlay" class="fixed inset-0 bg-black/90 flex items-center justify-center z-[500] hidden text-white" onclick="this.classList.add('hidden')">
-        <div class="text-center p-12">
-            <div id="roll-label" class="text-amber-500 font-serif text-xl mb-1 uppercase tracking-widest font-black">ROLL</div>
-            <div id="roll-total" class="text-9xl font-black mb-2 roll-anim font-sans">20</div>
-            <div id="roll-breakdown" class="text-gray-400 font-mono text-sm bg-black/40 px-4 py-2 rounded-full inline-block text-center font-bold"></div>
         </div>
     </div>
 
@@ -525,12 +529,13 @@
 
         // --- GLOBAL HOISTED FUNCTIONS ---
 
-        window.showToast = function(m) {
+        function showToast(m) {
             const t = document.getElementById('toast');
             if (t) { t.textContent = m; t.style.opacity = 1; setTimeout(() => t.style.opacity = 0, 3000); }
-        };
+        }
+        window.showToast = showToast;
 
-        window.calcMods = function() {
+        function calcMods() {
             STATS.forEach(s => {
                 const el = document.querySelector(`[data-key="${s}"]`);
                 const v = parseInt(el?.value) || 10;
@@ -549,9 +554,10 @@
                 const sel = document.getElementById(`skill-mod-${safeKey}`); 
                 if (sel) sel.textContent = (m + (sp ? p : 0) >= 0 ? '+' : '') + (m + (sp ? p : 0));
             });
-        };
+        }
+        window.calcMods = calcMods;
 
-        window.renderDashboard = function() {
+        function renderDashboard() {
             const pcC = document.getElementById('party-view-container'), grC = document.getElementById('graveyard-view-container');
             if (!pcC || !grC) return; pcC.innerHTML = ''; grC.innerHTML = '';
             const activePCs = characters.filter(c => c.type === 'PC' && !c.isDeleted);
@@ -569,9 +575,10 @@
                 const g = s.querySelector('#unassigned-grid'); unassigned.forEach(c => g.appendChild(window.createCard(c)));
             }
             characters.filter(c => c.isDeleted).forEach(c => grC.appendChild(window.createCard(c)));
-        };
+        }
+        window.renderDashboard = renderDashboard;
 
-        window.createCard = function(c) {
+        function createCard(c) {
             const d = document.createElement('div'); d.className = `bg-gray-800 p-4 rounded-xl card border-l-4 shadow-xl border-amber-600 text-white`;
             d.onclick = () => window.openSheet(c.id);
             const status = c.status || 'alive';
@@ -589,9 +596,10 @@
                 </div>
             `;
             return d;
-        };
+        }
+        window.createCard = createCard;
 
-        window.initSheetUI = function() {
+        function initSheetUI() {
             const sC = document.getElementById('stats-container'), svC = document.getElementById('saves-container'), skC = document.getElementById('skills-container');
             if (!sC) return; sC.innerHTML = ''; svC.innerHTML = ''; skC.innerHTML = '';
             STATS.forEach(s => {
@@ -604,9 +612,10 @@
                 skC.innerHTML += `<div class="stat-row"><input type="checkbox" class="circle-check" data-key="prof_${safeKey}" onchange="window.calcMods()"><span class="stat-label-text text-gray-700 font-bold font-sans">${sk.n}</span><span class="stat-mod-box rollable" id="${id}" onclick="window.rollSkill('${sk.n}')">+0</span></div>`;
             });
             window.renderMovesGrid();
-        };
+        }
+        window.initSheetUI = initSheetUI;
 
-        window.syncSheetData = async function() {
+        async function syncSheetData() {
             const char = characters.find(c => c.id === activeCharId); if (!char) return;
             const ps = document.getElementById('party-select'); if (ps) { ps.innerHTML = '<option value="">Unassigned</option>'; parties.forEach(p => ps.innerHTML += `<option value="${p.id}">${p.name}</option>`); }
             document.querySelectorAll('#pc-sheet-layout [data-key]').forEach(el => {
@@ -668,18 +677,20 @@
             }
             window.renderMovesGrid();
         };
+        window.syncSheetData = syncSheetData;
 
         window.openSheet = function(id) { 
             activeCharId = id; 
             document.getElementById('dashboard-screen').classList.add('hidden-view'); 
             document.getElementById('sheet-screen').classList.remove('hidden-view'); 
-            document.getElementById('quick-roll-bar').classList.remove('hidden-view'); 
+            const roller = document.getElementById('quick-roll-bar');
+            if (roller) roller.classList.remove('hidden-view'); 
             window.scrollTo(0,0);
             window.initSheetUI(); 
             window.syncSheetData(); 
         };
 
-        window.closeSheet = function() { activeCharId = null; document.getElementById('sheet-screen').classList.add('hidden-view'); document.getElementById('dashboard-screen').classList.remove('hidden-view'); document.getElementById('quick-roll-bar').classList.add('hidden-view'); };
+        window.closeSheet = function() { activeCharId = null; document.getElementById('sheet-screen').classList.add('hidden-view'); document.getElementById('dashboard-screen').classList.remove('hidden-view'); const roller = document.getElementById('quick-roll-bar'); if (roller) roller.classList.add('hidden-view'); };
 
         window.setRole = function(r) { if (r === 'dm') document.getElementById('password-modal').classList.remove('hidden'); else { activeRole = 'player'; updateRoleUI(); } };
         window.verifyDmPassword = function() { if (document.getElementById('dm-password').value === 'Rew4994') { activeRole = 'dm'; document.getElementById('password-modal').classList.add('hidden'); updateRoleUI(); } else { window.showToast("Denied"); } };
@@ -708,7 +719,7 @@
         window.archiveCharacter = async function() { 
             if (!activeCharId || !db) return; 
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { isDeleted: true, status: 'dead' }); 
-            document.getElementById('delete-modal').classList.add('hidden'); window.closeSheet(); window.showToast("Buried in Graveyard");
+            document.getElementById('delete-modal').classList.add('hidden'); window.closeSheet(); window.showToast("Bury Complete");
         };
 
         window.restoreCharacter = async function() { 
@@ -747,8 +758,8 @@
             document.getElementById('gen-numbers-display').innerHTML = scores.map(n => `<span class="gen-num-badge">${n}</span>`).join('');
             document.getElementById('assign-grid').innerHTML = STATS.map(s => `
                 <div class="assign-row">
-                    <span class="assign-label">${s.toUpperCase()}</span>
-                    <select class="assign-select" data-assign-stat="${s}">
+                    <span class="assign-label font-black">${s.toUpperCase()}</span>
+                    <select class="assign-select font-black" data-assign-stat="${s}">
                         <option value="">- Select -</option>
                         ${scores.map((n, idx) => `<option value="${idx}">${n}</option>`).join('')}
                     </select>
@@ -950,7 +961,7 @@
             updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), data);
             if (manual) window.showToast("Synced to Cloud");
             const si = document.getElementById('sync-indicator'); si.style.opacity = 1; setTimeout(()=>si.style.opacity = 0, 1000);
-        };
+        }
 
         // --- DATA SYNC ---
 
@@ -984,5 +995,28 @@
         
         initAuth();
     </script>
+
+    <!-- QUICK ROLLER -->
+    <div id="quick-roll-bar" class="hidden-view floating-roller text-gray-800">
+        <div class="flex items-center justify-between mb-4 border-b pb-3">
+            <div class="flex items-center gap-2">
+                <input type="number" id="roll-count" value="1" min="1" class="w-12 h-10 text-center font-black bg-gray-100 rounded-lg text-lg">
+                <div class="h-6 w-px bg-gray-200 mx-1"></div>
+                <button onclick="window.setRollMode('normal')" class="mode-btn roll-mode active" id="mode-norm">Norm</button>
+                <button onclick="window.setRollMode('adv')" class="mode-btn roll-mode" id="mode-adv">Adv</button>
+                <button onclick="window.setRollMode('dis')" class="mode-btn roll-mode" id="mode-dis">Dis</button>
+            </div>
+        </div>
+        <div class="grid grid-cols-4 gap-2">
+            <button onclick="window.rollDice(4)" class="dice-grid-btn" style="background: #fffbeb; border-color: #d97706; color: #92400e;">d4</button>
+            <button onclick="window.rollDice(6)" class="dice-grid-btn" style="background: #f0fdf4; border-color: #16a34a; color: #14532d;">d6</button>
+            <button onclick="window.rollDice(8)" class="dice-grid-btn" style="background: #eff6ff; border-color: #2563eb; color: #1e3a8a;">d8</button>
+            <button onclick="window.rollDice(10)" class="dice-grid-btn" style="background: #f5f3ff; border-color: #7c3aed; color: #4c1d95;">d10</button>
+            <button onclick="window.rollDice(12)" class="dice-grid-btn" style="background: #f5f3ff; border-color: #7c3aed; color: #4c1d95;">d12</button>
+            <button onclick="window.rollDice(20)" class="dice-grid-btn" style="background: #fef2f2; border-color: #dc2626; color: #7f1d1d;">d20</button>
+            <button onclick="window.rollDice(100)" class="dice-grid-btn" style="background: #f9fafb; border-color: #374151; color: #111827;">d100</button>
+        </div>
+    </div>
+
 </body>
 </html>
