@@ -66,13 +66,14 @@
         .vital-label { font-size: 7px; font-weight: 900; text-transform: uppercase; position: absolute; top: 10%; color: #64748b; width: 100%; text-align: center; font-family: 'Noto Sans', sans-serif; }
         .vital-input { width: 90%; text-align: center; font-size: 18px; font-weight: 900; background: transparent; border: none !important; color: #1e293b; margin-top: 8px; font-family: 'Noto Sans', sans-serif; }
 
-        /* DEATH & COMA */
+        /* DEATH & COMA (FIXED CLIPPING) */
         .death-saves-label { font-size: 9px; font-weight: 900; color: #94a3b8; text-transform: uppercase; font-family: 'Noto Sans', sans-serif; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 4px; display: block; width: 100%; }
         .ds-status-label { font-size: 10px; font-weight: 900; text-transform: uppercase; margin-bottom: 6px; font-family: 'Noto Sans', sans-serif; }
         .ds-dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #cbd5e1; cursor: pointer; transition: all 0.2s; background: white; }
         .ds-dot.checked-succ { background: #16a34a; border-color: #14532d; box-shadow: inset 0 0 0 3px white; }
         .ds-dot.checked-fail { background: #dc2626; border-color: #7f1d1d; box-shadow: inset 0 0 0 3px white; }
-        .rounds-val { font-size: 48px; font-weight: 900; color: #1e293b; font-family: 'Noto Sans', sans-serif; width: 80px; text-align: center; border-bottom: 2px solid #cbd5e1; }
+        .coma-label { font-size: 10px; font-weight: 900; color: #d97706; text-transform: uppercase; font-family: 'Noto Sans', sans-serif; }
+        .rounds-val { font-size: 44px; font-weight: 900; color: #1e293b; font-family: 'Noto Sans', sans-serif; width: 90px; text-align: center; border-bottom: 2px solid #cbd5e1; padding-right: 4px; }
 
         /* WEAPON TABLE (Fixed Alignment) */
         .equip-table-header { 
@@ -86,12 +87,15 @@
         }
         .atk-input { font-family: 'Noto Sans', sans-serif; font-size: 11px; font-weight: 700; color: #1e293b; border: none; background: transparent; width: 100%; }
 
-        /* STRESS & TRAUMA (Screenshot 6 Match) */
+        /* STRESS & TRAUMA (FIXED CLIPPING) */
         .stress-container { border-bottom: 2px solid #e2e8f0; padding-bottom: 4px; display: inline-block; }
-        .stress-input-val { font-size: 44px; font-weight: 900; color: #1e293b; text-align: center; width: 75px; font-family: 'Noto Sans', sans-serif; }
+        .stress-input-val { 
+            font-size: 44px; font-weight: 900; color: #1e293b; text-align: center; 
+            width: 110px; font-family: 'Noto Sans', sans-serif; padding-right: 15px;
+        }
         .stress-sub-label { font-size: 9px; font-weight: 900; color: #94a3b8; text-transform: uppercase; margin-top: 4px; font-family: 'Noto Sans', sans-serif; }
 
-        /* CURRENCY */
+        /* CURRENCY & INVENTORY */
         .currency-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; }
         .currency-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 4px; text-align: center; }
         .currency-label { font-size: 8px; font-weight: 900; color: #94a3b8; display: block; font-family: 'Noto Sans', sans-serif; margin-bottom: 2px; }
@@ -106,16 +110,9 @@
         .move-delete:hover { opacity: 1; }
         .add-move-btn { font-family: 'Noto Sans', sans-serif; font-size: 10px; font-weight: 900; color: #3b82f6; text-transform: uppercase; margin-top: auto; padding-top: 12px; cursor: pointer; text-align: center; }
 
-        /* QUICK ROLLER Panel */
         .floating-roller { position: fixed; bottom: 24px; right: 24px; z-index: 100; background: white; border-radius: 24px; border: 3px solid #1a1a1a; padding: 16px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); width: 300px; }
         .roll-mode.active { background: #374151 !important; color: white !important; border-color: #374151 !important; }
         .dice-grid-btn { width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border: 3px solid; border-radius: 14px; font-weight: 900; font-size: 15px; transition: transform 0.1s; cursor: pointer; font-family: 'Noto Sans', sans-serif; }
-
-        /* DASHBOARD STATUS BADGES */
-        .card-status-badge { font-size: 7px; font-weight: 900; padding: 1px 4px; border-radius: 4px; text-transform: uppercase; margin-top: 4px; display: inline-block; }
-        .badge-alive { background: #dcfce7; color: #166534; }
-        .badge-coma { background: #fef3c7; color: #92400e; }
-        .badge-dead { background: #f3f4f6; color: #4b5563; }
 
         .card { transition: all 0.2s; border-left-width: 6px; cursor: pointer; border-radius: 12px; position: relative; }
         .card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.5); }
@@ -126,16 +123,9 @@
         .stat-row { display: flex; align-items: center; gap: 12px; padding: 10px 8px; border-bottom: 1px solid #f3f4f6; font-size: 11px; height: 42px; }
         .circle-check { appearance: none; width: 18px; height: 18px; border: 2px solid #9ca3af; border-radius: 50%; cursor: pointer; transition: all 0.2s; flex-shrink: 0; background-color: white; }
         .circle-check:checked { background-color: #333; border-color: #333; box-shadow: inset 0 0 0 3px white; }
-        .stat-label-text { flex-grow: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #374151; font-weight: 700; font-family: 'Noto Sans', sans-serif; text-transform: uppercase; }
-        .stat-mod-box { flex-shrink: 0; min-width: 35px; text-align: right; font-weight: 900; color: #000; font-size: 13px; font-family: 'Noto Sans', sans-serif; }
 
-        .gen-num-badge { display: inline-block; background: #f3f4f6; color: #1e293b; font-weight: 900; padding: 4px 10px; border-radius: 6px; margin: 0 4px; font-family: 'Noto Sans', sans-serif; font-size: 16px; border: 1px solid #e2e8f0; }
-        .assign-row { display: grid; grid-template-columns: 80px 1fr; gap: 12px; align-items: center; margin-bottom: 8px; text-align: left; }
-        .assign-label { font-weight: 900; color: #64748b; font-size: 10px; text-transform: uppercase; }
-        .assign-select { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 8px; padding: 4px 8px; font-weight: 900; color: #1e293b; }
-        
-        .whisper-box { background: #f5f3ff; border-left: 4px solid #7c3aed; padding: 10px 12px; margin-top: 8px; border-radius: 4px; display: flex; justify-content: space-between; align-items: flex-start; color: #111; font-style: italic; }
-        .whisper-delete { color: #ef4444; font-weight: 900; cursor: pointer; padding-left: 10px; font-style: normal; }
+        .dm-panel { background: #2d2a2e; color: #fff; padding: 16px; border-radius: 12px; border: 2px solid #f59e0b; }
+        .whisper-box { background: #fef2f2; border-left: 4px solid #ef4444; padding: 10px; border-radius: 4px; margin-bottom: 8px; color: #333; display: flex; justify-content: space-between; align-items: flex-start; }
     </style>
 </head>
 <body class="min-h-screen">
@@ -194,7 +184,7 @@
 
             <div class="max-w-7xl mx-auto p-4 md:p-8">
                 <!-- DM Oversight Panel -->
-                <div id="dm-oversight-panel" class="hidden-view mb-8 bg-gray-800 p-4 border-2 border-amber-500 rounded-lg">
+                <div id="dm-oversight-panel" class="dm-panel hidden-view mb-8">
                     <div class="flex flex-col md:flex-row justify-between items-end gap-6">
                         <div class="flex-grow w-full">
                             <h4 class="text-[10px] font-black uppercase text-amber-500 mb-2 font-sans">DM Whisper Tool</h4>
@@ -212,7 +202,7 @@
                 </div>
 
                 <div id="pc-sheet-layout">
-                    <!-- HEADER BLOCK -->
+                    <!-- HEADER -->
                     <div class="sheet-card mb-6">
                         <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start text-gray-800">
                             <div class="md:col-span-12 grid grid-cols-4 gap-y-6 gap-x-8">
@@ -221,7 +211,7 @@
                                     <label class="header-label">Character Name</label>
                                 </div>
                                 <div class="col-span-1">
-                                    <div class="header-input-group"><input type="text" data-key="class" class="header-input-val" placeholder="Fighter"></div>
+                                    <div class="header-input-group"><input type="text" data-key="class" class="header-input-val" placeholder="Class"></div>
                                     <label class="header-label">Class</label>
                                 </div>
                                 <div class="col-span-1">
@@ -244,10 +234,10 @@
                     </div>
 
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                        <!-- Column 1: Attributes, Saves, Skills -->
+                        <!-- Column 1 -->
                         <div class="lg:col-span-3 space-y-6">
                             <div class="sheet-card text-gray-800">
-                                <h3 class="flex justify-between items-center text-gray-800 font-black">Abilities & Modifiers <button onclick="window.openScoreGenModal()" class="bg-blue-100 text-[8px] px-2 py-0.5 rounded text-blue-700 font-black">GENERATE</button></h3>
+                                <h3 class="flex justify-between items-center text-gray-800 font-black">Attributes</h3>
                                 <div class="grid grid-cols-2 gap-8 mt-6 px-4 mb-8">
                                     <div class="special-field-group">
                                         <div class="special-field-input-wrapper"><input type="number" data-key="profBonus" class="special-field-val" value="2" onchange="window.calcMods()"></div>
@@ -258,13 +248,13 @@
                                         <label class="special-field-label">Pass. Perception</label>
                                     </div>
                                 </div>
-                                <div id="stats-container" class="space-y-4 px-2 text-gray-800"></div>
+                                <div id="stats-container" class="space-y-4 px-2"></div>
                             </div>
                             <div class="sheet-card !p-0"><h3 class="pt-3 font-black">Saves</h3><div id="saves-container" class="text-gray-800 pb-2 px-2"></div></div>
                             <div class="sheet-card !p-0"><h3 class="pt-3 font-black">Skills</h3><div id="skills-container" class="max-h-[500px] overflow-y-auto pr-1 text-gray-800 pb-2 px-2"></div></div>
                         </div>
 
-                        <!-- Column 2: Vitals & Restoration -->
+                        <!-- Column 2 -->
                         <div class="lg:col-span-4 space-y-4">
                             <div class="flex justify-center gap-6">
                                 <div class="vital-badge vital-shield"><div class="vital-label">AC</div><input type="number" class="vital-input" data-key="ac" placeholder="10"></div>
@@ -279,13 +269,15 @@
                                 </div>
                                 <input type="number" class="text-7xl font-black text-center w-full mb-2" data-key="hpCurrent" placeholder="10">
                                 <div class="text-[9px] font-black uppercase tracking-widest text-gray-400 font-sans">Current Health Points</div>
+                                
                                 <div class="mt-6 flex flex-col items-center">
                                     <input type="number" class="text-xl font-bold text-center w-32 border-b text-gray-800" data-key="tempHp" placeholder="0">
                                     <label class="text-[8px] font-black uppercase text-gray-400 mt-1 font-sans">Temporary Points</label>
                                 </div>
+
                                 <div class="flex gap-4 justify-center mt-8">
-                                    <button onclick="window.rest('short')" class="bg-blue-50 text-blue-700 px-6 py-2 rounded-lg text-[9px] font-black uppercase shadow-sm">Short Rest</button>
-                                    <button onclick="window.rest('long')" class="bg-blue-600 text-white px-6 py-2 rounded-lg text-[10px] font-black uppercase shadow-lg">Long Rest</button>
+                                    <button onclick="window.rest('short')" class="bg-blue-50 text-blue-700 px-6 py-2 rounded-lg text-[9px] font-black uppercase shadow-sm font-sans">Short Rest</button>
+                                    <button onclick="window.rest('long')" class="bg-blue-600 text-white px-6 py-2 rounded-lg text-[10px] font-black uppercase shadow-lg font-sans">Long Rest</button>
                                 </div>
                             </div>
 
@@ -294,22 +286,8 @@
                                 <div class="py-4 px-4">
                                     <span class="death-saves-label">Death Saves</span>
                                     <div class="grid grid-cols-2 gap-4 mb-6">
-                                        <div>
-                                            <div class="ds-status-label text-green-700 font-black">Success</div>
-                                            <div class="flex justify-center gap-3">
-                                                <div onclick="window.toggleDS('succ', 1)" id="ds-succ-1" class="ds-dot"></div>
-                                                <div onclick="window.toggleDS('succ', 2)" id="ds-succ-2" class="ds-dot"></div>
-                                                <div onclick="window.toggleDS('succ', 3)" id="ds-succ-3" class="ds-dot"></div>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div class="ds-status-label text-red-700 font-black">Failure</div>
-                                            <div class="flex justify-center gap-3">
-                                                <div onclick="window.toggleDS('fail', 1)" id="ds-fail-1" class="ds-dot"></div>
-                                                <div onclick="window.toggleDS('fail', 2)" id="ds-fail-2" class="ds-dot"></div>
-                                                <div onclick="window.toggleDS('fail', 3)" id="ds-fail-3" class="ds-dot"></div>
-                                            </div>
-                                        </div>
+                                        <div><div class="ds-status-label text-green-700 font-black">Success</div><div class="flex justify-center gap-3"><div onclick="window.toggleDS('succ', 1)" id="ds-succ-1" class="ds-dot"></div><div onclick="window.toggleDS('succ', 2)" id="ds-succ-2" class="ds-dot"></div><div onclick="window.toggleDS('succ', 3)" id="ds-succ-3" class="ds-dot"></div></div></div>
+                                        <div><div class="ds-status-label text-red-700 font-black">Failure</div><div class="flex justify-center gap-3"><div onclick="window.toggleDS('fail', 1)" id="ds-fail-1" class="ds-dot"></div><div onclick="window.toggleDS('fail', 2)" id="ds-fail-2" class="ds-dot"></div><div onclick="window.toggleDS('fail', 3)" id="ds-fail-3" class="ds-dot"></div></div></div>
                                     </div>
                                     <div class="pt-4 border-t border-gray-100 flex flex-col items-center">
                                         <div class="flex items-center gap-3 mb-2"><input type="checkbox" data-key="comaActive" class="w-5 h-5 rounded"><span class="coma-label font-black font-sans">Active Coma</span></div>
@@ -321,23 +299,27 @@
                             <div class="sheet-card text-gray-800 text-center">
                                 <h3>Stress & Trauma</h3>
                                 <div class="flex justify-around items-center mb-6 py-4">
-                                    <div class="flex flex-col items-center"><div class="stress-container"><input type="number" data-key="currentStress" class="stress-input-val" value="0"></div><label class="stress-sub-label">Current Stress</label></div>
+                                    <div class="flex flex-col items-center">
+                                        <div class="stress-container"><input type="number" data-key="currentStress" class="stress-input-val" value="0"></div>
+                                        <label class="stress-sub-label">Current Stress</label>
+                                    </div>
                                     <div class="text-4xl text-gray-200 font-light translate-y-[-10px]">/</div>
-                                    <div class="flex flex-col items-center"><div class="stress-container"><input type="number" data-key="stressThreshold" class="stress-input-val" value="10"></div><label class="stress-sub-label">Threshold</label></div>
+                                    <div class="flex flex-col items-center">
+                                        <div class="stress-container"><input type="number" data-key="stressThreshold" class="stress-input-val" value="10"></div>
+                                        <label class="stress-sub-label">Threshold</label>
+                                    </div>
                                 </div>
                                 <textarea data-key="trauma" class="text-[11px] italic font-serif h-16 w-full p-2 bg-gray-50 rounded" placeholder="Scars and traumas..."></textarea>
                             </div>
                         </div>
 
-                        <!-- Column 3: Equipment & Identity -->
+                        <!-- Column 3 -->
                         <div class="lg:col-span-5 space-y-4 text-gray-800">
                             <div class="sheet-card h-48 flex flex-col items-center justify-center border-2 border-dashed bg-gray-50 rounded-lg relative overflow-hidden">
                                 <img id="portrait-preview" class="hidden absolute inset-0 w-full h-full object-cover">
                                 <div id="portrait-placeholder" class="text-center opacity-40 font-sans"><span class="text-2xl">👤</span><br><span class="text-[8px] font-black uppercase font-bold">Portrait Upload</span></div>
                                 <input type="file" onchange="window.handleImageUpload(event)" class="absolute inset-0 opacity-0 cursor-pointer">
                             </div>
-
-                            <div id="whisper-display-box" class="hidden-view"><div class="sheet-card !bg-purple-50 !border-purple-200 text-gray-800"><h3 class="!text-purple-700 font-black">Secret Whispers</h3><div id="whispers-list" class="space-y-1"></div></div></div>
 
                             <div class="sheet-card text-gray-800">
                                 <h3 class="!text-[11px] font-black !mb-4">Weapons & tech</h3>
@@ -346,7 +328,7 @@
                                         <div class="equip-table-header"><span>Name</span><span class="text-center">Atk</span><span class="text-center">Dmg/Type</span><span></span></div>
                                         <div id="attacks-list" class="space-y-1 my-1"></div>
                                         <button onclick="window.addAttackItem()" class="w-full py-2 border-2 border-dashed text-[9px] font-black text-gray-400 uppercase hover:border-amber-400 transition-all font-sans font-bold">+ ADD WEAPON/ITEM</button>
-                                        <textarea data-key="combatNotes" class="w-full mt-3 h-14 p-2 bg-gray-50 rounded text-[11px]" placeholder="Attack notes..."></textarea>
+                                        <textarea data-key="combatNotes" class="w-full mt-3 h-14 p-2 bg-gray-50 rounded text-[11px]" placeholder="Combat notes..."></textarea>
                                     </div>
                                     <div class="prof-group">
                                         <label class="text-[9px] font-black uppercase text-gray-500 mb-2 block font-black">Proficiencies</label>
@@ -367,7 +349,7 @@
                                     <div class="currency-box"><span class="currency-label">BYT</span><input type="number" data-key="ep" class="currency-input"></div>
                                     <div class="currency-box"><span class="currency-label">VT</span><input type="number" data-key="gp" class="currency-input"></div>
                                 </div>
-                                <textarea data-key="equipment" class="w-full h-32 p-3 bg-gray-50 rounded font-serif text-[11px] leading-relaxed" placeholder="Detailed Inventory..."></textarea>
+                                <textarea data-key="equipment" class="w-full h-32 p-3 bg-gray-50 rounded font-serif text-[11px] leading-relaxed" placeholder="Inventory list..."></textarea>
                             </div>
 
                             <div class="sheet-card text-gray-800">
@@ -390,7 +372,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="sheet-card h-40 flex flex-col text-gray-800"><h3>History Log</h3><div id="dice-log" class="flex-grow overflow-y-auto text-[10px] font-mono p-1 bg-gray-50 rounded"></div></div>
                         </div>
                     </div>
 
@@ -440,7 +421,7 @@
                 <button onclick="window.generateScores('heroic')" class="bg-indigo-600 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-md">Heroic</button>
             </div>
             <div id="gen-apply-area" class="hidden space-y-4 mt-6"><button onclick="window.applyScores()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-lg">Apply Stats</button></div>
-            <button onclick="document.getElementById('score-gen-modal').classList.add('hidden')" class="mt-4 text-[10px] font-bold text-gray-400 uppercase font-black font-bold">Close</button>
+            <button onclick="document.getElementById('score-gen-modal').classList.add('hidden')" class="mt-4 text-[10px] font-bold text-gray-400 uppercase font-black">Close</button>
         </div>
     </div>
 
@@ -455,6 +436,7 @@
         </div>
     </div>
 
+    <!-- MANAGE MODAL -->
     <div id="delete-modal" class="fixed inset-0 bg-black/90 flex items-center justify-center z-[300] hidden text-gray-800">
         <div class="bg-white p-8 rounded-2xl w-full max-w-sm border-4 border-red-600 shadow-2xl text-center font-sans">
             <div id="delete-stage-1">
@@ -510,7 +492,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, updateDoc, deleteDoc, onSnapshot, addDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, doc, updateDoc, deleteDoc, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI",
@@ -634,6 +616,17 @@
             const sCont = document.getElementById('sheet-container'); 
             if (sCont) sCont.className = char.status === 'coma' ? 'status-coma' : char.status === 'dead' ? 'status-dead' : '';
             
+            const whisperList = document.getElementById('whispers-list');
+            if (whisperList) {
+                const whispers = char.dmWhispers || [];
+                whisperList.innerHTML = whispers.map((w, idx) => `
+                    <div class="whisper-box">
+                        <div class="flex-grow">${w.text}</div>
+                        ${activeRole === 'dm' ? `<span class="whisper-delete" onclick="window.deleteWhisper(${idx})">×</span>` : ''}
+                    </div>`).reverse().join('');
+                document.getElementById('whisper-display-box').classList.toggle('hidden-view', whispers.length === 0);
+            }
+
             const pPreview = document.getElementById('portrait-preview');
             const pPlaceholder = document.getElementById('portrait-placeholder');
             if (char.imageSrc) { if(pPreview) { pPreview.src = char.imageSrc; pPreview.classList.remove('hidden'); } pPlaceholder?.classList.add('hidden'); }
@@ -680,14 +673,13 @@
             activeCharId = id; 
             document.getElementById('dashboard-screen').classList.add('hidden-view'); 
             document.getElementById('sheet-screen').classList.remove('hidden-view'); 
-            const roller = document.getElementById('quick-roll-bar');
-            if (roller) roller.classList.remove('hidden-view'); 
+            document.getElementById('quick-roll-bar').classList.remove('hidden-view'); 
             window.scrollTo(0,0);
             window.initSheetUI(); 
             window.syncSheetData(); 
         };
 
-        window.closeSheet = function() { activeCharId = null; document.getElementById('sheet-screen').classList.add('hidden-view'); document.getElementById('dashboard-screen').classList.remove('hidden-view'); const roller = document.getElementById('quick-roll-bar'); if (roller) roller.classList.add('hidden-view'); };
+        window.closeSheet = function() { activeCharId = null; document.getElementById('sheet-screen').classList.add('hidden-view'); document.getElementById('dashboard-screen').classList.remove('hidden-view'); document.getElementById('quick-roll-bar').classList.add('hidden-view'); };
 
         window.setRole = function(r) { if (r === 'dm') document.getElementById('password-modal').classList.remove('hidden'); else { activeRole = 'player'; updateRoleUI(); } };
         window.verifyDmPassword = function() { if (document.getElementById('dm-password').value === 'Rew4994') { activeRole = 'dm'; document.getElementById('password-modal').classList.add('hidden'); updateRoleUI(); } else { window.showToast("Denied"); } };
@@ -702,12 +694,21 @@
             input.value = ''; window.showToast("Whisper Sent");
         };
 
+        window.deleteWhisper = async function(idx) {
+            if (!activeCharId || activeRole !== 'dm') return;
+            const char = characters.find(c => c.id === activeCharId);
+            if (!char) return;
+            const whispers = [...(char.dmWhispers || [])];
+            whispers.splice(idx, 1);
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { dmWhispers: whispers });
+        };
+
         window.updateCharStatus = async function(s) { if (!activeCharId || !db) return; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { status: s }); window.showToast(`Status: ${s.toUpperCase()}`); };
         
         window.archiveCharacter = async function() { 
             if (!activeCharId || !db) return; 
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { isDeleted: true, status: 'dead' }); 
-            document.getElementById('delete-modal').classList.add('hidden'); window.closeSheet(); window.showToast("Bury Complete");
+            document.getElementById('delete-modal').classList.add('hidden'); window.closeSheet(); window.showToast("Buried in Graveyard");
         };
 
         window.restoreCharacter = async function() { 
@@ -949,7 +950,7 @@
             updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), data);
             if (manual) window.showToast("Synced to Cloud");
             const si = document.getElementById('sync-indicator'); si.style.opacity = 1; setTimeout(()=>si.style.opacity = 0, 1000);
-        }
+        };
 
         // --- DATA SYNC ---
 
