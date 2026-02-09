@@ -3,18 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aeonfall Campaign</title>
+    <title>Aeonfall Campaign Suite</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Roboto+Slab:wght@300;400;700&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Roboto+Slab:wght@300;400;700&family=Noto+Sans:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Roboto Slab', serif; background-color: #1a1a1a; color: #e2e8f0; overflow-x: hidden; }
+        body { font-family: 'Roboto Slab', serif; background-color: #1a1a1a; color: #e2e8f0; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
         .dashboard-bg { background-image: url('https://www.transparenttextures.com/patterns/dark-wood.png'); background-color: #121212; }
-        .card { transition: all 0.2s; cursor: pointer; border-left-width: 4px; position: relative; }
-        .card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.7); }
         
-        #sheet-container { background-color: #e8e0cd; min-height: 100vh; padding-bottom: 120px; color: #333; transition: filter 0.3s ease; }
+        #sheet-container { background-color: #e8e0cd; min-height: 100vh; padding-bottom: 140px; color: #333; transition: all 0.4s ease; }
         
-        /* Status Themes */
+        /* STATUS STYLES (Hue Effects) */
         #sheet-container.status-coma { background-color: #fef3c7 !important; }
         #sheet-container.status-dead { filter: grayscale(1); background-color: #d1d5db !important; }
         
@@ -23,99 +21,140 @@
             border: 1px solid #dcd3c0;
             border-radius: 4px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            padding: 16px;
+            padding: 12px;
             margin-bottom: 16px;
-            position: relative;
-            overflow: hidden;
         }
         .sheet-card h3 {
-            font-family: 'Cinzel', serif; font-weight: 700; text-align: center; font-size: 0.85rem; color: #222;
-            border-bottom: 2px solid #e8e0cd; padding-bottom: 4px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em;
+            font-family: 'Cinzel', serif; font-weight: 900; text-align: center; font-size: 0.95rem; color: #111;
+            border-bottom: 1px solid #eee; padding-bottom: 6px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.1em;
         }
         
-        .nav-link { color: #94a3b8; font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.2s; cursor: pointer; }
+        .nav-link { color: #94a3b8; font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.2s; cursor: pointer; font-family: 'Noto Sans', sans-serif; }
         .nav-link.active { color: #f59e0b; border-bottom: 2px solid #f59e0b; padding-bottom: 4px; }
 
-        .vital-container { aspect-ratio: 1/1; display: flex; flex-direction: column; align-items: center; justify-content: center; background-size: 100% 100%; position: relative; transition: transform 0.2s; }
-        .vital-shield { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 5 L10 20 L10 50 C10 75 50 95 50 95 C50 95 90 75 90 50 L90 20 Z' fill='%23e0f2fe' stroke='%230369a1' stroke-width='4'/%3E%3C/svg%3E"); }
-        .vital-square-init { border: 3px solid #b45309; border-radius: 12px; background-color: #fef3c7; }
-        .vital-square-speed { border: 3px solid #15803d; border-radius: 12px; background-color: #dcfce7; }
-        .vital-label { font-size: 10px; font-weight: 900; text-transform: uppercase; position: absolute; top: 10%; color: #4b5563; }
-        .vital-input { width: 80%; text-align: center; font-size: 24px; font-weight: 900; background: transparent; border: none !important; color: #1a1a1a; margin-top: 10px; }
+        /* HEADER GRID */
+        .header-input-group { border-bottom: 2px solid #cbd5e1; padding-bottom: 2px; margin-bottom: 4px; }
+        .header-label { font-size: 8px; font-weight: 900; color: #94a3b8; text-transform: uppercase; font-family: 'Noto Sans', sans-serif; }
+        .header-name-val { font-size: 32px; font-weight: 900; color: #1e293b; font-family: 'Noto Sans', sans-serif; width: 100%; border:none; outline:none; background:transparent; }
+        .header-input-val { font-size: 14px; font-weight: 700; color: #334155; width: 100%; background:transparent; border:none; outline:none; font-family: 'Noto Sans', sans-serif; }
 
-        .floating-roller {
-            position: fixed; bottom: 24px; right: 24px; z-index: 100;
-            background: white; border-radius: 20px; border: 3px solid #1a1a1a;
-            padding: 16px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); width: 280px;
+        /* ATTRIBUTE BOXES (Screenshot 5 Match) */
+        .special-field-group { display: flex; flex-direction: column; align-items: center; width: 100%; }
+        .special-field-input-wrapper { display: flex; align-items: center; border-bottom: 2px solid #cbd5e1; width: 100%; padding-bottom: 2px; }
+        .special-field-val { font-size: 28px; font-weight: 900; color: #1e293b; text-align: center; font-family: 'Noto Sans', sans-serif; width: 100%; border: none; background: transparent; }
+        .special-field-label { font-size: 9px; font-weight: 900; color: #94a3b8; text-transform: uppercase; margin-top: 4px; text-align: center; width: 100%; font-family: 'Noto Sans', sans-serif; }
+
+        .attr-item { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+        .attr-mod-box {
+            width: 54px; height: 54px;
+            border: 2px solid #cbd5e1;
+            border-radius: 10px;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            background: #fff;
         }
-        .dice-grid-btn { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border: 3px solid; border-radius: 10px; font-weight: 900; font-size: 12px; transition: all 0.1s; }
-        .dice-orange { background: #fffbeb; border-color: #d97706; color: #b45309; }
-        .dice-green { background: #f0fdf4; border-color: #16a34a; color: #166534; }
-        .dice-blue { background: #eff6ff; border-color: #2563eb; color: #1e40af; }
-        .dice-purple { background: #f5f3ff; border-color: #7c3aed; color: #5b21b6; }
-        .dice-red { background: #fef2f2; border-color: #dc2626; color: #991b1b; }
-        .dice-dark { background: #f9fafb; border-color: #374151; color: #111827; }
+        .attr-mod-box .shorthand { font-size: 7px; font-weight: 900; color: #94a3b8; text-transform: uppercase; margin-top: -2px; font-family: 'Noto Sans', sans-serif; }
+        .attr-mod-box .modifier { font-size: 18px; font-weight: 900; color: #1e293b; font-family: 'Noto Sans', sans-serif; }
+        .attr-score-val { font-size: 22px; font-weight: 800; color: #334155; width: 50px; text-align: center; font-family: 'Noto Sans', sans-serif; }
 
-        .ds-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid #ccc; cursor: pointer; transition: background 0.2s; }
-        .ds-dot.checked-succ { background: #16a34a; border-color: #166534; }
-        .ds-dot.checked-fail { background: #dc2626; border-color: #991b1b; }
+        /* VITALS BADGES (Screenshot 7 Match) */
+        .vital-badge { aspect-ratio: 1/1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; width: 65px; height: 65px; margin: 0 auto; }
+        .vital-shield { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 5 L10 20 L10 50 C10 75 50 95 50 95 C50 95 90 75 90 50 L90 20 Z' fill='%23eff6ff' stroke='%233b82f6' stroke-width='4'/%3E%3C/svg%3E"); background-size: 100% 100%; }
+        .vital-square-init { border: 3px solid #d97706; border-radius: 12px; background-color: #fffbeb; }
+        .vital-square-speed { border: 3px solid #16a34a; border-radius: 12px; background-color: #f0fdf4; }
+        .vital-label { font-size: 7px; font-weight: 900; text-transform: uppercase; position: absolute; top: 10%; color: #64748b; width: 100%; text-align: center; font-family: 'Noto Sans', sans-serif; }
+        .vital-input { width: 90%; text-align: center; font-size: 18px; font-weight: 900; background: transparent; border: none !important; color: #1e293b; margin-top: 8px; font-family: 'Noto Sans', sans-serif; }
 
+        /* DEATH & COMA (Screenshot 9 Match) */
+        .death-saves-label { font-size: 9px; font-weight: 900; color: #94a3b8; text-transform: uppercase; font-family: 'Noto Sans', sans-serif; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 4px; display: block; width: 100%; }
+        .ds-status-label { font-size: 10px; font-weight: 900; text-transform: uppercase; margin-bottom: 6px; font-family: 'Noto Sans', sans-serif; }
+        .ds-dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #cbd5e1; cursor: pointer; transition: all 0.2s; background: white; }
+        .ds-dot.checked-succ { background: #16a34a; border-color: #14532d; box-shadow: inset 0 0 0 3px white; }
+        .ds-dot.checked-fail { background: #dc2626; border-color: #7f1d1d; box-shadow: inset 0 0 0 3px white; }
+        .rounds-val { font-size: 48px; font-weight: 900; color: #1e293b; font-family: 'Noto Sans', sans-serif; width: 80px; text-align: center; border-bottom: 2px solid #cbd5e1; }
+
+        /* WEAPON TABLE (Fixed Grid) */
+        .equip-table-header { 
+            font-size: 8px; font-weight: 900; color: #94a3b8; text-transform: uppercase; 
+            display: grid; grid-template-columns: 2fr 1fr 1.5fr 30px; gap: 8px; 
+            padding: 6px 8px; background: #f8fafc; border-radius: 4px; margin-bottom: 6px; font-family: 'Noto Sans', sans-serif;
+        }
+        .attack-row {
+            display: grid; grid-template-columns: 2fr 1fr 1.5fr 30px; gap: 8px; align-items: center;
+            padding: 6px 8px; border-bottom: 1px solid #f1f5f9;
+        }
+        .atk-input { font-family: 'Noto Sans', sans-serif; font-size: 11px; font-weight: 700; color: #1e293b; border: none; background: transparent; width: 100%; }
+
+        /* STRESS & TRAUMA (Screenshot 6 Match) */
+        .stress-container { border-bottom: 2px solid #e2e8f0; padding-bottom: 4px; display: inline-block; }
+        .stress-input-val { font-size: 44px; font-weight: 900; color: #1e293b; text-align: center; width: 75px; font-family: 'Noto Sans', sans-serif; }
+        .stress-sub-label { font-size: 9px; font-weight: 900; color: #94a3b8; text-transform: uppercase; margin-top: 4px; font-family: 'Noto Sans', sans-serif; }
+
+        /* CURRENCY & INVENTORY */
+        .currency-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; }
+        .currency-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 4px; text-align: center; }
+        .currency-label { font-size: 8px; font-weight: 900; color: #94a3b8; display: block; font-family: 'Noto Sans', sans-serif; margin-bottom: 2px; }
+        .currency-input { font-size: 15px; font-weight: 900; text-align: center; color: #1e293b; width: 100%; font-family: 'Noto Sans', sans-serif; border: none; background: transparent; }
+
+        /* DYNAMIC MOVES (Screenshot 8) */
+        .lvl-card { background: #fdfaf3; border: 1px solid #dcd3c0; border-radius: 8px; padding: 16px; display: flex; flex-direction: column; min-height: 140px; box-shadow: inset 0 0 10px rgba(0,0,0,0.02); }
+        .lvl-header { font-family: 'Cinzel', serif; font-size: 11px; font-weight: 900; border-bottom: 2px solid #e8e0cd; margin-bottom: 12px; padding-bottom: 6px; color: #222; text-transform: uppercase; letter-spacing: 0.05em; text-align: left; }
+        .move-entry { border-bottom: 1px solid #e8e0cd; padding: 10px 0; position: relative; }
+        .move-entry:last-child { border-bottom: none; }
+        .move-delete { position: absolute; top: 10px; right: 0; color: #ef4444; font-size: 14px; cursor: pointer; opacity: 0.4; transition: opacity 0.2s; }
+        .move-delete:hover { opacity: 1; }
+        .move-input-name { font-weight: 900; font-size: 11px; color: #1e293b; text-transform: uppercase; font-family: 'Noto Sans', sans-serif; width: 100%; }
+        .move-input-dice { font-weight: 700; font-size: 10px; color: #3b82f6; font-family: 'Noto Sans', sans-serif; width: 100%; }
+        .move-input-desc { font-size: 10px; color: #64748b; line-height: 1.4; width: 100%; height: 50px; resize: none; border: none; background: transparent; }
+        .add-move-btn { font-family: 'Noto Sans', sans-serif; font-size: 10px; font-weight: 900; color: #3b82f6; text-transform: uppercase; margin-top: auto; padding-top: 12px; cursor: pointer; text-align: center; }
+
+        .floating-roller { position: fixed; bottom: 24px; right: 24px; z-index: 100; background: white; border-radius: 24px; border: 3px solid #1a1a1a; padding: 16px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); width: 300px; }
+        .roll-mode.active { background: #374151 !important; color: white !important; border-color: #374151 !important; }
+        .dice-grid-btn { width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border: 3px solid; border-radius: 14px; font-weight: 900; font-size: 15px; transition: transform 0.1s; cursor: pointer; font-family: 'Noto Sans', sans-serif; }
+
+        /* DASHBOARD STATUS BADGES */
+        .card-status-badge { font-size: 7px; font-weight: 900; padding: 1px 4px; border-radius: 4px; text-transform: uppercase; margin-top: 4px; display: inline-block; }
+        .badge-alive { background: #dcfce7; color: #166534; }
+        .badge-coma { background: #fef3c7; color: #92400e; }
+        .badge-dead { background: #f3f4f6; color: #4b5563; }
+
+        .card { transition: all 0.2s; border-left-width: 6px; cursor: pointer; border-radius: 12px; }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.5); }
         .hidden-view { display: none !important; }
-        .rollable { cursor: pointer; transition: transform 0.1s; padding: 2px; border-radius: 4px; }
-        .rollable:hover { background-color: rgba(0,0,0,0.05); color: #8b0000; }
-        .tiny-label { font-size: 9px; text-transform: uppercase; color: #888; font-weight: 900; display: block; border-top: 1px solid #ddd; margin-top: 2px; }
-        
-        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 12px 24px; border-radius: 30px; z-index: 1000; pointer-events: none; opacity: 0; transition: opacity 0.3s; }
-        
         input, textarea, select { background: transparent; border: none; font-size: 13px; color: #333; width: 100%; }
-        input:focus { outline: none; border-bottom: 1px solid #d97706; }
+        input:focus { outline: none; }
 
-        #sync-indicator { position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.5); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 10px; opacity: 0; pointer-events: none; z-index: 9999; }
-        
-        .score-line-val { font-family: 'Cinzel', serif; font-size: 24px; font-weight: 900; color: #312e81; position: relative; margin: 0 10px; }
-        .score-line-val::after { content: ''; position: absolute; bottom: -10px; left: 0; width: 100%; height: 2px; background: #cbd5e1; }
-        .assign-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .assign-row { display: flex; align-items: center; justify-content: space-between; background: #f8fafc; padding: 6px 10px; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .stat-row { display: flex; align-items: center; gap: 12px; padding: 10px 8px; border-bottom: 1px solid #f3f4f6; font-size: 11px; height: 42px; }
+        .circle-check { appearance: none; width: 18px; height: 18px; border: 2px solid #9ca3af; border-radius: 50%; cursor: pointer; transition: all 0.2s; flex-shrink: 0; background-color: white; }
+        .circle-check:checked { background-color: #333; border-color: #333; box-shadow: inset 0 0 0 3px white; }
+        .stat-label-text { flex-grow: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #374151; font-weight: 700; font-family: 'Noto Sans', sans-serif; text-transform: uppercase; }
+        .stat-mod-box { flex-shrink: 0; min-width: 35px; text-align: right; font-weight: 900; color: #000; font-size: 13px; font-family: 'Noto Sans', sans-serif; }
 
-        /* Robust Skills/Saves Layout */
-        .stat-row { display: flex; align-items: center; gap: 8px; padding: 4px 8px; border-bottom: 1px solid #f1f1f1; font-size: 11px; height: 36px; width: 100%; }
-        .stat-row input[type="checkbox"] { flex-shrink: 0; width: 14px; height: 14px; cursor: pointer; }
-        .stat-label-text { flex-grow: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #4b5563; font-weight: 600; font-family: 'Noto Sans', sans-serif; }
-        .stat-mod-box { flex-shrink: 0; min-width: 38px; text-align: right; font-weight: 900; color: #111; font-family: 'Roboto Slab', serif; }
-
-        .dm-panel { background: #2d2a2e; color: #fff; padding: 16px; border-radius: 12px; margin-bottom: 24px; border: 2px solid #f59e0b; }
-        .dm-whisper-box { background: #fef2f2; border-left: 4px solid #ef4444; padding: 12px; border-radius: 4px; margin-bottom: 16px; color: #333; }
-        .whisper-tag { font-size: 9px; font-weight: 900; color: #991b1b; text-transform: uppercase; margin-bottom: 4px; display: block; }
-        
-        .equip-header { background: #f8f9fa; font-size: 10px; font-weight: 900; color: #6c757d; text-transform: uppercase; padding: 4px 8px; border-radius: 4px; display: grid; grid-template-columns: 1fr 50px 70px 24px; gap: 4px; margin-bottom: 4px; }
-        .equip-row { display: grid; grid-template-columns: 1fr 50px 70px 24px; gap: 4px; align-items: center; padding: 4px 8px; border-bottom: 1px solid #f1f1f1; }
-        
-        .mode-btn { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 900; border: 2px solid #cbd5e1; color: #64748b; background: #f1f5f9; }
-        .mode-btn.active { background: #374151; color: white; border-color: #374151; }
-
-        .lvl-card { background: #fff; border: 1px solid #dcd3c0; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; min-height: 100px; }
-        .lvl-header { font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; border-bottom: 2px solid #e8e0cd; margin-bottom: 8px; padding-bottom: 4px; }
+        .gen-num-badge { display: inline-block; background: #f3f4f6; color: #1e293b; font-weight: 900; padding: 4px 10px; border-radius: 6px; margin: 0 4px; font-family: 'Noto Sans', sans-serif; font-size: 16px; border: 1px solid #e2e8f0; }
+        .assign-row { display: grid; grid-template-columns: 80px 1fr; gap: 12px; align-items: center; margin-bottom: 8px; text-align: left; }
+        .assign-label { font-weight: 900; color: #64748b; font-size: 10px; text-transform: uppercase; }
+        .assign-select { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 8px; padding: 4px 8px; font-weight: 900; color: #1e293b; }
     </style>
 </head>
 <body class="min-h-screen">
 
-    <div id="toast" class="toast">Message</div>
-    <div id="sync-indicator">Cloud Synced</div>
+    <div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-[#333] text-white px-6 py-3 rounded-full opacity-0 transition-opacity z-[1000] pointer-events-none font-black text-xs uppercase tracking-widest">Message</div>
+    <div id="sync-indicator" class="fixed top-2 right-2 text-[10px] bg-black/50 text-white px-2 py-1 rounded opacity-0 pointer-events-none z-[200]">Synced</div>
 
     <!-- MAIN DASHBOARD -->
     <div id="dashboard-screen" class="min-h-screen dashboard-bg p-4 md:p-8 text-white">
         <div class="max-w-6xl mx-auto">
-            <header class="flex flex-col md:flex-row justify-between items-center mb-10 border-b border-gray-800 pb-8 gap-6">
+            <header class="flex flex-col md:flex-row justify-between items-center mb-10 border-b border-gray-800 pb-8 gap-6 text-white font-serif">
                 <div>
-                    <h1 class="text-4xl md:text-6xl text-amber-500 font-bold mb-2 font-serif tracking-tight">Aeonfall</h1>
-                    <p class="text-gray-500 text-xs md:text-sm uppercase tracking-widest font-bold">Campaign Management Suite</p>
+                    <h1 class="text-5xl text-amber-500 font-bold mb-2 tracking-tight">Aeonfall</h1>
+                    <p class="text-gray-500 text-xs uppercase tracking-widest font-bold font-sans">Campaign Management Suite</p>
                 </div>
                 <div class="flex flex-col items-center gap-4">
-                    <div class="flex items-center gap-2 bg-gray-900 p-1 rounded-xl shadow-2xl">
-                        <button id="role-player-btn" onclick="window.setRole('player')" class="px-6 py-3 rounded-lg text-sm font-bold transition-all bg-amber-600 text-white shadow-lg">Player</button>
-                        <button id="role-dm-btn" onclick="window.setRole('dm')" class="px-6 py-3 rounded-lg text-sm font-bold transition-all text-gray-500">DM</button>
+                    <div class="flex items-center gap-2 bg-black/40 p-1 rounded-xl border border-gray-800">
+                        <button id="role-player-btn" onclick="window.setRole('player')" class="px-6 py-2 rounded-lg text-xs font-black uppercase transition-all">Player</button>
+                        <button id="role-dm-btn" onclick="window.setRole('dm')" class="px-6 py-2 rounded-lg text-xs font-black uppercase transition-all">DM</button>
                     </div>
-                    <nav id="main-nav" class="flex gap-6">
+                    <nav class="flex gap-6 font-sans">
                         <button onclick="window.setView('party')" id="nav-party" class="nav-link active">Party</button>
                         <button onclick="window.location.href='NPCs.html'" id="nav-npcs" class="nav-link">NPCs</button>
                         <button onclick="window.location.href='Beasts.html'" id="nav-beasts" class="nav-link">Bestiary</button>
@@ -124,84 +163,8 @@
                 </div>
             </header>
 
-            <div class="flex justify-between items-center mb-8">
-                <h2 id="view-title" class="text-2xl font-serif text-gray-400 uppercase font-bold tracking-widest">The Party</h2>
-                <div id="create-actions" class="flex gap-2">
-                    <button onclick="window.openPartyModal()" class="bg-indigo-600 text-white px-4 py-2.5 rounded-lg text-sm font-bold shadow-lg">NEW PARTY</button>
-                    <button id="btn-create-pc" onclick="window.createChar('PC')" class="bg-green-700 text-white px-6 py-2.5 rounded-lg text-sm font-bold shadow-lg">+ NEW PC</button>
-                </div>
-            </div>
-
-            <div id="view-content" class="space-y-8">
-                <div id="party-view-container" class="space-y-8"></div>
-                <div id="npcs-view-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden-view"></div>
-                <div id="beasts-view-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden-view"></div>
-                <div id="graveyard-view-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden-view"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODALS -->
-    <div id="password-modal" class="fixed inset-0 bg-black/95 backdrop-blur-md flex items-center justify-center z-[200] hidden text-white">
-        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border-2 border-amber-600 shadow-2xl text-center">
-            <h3 class="text-xl font-serif text-amber-500 font-bold mb-2">DM AUTHORIZATION</h3>
-            <input type="password" id="dm-password" class="w-full bg-gray-900 text-white text-center text-2xl tracking-widest rounded-lg p-3 mb-6 border border-gray-700 font-serif" placeholder="••••">
-            <button onclick="window.verifyDmPassword()" class="w-full bg-amber-600 text-white py-3 rounded-xl font-bold uppercase text-xs">Enter</button>
-            <button onclick="document.getElementById('password-modal').classList.add('hidden')" class="w-full text-gray-500 mt-4 text-[10px] uppercase font-bold">Back</button>
-        </div>
-    </div>
-
-    <div id="party-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-[110] hidden text-white">
-        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border-2 border-indigo-600 shadow-2xl text-center">
-            <h3 class="text-xl font-serif text-indigo-400 font-bold mb-4 uppercase">Create New Party</h3>
-            <input type="text" id="party-name-input" class="w-full bg-gray-900 text-white rounded-lg p-3 mb-6 border border-gray-700 font-serif" placeholder="Party Name...">
-            <div class="flex gap-2">
-                <button onclick="window.createParty()" class="flex-1 bg-indigo-600 text-white py-3 rounded-xl font-bold uppercase text-xs">Confirm</button>
-                <button onclick="document.getElementById('party-modal').classList.add('hidden')" class="flex-1 bg-gray-700 text-gray-300 py-3 rounded-xl font-bold uppercase text-xs">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="score-gen-modal" class="fixed inset-0 bg-black/90 flex items-center justify-center z-[150] hidden text-gray-800">
-        <div class="bg-white p-8 rounded-2xl w-full max-w-lg border-4 border-indigo-600 shadow-2xl text-center">
-            <h3 class="text-2xl font-serif text-indigo-700 font-bold mb-2 uppercase">Score Generator</h3>
-            <div id="gen-results-area" class="bg-gray-100 p-6 rounded-xl mb-6 hidden">
-                <div id="gen-numbers-display" class="flex justify-center gap-4 mb-4"></div>
-                <div class="assign-grid" id="assign-grid"></div>
-                <button onclick="window.randomizeAssignment()" class="mt-6 w-full py-2 bg-gray-200 text-gray-700 rounded-lg text-[10px] font-black uppercase hover:bg-gray-300 transition-colors">Randomly Assign Numbers</button>
-            </div>
-            <div id="gen-controls" class="grid grid-cols-2 gap-4 mb-6">
-                <button onclick="window.generateScores('standard')" class="bg-gray-800 text-white py-3 rounded-xl font-bold uppercase text-xs">Standard Array</button>
-                <button onclick="window.generateScores('heroic')" class="bg-indigo-600 text-white py-3 rounded-xl font-bold uppercase text-xs">Heroic Roll</button>
-            </div>
-            <div id="gen-apply-area" class="hidden space-y-4">
-                <div id="heroic-reroll-area" class="hidden"><button id="btn-reroll" onclick="window.generateScores('heroic', true)" class="w-full bg-amber-500 text-white py-2 rounded-lg font-black uppercase text-[10px]">Use 1x Heroic Reroll</button></div>
-                <div class="flex gap-2 pt-4"><button onclick="window.applyScores()" class="flex-1 bg-green-600 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-lg hover:bg-green-500">Apply & Finalize</button></div>
-            </div>
-            <button onclick="document.getElementById('score-gen-modal').classList.add('hidden')" class="mt-4 text-[10px] font-bold text-gray-400 uppercase">Close</button>
-        </div>
-    </div>
-
-    <div id="delete-modal" class="fixed inset-0 bg-black/90 flex items-center justify-center z-[160] hidden text-gray-800">
-        <div class="bg-white p-8 rounded-2xl w-full max-w-sm border-4 border-red-600 shadow-2xl text-center">
-            <div id="delete-stage-1">
-                <h3 class="text-2xl font-serif text-red-700 font-bold mb-4 uppercase">Manage Record</h3>
-                <p id="delete-modal-desc" class="text-gray-500 text-sm mb-8 leading-relaxed text-left">Choose an action for this character record.</p>
-                <div class="flex flex-col gap-3">
-                    <button id="archive-btn" onclick="window.archiveCharacter()" class="bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-md transition-colors">Archive to Graveyard</button>
-                    <button id="restore-btn" onclick="window.restoreCharacter()" class="bg-green-600 hover:bg-green-500 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-md transition-colors hidden">Restore to Active Party</button>
-                    <button onclick="window.showPermDeleteConfirm()" class="bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-md transition-colors">Permanently Delete</button>
-                    <button onclick="document.getElementById('delete-modal').classList.add('hidden')" class="bg-gray-100 hover:bg-gray-200 text-gray-500 py-3 rounded-xl font-bold uppercase text-xs transition-colors">Cancel</button>
-                </div>
-            </div>
-            <div id="delete-stage-confirm" class="hidden">
-                <h3 class="text-2xl font-serif text-red-700 font-bold mb-4 uppercase">Confirm Erase</h3>
-                <p class="text-gray-500 text-sm mb-8 leading-relaxed">This action CANNOT be undone. Erase record completely?</p>
-                <div class="flex flex-col gap-3">
-                    <button onclick="window.executePermDelete()" class="bg-red-700 hover:bg-red-800 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-md transition-colors">Yes, Delete Forever</button>
-                    <button onclick="window.resetDeleteModal()" class="bg-gray-100 py-3 rounded-xl font-bold uppercase text-xs transition-colors">No, Go Back</button>
-                </div>
-            </div>
+            <div id="party-view-container" class="space-y-12"></div>
+            <div id="graveyard-view-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden-view"></div>
         </div>
     </div>
 
@@ -210,117 +173,244 @@
         <div id="sheet-container">
             <nav class="sticky top-0 z-[60] bg-gray-900 p-2 shadow-2xl border-b border-gray-800 text-white">
                 <div class="max-w-6xl mx-auto flex justify-between items-center px-4">
-                    <button onclick="window.closeSheet()" class="text-gray-400 hover:text-white font-bold flex items-center gap-2"><span>←</span> Exit</button>
-                    <div class="flex items-center gap-4">
-                        <span id="sheet-type-badge" class="bg-amber-600 px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest">PC</span>
-                        <div class="flex items-center gap-1">
-                            <button onclick="window.saveCurrentCharacter(true)" class="bg-green-700 hover:bg-green-600 px-4 py-1 rounded text-[10px] font-black uppercase tracking-widest">SYNC</button>
-                            <button id="delete-char-btn" onclick="window.triggerDeleteModal()" class="bg-red-900 px-3 py-1 rounded text-[10px] font-black uppercase hidden">Manage</button>
-                        </div>
+                    <button onclick="window.closeSheet()" class="text-gray-400 hover:text-white font-bold flex items-center gap-1 text-[10px]"><span>←</span> DASHBOARD</button>
+                    <div class="flex items-center gap-2">
+                        <span id="sheet-type-badge" class="bg-amber-600 px-3 py-1 rounded text-[9px] font-black uppercase font-sans">PC</span>
+                        <button onclick="window.saveCurrentCharacter(true)" class="bg-green-700 hover:bg-green-600 px-4 py-1 rounded text-[10px] font-black uppercase tracking-widest text-white font-sans">SYNC</button>
+                        <button id="delete-char-btn" onclick="window.triggerDeleteModal()" class="bg-red-900 px-3 py-1 rounded text-[10px] font-black uppercase hidden text-white font-sans">Manage</button>
                     </div>
                 </div>
             </nav>
 
-            <div class="max-w-6xl mx-auto p-4 md:p-8">
-                <div id="dm-oversight-panel" class="dm-panel hidden-view">
-                    <div class="flex flex-col md:flex-row justify-between items-center gap-6 text-white">
+            <div class="max-w-7xl mx-auto p-4 md:p-8">
+                <!-- DM Oversight Panel -->
+                <div id="dm-oversight-panel" class="hidden-view mb-8 bg-gray-800 p-4 border-2 border-amber-500 rounded-lg">
+                    <div class="flex flex-col md:flex-row justify-between items-end gap-6">
                         <div class="flex-grow w-full">
-                            <h4 class="text-xs font-black uppercase text-amber-500 mb-2">DM Whisper</h4>
+                            <h4 class="text-[10px] font-black uppercase text-amber-500 mb-2 font-sans">DM Whisper Tool</h4>
                             <div class="flex gap-2">
-                                <input type="text" id="dm-whisper-input" class="bg-black/40 border-none rounded p-2 text-white text-sm" placeholder="Secret note...">
-                                <button onclick="window.sendDmWhisper()" class="bg-purple-600 px-4 py-2 rounded text-xs font-black uppercase">Send</button>
+                                <input type="text" id="dm-whisper-input" class="bg-black/40 border-none rounded p-2 text-white text-sm flex-grow" placeholder="Send private message...">
+                                <button onclick="window.sendDmWhisper()" class="bg-purple-600 px-6 py-2 rounded text-[10px] font-black uppercase text-white font-sans">Whisper</button>
                             </div>
                         </div>
-                        <div class="flex flex-col items-center gap-2">
-                            <h4 class="text-xs font-black uppercase text-amber-500">Character Status</h4>
-                            <div class="flex gap-2">
-                                <button onclick="window.updateCharStatus('alive')" class="bg-green-900 text-green-400 px-4 py-2 rounded text-[10px] font-black uppercase">Alive</button>
-                                <button onclick="window.updateCharStatus('coma')" class="bg-amber-900 text-amber-400 px-4 py-2 rounded text-[10px] font-black uppercase">Coma</button>
-                                <button onclick="window.updateCharStatus('dead')" class="bg-gray-700 text-gray-300 px-4 py-2 rounded text-[10px] font-black uppercase">Death</button>
-                            </div>
+                        <div class="flex gap-2 font-sans">
+                            <button onclick="window.updateCharStatus('alive')" class="bg-green-700 text-white px-4 py-2 rounded text-[10px] font-black uppercase">Alive</button>
+                            <button onclick="window.updateCharStatus('coma')" class="bg-amber-600 text-white px-4 py-2 rounded text-[10px] font-black uppercase">Coma</button>
+                            <button onclick="window.updateCharStatus('dead')" class="bg-gray-500 text-white px-4 py-2 rounded text-[10px] font-black uppercase">Dead</button>
                         </div>
                     </div>
                 </div>
 
                 <div id="pc-sheet-layout">
-                    <header class="sheet-card mb-8">
-                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                            <div class="lg:col-span-4 flex flex-col gap-4">
-                                <div><input type="text" id="pc-name-field" class="text-3xl font-bold font-serif w-full mb-1" placeholder="Character Name" data-key="name"><label class="tiny-label">Character Name</label></div>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div><input type="text" data-key="archetype" placeholder="Survivor"><label class="tiny-label">Archetype</label></div>
-                                    <div><input type="text" data-key="belief" placeholder="Belief"><label class="tiny-label">Belief</label></div>
+                    <!-- HEADER -->
+                    <div class="sheet-card mb-6">
+                        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start text-gray-800">
+                            <div class="md:col-span-12 grid grid-cols-4 gap-y-6 gap-x-8">
+                                <div class="col-span-1">
+                                    <div class="header-input-group"><input type="text" id="pc-name-field" class="header-name-val" placeholder="Name" data-key="name"></div>
+                                    <label class="header-label">Character Name</label>
+                                </div>
+                                <div class="col-span-1">
+                                    <div class="header-input-group"><input type="text" data-key="class" class="header-input-val" placeholder="Fighter"></div>
+                                    <label class="header-label">Class</label>
+                                </div>
+                                <div class="col-span-1">
+                                    <div class="header-input-group"><input type="number" data-key="level" class="header-input-val text-center" value="1" onchange="window.updateLevelDependencies(this.value)"></div>
+                                    <label class="header-label text-center">Level</label>
+                                </div>
+                                <div class="col-span-1">
+                                    <div class="header-input-group"><select id="party-select" data-key="partyId" class="header-input-val font-bold"><option value="">Unassigned</option></select></div>
+                                    <label class="header-label">Party</label>
+                                </div>
+                                <div class="col-span-1"><div class="header-input-group"><input type="text" data-key="archetype" class="header-input-val" placeholder="Archetype"></div><label class="header-label">Archetype</label></div>
+                                <div class="col-span-1"><div class="header-input-group"><input type="text" data-key="belief" class="header-input-val" placeholder="Belief"></div><label class="header-label">Belief</label></div>
+                                <div class="col-span-1"><div class="header-input-group"><input type="text" data-key="race" class="header-input-val" placeholder="Race"></div><label class="header-label">Race</label></div>
+                                <div class="col-span-1 flex gap-4">
+                                    <div class="flex-1"><div class="header-input-group"><input type="text" data-key="background" class="header-input-val"></div><label class="header-label">Background</label></div>
+                                    <div class="flex-1"><div class="header-input-group"><input type="text" data-key="alignment" class="header-input-val"></div><label class="header-label">Alignment</label></div>
                                 </div>
                             </div>
-                            <div class="lg:col-span-8 grid grid-cols-2 md:grid-cols-3 gap-4 text-gray-800">
-                                <div><input type="text" data-key="class" placeholder="Fighter"><label class="tiny-label">Class</label></div>
-                                <div><input type="number" data-key="level" placeholder="1" onchange="window.updateLevelDependencies(this.value)"><label class="tiny-label">Level</label></div>
-                                <div><select id="party-select" data-key="partyId" class="cursor-pointer"><option value="">Unassigned</option></select><label class="tiny-label">Party</label></div>
-                                <div><input type="text" data-key="race" placeholder="Human"><label class="tiny-label">Race</label></div>
-                                <div><input type="text" data-key="background" placeholder="Noble"><label class="tiny-label">Background</label></div>
-                                <div><input type="text" data-key="alignment" placeholder="Neutral"><label class="tiny-label">Alignment</label></div>
-                            </div>
-                        </div>
-                    </header>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 text-gray-800">
-                        <div class="lg:col-span-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="space-y-6">
-                                <div class="sheet-card">
-                                    <h3 class="flex justify-between items-center">Abilities & Modifiers <button id="main-gen-btn" onclick="window.openScoreGenModal()" class="bg-blue-100 text-[8px] px-1.5 rounded text-blue-700 font-black">GENERATE</button></h3>
-                                    <div class="grid grid-cols-2 gap-4 mb-4">
-                                        <div class="text-center"><input type="number" data-key="profBonus" class="text-xl font-black text-center" value="2" onchange="window.calcMods()"><label class="tiny-label">Proficiency</label></div>
-                                        <div class="text-center"><input type="number" data-key="passivePerception" class="text-xl font-black text-center" value="10" onchange="window.calcMods()"><label class="tiny-label">Pass. Perception</label></div>
-                                    </div>
-                                    <div id="stats-container" class="space-y-3"></div>
-                                </div>
-                                <div class="sheet-card"><h3>Saves</h3><div id="saves-container" class="space-y-1"></div></div>
-                                <div class="sheet-card"><h3>Skills</h3><div id="skills-container" class="space-y-0.5 max-h-[500px] overflow-y-auto pr-1"></div></div>
-                            </div>
-                            <div class="space-y-6">
-                                <div class="grid grid-cols-3 gap-2">
-                                    <div class="vital-container vital-shield"><div class="vital-label">AC</div><input type="number" class="vital-input" data-key="ac" placeholder="10"></div>
-                                    <div class="vital-container vital-square-init"><div class="vital-label">INIT</div><input type="number" class="vital-input" data-key="init" placeholder="0"></div>
-                                    <div class="vital-container vital-square-speed"><div class="vital-label">Speed</div><input type="text" class="vital-input text-green-600" data-key="speed" placeholder="30FT"></div>
-                                </div>
-                                <div class="sheet-card text-center py-8">
-                                    <div class="flex justify-between px-2 mb-2 text-[10px] font-black uppercase text-gray-400"><span>MAX HP: <input type="number" class="w-8" data-key="hpMax"></span><span>HD: <input type="text" class="w-12 text-right" data-key="hd" placeholder="1 / 1d10"></span></div>
-                                    <input type="number" class="text-7xl font-black text-center w-full mb-1" data-key="hpCurrent" placeholder="10"><div class="text-[10px] font-black uppercase mt-4">Health Points</div>
-                                    <input type="number" class="text-xl font-bold text-center w-full border-b mt-4" data-key="tempHp" placeholder="Temp HP">
-                                    <div class="flex gap-2 justify-center mt-6">
-                                        <button onclick="window.rest('short')" class="bg-blue-100 text-blue-700 px-3 py-1 rounded text-[10px] font-black uppercase">Short Rest</button>
-                                        <button onclick="window.rest('long')" class="bg-blue-100 text-blue-700 px-3 py-1 rounded text-[10px] font-black uppercase">Long Rest</button>
-                                    </div>
-                                </div>
-                                <div class="sheet-card"><h3>Death & Coma</h3><div class="text-center space-y-4"><div class="uppercase text-[10px] font-black text-gray-400 tracking-widest">Death Saves</div><div class="flex flex-col items-center gap-2"><div class="text-green-700 text-[10px] font-black">SUCCESS</div><div class="flex gap-2"><div onclick="window.toggleDS('succ', 1)" id="ds-succ-1" class="ds-dot"></div><div onclick="window.toggleDS('succ', 2)" id="ds-succ-2" class="ds-dot"></div><div onclick="window.toggleDS('succ', 3)" id="ds-succ-3" class="ds-dot"></div></div><div class="text-red-700 text-[10px] font-black mt-2">FAILURE</div><div class="flex gap-2"><div onclick="window.toggleDS('fail', 1)" id="ds-fail-1" class="ds-dot"></div><div onclick="window.toggleDS('fail', 2)" id="ds-fail-2" class="ds-dot"></div><div onclick="window.toggleDS('fail', 3)" id="ds-fail-3" class="ds-dot"></div></div></div><div class="pt-4 border-t border-gray-100 flex items-center justify-center gap-2"><input type="checkbox" data-key="comaActive" class="w-4 h-4"><span class="text-[10px] font-black uppercase text-amber-600">Active Coma</span></div><div class="flex items-center justify-center gap-1"><input type="number" class="w-10 text-center text-xl font-black" data-key="comaRounds" value="0"><span class="text-gray-400 font-black">/ 10</span></div></div></div>
-                                <div class="sheet-card"><h3>Stress & Trauma</h3><div class="flex justify-around items-center mb-4"><div class="text-center"><input type="number" data-key="currentStress" class="text-2xl font-black text-center w-16" value="0"><label class="tiny-label">Current Stress</label></div><div class="text-3xl text-gray-200 font-light">/</div><div class="text-center"><input type="number" data-key="stressThreshold" class="text-2xl font-black text-center w-16" value="10"><label class="tiny-label">Threshold</label></div></div><textarea data-key="trauma" class="text-xs italic font-serif h-12 w-full" placeholder="Scars and traumas..."></textarea></div>
-                            </div>
-                        </div>
-
-                        <div class="lg:col-span-6 space-y-6">
-                            <div id="whisper-display-box" class="hidden-view"><div class="sheet-card !bg-purple-50 !border-purple-200"><h3 class="!text-purple-700 !border-purple-200">DM Whispers</h3><div id="whispers-list" class="space-y-3 max-h-[200px] overflow-y-auto pr-2"></div></div></div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div class="sheet-card h-64 flex flex-col items-center justify-center border-2 border-dashed bg-gray-50 group relative overflow-hidden"><img id="portrait-preview" class="hidden absolute inset-0 w-full h-full object-cover"><div id="portrait-placeholder" class="text-center opacity-40"><span class="text-4xl">👤</span><br><span class="text-[10px] font-black uppercase">Add Portrait</span></div><input type="file" onchange="window.handleImageUpload(event)" class="absolute inset-0 opacity-0 cursor-pointer"></div>
-                                <div class="sheet-card h-64 flex flex-col text-gray-800"><h3>Roll History</h3><div id="dice-log" class="flex-grow overflow-y-auto text-[10px] font-mono p-2 space-y-1 bg-gray-50 rounded"></div></div>
-                            </div>
-                            <div class="sheet-card text-gray-800">
-                                <h3>Equipment & Weapons</h3>
-                                <div class="equip-header"><span>Name</span><span>Atk</span><span>Dmg</span><span></span></div>
-                                <div id="attacks-list" class="space-y-1 mb-4 text-xs"></div>
-                                <button onclick="window.addAttackItem()" class="w-full py-2 border-2 border-dashed border-gray-200 text-[10px] font-black text-gray-400 uppercase rounded hover:border-amber-400">+ Add Weapon</button>
-                                <textarea data-key="equipment" class="mt-6 text-[12px] h-48 p-3 bg-gray-50 rounded font-mono" placeholder="Detailed Inventory list..."></textarea>
-                            </div>
-                            <div class="sheet-card text-gray-800"><h3>Identity & Features</h3><div class="space-y-6 text-xs"><div><div class="text-[9px] font-black text-gray-400 uppercase mb-2">Languages</div><div id="languages-list" class="flex flex-wrap gap-2 mb-3 text-xs font-bold"></div><div class="flex gap-2"><input type="text" id="lang-input" class="text-xs border-b px-2 h-8" placeholder="Add Language..."><button onclick="window.addLanguageItem()" class="bg-gray-200 px-4 rounded text-[9px] font-black h-8">ADD</button></div></div><div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4"><div><input type="text" data-key="traits" class="border-b h-8"><label class="tiny-label">Personality Traits</label></div><div><input type="text" data-key="ideals" class="border-b h-8"><label class="tiny-label">Ideals</label></div><div><input type="text" data-key="bonds" class="border-b h-8"><label class="tiny-label">Bonds</label></div><div><input type="text" data-key="flaws" class="border-b h-8"><label class="tiny-label">Flaws</label></div></div><textarea data-key="notes" class="text-[12px] h-48 p-3 bg-gray-50 rounded leading-relaxed font-serif mt-4" placeholder="Lore..."></textarea></div></div>
                         </div>
                     </div>
 
-                    <div class="mt-8">
-                        <div class="sheet-card">
-                            <div class="flex justify-between items-center border-b-2 border-gray-100 pb-2 mb-6">
-                                <h2 class="font-serif font-bold text-lg uppercase tracking-wider text-gray-800">Character Moves</h2>
-                                <div class="flex items-center gap-2"><label class="text-[10px] font-black uppercase text-gray-400">Viewing:</label><select id="moves-selector" onchange="window.renderMovesGrid()" class="text-[10px] font-black uppercase border rounded px-2 py-1 bg-blue-500 text-white border-none cursor-pointer"><option value="features">Feature Moves</option><option value="scriptcasting">Scriptcasting</option></select></div>
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                        <!-- Column 1: Attributes & Saves -->
+                        <div class="lg:col-span-3 space-y-6">
+                            <div class="sheet-card text-gray-800">
+                                <h3 class="flex justify-between items-center text-gray-800 font-black">Abilities & Modifiers <button onclick="window.openScoreGenModal()" class="bg-blue-100 text-[8px] px-2 py-0.5 rounded text-blue-700 font-black">GENERATE</button></h3>
+                                <div class="grid grid-cols-2 gap-8 mt-6 px-4 mb-8">
+                                    <div class="special-field-group">
+                                        <div class="special-field-input-wrapper"><input type="number" data-key="profBonus" class="special-field-val" value="2" onchange="window.calcMods()"></div>
+                                        <label class="special-field-label">Proficiency</label>
+                                    </div>
+                                    <div class="special-field-group">
+                                        <div class="special-field-input-wrapper"><input type="number" data-key="passivePerception" class="special-field-val" value="10" onchange="window.calcMods()"></div>
+                                        <label class="special-field-label">Pass. Perception</label>
+                                    </div>
+                                </div>
+                                <div id="stats-container" class="space-y-4 px-2"></div>
                             </div>
-                            <div id="features-lvl-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-gray-800"></div>
+                            <div class="sheet-card !p-0"><h3 class="pt-3 font-black">Saves</h3><div id="saves-container" class="text-gray-800 pb-2 px-2"></div></div>
+                            <div class="sheet-card !p-0"><h3 class="pt-3 font-black">Skills</h3><div id="skills-container" class="max-h-[500px] overflow-y-auto pr-1 text-gray-800 pb-2 px-2"></div></div>
+                        </div>
+
+                        <!-- Column 2: Health, Vitals, Recovery, Stress -->
+                        <div class="lg:col-span-4 space-y-4">
+                            <div class="flex justify-center gap-6">
+                                <div class="vital-badge vital-shield"><div class="vital-label">AC</div><input type="number" class="vital-input" data-key="ac" placeholder="10"></div>
+                                <div class="vital-badge vital-square-init"><div class="vital-label">INIT</div><input type="number" class="vital-input" data-key="init" placeholder="0"></div>
+                                <div class="vital-badge vital-square-speed"><div class="vital-label">SPD</div><input type="text" class="vital-input text-green-700" data-key="speed" placeholder="30FT"></div>
+                            </div>
+
+                            <div class="sheet-card text-center py-6 text-gray-800">
+                                <div class="flex justify-between px-4 mb-2 text-[9px] font-black uppercase text-gray-400 font-sans font-black">
+                                    <span>MAX: <input type="number" class="w-10 font-black text-gray-800" data-key="hpMax"></span>
+                                    <span>HD: <input type="text" class="w-16 text-right font-black text-gray-800" data-key="hd" placeholder="1d10"></span>
+                                </div>
+                                <input type="number" class="text-7xl font-black text-center w-full mb-2" data-key="hpCurrent" placeholder="10">
+                                <div class="text-[9px] font-black uppercase tracking-widest text-gray-400 font-sans">Current Health Points</div>
+                                <div class="mt-6 flex flex-col items-center">
+                                    <input type="number" class="text-xl font-bold text-center w-32 border-b text-gray-800" data-key="tempHp" placeholder="0">
+                                    <label class="text-[8px] font-black uppercase text-gray-400 mt-1 font-sans">Temporary Points</label>
+                                </div>
+                                <div class="flex gap-4 justify-center mt-8">
+                                    <button onclick="window.rest('short')" class="bg-blue-50 text-blue-700 px-6 py-2 rounded-lg text-[9px] font-black uppercase shadow-sm font-sans">Short Rest</button>
+                                    <button onclick="window.rest('long')" class="bg-blue-600 text-white px-6 py-2 rounded-lg text-[10px] font-black uppercase shadow-lg font-sans">Long Rest</button>
+                                </div>
+                            </div>
+
+                            <div class="sheet-card text-gray-800 text-center">
+                                <h3 class="font-black">Death & Coma</h3>
+                                <div class="py-4 px-4">
+                                    <span class="death-saves-label">Death Saves</span>
+                                    <div class="grid grid-cols-2 gap-4 mb-6">
+                                        <div>
+                                            <div class="ds-status-label text-green-700 font-black">Success</div>
+                                            <div class="flex justify-center gap-3">
+                                                <div onclick="window.toggleDS('succ', 1)" id="ds-succ-1" class="ds-dot"></div>
+                                                <div onclick="window.toggleDS('succ', 2)" id="ds-succ-2" class="ds-dot"></div>
+                                                <div onclick="window.toggleDS('succ', 3)" id="ds-succ-3" class="ds-dot"></div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="ds-status-label text-red-700 font-black">Failure</div>
+                                            <div class="flex justify-center gap-3">
+                                                <div onclick="window.toggleDS('fail', 1)" id="ds-fail-1" class="ds-dot"></div>
+                                                <div onclick="window.toggleDS('fail', 2)" id="ds-fail-2" class="ds-dot"></div>
+                                                <div onclick="window.toggleDS('fail', 3)" id="ds-fail-3" class="ds-dot"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="pt-4 border-t border-gray-100 flex flex-col items-center">
+                                        <div class="flex items-center gap-3 mb-2"><input type="checkbox" data-key="comaActive" class="w-5 h-5 rounded"><span class="coma-label font-black font-sans">Active Coma</span></div>
+                                        <div class="flex items-center justify-center"><input type="number" data-key="comaRounds" class="rounds-val" value="0"><span class="text-3xl text-gray-300 mx-2 font-light">/</span><span class="text-3xl font-black text-gray-400">10</span></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="sheet-card text-gray-800 text-center">
+                                <h3>Stress & Trauma</h3>
+                                <div class="flex justify-around items-center mb-6 py-4">
+                                    <div class="flex flex-col items-center"><div class="stress-container"><input type="number" data-key="currentStress" class="stress-input-val" value="0"></div><label class="stress-sub-label">Current Stress</label></div>
+                                    <div class="text-4xl text-gray-200 font-light translate-y-[-10px]">/</div>
+                                    <div class="flex flex-col items-center"><div class="stress-container"><input type="number" data-key="stressThreshold" class="stress-input-val" value="10"></div><label class="stress-sub-label">Threshold</label></div>
+                                </div>
+                                <textarea data-key="trauma" class="text-[11px] italic font-serif h-16 w-full p-2 bg-gray-50 rounded" placeholder="Scars and traumas..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Column 3: Equipment & Identity -->
+                        <div class="lg:col-span-5 space-y-4 text-gray-800">
+                            <div class="sheet-card h-48 flex flex-col items-center justify-center border-2 border-dashed bg-gray-50 rounded-lg relative overflow-hidden">
+                                <img id="portrait-preview" class="hidden absolute inset-0 w-full h-full object-cover">
+                                <div id="portrait-placeholder" class="text-center opacity-40 font-sans"><span class="text-2xl">👤</span><br><span class="text-[8px] font-black uppercase font-bold">Portrait Upload</span></div>
+                                <input type="file" onchange="window.handleImageUpload(event)" class="absolute inset-0 opacity-0 cursor-pointer">
+                            </div>
+
+                            <div id="whisper-display-box" class="hidden-view">
+                                <div class="sheet-card !bg-purple-50 !border-purple-200">
+                                    <h3 class="!text-purple-700 font-black">Secret Whispers</h3>
+                                    <div id="whispers-list" class="space-y-2"></div>
+                                </div>
+                            </div>
+
+                            <div class="sheet-card text-gray-800">
+                                <h3 class="!text-[11px] font-black !mb-4">Weapons & Tech Items</h3>
+                                <div class="space-y-6">
+                                    <div>
+                                        <div class="equip-table-header"><span>Name</span><span class="text-center">Atk</span><span class="text-center">Dmg/Type</span><span></span></div>
+                                        <div id="attacks-list" class="space-y-1 my-1"></div>
+                                        <button onclick="window.addAttackItem()" class="w-full py-2 border-2 border-dashed text-[9px] font-black text-gray-400 uppercase hover:border-amber-400 transition-all font-sans font-bold">+ ADD WEAPON/ITEM</button>
+                                        <textarea data-key="combatNotes" class="w-full mt-3 h-14 p-2 bg-gray-50 rounded text-[11px]" placeholder="Attack notes, ammo..."></textarea>
+                                    </div>
+                                    <div class="prof-group">
+                                        <label class="text-[9px] font-black uppercase text-gray-500 mb-2 block font-black">Proficiencies</label>
+                                        <div class="space-y-3 text-[10px]">
+                                            <div><div class="prof-header font-black">Armor</div><div class="flex gap-1 mb-2"><input type="text" id="add-armor-field" class="bg-gray-100 rounded px-2 text-[10px] flex-grow" placeholder="Add..."><button onclick="window.addProf('armor')" class="bg-green-600 text-white px-3 rounded font-black">+</button></div><div id="prof-armor-list" class="flex flex-wrap gap-1"></div></div>
+                                            <div><div class="prof-header font-black">Weapons</div><div class="flex gap-1 mb-2"><input type="text" id="add-weapon-field" class="bg-gray-100 rounded px-2 text-[10px] flex-grow" placeholder="Add..."><button onclick="window.addProf('weapon')" class="bg-green-600 text-white px-3 rounded font-black">+</button></div><div id="prof-weapon-list" class="flex flex-wrap gap-1"></div></div>
+                                            <div><div class="prof-header font-black">Tools</div><div class="flex gap-1 mb-2"><input type="text" id="add-tool-field" class="bg-gray-100 rounded px-2 text-[10px] flex-grow" placeholder="Add..."><button onclick="window.addProf('tool')" class="bg-green-600 text-white px-3 rounded font-black">+</button></div><div id="prof-tool-list" class="flex flex-wrap gap-1"></div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- EQUIPMENT & INVENTORY SECTION -->
+                            <div class="sheet-card text-gray-800">
+                                <h3 class="font-black">Equipment & Inventory</h3>
+                                <div class="prof-group">
+                                    <label class="text-[9px] font-black uppercase text-gray-500 mb-2 block font-black font-sans">Currency & Credits</label>
+                                    <div class="currency-grid">
+                                        <div class="currency-box"><span class="currency-label">SC</span><input type="number" data-key="cp" class="currency-input"></div>
+                                        <div class="currency-box"><span class="currency-label">CR</span><input type="number" data-key="sp" class="currency-input"></div>
+                                        <div class="currency-box"><span class="currency-label">BYT</span><input type="number" data-key="ep" class="currency-input"></div>
+                                        <div class="currency-box"><span class="currency-label">VT</span><input type="number" data-key="gp" class="currency-input"></div>
+                                    </div>
+                                    <label class="text-[9px] font-black uppercase text-gray-500 mb-2 block font-black font-sans">Bag & Inventory</label>
+                                    <textarea data-key="equipment" class="w-full h-32 p-3 bg-gray-50 rounded font-serif text-[11px] leading-relaxed" placeholder="Detailed Inventory..."></textarea>
+                                </div>
+                            </div>
+
+                            <!-- IDENTITY & FEATURES SECTION -->
+                            <div class="sheet-card text-gray-800">
+                                <h3 class="font-black">Identity & Features</h3>
+                                <div class="space-y-4">
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="header-input-group"><input type="text" data-key="traits" class="header-input-val"><label class="header-label">Personality Traits</label></div>
+                                        <div class="header-input-group"><input type="text" data-key="ideals" class="header-input-val"><label class="header-label">Ideals</label></div>
+                                        <div class="header-input-group"><input type="text" data-key="bonds" class="header-input-val"><label class="header-label">Bonds</label></div>
+                                        <div class="header-input-group"><input type="text" data-key="flaws" class="header-input-val"><label class="header-label">Flaws</label></div>
+                                    </div>
+                                    <div class="pt-2 border-t">
+                                        <label class="text-[9px] font-black uppercase text-gray-500 block font-black">Languages</label>
+                                        <div class="flex gap-1 mb-2"><input type="text" id="add-lang-field" class="bg-gray-100 rounded px-2 text-[10px] flex-grow" placeholder="Add Language..."><button onclick="window.addLanguageItem()" class="bg-green-600 text-white px-3 rounded font-black font-sans text-xs">+</button></div>
+                                        <div id="languages-list" class="flex flex-wrap gap-1.5"></div>
+                                    </div>
+                                    <div>
+                                        <label class="text-[9px] font-black uppercase text-gray-500 mb-2 block font-black">Background History</label>
+                                        <textarea data-key="notes" class="w-full h-32 p-3 bg-gray-50 rounded font-serif text-[11px] leading-relaxed" placeholder="History..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="sheet-card h-40 flex flex-col text-gray-800"><h3>History Log</h3><div id="dice-log" class="flex-grow overflow-y-auto text-[10px] font-mono p-1 bg-gray-50 rounded"></div></div>
+                        </div>
+                    </div>
+
+                    <!-- BOTTOM PROGRESSION -->
+                    <div class="mt-6">
+                        <div class="sheet-card text-gray-800">
+                            <div class="flex justify-between items-center border-b-2 border-gray-100 pb-3 mb-6">
+                                <h2 class="moves-title font-black font-serif">Character Moves</h2>
+                                <div class="flex items-center gap-3">
+                                    <span class="moves-viewing-label">Viewing:</span>
+                                    <div class="relative">
+                                        <select id="moves-selector" onchange="window.renderMovesGrid()" class="moves-selector-styled font-sans">
+                                            <option value="features">Feature Moves</option>
+                                            <option value="scriptcasting">Scriptcasting</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="features-lvl-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
                         </div>
                     </div>
                 </div>
@@ -328,41 +418,100 @@
         </div>
     </div>
 
-    <!-- ROLL OVERLAY -->
-    <div id="dice-result-overlay" class="fixed inset-0 bg-black/90 flex items-center justify-center z-[200] hidden" onclick="this.classList.add('hidden')">
-        <div class="text-center text-white p-12">
-            <div id="roll-label" class="text-amber-500 font-serif text-2xl mb-2 uppercase tracking-widest">ROLL</div>
-            <div id="roll-total" class="text-9xl font-black mb-4">20</div>
-            <div id="roll-breakdown" class="text-gray-300 font-mono text-lg bg-black/40 px-6 py-2 rounded-full inline-block text-center"></div>
+    <!-- MODALS -->
+    <div id="password-modal" class="fixed inset-0 bg-black/95 backdrop-blur-md flex items-center justify-center z-[300] hidden text-white">
+        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border-2 border-amber-600 shadow-2xl text-center font-sans">
+            <h3 class="text-xl font-serif text-amber-500 font-bold mb-2 uppercase tracking-widest">DM Access</h3>
+            <input type="password" id="dm-password" class="w-full bg-gray-900 text-white text-center text-2xl tracking-widest rounded-lg p-3 mb-6 border border-gray-700 font-sans" placeholder="••••">
+            <button onclick="window.verifyDmPassword()" class="w-full bg-amber-600 text-white py-3 rounded-xl font-bold uppercase text-xs">Authorize</button>
+            <button onclick="document.getElementById('password-modal').classList.add('hidden')" class="w-full text-gray-500 mt-4 text-[10px] uppercase font-bold">Cancel</button>
         </div>
     </div>
 
-    <!-- QUICK ROLLER -->
-    <div id="quick-roll-bar" class="hidden-view floating-roller">
-        <div class="flex items-center justify-between mb-4 border-b pb-2 text-gray-800">
+    <div id="score-gen-modal" class="fixed inset-0 bg-black/90 flex items-center justify-center z-[350] hidden text-gray-800">
+        <div class="bg-white p-6 rounded-2xl w-full max-w-lg border-4 border-indigo-600 shadow-2xl text-center font-sans">
+            <h3 class="text-xl font-serif text-indigo-700 font-bold mb-4 uppercase font-black">Stat Generator</h3>
+            <div id="gen-results-area" class="bg-gray-100 p-4 rounded-xl mb-6 hidden">
+                <div id="gen-numbers-display" class="flex justify-center gap-2 mb-4"></div>
+                <div class="assign-grid" id="assign-grid"></div>
+                <button onclick="window.randomizeAssignment()" class="mt-4 w-full py-2 bg-gray-200 text-gray-700 rounded-lg text-[10px] font-black uppercase font-bold">Auto-Assign</button>
+            </div>
+            <div id="gen-controls" class="grid grid-cols-2 gap-4">
+                <button onclick="window.generateScores('standard')" class="bg-gray-800 text-white py-3 rounded-xl font-bold uppercase text-xs">Standard</button>
+                <button onclick="window.generateScores('heroic')" class="bg-indigo-600 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-md">Heroic</button>
+            </div>
+            <div id="gen-apply-area" class="hidden space-y-4 mt-6"><button onclick="window.applyScores()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-lg">Apply Stats</button></div>
+            <button onclick="document.getElementById('score-gen-modal').classList.add('hidden')" class="mt-4 text-[10px] font-bold text-gray-400 uppercase font-black">Close</button>
+        </div>
+    </div>
+
+    <div id="delete-modal" class="fixed inset-0 bg-black/90 flex items-center justify-center z-[300] hidden text-gray-800">
+        <div class="bg-white p-8 rounded-2xl w-full max-w-sm border-4 border-red-600 shadow-2xl text-center font-sans">
+            <div id="delete-stage-1">
+                <h3 class="text-2xl font-serif text-red-700 font-bold mb-4 uppercase font-black">Manage Record</h3>
+                <div class="flex flex-col gap-3">
+                    <button id="archive-btn" onclick="window.archiveCharacter()" class="bg-indigo-600 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-md font-bold">Archive (Bury)</button>
+                    <button id="restore-btn" onclick="window.restoreCharacter()" class="bg-green-600 text-white py-3 rounded-xl font-bold uppercase text-xs hidden font-bold">Restore to Party</button>
+                    <button onclick="window.showPermDeleteConfirm()" class="bg-red-600 text-white py-3 rounded-xl font-bold uppercase text-xs font-bold">Delete Forever</button>
+                    <button onclick="document.getElementById('delete-modal').classList.add('hidden')" class="bg-gray-100 py-3 rounded-xl font-bold uppercase text-xs font-bold">Cancel</button>
+                </div>
+            </div>
+            <div id="delete-stage-confirm" class="hidden">
+                <h3 class="text-2xl font-serif text-red-700 font-bold mb-4 uppercase font-black">Confirm Delete?</h3>
+                <div class="flex flex-col gap-3">
+                    <button onclick="window.executePermDelete()" class="bg-red-700 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-lg font-bold">Confirm Delete</button>
+                    <button onclick="window.resetDeleteModal()" class="bg-gray-100 py-3 rounded-xl font-bold uppercase text-xs font-bold">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="quick-roll-bar" class="hidden-view floating-roller text-gray-800">
+        <div class="flex items-center justify-between mb-4 border-b pb-3">
             <div class="flex items-center gap-2">
-                <input type="number" id="roll-count" value="1" min="1" class="w-8 text-center font-black bg-gray-100 rounded">
-                <div class="h-4 w-px bg-gray-200 mx-1"></div>
+                <input type="number" id="roll-count" value="1" min="1" class="w-12 h-10 text-center font-black bg-gray-100 rounded-lg text-lg">
+                <div class="h-6 w-px bg-gray-200 mx-1"></div>
                 <button onclick="window.setRollMode('normal')" class="mode-btn roll-mode active" id="mode-norm">Norm</button>
                 <button onclick="window.setRollMode('adv')" class="mode-btn roll-mode" id="mode-adv">Adv</button>
                 <button onclick="window.setRollMode('dis')" class="mode-btn roll-mode" id="mode-dis">Dis</button>
             </div>
         </div>
         <div class="grid grid-cols-4 gap-2">
-            <button onclick="window.rollDice(4)" class="dice-grid-btn dice-orange">d4</button>
-            <button onclick="window.rollDice(6)" class="dice-grid-btn dice-green">d6</button>
-            <button onclick="window.rollDice(8)" class="dice-grid-btn dice-blue">d8</button>
-            <button onclick="window.rollDice(10)" class="dice-grid-btn dice-purple">d10</button>
-            <button onclick="window.rollDice(12)" class="dice-grid-btn dice-purple">d12</button>
-            <button onclick="window.rollDice(20)" class="dice-grid-btn dice-red">d20</button>
-            <button onclick="window.rollDice(100)" class="dice-grid-btn dice-dark">d100</button>
+            <button onclick="window.rollDice(4)" class="dice-grid-btn dice-d4" style="background: #fffbeb; border-color: #d97706; color: #92400e;">d4</button>
+            <button onclick="window.rollDice(6)" class="dice-grid-btn dice-d6" style="background: #f0fdf4; border-color: #16a34a; color: #14532d;">d6</button>
+            <button onclick="window.rollDice(8)" class="dice-grid-btn dice-d8" style="background: #eff6ff; border-color: #2563eb; color: #1e3a8a;">d8</button>
+            <button onclick="window.rollDice(10)" class="dice-grid-btn dice-d10" style="background: #f5f3ff; border-color: #7c3aed; color: #4c1d95;">d10</button>
+            <button onclick="window.rollDice(12)" class="dice-grid-btn dice-d12" style="background: #f5f3ff; border-color: #7c3aed; color: #4c1d95;">d12</button>
+            <button onclick="window.rollDice(20)" class="dice-grid-btn dice-d20" style="background: #fef2f2; border-color: #dc2626; color: #7f1d1d;">d20</button>
+            <button onclick="window.rollDice(100)" class="dice-grid-btn dice-d100" style="background: #f9fafb; border-color: #374151; color: #111827;">d100</button>
+        </div>
+    </div>
+
+    <!-- PARTY MODAL -->
+    <div id="party-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-[300] hidden text-white">
+        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border-2 border-indigo-600 shadow-2xl text-center">
+            <h3 class="text-xl font-serif text-indigo-400 font-bold mb-4 uppercase tracking-widest">New Party</h3>
+            <input type="text" id="party-name-input" class="w-full bg-gray-900 text-white rounded-lg p-3 mb-6 border border-gray-700 font-sans" placeholder="Name...">
+            <div class="flex gap-2">
+                <button onclick="window.createParty()" class="flex-1 bg-indigo-600 text-white py-3 rounded-xl font-bold uppercase text-xs">Form</button>
+                <button onclick="document.getElementById('party-modal').classList.add('hidden')" class="flex-1 bg-gray-700 text-gray-300 py-3 rounded-xl font-bold uppercase text-xs font-bold">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ROLL RESULT OVERLAY -->
+    <div id="dice-result-overlay" class="fixed inset-0 bg-black/90 flex items-center justify-center z-[500] hidden text-white" onclick="this.classList.add('hidden')">
+        <div class="text-center p-12">
+            <div id="roll-label" class="text-amber-500 font-serif text-xl mb-1 uppercase tracking-widest font-black">ROLL</div>
+            <div id="roll-total" class="text-9xl font-black mb-2 roll-anim font-sans">20</div>
+            <div id="roll-breakdown" class="text-gray-400 font-mono text-sm bg-black/40 px-4 py-2 rounded-full inline-block text-center font-bold"></div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot, addDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, updateDoc, deleteDoc, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI",
@@ -373,15 +522,16 @@
             appId: "1:716207733913:web:7aac43906a70e2b5f50c08"
         };
 
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'aeonfall-manager';
+        const appId = 'aeonfall-manager';
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
         let characters = [], parties = [], user = null, activeCharId = null, activeRole = 'player', rollMode = 'normal';
-        let autoSaveTimer = null, lastGeneratedScores = [], sessionRerollUsed = false;
+        let autoSaveTimer = null, lastGeneratedScores = [];
 
         const STATS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+        const STAT_NAMES_SHORT = { str: 'STR', dex: 'DEX', con: 'CON', int: 'INT', wis: 'WIS', cha: 'CHA' };
         const SKILLS = [
             {n:'Acrobatics (Dex)', s:'dex'},{n:'Animal Handling (Wis)', s:'wis'},{n:'Arcana (Int)', s:'int'},
             {n:'Athletics (Str)', s:'str'},{n:'Deception (Cha)', s:'cha'},{n:'History (Int)', s:'int'},
@@ -391,30 +541,27 @@
             {n:'Sleight of Hand (Dex)', s:'dex'},{n:'Stealth (Dex)', s:'dex'},{n:'Survival (Wis)', s:'wis'}
         ];
 
-        // --- CORE UI FUNCTIONS DECLARED AND ASSIGNED EARLY ---
+        // --- GLOBAL HOISTED FUNCTIONS ---
 
-        const showToast = (m) => { const t = document.getElementById('toast'); if(t){t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 3000);} };
-        
-        const renderMovesGrid = () => {
-            const s = document.getElementById('moves-selector'); if (!s) return;
-            const t = s.value, g = document.getElementById('features-lvl-grid'); if (!g) return; g.innerHTML = '';
-            let l = (t === 'features') ? ['Level 1','Level 2','Level 3','Level 4','Level 5','Level 6','Level 7','Level 8','Level 9'] : ['Tricks (0)','Level 1','Level 2','Level 3','Level 4','Level 5','Level 6','Level 7','Level 8','Level 9'];
-            l.forEach(lvl => g.innerHTML += `<div class="lvl-card"><div class="lvl-header">${lvl.toUpperCase()}</div><div class="flex-grow"></div><button class="text-[9px] font-black uppercase text-blue-500 text-center mt-2">+ ADD</button></div>`);
+        window.showToast = function(m) {
+            const t = document.getElementById('toast');
+            if (t) { t.textContent = m; t.style.opacity = 1; setTimeout(() => t.style.opacity = 0, 3000); }
         };
 
-        const calcMods = () => {
-            const p = parseInt(document.querySelector('[data-key="profBonus"]')?.value) || 2;
+        window.calcMods = function() {
             STATS.forEach(s => {
-                const vValue = document.querySelector(`[data-key="${s}"]`)?.value;
-                const v = parseInt(vValue) || 10;
+                const el = document.querySelector(`[data-key="${s}"]`);
+                const v = parseInt(el?.value) || 10;
                 const m = Math.floor((v - 10) / 2);
-                const el = document.getElementById(`mod-${s}`); if (el) el.textContent = (m >= 0 ? '+' : '') + m;
+                const modEl = document.getElementById(`mod-${s}`); if (modEl) modEl.textContent = (m >= 0 ? '+' : '') + m;
                 const sp = document.querySelector(`[data-key="save_prof_${s}"]`)?.checked;
-                const sel = document.getElementById(`save-mod-${s}`); if (sel) sel.textContent = (m + (sp ? p : 0) >= 0 ? '+' : '') + (m + (sp ? p : 0));
+                const p = parseInt(document.querySelector('[data-key="profBonus"]')?.value) || 2;
+                const saveModEl = document.getElementById(`save-mod-${s}`); if (saveModEl) saveModEl.textContent = (m + (sp ? p : 0) >= 0 ? '+' : '') + (m + (sp ? p : 0));
             });
             SKILLS.forEach(sk => {
                 const attrVal = parseInt(document.querySelector(`[data-key="${sk.s}"]`)?.value) || 10;
                 const m = Math.floor((attrVal - 10) / 2);
+                const p = parseInt(document.querySelector('[data-key="profBonus"]')?.value) || 2;
                 const safeKey = sk.n.toLowerCase().replace(/ /g,'_').replace(/[()]/g,'');
                 const sp = document.querySelector(`[data-key="prof_${safeKey}"]`)?.checked;
                 const sel = document.getElementById(`skill-mod-${safeKey}`); 
@@ -422,245 +569,440 @@
             });
         };
 
-        const initSheetUI = () => {
-            const sC = document.getElementById('stats-container'), svC = document.getElementById('saves-container'), skC = document.getElementById('skills-container');
-            if (!sC) return; sC.innerHTML = ''; svC.innerHTML = ''; skC.innerHTML = '';
-            STATS.forEach(s => {
-                sC.innerHTML += `<div class="flex items-center gap-3 text-gray-800"><div class="w-12 h-12 bg-gray-100 rounded-lg flex flex-col items-center justify-center border-2 border-gray-300 font-black rollable" onclick="window.rollStat('${s}')"><span class="text-[8px] uppercase text-gray-400">${s}</span><span id="mod-${s}">+0</span></div><input type="number" data-key="${s}" class="w-10 text-center font-bold" value="10" onchange="window.calcMods()"></div>`;
-                svC.innerHTML += `<div class="stat-row"><input type="checkbox" data-key="save_prof_${s}" onchange="window.calcMods()"><span class="stat-label-text uppercase text-gray-700">${s}</span><span class="stat-mod-box rollable" id="save-mod-${s}" onclick="window.rollSave('${s}')">+0</span></div>`;
-            });
-            SKILLS.forEach(sk => {
-                const safeKey = sk.n.toLowerCase().replace(/ /g,'_').replace(/[()]/g,'');
-                const id = `skill-mod-${safeKey}`;
-                skC.innerHTML += `<div class="stat-row"><input type="checkbox" data-key="prof_${safeKey}" onchange="window.calcMods()"><span class="stat-label-text text-gray-700">${sk.n}</span><span class="stat-mod-box rollable" id="${id}" onclick="window.rollSkill('${sk.n}')">+0</span></div>`;
-            });
-            renderMovesGrid();
-        };
-
-        const saveCurrentCharacter = (m) => {
-            if (!activeCharId || !db) return;
-            const data = {};
-            document.querySelectorAll('[data-key]').forEach(el => data[el.dataset.key] = el.type === 'checkbox' ? el.checked : el.value);
-            const p = document.getElementById('portrait-preview'); if (p) data.imageSrc = p.src || "";
-            data.languages = Array.from(document.querySelectorAll('#languages-list span')).map(s => s.textContent);
-            data.attacks = Array.from(document.querySelectorAll('#attacks-list > div')).map(r => ({
-                name: r.querySelector('.atk-name')?.value || "", bonus: r.querySelector('.atk-bonus')?.value || "", dmg: r.querySelector('.atk-dmg')?.value || ""
-            }));
-            updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), data);
-            if (m) showToast("Synced");
-            const si = document.getElementById('sync-indicator'); if (si) { si.style.opacity = 1; setTimeout(()=>si.style.opacity = 0, 1000); }
-        };
-
-        const handleImageUpload = (e) => {
-            const f = e.target.files[0]; if (!f) return;
-            const reader = new FileReader(); reader.onload = (ev) => {
-                const p = document.getElementById('portrait-preview'); if (p) { p.src = ev.target.result; p.classList.remove('hidden'); }
-                document.getElementById('portrait-placeholder')?.classList.add('hidden'); saveCurrentCharacter();
-            }; reader.readAsDataURL(f);
-        };
-
-        const openSheet = (id) => {
-            activeCharId = id;
-            document.getElementById('dashboard-screen')?.classList.add('hidden-view');
-            document.getElementById('sheet-screen')?.classList.remove('hidden-view');
-            document.getElementById('quick-roll-bar')?.classList.remove('hidden-view');
-            initSheetUI();
-            syncSheetData();
-        };
-
-        // --- ATTACH ALL TO WINDOW IMMEDIATELY ---
-        window.showToast = showToast;
-        window.renderMovesGrid = renderMovesGrid;
-        window.calcMods = calcMods;
-        window.initSheetUI = initSheetUI;
-        window.saveCurrentCharacter = saveCurrentCharacter;
-        window.handleImageUpload = handleImageUpload;
-        window.openSheet = openSheet;
-
-        // --- REMAINING HELPER DEFINITIONS ---
-        
-        function execRoll(label, bonus) {
-            const r1 = Math.floor(Math.random()*20)+1, r2 = Math.floor(Math.random()*20)+1;
-            let f = r1, btxt = `(${r1})`;
-            if (rollMode === 'adv') { f = Math.max(r1, r2); btxt = `Adv: Max(${r1}, ${r2})`; }
-            else if (rollMode === 'dis') { f = Math.min(r1, r2); btxt = `Dis: Min(${r1}, ${r2})`; }
-            const total = f + bonus;
-            const lEl = document.getElementById('roll-label'), tEl = document.getElementById('roll-total'), bEl = document.getElementById('roll-breakdown');
-            if (lEl) lEl.textContent = label;
-            if (tEl) tEl.textContent = total;
-            if (bEl) bEl.textContent = `${btxt} + ${bonus}`;
-            document.getElementById('dice-result-overlay')?.classList.remove('hidden');
-            const log = document.getElementById('dice-log'); if (log) { const d = document.createElement('div'); d.className="flex justify-between border-b py-1"; d.innerHTML=`<span>${label}</span><b>${total}</b>`; log.prepend(d); }
-        }
-
-        function createCard(c) {
-            const d = document.createElement('div'); d.className = `bg-gray-800 p-5 rounded-xl card border-l-4 shadow-xl border-amber-600 text-white`;
-            d.onclick = () => window.openSheet(c.id);
-            d.innerHTML = `<div class="flex items-center gap-4 mb-4 text-white"><div class="w-12 h-12 rounded-lg bg-gray-700 overflow-hidden">${c.imageSrc ? `<img src="${c.imageSrc}" class="w-full h-full object-cover">` : '<div class="w-full h-full flex items-center justify-center text-xl">👤</div>'}</div><div><h5 class="text-amber-500 font-serif font-bold">${c.name}</h5><p class="text-[10px] text-gray-400 uppercase">${c.class || 'Class'} Lvl ${c.level || 1}</p></div></div>`;
-            return d;
-        }
-
-        function renderDashboard() {
+        window.renderDashboard = function() {
             const pcC = document.getElementById('party-view-container'), grC = document.getElementById('graveyard-view-container');
             if (!pcC || !grC) return; pcC.innerHTML = ''; grC.innerHTML = '';
             const activePCs = characters.filter(c => c.type === 'PC' && !c.isDeleted);
             parties.forEach(p => {
-                const s = document.createElement('div'); s.className = "bg-gray-900/40 p-6 rounded-2xl border border-gray-800 shadow-xl mb-8 text-white";
-                s.innerHTML = `<h3 class="text-indigo-400 font-serif font-bold uppercase text-sm mb-4">${p.name}</h3><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="party-grid-${p.id}"></div>`;
+                const s = document.createElement('div'); s.className = "bg-gray-900/40 p-4 rounded-xl border border-gray-800 shadow-xl mb-6 text-white";
+                s.innerHTML = `<h3 class="text-indigo-400 font-serif font-bold uppercase text-[9px] mb-3 tracking-widest px-2 font-black">${p.name}</h3><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="party-grid-${p.id}"></div>`;
                 pcC.appendChild(s);
-                const g = s.querySelector(`#party-grid-${p.id}`); activePCs.filter(c => c.partyId === p.id).forEach(c => g.appendChild(createCard(c)));
+                const g = s.querySelector(`#party-grid-${p.id}`); activePCs.filter(c => c.partyId === p.id).forEach(c => g.appendChild(window.createCard(c)));
             });
             const unassigned = activePCs.filter(c => !c.partyId);
             if (unassigned.length > 0) {
-                const s = document.createElement('div'); s.className = "space-y-4 mb-8 text-white";
-                s.innerHTML = `<h3 class="text-gray-500 font-serif font-bold uppercase text-sm mb-4">Adventurers</h3><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="unassigned-grid"></div>`;
+                const s = document.createElement('div'); s.className = "mb-8 text-white px-2";
+                s.innerHTML = `<h3 class="text-gray-500 font-serif font-bold uppercase text-[9px] mb-3 tracking-widest px-2 font-black">Adventurers</h3><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="unassigned-grid"></div>`;
                 pcC.appendChild(s);
-                const g = s.querySelector('#unassigned-grid'); unassigned.forEach(c => g.appendChild(createCard(c)));
+                const g = s.querySelector('#unassigned-grid'); unassigned.forEach(c => g.appendChild(window.createCard(c)));
             }
-            characters.filter(c => c.isDeleted).forEach(c => grC.appendChild(createCard(c)));
-            const npcC = document.getElementById('npcs-view-container'), bstC = document.getElementById('beasts-view-container');
-            if (npcC) { npcC.innerHTML = ''; characters.filter(c => c.type === 'NPC' && !c.isDeleted).forEach(c => npcC.appendChild(createCard(c))); }
-            if (bstC) { bstC.innerHTML = ''; characters.filter(c => c.type === 'Beast' && !c.isDeleted).forEach(c => bstC.appendChild(createCard(c))); }
-        }
-
-        async function syncSheetData() {
-            const char = characters.find(c => c.id === activeCharId); if (!char) return;
-            const ps = document.getElementById('party-select'); if (ps) { ps.innerHTML = '<option value="">Unassigned</option>'; parties.forEach(p => ps.innerHTML += `<option value="${p.id}">${p.name}</option>`); }
-            document.querySelectorAll('[data-key]').forEach(el => {
-                if (el.type === 'checkbox') el.checked = !!char[el.dataset.key];
-                else { const v = char[el.dataset.key]; el.value = ((el.dataset.key === 'passivePerception' || el.dataset.key === 'stressThreshold') && (v === undefined || v === "")) ? 10 : (v || (el.type === 'number' ? 0 : '')); }
-            });
-            const sCont = document.getElementById('sheet-container'); if (sCont) sCont.className = char.status === 'coma' ? 'status-coma' : char.status === 'dead' ? 'status-dead' : '';
-            const isU = activeRole === 'dm' || char.ownerId === user?.uid;
-            document.getElementById('delete-char-btn')?.classList.toggle('hidden', !isU);
-            document.getElementById('whisper-display-box')?.classList.toggle('hidden-view', !isU);
-            const wl = document.getElementById('whispers-list'); if (wl) {
-                const whispers = char.dmWhispers || [];
-                wl.innerHTML = whispers.map((w, idx) => `
-                    <div class="dm-whisper-box flex justify-between items-start">
-                        <p class="text-xs italic text-gray-800">${w.text}</p>
-                        ${activeRole === 'dm' ? `<button onclick="window.deleteWhisper(${idx})" class="text-red-500 font-bold ml-2 hover:text-red-700">×</button>` : ''}
-                    </div>
-                `).reverse().join('');
-            }
-            const gBtn = document.getElementById('main-gen-btn'); if (gBtn) gBtn.classList.toggle('hidden', !!char.scoresGenerated);
-            if (char.imageSrc) { 
-                const p = document.getElementById('portrait-preview'); 
-                if(p) { p.src = char.imageSrc; p.classList.remove('hidden'); } 
-                document.getElementById('portrait-placeholder')?.classList.add('hidden'); 
-            } else {
-                document.getElementById('portrait-preview')?.classList.add('hidden');
-                document.getElementById('portrait-placeholder')?.classList.remove('hidden');
-            }
-            calcMods();
-        }
-
-        // --- DATA LISTENERS ---
-        function setupListeners() {
-            if (!user) return;
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), (snap) => {
-                characters = snap.docs.map(d => ({id: d.id, ...d.data()}));
-                renderDashboard();
-                if (activeCharId) syncSheetData();
-            }, (err) => console.error("Snapshot error:", err));
-
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'parties'), (snap) => {
-                parties = snap.docs.map(d => ({id: d.id, ...d.data()}));
-                renderDashboard();
-                if (activeCharId) syncSheetData();
-            });
-        }
-
-        // --- GLOBAL ACTIONS ---
-        window.closeSheet = () => { activeCharId = null; document.getElementById('sheet-screen')?.classList.add('hidden-view'); document.getElementById('dashboard-screen')?.classList.remove('hidden-view'); document.getElementById('quick-roll-bar')?.classList.add('hidden-view'); };
-        window.setRole = (r) => { if (r === 'dm') document.getElementById('password-modal')?.classList.remove('hidden'); else { activeRole = 'player'; updateRoleUI(); } };
-        window.verifyDmPassword = () => { if (document.getElementById('dm-password').value === 'Rew4994') { activeRole = 'dm'; document.getElementById('password-modal')?.classList.add('hidden'); updateRoleUI(); } else showToast("Denied"); };
-        window.setView = (v) => { document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active')); document.getElementById(`nav-${v}`)?.classList.add('active'); ['party','npcs','beasts','graveyard'].forEach(view => document.getElementById(`${view}-view-container`)?.classList.toggle('hidden-view', view !== v)); renderDashboard(); };
-        window.createChar = async (type) => { if (!db || !user) return; try { const ref = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), { type, name: `New ${type}`, ownerId: user.uid, isDeleted: false, status: 'alive', hpMax: 10, hpCurrent: 10, level: 1, str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10, profBonus: 2, scoresGenerated: false, languages: [], attacks: [], dmWhispers: [] }); window.openSheet(ref.id); } catch (err) { showToast("Creation failed."); } };
-        window.archiveCharacter = async () => { if (!activeCharId || !db) return; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { isDeleted: true, status: 'dead' }); document.getElementById('delete-modal')?.classList.add('hidden'); window.closeSheet(); };
-        window.restoreCharacter = async () => { if (!activeCharId || !db) return; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { isDeleted: false, status: 'alive' }); document.getElementById('delete-modal')?.classList.add('hidden'); showToast("Restored"); syncSheetData(); };
-        window.executePermDelete = async () => { if (!activeCharId || !db) return; await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId)); document.getElementById('delete-modal')?.classList.add('hidden'); window.closeSheet(); };
-        window.updateCharStatus = async (s) => { if (!activeCharId || !db) return; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { status: s }); showToast(s.toUpperCase()); };
-        window.sendDmWhisper = async () => { const i = document.getElementById('dm-whisper-input'); if (!i || !i.value || !activeCharId || !db) return; const c = characters.find(x => x.id === activeCharId), w = c.dmWhispers || []; w.push({text: i.value, timestamp: Date.now()}); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), {dmWhispers: w}); i.value = ''; showToast("Sent"); };
-        window.deleteWhisper = async (idx) => { if (!activeCharId || activeRole !== 'dm') return; const char = characters.find(c => c.id === activeCharId); if (!char) return; const whispers = [...(char.dmWhispers || [])]; whispers.splice(idx, 1); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { dmWhispers: whispers }); showToast("Removed"); };
-        window.openPartyModal = () => document.getElementById('party-modal')?.classList.remove('hidden');
-        window.createParty = async () => { const n = document.getElementById('party-name-input'); if (!n || !n.value || !db) return; await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'parties'), {name: n.value, createdAt: Date.now()}); document.getElementById('party-modal')?.classList.add('hidden'); n.value = ''; showToast("Party Formed"); };
-        window.setRollMode = (m) => { rollMode = m; document.querySelectorAll('.roll-mode').forEach(b => b.classList.remove('active')); document.getElementById(`mode-${m}`)?.classList.add('active'); };
-        window.openScoreGenModal = () => { sessionRerollUsed = false; document.getElementById('score-gen-modal')?.classList.remove('hidden'); document.getElementById('gen-results-area')?.classList.add('hidden'); document.getElementById('gen-apply-area')?.classList.add('hidden'); document.getElementById('gen-controls')?.classList.remove('hidden'); };
-        window.updateLevelDependencies = (v) => { const l = parseInt(v) || 1; const b = l >= 17 ? 6 : l >= 13 ? 5 : l >= 9 ? 4 : l >= 5 ? 3 : 2; const pi = document.querySelector('[data-key="profBonus"]'); if (pi) pi.value = b; calcMods(); window.saveCurrentCharacter(); };
-        window.rest = async (t) => { if (!activeCharId || !db) return; const c = characters.find(x => x.id === activeCharId); if (t === 'long') await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { dsSucc: 0, dsFail: 0, hpCurrent: parseInt(c.hpMax) || 10, tempHp: 0 }); else showToast("Ready"); };
-        window.toggleDS = async (type, num) => { const char = characters.find(c => c.id === activeCharId); if (!char) return; const key = type === 'succ' ? 'dsSucc' : 'dsFail'; const newVal = char[key] === num ? num - 1 : num; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { [key]: newVal }); };
-        window.randomizeAssignment = () => { const p = [0,1,2,3,4,5].sort(()=>Math.random()-0.5); Array.from(document.querySelectorAll('[data-assign-stat]')).forEach((s,i)=>s.value=p[i]); };
-        window.triggerDeleteModal = () => { const char = characters.find(c => c.id === activeCharId); if (!char) return; window.resetDeleteModal(); const isArchived = !!char.isDeleted; document.getElementById('archive-btn')?.classList.toggle('hidden', isArchived); document.getElementById('restore-btn')?.classList.toggle('hidden', !isArchived); document.getElementById('delete-modal')?.classList.remove('hidden'); };
-        window.showPermDeleteConfirm = () => { document.getElementById('delete-stage-1')?.classList.add('hidden'); document.getElementById('delete-stage-confirm')?.classList.remove('hidden'); };
-        window.resetDeleteModal = () => { document.getElementById('delete-stage-1')?.classList.remove('hidden'); document.getElementById('delete-stage-confirm')?.classList.add('hidden'); };
-        window.rollStat = (s) => { const v = parseInt(document.querySelector(`[data-key="${s}"]`)?.value) || 10; execRoll(`${s.toUpperCase()} Check`, Math.floor((v - 10) / 2)); };
-        window.rollSave = (s) => { const v = parseInt(document.querySelector(`[data-key="${s}"]`)?.value) || 10; const m = Math.floor((v - 10) / 2); const p = parseInt(document.querySelector('[data-key="profBonus"]')?.value) || 2; const sp = document.querySelector(`[data-key="save_prof_${s}"]`)?.checked; execRoll(`${s.toUpperCase()} Save`, m + (sp ? p : 0)); };
-        window.rollSkill = (n) => { const skillObj = SKILLS.find(x => x.n === n); const v = parseInt(document.querySelector(`[data-key="${skillObj.s}"]`)?.value) || 10; const m = Math.floor((v - 10) / 2); const p = parseInt(document.querySelector('[data-key="profBonus"]')?.value) || 2; const safeKey = n.toLowerCase().replace(/ /g,'_').replace(/[()]/g,''); const sp = document.querySelector(`[data-key="prof_${safeKey}"]`)?.checked; execRoll(`${n} Check`, m + (sp ? p : 0)); };
-        window.addAttackItem = () => { const c = document.getElementById('attacks-list'); if (!c) return; const d = document.createElement('div'); d.className = "equip-row"; d.innerHTML = `<input type="text" class="atk-name font-bold flex-1" placeholder="Weapon"><input type="text" class="atk-bonus w-10 text-center" placeholder="+0"><input type="text" class="atk-dmg w-12 text-center" placeholder="1d8"><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-300">×</button>`; c.appendChild(d); };
-        window.addLanguageItem = () => { const i = document.getElementById('lang-input'); if (!i || !i.value) return; const c = document.getElementById('languages-list'), t = document.createElement('div'); t.className = "bg-gray-100 px-2 py-0.5 rounded text-[10px] flex items-center gap-1 font-bold text-gray-700"; t.innerHTML = `<span>${i.value}</span><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-400">×</button>`; if (c) c.appendChild(t); i.value = ''; window.saveCurrentCharacter(); };
-
-        window.rollDice = (s) => {
-            const cCount = parseInt(document.getElementById('roll-count').value) || 1;
-            function getRolls(count, sides) {
-                const rolls = Array.from({length: count}, () => Math.floor(Math.random() * sides) + 1);
-                return { rolls, sum: rolls.reduce((a, b) => a + b, 0) };
-            }
-            let finalTotal, breakdownTxt, label;
-            if (rollMode === 'normal') {
-                const result = getRolls(cCount, s);
-                finalTotal = result.sum; label = `${cCount}d${s} Roll`;
-                breakdownTxt = cCount > 1 ? `${result.rolls.join(' + ')} = ${finalTotal}` : `(${result.rolls[0]})`;
-            } else {
-                const res1 = getRolls(cCount, s), res2 = getRolls(cCount, s), isAdv = rollMode === 'adv';
-                if (isAdv) { finalTotal = Math.max(res1.sum, res2.sum); label = `${cCount}d${s} w/ Advantage`; } 
-                else { finalTotal = Math.min(res1.sum, res2.sum); label = `${cCount}d${s} w/ Disadvantage`; }
-                const s1Str = res1.rolls.length > 1 ? `(${res1.rolls.join('+')}=${res1.sum})` : `${res1.sum}`;
-                const s2Str = res2.rolls.length > 1 ? `(${res2.rolls.join('+')}=${res2.sum})` : `${res2.sum}`;
-                breakdownTxt = `${isAdv ? 'Max' : 'Min'}[ ${s1Str}, ${s2Str} ]`;
-            }
-            const lEl = document.getElementById('roll-label'), tEl = document.getElementById('roll-total'), bEl = document.getElementById('roll-breakdown');
-            if (lEl) lEl.textContent = label; if (tEl) tEl.textContent = finalTotal; if (bEl) bEl.textContent = breakdownTxt;
-            document.getElementById('dice-result-overlay')?.classList.remove('hidden');
+            characters.filter(c => c.isDeleted).forEach(c => grC.appendChild(window.createCard(c)));
         };
 
-        window.generateScores = (method, isReroll = false) => {
-            if (method === 'standard') lastGeneratedScores = [15, 14, 13, 12, 10, 8];
-            else { if (isReroll) sessionRerollUsed = true; lastGeneratedScores = Array.from({length: 6}, () => { const r = [Math.floor(Math.random()*6)+1, Math.floor(Math.random()*6)+1, Math.floor(Math.random()*6)+1, Math.floor(Math.random()*6)+1]; r.sort((a,b)=>b-a); return r[0]+r[1]+r[2]; }).sort((a,b)=>b-a); }
-            document.getElementById('gen-numbers-display').innerHTML = lastGeneratedScores.map(n => `<span class="score-line-val text-gray-800">${n}</span>`).join('');
-            document.getElementById('assign-grid').innerHTML = STATS.map(s => `<div class="assign-row text-gray-800"><span class="assign-label font-bold">${s.toUpperCase()}</span><select class="assign-select" data-assign-stat="${s}"><option value="">-</option>${lastGeneratedScores.map((n, i) => `<option value="${i}">${n}</option>`).join('')}</select></div>`).join('');
-            document.getElementById('gen-results-area')?.classList.remove('hidden'); document.getElementById('gen-apply-area')?.classList.remove('hidden'); document.getElementById('gen-controls')?.classList.add('hidden'); document.getElementById('heroic-reroll-area')?.classList.toggle('hidden', method !== 'heroic' || sessionRerollUsed);
+        window.createCard = function(c) {
+            const d = document.createElement('div'); d.className = `bg-gray-800 p-4 rounded-xl card border-l-4 shadow-xl border-amber-600 text-white`;
+            d.onclick = () => window.openSheet(c.id);
+            const status = c.status || 'alive';
+            const badgeClass = status === 'alive' ? 'badge-alive' : status === 'coma' ? 'badge-coma' : 'badge-dead';
+            d.innerHTML = `
+                <div class="flex items-center gap-3 text-white">
+                    <div class="w-12 h-12 rounded bg-gray-700 overflow-hidden flex items-center justify-center text-sm font-sans flex-shrink-0">
+                        ${c.imageSrc ? `<img src="${c.imageSrc}" class="w-full h-full object-cover">` : '👤'}
+                    </div>
+                    <div class="min-w-0">
+                        <h5 class="text-amber-500 font-serif font-bold text-sm truncate">${c.name}</h5>
+                        <p class="text-[8px] opacity-60 font-black uppercase font-sans truncate">${c.class || 'No Class'} | LVL ${c.level||1}</p>
+                        <span class="card-status-badge ${badgeClass}">${status.toUpperCase()}</span>
+                    </div>
+                </div>
+            `;
+            return d;
+        };
+
+        window.initSheetUI = function() {
+            const sC = document.getElementById('stats-container'), svC = document.getElementById('saves-container'), skC = document.getElementById('skills-container');
+            if (!sC) return; sC.innerHTML = ''; svC.innerHTML = ''; skC.innerHTML = '';
+            STATS.forEach(s => {
+                sC.innerHTML += `<div class="attr-item"><div class="attr-mod-box"><span class="shorthand">${s}</span><span id="mod-${s}" class="modifier">+0</span></div><input type="number" data-key="${s}" class="attr-score-val" value="10" onchange="window.calcMods()"></div>`;
+                svC.innerHTML += `<div class="stat-row"><input type="checkbox" class="circle-check" data-key="save_prof_${s}" onchange="window.calcMods()"><span class="stat-label-text uppercase text-gray-700 font-black font-sans font-bold">${STAT_NAMES_SHORT[s]}</span><span class="stat-mod-box rollable" id="save-mod-${s}" onclick="window.rollSave('${s}')">+0</span></div>`;
+            });
+            SKILLS.forEach(sk => {
+                const safeKey = sk.n.toLowerCase().replace(/ /g,'_').replace(/[()]/g,'');
+                const id = `skill-mod-${safeKey}`;
+                skC.innerHTML += `<div class="stat-row"><input type="checkbox" class="circle-check" data-key="prof_${safeKey}" onchange="window.calcMods()"><span class="stat-label-text text-gray-700 font-bold font-sans">${sk.n}</span><span class="stat-mod-box rollable" id="${id}" onclick="window.rollSkill('${sk.n}')">+0</span></div>`;
+            });
+            window.renderMovesGrid();
+        };
+
+        window.syncSheetData = async function() {
+            const char = characters.find(c => c.id === activeCharId); if (!char) return;
+            const ps = document.getElementById('party-select'); if (ps) { ps.innerHTML = '<option value="">Unassigned</option>'; parties.forEach(p => ps.innerHTML += `<option value="${p.id}">${p.name}</option>`); }
+            document.querySelectorAll('#pc-sheet-layout [data-key]').forEach(el => {
+                if (el.type === 'checkbox') el.checked = !!char[el.dataset.key];
+                else if (document.activeElement !== el) el.value = char[el.dataset.key] || (el.type === 'number' ? 0 : '');
+            });
+            
+            const sCont = document.getElementById('sheet-container'); 
+            if (sCont) sCont.className = char.status === 'coma' ? 'status-coma' : char.status === 'dead' ? 'status-dead' : '';
+            
+            const whisperList = document.getElementById('whispers-list');
+            if (whisperList) {
+                const whispers = char.dmWhispers || [];
+                whisperList.innerHTML = whispers.map((w, idx) => `
+                    <div class="whisper-box">
+                        <div class="flex-grow">${w.text}</div>
+                        ${activeRole === 'dm' ? `<span class="whisper-delete" onclick="window.deleteWhisper(${idx})">×</span>` : ''}
+                    </div>`).reverse().join('');
+                document.getElementById('whisper-display-box').classList.toggle('hidden-view', whispers.length === 0);
+            }
+
+            const pPreview = document.getElementById('portrait-preview');
+            const pPlaceholder = document.getElementById('portrait-placeholder');
+            if (char.imageSrc) { if(pPreview) { pPreview.src = char.imageSrc; pPreview.classList.remove('hidden'); } pPlaceholder?.classList.add('hidden'); }
+            else { pPreview?.classList.add('hidden'); pPlaceholder?.classList.remove('hidden'); }
+
+            const atCont = document.getElementById('attacks-list'); if (atCont) {
+                atCont.innerHTML = '';
+                (char.attacks || []).forEach(atk => {
+                    const d = document.createElement('div'); d.className = "attack-row";
+                    d.innerHTML = `<input type="text" class="atk-input font-bold" value="${atk.name}"><input type="text" class="atk-input atk-center" value="${atk.bonus}"><input type="text" class="atk-input atk-center" value="${atk.dmg}"><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-300 text-xs">×</button>`;
+                    atCont.appendChild(d);
+                });
+            }
+            ['armor', 'weapon', 'tool'].forEach(type => {
+                const cont = document.getElementById(`prof-${type}-list`);
+                if (cont) {
+                    cont.innerHTML = '';
+                    (char[`prof_${type}`] || []).forEach(val => {
+                        const s = document.createElement('div'); s.className = "bg-gray-100 px-1.5 py-0.5 rounded text-[9px] flex items-center gap-1 font-bold font-sans";
+                        s.innerHTML = `<span>${val}</span><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-400 text-xs">×</button>`;
+                        cont.appendChild(s);
+                    });
+                }
+            });
+            const langCont = document.getElementById('languages-list');
+            if (langCont) {
+                langCont.innerHTML = '';
+                (char.languages || []).forEach(val => {
+                    const s = document.createElement('div'); s.className = "bg-gray-100 px-1.5 py-0.5 rounded text-[9px] flex items-center gap-1 font-bold font-black font-sans";
+                    s.innerHTML = `<span>${val}</span><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-400 text-xs">×</button>`;
+                    langCont.appendChild(s);
+                });
+            }
+            window.calcMods();
+            for(let i=1; i<=3; i++) {
+                const s = document.getElementById(`ds-succ-${i}`), f = document.getElementById(`ds-fail-${i}`);
+                if (s) s.className = `ds-dot ${char.dsSucc >= i ? 'checked-succ' : ''}`;
+                if (f) f.className = `ds-dot ${char.dsFail >= i ? 'checked-fail' : ''}`;
+            }
+            window.renderMovesGrid();
+        };
+
+        window.openSheet = function(id) { 
+            activeCharId = id; 
+            document.getElementById('dashboard-screen').classList.add('hidden-view'); 
+            document.getElementById('sheet-screen').classList.remove('hidden-view'); 
+            const roller = document.getElementById('quick-roll-bar');
+            if (roller) roller.classList.remove('hidden-view'); 
+            window.scrollTo(0,0);
+            window.initSheetUI(); 
+            window.syncSheetData(); 
+        };
+
+        window.closeSheet = function() { activeCharId = null; document.getElementById('sheet-screen').classList.add('hidden-view'); document.getElementById('dashboard-screen').classList.remove('hidden-view'); const roller = document.getElementById('quick-roll-bar'); if (roller) roller.classList.add('hidden-view'); };
+
+        window.setRole = function(r) { if (r === 'dm') document.getElementById('password-modal').classList.remove('hidden'); else { activeRole = 'player'; updateRoleUI(); } };
+        window.verifyDmPassword = function() { if (document.getElementById('dm-password').value === 'Rew4994') { activeRole = 'dm'; document.getElementById('password-modal').classList.add('hidden'); updateRoleUI(); } else { window.showToast("Denied"); } };
+
+        window.sendDmWhisper = async function() {
+            const input = document.getElementById('dm-whisper-input');
+            const val = input.value; if (!val || !activeCharId) return;
+            const char = characters.find(c => c.id === activeCharId);
+            const whispers = char.dmWhispers || [];
+            whispers.push({ text: val, timestamp: Date.now() });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { dmWhispers: whispers });
+            input.value = ''; window.showToast("Whisper Sent");
+        };
+
+        window.deleteWhisper = async function(idx) {
+            if (!activeCharId || activeRole !== 'dm') return;
+            const char = characters.find(c => c.id === activeCharId);
+            if (!char) return;
+            const whispers = [...(char.dmWhispers || [])];
+            whispers.splice(idx, 1);
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { dmWhispers: whispers });
+        };
+
+        window.updateCharStatus = async function(s) { if (!activeCharId || !db) return; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { status: s }); window.showToast(`Status Updated: ${s.toUpperCase()}`); };
+        
+        window.archiveCharacter = async function() { 
+            if (!activeCharId || !db) return; 
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { isDeleted: true, status: 'dead' }); 
+            document.getElementById('delete-modal').classList.add('hidden'); 
+            window.closeSheet(); 
+            window.showToast("Character Buried in Graveyard");
+        };
+
+        window.restoreCharacter = async function() { 
+            if (!activeCharId || !db) return; 
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { isDeleted: false, status: 'alive' }); 
+            document.getElementById('delete-modal').classList.add('hidden'); 
+            window.syncSheetData(); 
+            window.showToast("Character Restored to Active Party");
+        };
+
+        window.executePermDelete = async function() { if (!activeCharId || !db) return; await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId)); document.getElementById('delete-modal').classList.add('hidden'); window.closeSheet(); window.showToast("Character Erased Forever"); };
+
+        window.triggerDeleteModal = function() { 
+            const char = characters.find(c => c.id === activeCharId);
+            const archiveBtn = document.getElementById('archive-btn');
+            const restoreBtn = document.getElementById('restore-btn');
+            window.resetDeleteModal();
+            if (char?.isDeleted) { archiveBtn.classList.add('hidden'); restoreBtn.classList.remove('hidden'); } 
+            else { archiveBtn.classList.remove('hidden'); restoreBtn.classList.add('hidden'); }
+            document.getElementById('delete-modal').classList.remove('hidden'); 
+        };
+        
+        window.showPermDeleteConfirm = () => { document.getElementById('delete-stage-1').classList.add('hidden'); document.getElementById('delete-stage-confirm').classList.remove('hidden'); };
+        window.resetDeleteModal = () => { document.getElementById('delete-stage-1').classList.remove('hidden'); document.getElementById('delete-stage-confirm').classList.add('hidden'); };
+
+        window.generateScores = function(method) {
+            let scores = [];
+            if (method === 'standard') scores = [15, 14, 13, 12, 10, 8];
+            else {
+                for(let i=0; i<6; i++) {
+                    let rolls = Array.from({length: 4}, () => Math.floor(Math.random() * 6) + 1).sort((a,b) => b-a);
+                    scores.push(rolls[0] + rolls[1] + rolls[2]);
+                }
+                scores.sort((a,b) => b-a);
+            }
+            lastGeneratedScores = scores;
+            document.getElementById('gen-results-area').classList.remove('hidden');
+            document.getElementById('gen-numbers-display').innerHTML = scores.map(n => `<span class="gen-num-badge">${n}</span>`).join('');
+            document.getElementById('assign-grid').innerHTML = STATS.map(s => `
+                <div class="assign-row">
+                    <span class="assign-label">${s.toUpperCase()}</span>
+                    <select class="assign-select" data-assign-stat="${s}">
+                        <option value="">- Select -</option>
+                        ${scores.map((n, idx) => `<option value="${idx}">${n}</option>`).join('')}
+                    </select>
+                </div>
+            `).join('');
+            document.getElementById('gen-apply-area').classList.remove('hidden');
+            document.getElementById('gen-controls').classList.add('hidden');
+        };
+
+        window.applyScores = async function() {
+            if (!activeCharId || !db) return;
+            const selects = Array.from(document.querySelectorAll('[data-assign-stat]'));
+            const chosenIndices = selects.map(s => s.value).filter(v => v !== "");
+            if (chosenIndices.length < 6 || new Set(chosenIndices).size < 6) return window.showToast("Assign unique values to all stats");
+            const updates = {};
+            selects.forEach(s => updates[s.dataset.assignStat] = lastGeneratedScores[parseInt(s.value)]);
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), updates);
+            document.getElementById('score-gen-modal').classList.add('hidden');
+            window.calcMods();
+        };
+
+        window.randomizeAssignment = function() {
+            const indices = [0, 1, 2, 3, 4, 5].sort(() => Math.random() - 0.5);
+            Array.from(document.querySelectorAll('[data-assign-stat]')).forEach((s, idx) => s.value = indices[idx]);
+        };
+
+        window.addProf = function(type) {
+            const input = document.getElementById(`add-${type}-field`);
+            const val = input.value; if (!val) return;
+            const cont = document.getElementById(`prof-${type}-list`);
+            const s = document.createElement('div'); s.className = "bg-gray-100 px-1.5 py-0.5 rounded text-[9px] flex items-center gap-1 font-bold font-sans";
+            s.innerHTML = `<span>${val}</span><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-400 text-xs">×</button>`;
+            cont.appendChild(s); input.value = ''; window.saveCurrentCharacter();
+        };
+
+        window.addLanguageItem = function() {
+            const input = document.getElementById('add-lang-field');
+            const val = input.value; if (!val) return;
+            const cont = document.getElementById('languages-list');
+            const s = document.createElement('div'); s.className = "bg-gray-100 px-1.5 py-0.5 rounded text-[9px] flex items-center gap-1 font-bold font-black font-sans";
+            s.innerHTML = `<span>${val}</span><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-400 text-xs">×</button>`;
+            cont.appendChild(s); input.value = ''; window.saveCurrentCharacter();
+        };
+
+        window.addAttackItem = function() {
+            const c = document.getElementById('attacks-list'); if (!c) return;
+            const d = document.createElement('div'); d.className = "attack-row";
+            d.innerHTML = `<input type="text" class="atk-input font-bold" placeholder="Weapon"><input type="text" class="atk-input atk-center" placeholder="+0"><input type="text" class="atk-input atk-center" placeholder="1d8"><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-300 text-xs">×</button>`;
+            c.appendChild(d); window.saveCurrentCharacter();
+        };
+
+        window.createChar = async function(type) { if (!db || !user) return; const ref = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), { type, name: `New ${type}`, ownerId: user.uid, isDeleted: false, status: 'alive', hpMax: 10, hpCurrent: 10, level: 1, str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10, profBonus: 2, scoresGenerated: false }); window.openSheet(ref.id); };
+        window.openPartyModal = () => document.getElementById('party-modal').classList.remove('hidden');
+        window.createParty = async function() { const n = document.getElementById('party-name-input'); if (!n || !n.value || !db) return; await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'parties'), {name: n.value, createdAt: Date.now()}); document.getElementById('party-modal').classList.add('hidden'); n.value = ''; window.showToast("Party Formed"); };
+        window.setView = function(v) { document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active')); document.getElementById(`nav-${v}`).classList.add('active'); ['party-view-container','graveyard-view-container'].forEach(cid => document.getElementById(cid).classList.add('hidden-view')); document.getElementById(`${v}-view-container`).classList.remove('hidden-view'); window.renderDashboard(); };
+        window.openScoreGenModal = () => { document.getElementById('score-gen-modal').classList.remove('hidden'); };
+
+        window.renderMovesGrid = function() {
+            const s = document.getElementById('moves-selector'); if (!s) return;
+            const t = s.value, g = document.getElementById('features-lvl-grid'); if (!g) return; g.innerHTML = '';
+            const char = characters.find(c => c.id === activeCharId);
+            const movesObj = char ? (char.moves || {}) : {};
+            const activeMoves = movesObj[t] || {};
+            let levels = (t === 'features') ? ['Level 1','Level 2','Level 3','Level 4','Level 5','Level 6','Level 7','Level 8','Level 9'] : ['Tricks (0)','Level 1','Level 2','Level 3','Level 4','Level 5','Level 6','Level 7','Level 8','Level 9'];
+            levels.forEach(lvl => {
+                const key = lvl.toLowerCase().replace(/\s+/g, '');
+                const moveList = activeMoves[key] || [];
+                const card = document.createElement('div'); card.className = "lvl-card";
+                card.innerHTML = `<div class="lvl-header">${lvl}</div><div class="move-entries-container"></div><div class="add-move-btn" onclick="window.addMoveEntry('${t}', '${key}')">+ ADD</div>`;
+                const entriesCont = card.querySelector('.move-entries-container');
+                moveList.forEach((move, idx) => {
+                    const div = document.createElement('div'); div.className = "move-entry";
+                    div.innerHTML = `<div class="move-delete" onclick="window.removeMoveEntry('${t}', '${key}', ${idx})">×</div><input type="text" class="move-input-name" placeholder="Name" value="${move.name || ''}" oninput="window.updateMoveField('${t}', '${key}', ${idx}, 'name', this.value)"><input type="text" class="move-input-dice" placeholder="Dice Roll" value="${move.dice || ''}" oninput="window.updateMoveField('${t}', '${key}', ${idx}, 'dice', this.value)"><textarea class="move-input-desc" placeholder="Description..." oninput="window.updateMoveField('${t}', '${key}', ${idx}, 'desc', this.value)">${move.desc || ''}</textarea>`;
+                    entriesCont.appendChild(div);
+                });
+                g.appendChild(card);
+            });
         };
 
         function updateRoleUI() {
             const isDM = activeRole === 'dm';
-            document.getElementById('role-player-btn').className = !isDM ? 'px-6 py-3 rounded-lg text-sm font-bold bg-amber-600 text-white shadow-lg' : 'px-6 py-3 text-gray-500';
-            document.getElementById('role-dm-btn').className = isDM ? 'px-6 py-3 rounded-lg text-sm font-bold bg-amber-600 text-white shadow-lg' : 'px-6 py-3 text-gray-500';
-            document.getElementById('dm-oversight-panel')?.classList.toggle('hidden-view', !isDM);
-            renderDashboard();
-            if (activeCharId) syncSheetData();
+            document.getElementById('role-player-btn').className = !isDM ? 'px-4 py-2 rounded-lg text-[10px] font-black uppercase bg-amber-600 text-white shadow-lg' : 'px-4 py-2 rounded-lg text-[10px] font-black uppercase text-gray-500';
+            document.getElementById('role-dm-btn').className = isDM ? 'px-4 py-2 rounded-lg text-[10px] font-black uppercase bg-amber-600 text-white shadow-lg' : 'px-4 py-2 rounded-lg text-[10px] font-black uppercase text-gray-500';
+            document.getElementById('dm-oversight-panel').classList.toggle('hidden-view', !isDM);
+            window.renderDashboard();
+            if (activeCharId) window.syncSheetData();
+        }
+
+        window.updateLevelDependencies = (v) => { const l = parseInt(v) || 1; const b = l >= 17 ? 6 : l >= 13 ? 5 : l >= 9 ? 4 : l >= 5 ? 3 : 2; const pi = document.querySelector('[data-key="profBonus"]'); if (pi) pi.value = b; window.calcMods(); window.saveCurrentCharacter(); };
+
+        window.rest = async (t) => { 
+            if (!activeCharId || !db) return; 
+            const char = characters.find(x => x.id === activeCharId); 
+            if (!char) return;
+            const updates = { dsSucc: 0, dsFail: 0, comaActive: false, comaRounds: 0 };
+            if (t === 'long') {
+                updates.hpCurrent = char.hpMax || 10;
+                updates.tempHp = 0;
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), updates);
+                window.showToast("Long Rest Complete");
+            } else {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), updates);
+                window.showToast("Short Rest Complete");
+            }
+        };
+
+        window.toggleDS = async (type, num) => { 
+            const char = characters.find(c => c.id === activeCharId); if (!char) return; 
+            const key = type === 'succ' ? 'dsSucc' : 'dsFail'; 
+            const newVal = char[key] === num ? num - 1 : num; 
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { [key]: newVal }); 
+        };
+
+        window.rollStat = (s) => { const v = parseInt(document.querySelector(`[data-key="${s}"]`)?.value) || 10; const mod = Math.floor((v - 10) / 2); window.execRoll(`${s.toUpperCase()} Check`, mod + (Math.floor(Math.random()*20)+1), `1d20 + ${mod}`); };
+        window.rollSave = (s) => { const v = parseInt(document.querySelector(`[data-key="${s}"]`)?.value) || 10; const mod = Math.floor((v - 10) / 2); const p = parseInt(document.querySelector('[data-key="profBonus"]')?.value) || 2; const sp = document.querySelector(`[data-key="save_prof_${s}"]`)?.checked; const bonus = mod + (sp ? p : 0); window.execRoll(`${s.toUpperCase()} Save`, bonus + (Math.floor(Math.random()*20)+1), `1d20 + ${bonus}`); };
+        window.rollSkill = (n) => { const skillObj = SKILLS.find(x => x.n === n); const v = parseInt(document.querySelector(`[data-key="${skillObj.s}"]`)?.value) || 10; const mod = Math.floor((v - 10) / 2); const p = parseInt(document.querySelector('[data-key="profBonus"]')?.value) || 2; const safeKey = n.toLowerCase().replace(/ /g,'_').replace(/[()]/g,''); const sp = document.querySelector(`[data-key="prof_${safeKey}"]`)?.checked; const bonus = mod + (sp ? p : 0); window.execRoll(`${n} Check`, bonus + (Math.floor(Math.random()*20)+1), `1d20 + ${bonus}`); };
+
+        window.rollDice = (s) => {
+            const count = parseInt(document.getElementById('roll-count').value) || 1;
+            const getOneSet = () => {
+                const rolls = Array.from({length: count}, () => Math.floor(Math.random() * s) + 1);
+                return { rolls, sum: rolls.reduce((a, b) => a + b, 0) };
+            };
+            let total, breakdown, label = `${count}d${s}`;
+            if (rollMode === 'normal') {
+                const res = getOneSet(); total = res.sum; breakdown = count > 1 ? `(${res.rolls.join('+')})` : res.sum;
+            } else {
+                const res1 = getOneSet(), res2 = getOneSet();
+                const isAdv = rollMode === 'adv';
+                total = isAdv ? Math.max(res1.sum, res2.sum) : Math.min(res1.sum, res2.sum);
+                label += isAdv ? " (Adv)" : " (Dis)";
+                const s1 = count > 1 ? `(${res1.rolls.join('+')})` : res1.sum;
+                const s2 = count > 1 ? `(${res2.rolls.join('+')})` : res2.sum;
+                breakdown = `${isAdv ? 'Max' : 'Min'}[ ${s1}, ${s2} ]`;
+            }
+            window.execRoll(label, total, breakdown);
+        };
+
+        window.setRollMode = (m) => { 
+            rollMode = m; 
+            document.querySelectorAll('.roll-mode').forEach(b => b.classList.remove('active'));
+            const btn = document.getElementById(`mode-${m === 'normal' ? 'norm' : m}`);
+            if (btn) btn.classList.add('active'); 
+        };
+
+        window.execRoll = function(label, total, breakdown) {
+            const lEl = document.getElementById('roll-label'), tEl = document.getElementById('roll-total'), bEl = document.getElementById('roll-breakdown');
+            if (lEl) lEl.textContent = label;
+            if (tEl) { tEl.textContent = total; tEl.classList.remove('roll-anim'); void tEl.offsetWidth; tEl.classList.add('roll-anim'); }
+            if (bEl) bEl.textContent = breakdown;
+            document.getElementById('dice-result-overlay').classList.remove('hidden');
+            const log = document.getElementById('dice-log');
+            if (log) {
+                const d = document.createElement('div'); d.className = "border-b py-2 text-gray-800";
+                d.innerHTML = `<div class="flex justify-between font-black uppercase text-[10px] font-bold"><span>${label}</span><span>${total}</span></div><div class="text-[8px] opacity-60 font-mono mt-1">${breakdown}</div>`;
+                log.prepend(d);
+            }
+        };
+
+        window.handleImageUpload = (e) => {
+            const f = e.target.files[0]; if (!f) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_SIZE = 400; let w = img.width, h = img.height;
+                    if (w > h) { if (w > MAX_SIZE) { h *= MAX_SIZE / w; w = MAX_SIZE; } } 
+                    else { if (h > MAX_SIZE) { w *= MAX_SIZE / h; h = MAX_SIZE; } }
+                    canvas.width = w; canvas.height = h;
+                    const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, w, h);
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                    const p = document.getElementById('portrait-preview');
+                    p.src = compressedBase64; p.classList.remove('hidden');
+                    document.getElementById('portrait-placeholder').classList.add('hidden');
+                    window.saveCurrentCharacter();
+                };
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(f);
+        };
+
+        window.saveCurrentCharacter = function(manual) {
+            if (!activeCharId || !db) return;
+            const data = {};
+            document.querySelectorAll('#pc-sheet-layout [data-key]').forEach(el => {
+                if (el.type === 'checkbox') data[el.dataset.key] = el.checked;
+                else data[el.dataset.key] = el.value;
+            });
+            const p = document.getElementById('portrait-preview'); 
+            if (p && p.src && p.src.startsWith('data:')) data.imageSrc = p.src;
+            data.attacks = Array.from(document.querySelectorAll('#attacks-list > .attack-row')).map(r => ({
+                name: r.querySelectorAll('.atk-input')[0]?.value || "", bonus: r.querySelectorAll('.atk-input')[1]?.value || "", dmg: r.querySelectorAll('.atk-input')[2]?.value || ""
+            }));
+            ['armor', 'weapon', 'tool'].forEach(type => {
+                data[`prof_${type}`] = Array.from(document.querySelectorAll(`#prof-${type}-list span`)).map(s => s.textContent);
+            });
+            data.languages = Array.from(document.querySelectorAll('#languages-list span')).map(s => s.textContent);
+            updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), data);
+            if (manual) window.showToast("Synced to Cloud");
+            const si = document.getElementById('sync-indicator'); si.style.opacity = 1; setTimeout(()=>si.style.opacity = 0, 1000);
+        }
+
+        // --- DATA SYNC ---
+
+        function setupListeners() {
+            if (!user) return;
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), (snap) => {
+                characters = snap.docs.map(d => ({id: d.id, ...d.data()}));
+                window.renderDashboard();
+                if (activeCharId) window.syncSheetData();
+            });
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'parties'), (snap) => {
+                parties = snap.docs.map(d => ({id: d.id, ...d.data()}));
+                window.renderDashboard();
+                if (activeCharId) window.syncSheetData();
+            });
         }
 
         async function initAuth() {
             try {
-                let signedIn = false;
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    try { await signInWithCustomToken(auth, __initial_auth_token); signedIn = true; } catch (e) {}
-                }
-                if (!signedIn) await signInAnonymously(auth);
-                onAuthStateChanged(auth, (u) => {
-                    user = u;
-                    if (user) setupListeners();
-                });
+                await signInAnonymously(auth);
+                onAuthStateChanged(auth, (u) => { user = u; if (user) setupListeners(); });
             } catch (err) { console.error("Firebase Auth failed:", err); }
         }
 
         document.addEventListener('input', (e) => { 
             if (e.target.dataset.key || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') { 
                 if (autoSaveTimer) clearTimeout(autoSaveTimer); 
-                autoSaveTimer = setTimeout(() => {
-                    if (typeof window.saveCurrentCharacter === 'function') window.saveCurrentCharacter();
-                }, 1000); 
+                autoSaveTimer = setTimeout(() => { if (typeof window.saveCurrentCharacter === 'function') window.saveCurrentCharacter(); }, 1500); 
             } 
         });
         
