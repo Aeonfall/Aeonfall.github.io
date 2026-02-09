@@ -56,6 +56,7 @@
         .dice-red { background: #fef2f2; border-color: #dc2626; color: #991b1b; }
         .dice-dark { background: #f9fafb; border-color: #374151; color: #111827; }
 
+        /* Death Save Dots */
         .ds-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid #ccc; cursor: pointer; transition: background 0.2s; display: inline-block; }
         .ds-dot.checked-succ { background: #16a34a !important; border-color: #166534 !important; }
         .ds-dot.checked-fail { background: #dc2626 !important; border-color: #991b1b !important; }
@@ -122,8 +123,8 @@
                     </div>
                     <nav id="main-nav" class="flex gap-6">
                         <button onclick="window.setView('party')" id="nav-party" class="nav-link active">Party</button>
-                        <button onclick="window.showToast('Coming Soon')" id="nav-npcs" class="nav-link">NPCs</button>
-                        <button onclick="window.showToast('Coming Soon')" id="nav-beasts" class="nav-link">Bestiary</button>
+                        <button onclick="window.showToast('Coming Soon')" class="nav-link">NPCs</button>
+                        <button onclick="window.showToast('Coming Soon')" class="nav-link">Bestiary</button>
                         <button onclick="window.setView('graveyard')" id="nav-graveyard" class="nav-link !text-red-900">Graveyard</button>
                     </nav>
                 </div>
@@ -161,7 +162,7 @@
             </div>
             <div id="party-manage-delete" class="hidden">
                 <h3 class="text-xl font-serif text-red-500 font-bold mb-4 uppercase">Disband Party?</h3>
-                <p class="text-gray-400 text-sm mb-8 leading-relaxed">Characters will be moved to the unassigned pool.</p>
+                <p class="text-gray-400 text-sm mb-8 leading-relaxed">This will dissolve the group. Characters move to unassigned pool.</p>
                 <div class="flex flex-col gap-3">
                     <button onclick="window.executeDeleteParty()" class="w-full bg-red-600 text-white py-3 rounded-xl font-bold uppercase text-xs">Yes, Disband</button>
                     <button onclick="window.resetPartyManageState()" class="w-full bg-gray-700 text-white py-3 rounded-xl font-bold uppercase text-xs">No, Go Back</button>
@@ -175,7 +176,7 @@
             <h3 class="text-xl font-serif font-bold mb-4 uppercase text-blue-600" id="move-modal-title">New Move</h3>
             <div class="space-y-4">
                 <div><label class="tiny-label">Move Name</label><input type="text" id="move-name-in" class="w-full bg-gray-100 p-2 rounded"></div>
-                <div><label class="tiny-label">Dice Roll (Optional)</label><input type="text" id="move-roll-in" class="w-full bg-gray-100 p-2 rounded" placeholder="2d6+str"></div>
+                <div><label class="tiny-label">Dice Roll (Optional)</label><input type="text" id="move-roll-in" class="w-full bg-gray-100 p-2 rounded" placeholder="2d6+4"></div>
                 <div><label class="tiny-label">Description</label><textarea id="move-desc-in" class="w-full bg-gray-100 p-2 rounded h-24 text-xs"></textarea></div>
                 <div class="flex gap-2 pt-2">
                     <button onclick="window.saveMove()" class="flex-1 bg-blue-600 text-white py-2 rounded font-bold uppercase text-xs">Save Move</button>
@@ -340,6 +341,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="sheet-card"><h3>Stress & Trauma</h3><div class="flex justify-around items-center mb-4"><div class="text-center"><input type="number" data-key="currentStress" class="text-2xl font-black text-center w-16" value="0"><label class="tiny-label">Current Stress</label></div><div class="text-3xl text-gray-200 font-light">/</div><div class="text-center"><input type="number" data-key="stressThreshold" class="text-2xl font-black text-center w-16" value="10"><label class="tiny-label">Threshold</label></div></div><textarea data-key="trauma" class="text-xs italic font-serif h-12 w-full" placeholder="Scars and traumas..."></textarea></div>
                             </div>
                         </div>
 
@@ -360,7 +362,7 @@
                                 <div class="equip-header"><span>Name</span><span>Atk</span><span>Dmg</span><span></span></div>
                                 <div id="attacks-list" class="space-y-1 mb-4"></div>
                                 <button onclick="window.addAttackItem()" class="w-full py-2 border-2 border-dashed border-gray-200 text-[10px] font-black text-gray-400 uppercase rounded hover:border-amber-400">+ Add Weapon</button>
-                                <textarea data-key="equipment" class="mt-6 text-[12px] h-32 p-3 bg-gray-50 rounded font-mono" placeholder="Tools, armor..."></textarea>
+                                <textarea data-key="equipment" class="mt-6 text-[12px] h-32 p-3 bg-gray-50 rounded font-mono" placeholder="Tools, armor, proficiencies..."></textarea>
                             </div>
 
                             <div class="sheet-card">
@@ -388,7 +390,7 @@
                                         <div><input type="text" data-key="bonds" class="border-b h-8"><label class="tiny-label">Bonds</label></div>
                                         <div><input type="text" data-key="flaws" class="border-b h-8"><label class="tiny-label">Flaws</label></div>
                                     </div>
-                                    <textarea data-key="notes" class="text-[12px] h-48 p-3 bg-gray-50 rounded leading-relaxed font-serif mt-4" placeholder="History..."></textarea>
+                                    <textarea data-key="notes" class="text-[12px] h-48 p-3 bg-gray-50 rounded font-serif mt-4" placeholder="Character history, notes..."></textarea>
                                 </div>
                             </div>
                         </div>
@@ -534,6 +536,19 @@
             } else window.showToast("Denied");
         };
 
+        window.openPartyModal = () => {
+            const m = document.getElementById('party-modal');
+            if(m) m.classList.remove('hidden');
+        };
+
+        window.createParty = async () => { 
+            const n = document.getElementById('party-name-input'); 
+            if (!n || !n.value) return; 
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'parties'), {name: n.value, createdAt: Date.now()}); 
+            document.getElementById('party-modal').classList.add('hidden'); n.value = ''; 
+            window.showToast("Party Formed"); 
+        };
+
         window.renderDashboard = () => {
             const pcC = document.getElementById('party-view-container'), grC = document.getElementById('graveyard-view-container');
             if (!pcC || !grC) return; pcC.innerHTML = ''; grC.innerHTML = '';
@@ -627,8 +642,12 @@
             
             for(let i=1; i<=3; i++) {
                 const s = document.getElementById(`ds-succ-${i}`), f = document.getElementById(`ds-fail-${i}`);
-                if (s) s.classList.toggle('checked-succ', (char.dsSucc || 0) >= i);
-                if (f) f.classList.toggle('checked-fail', (char.dsFail || 0) >= i);
+                if (s) {
+                    s.classList.toggle('checked-succ', (char.dsSucc || 0) >= i);
+                }
+                if (f) {
+                    f.classList.toggle('checked-fail', (char.dsFail || 0) >= i);
+                }
             }
 
             const whispersBox = document.getElementById('whisper-display-box');
