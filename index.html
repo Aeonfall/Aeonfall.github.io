@@ -65,6 +65,15 @@
         
         input, textarea, select { background: transparent; border: none; font-size: 13px; color: #333; width: 100%; }
         input:focus { outline: none; border-bottom: 1px solid #d97706; }
+        
+        /* Disabled Input Styling for Read Only Mode */
+        input:disabled, textarea:disabled, select:disabled {
+            background-color: transparent !important;
+            color: #555 !important;
+            border-bottom: 1px dashed #ccc !important;
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
 
         .mode-btn { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 900; border: 2px solid #cbd5e1; color: #64748b; background: #f1f5f9; transition: all 0.2s; }
         .mode-btn.active-norm { background: #64748b !important; color: white !important; border-color: #64748b !important; }
@@ -101,6 +110,7 @@
 
         .tiny-label { font-size: 9px; text-transform: uppercase; color: #888; font-weight: 900; display: block; border-top: 1px solid #ddd; margin-top: 2px; }
         .hidden-view { display: none !important; }
+        /* Removed .read-only-hide to allow JS toggling */
     </style>
 </head>
 <body class="min-h-screen">
@@ -108,13 +118,81 @@
     <div id="toast" class="toast">Message</div>
     <div id="sync-indicator">Cloud Synced</div>
 
+    <!-- AUTH MODAL (Login/Register) -->
+    <div id="auth-modal" class="fixed inset-0 bg-gray-900 z-[300] flex items-center justify-center p-4">
+        <div class="bg-gray-800 border-2 border-amber-600 rounded-2xl p-8 max-w-md w-full shadow-2xl text-center relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-amber-700 via-amber-500 to-amber-700"></div>
+            <h1 class="text-4xl text-amber-500 font-bold mb-2 font-serif tracking-tight mt-4">Aeonfall</h1>
+            <p class="text-gray-400 text-xs uppercase tracking-widest font-bold mb-8">Identity Verification</p>
+            
+            <div class="space-y-4 mb-8">
+                <div class="text-left">
+                    <label class="text-[10px] font-black uppercase text-gray-500 ml-1">Username</label>
+                    <input type="text" id="auth-username" class="w-full bg-gray-900 text-white rounded-lg p-3 border border-gray-700 font-serif focus:border-amber-500 transition-colors" placeholder="Enter username...">
+                </div>
+                <div class="text-left">
+                    <label class="text-[10px] font-black uppercase text-gray-500 ml-1">Password</label>
+                    <input type="password" id="auth-password" class="w-full bg-gray-900 text-white rounded-lg p-3 border border-gray-700 font-serif focus:border-amber-500 transition-colors" placeholder="••••••••">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="window.authSystem.login()" class="bg-amber-600 hover:bg-amber-500 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-lg transition-all">Enter (Login)</button>
+                <button onclick="window.authSystem.register()" class="bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-lg transition-all">Join (Register)</button>
+            </div>
+            <p id="auth-error" class="text-red-500 text-xs mt-4 font-bold min-h-[1rem]"></p>
+        </div>
+    </div>
+
+    <!-- SHORT REST MODAL -->
+    <div id="short-rest-modal" class="fixed inset-0 bg-black/90 flex items-center justify-center z-[220] hidden">
+        <div class="bg-white p-6 rounded-2xl w-full max-w-sm shadow-2xl text-gray-800 border-t-4 border-indigo-600">
+            <h3 class="text-xl font-serif font-bold mb-4 uppercase text-indigo-700">Short Rest</h3>
+            
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <label class="font-bold text-xs uppercase text-gray-500">Number of Dice</label>
+                    <input type="number" id="sr-num-dice" value="1" min="1" class="w-16 text-center bg-gray-100 font-bold p-2 rounded text-lg border-b-2 border-indigo-200 focus:border-indigo-600 outline-none">
+                </div>
+                
+                <div>
+                    <label class="font-bold text-xs uppercase text-gray-500 block mb-2">Hit Die Type</label>
+                    <div class="grid grid-cols-4 gap-2">
+                        <button onclick="window.selectSrDie(6)" class="sr-die-btn p-2 border-2 border-gray-200 rounded-lg font-black text-sm text-gray-400 hover:border-indigo-400 transition-colors" id="sr-btn-6">d6</button>
+                        <button onclick="window.selectSrDie(8)" class="sr-die-btn p-2 border-2 border-gray-200 rounded-lg font-black text-sm text-gray-400 hover:border-indigo-400 transition-colors" id="sr-btn-8">d8</button>
+                        <button onclick="window.selectSrDie(10)" class="sr-die-btn p-2 border-2 border-gray-200 rounded-lg font-black text-sm text-gray-400 hover:border-indigo-400 transition-colors" id="sr-btn-10">d10</button>
+                        <button onclick="window.selectSrDie(12)" class="sr-die-btn p-2 border-2 border-gray-200 rounded-lg font-black text-sm text-gray-400 hover:border-indigo-400 transition-colors" id="sr-btn-12">d12</button>
+                    </div>
+                    <input type="hidden" id="sr-die-val" value="8">
+                </div>
+
+                <div class="bg-gray-50 p-3 rounded text-center border border-gray-100">
+                    <span class="text-[9px] font-black uppercase text-gray-400 tracking-wider">Constitution Modifier</span>
+                    <div class="text-xl font-black text-indigo-900" id="sr-con-mod-display">+0</div>
+                </div>
+
+                <div class="flex gap-2 pt-2">
+                    <button onclick="window.confirmShortRest()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-lg transition-colors">Roll & Heal</button>
+                    <button onclick="document.getElementById('short-rest-modal').classList.add('hidden')" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-500 py-3 rounded-xl font-bold uppercase text-xs transition-colors">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- MAIN DASHBOARD -->
-    <div id="dashboard-screen" class="min-h-screen dashboard-bg p-4 md:p-8">
+    <div id="dashboard-screen" class="min-h-screen dashboard-bg p-4 md:p-8 hidden-view">
         <div class="max-w-6xl mx-auto">
             <header class="flex flex-col md:flex-row justify-between items-center mb-10 border-b border-gray-800 pb-8 gap-6">
                 <div>
                     <h1 class="text-4xl md:text-6xl text-amber-500 font-bold mb-2 font-serif tracking-tight">Aeonfall</h1>
-                    <p class="text-gray-500 text-xs md:text-sm uppercase tracking-widest font-bold">Campaign Management Suite</p>
+                    <div class="flex items-center gap-4">
+                        <p class="text-gray-500 text-xs md:text-sm uppercase tracking-widest font-bold">Campaign Management Suite</p>
+                        <div class="bg-gray-800 px-3 py-1 rounded-full border border-gray-700 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                            <span id="user-display-name" class="text-[10px] font-black text-gray-300 uppercase tracking-wider">Guest</span>
+                            <button onclick="window.logout()" class="text-[10px] text-red-400 hover:text-red-300 font-bold ml-2 border-l border-gray-600 pl-2">LOGOUT</button>
+                        </div>
+                    </div>
                 </div>
                 <div class="flex flex-col items-center gap-4">
                     <div class="flex items-center gap-2 bg-gray-900 p-1 rounded-xl shadow-2xl">
@@ -233,10 +311,12 @@
             <nav class="sticky top-0 z-[60] bg-gray-900 p-2 shadow-2xl border-b border-gray-800">
                 <div class="max-w-6xl mx-auto flex justify-between items-center text-white px-4">
                     <button onclick="window.closeSheet()" class="text-gray-400 hover:text-white font-bold flex items-center gap-2"><span>←</span> Exit</button>
+                    <div id="sheet-readonly-badge" class="hidden bg-gray-700 text-gray-300 px-4 py-1 rounded text-[10px] font-black uppercase tracking-widest border border-gray-600">VIEW ONLY</div>
                     <div class="flex items-center gap-4">
                         <span id="sheet-type-badge" class="bg-amber-600 px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest">PC</span>
                         <div class="flex items-center gap-1">
-                            <button onclick="window.saveCurrentCharacter(true)" class="bg-green-700 hover:bg-green-600 px-4 py-1 rounded text-[10px] font-black uppercase tracking-widest">SYNC</button>
+                            <button id="claim-char-btn" onclick="window.claimCharacter()" class="bg-indigo-600 hover:bg-indigo-500 px-4 py-1 rounded text-[10px] font-black uppercase tracking-widest hidden animate-pulse">CLAIM</button>
+                            <button id="sync-btn" onclick="window.saveCurrentCharacter(true)" class="bg-green-700 hover:bg-green-600 px-4 py-1 rounded text-[10px] font-black uppercase tracking-widest">SYNC</button>
                             <button id="delete-char-btn" onclick="window.triggerDeleteModal()" class="bg-red-900 px-3 py-1 rounded text-[10px] font-black uppercase" style="display: none;">Manage</button>
                         </div>
                     </div>
@@ -311,7 +391,10 @@
                                     <div class="text-[10px] font-black uppercase mt-4">Health Points</div>
                                     <input type="number" class="text-xl font-bold text-center w-full border-b mt-4" data-key="tempHp" placeholder="Temp HP">
                                     <div class="text-[10px] font-black uppercase mt-1 text-gray-400">Temporary Hit Points</div>
-                                    <div class="flex gap-2 justify-center mt-6"><button onclick="window.rest('long')" class="bg-blue-100 text-blue-700 px-3 py-1 rounded text-[10px] font-black uppercase">Long Rest</button></div>
+                                    <div class="flex gap-2 justify-center mt-6 read-only-hide">
+                                        <button onclick="window.rest('short')" class="bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-4 py-2 rounded-full text-[10px] font-black uppercase transition-colors shadow-sm">Short Rest</button>
+                                        <button onclick="window.rest('long')" class="bg-blue-100 hover:bg-blue-200 text-blue-700 px-6 py-2 rounded-full text-[10px] font-black uppercase transition-colors shadow-sm">Long Rest</button>
+                                    </div>
                                 </div>
                                 <div class="sheet-card">
                                     <h3>Death & Coma</h3>
@@ -353,7 +436,14 @@
                                 </div>
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div class="sheet-card h-64 flex flex-col items-center justify-center border-2 border-dashed bg-gray-50 group relative overflow-hidden"><img id="portrait-preview" class="hidden absolute inset-0 w-full h-full object-cover"><div id="portrait-placeholder" class="text-center opacity-40"><span class="text-4xl">👤</span><br><span class="text-[10px] font-black uppercase">Add Portrait</span></div><input type="file" onchange="window.handleImageUpload(event)" class="absolute inset-0 opacity-0 cursor-pointer"></div>
+                                <div class="sheet-card h-64 flex flex-col items-center justify-center border-2 border-dashed bg-gray-50 group relative overflow-hidden">
+                                    <img id="portrait-preview" class="hidden absolute inset-0 w-full h-full object-cover">
+                                    <div id="portrait-placeholder" class="text-center opacity-40 group-hover:opacity-100 transition-opacity">
+                                        <span class="text-4xl">👤</span><br>
+                                        <span class="text-[10px] font-black uppercase">Add Portrait</span>
+                                    </div>
+                                    <input type="file" accept="image/*" onchange="window.handleImageUpload(event)" class="absolute inset-0 opacity-0 cursor-pointer">
+                                </div>
                                 <div class="sheet-card h-64 flex flex-col"><h3>Roll History</h3><div id="dice-log" class="flex-grow overflow-y-auto text-[10px] font-mono p-2 space-y-1 bg-gray-50 rounded"></div></div>
                             </div>
                             
@@ -361,7 +451,7 @@
                                 <h3>Weapons, Equipment & Proficiencies</h3>
                                 <div class="equip-header"><span>Name</span><span>Atk</span><span>Dmg</span><span></span></div>
                                 <div id="attacks-list" class="space-y-1 mb-4"></div>
-                                <button onclick="window.addAttackItem()" class="w-full py-2 border-2 border-dashed border-gray-200 text-[10px] font-black text-gray-400 uppercase rounded hover:border-amber-400">+ Add Weapon</button>
+                                <button id="add-attack-btn" onclick="window.addAttackItem()" class="w-full py-2 border-2 border-dashed border-gray-200 text-[10px] font-black text-gray-400 uppercase rounded hover:border-amber-400">+ Add Weapon</button>
                                 <textarea data-key="equipment" class="mt-6 text-[12px] h-32 p-3 bg-gray-50 rounded font-mono" placeholder="Tools, armor, proficiencies..."></textarea>
                             </div>
 
@@ -382,7 +472,7 @@
                                     <div>
                                         <div class="text-[9px] font-black text-gray-400 uppercase mb-2">Languages</div>
                                         <div id="languages-list" class="flex flex-wrap gap-2 mb-3 text-xs font-bold"></div>
-                                        <div class="flex gap-2"><input type="text" id="lang-input" class="text-xs border-b px-2 h-8" placeholder="Add Language..."><button onclick="window.addLanguageItem()" class="bg-gray-200 px-4 rounded text-[9px] font-black h-8">ADD</button></div>
+                                        <div class="flex gap-2 read-only-hide"><input type="text" id="lang-input" class="text-xs border-b px-2 h-8" placeholder="Add Language..."><button onclick="window.addLanguageItem()" class="bg-gray-200 px-4 rounded text-[9px] font-black h-8">ADD</button></div>
                                     </div>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
                                         <div><input type="text" data-key="traits" class="border-b h-8"><label class="tiny-label">Personality Traits</label></div>
@@ -497,6 +587,9 @@
         let autoSaveTimer = null, lastGeneratedScores = [], sessionRerollUsed = false;
         let activeManagePartyId = null;
         let activeMoveLvl = null, editingMoveIndex = null;
+        
+        // Auth State
+        let currentUser = null; // { username: string, uid: string }
 
         const STATS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
         const SKILLS = [
@@ -507,6 +600,81 @@
             {n:'Performance', s:'cha'},{n:'Persuasion', s:'cha'},{n:'Religion', s:'int'},
             {n:'Sleight of Hand', s:'dex'},{n:'Stealth', s:'dex'},{n:'Survival', s:'wis'}
         ];
+
+        // --- AUTH SYSTEM (Custom Implementation on top of Anonymous Auth) ---
+        
+        async function hashPassword(str) {
+            const msgBuffer = new TextEncoder().encode(str);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        window.authSystem = {
+            login: async () => {
+                const u = document.getElementById('auth-username').value.trim().toLowerCase();
+                const p = document.getElementById('auth-password').value;
+                const err = document.getElementById('auth-error');
+                
+                if (!u || !p) { err.textContent = "Credentials required."; return; }
+                
+                try {
+                    const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'players'), where('username', '==', u));
+                    const querySnapshot = await getDocs(q);
+                    
+                    if (querySnapshot.empty) { err.textContent = "User not found."; return; }
+                    
+                    const userData = querySnapshot.docs[0].data();
+                    const inputHash = await hashPassword(p);
+                    
+                    if (userData.passwordHash === inputHash) {
+                        currentUser = { username: u, id: querySnapshot.docs[0].id };
+                        window.authSystem.completeAuth();
+                    } else {
+                        err.textContent = "Incorrect password.";
+                    }
+                } catch (e) { console.error(e); err.textContent = "Login error. Try again."; }
+            },
+            
+            register: async () => {
+                const u = document.getElementById('auth-username').value.trim().toLowerCase();
+                const p = document.getElementById('auth-password').value;
+                const err = document.getElementById('auth-error');
+                
+                if (!u || !p) { err.textContent = "Credentials required."; return; }
+                if (u.length < 3) { err.textContent = "Username too short."; return; }
+                
+                try {
+                    const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'players'), where('username', '==', u));
+                    const querySnapshot = await getDocs(q);
+                    
+                    if (!querySnapshot.empty) { err.textContent = "Username taken."; return; }
+                    
+                    const passHash = await hashPassword(p);
+                    const newDoc = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'players'), {
+                        username: u, passwordHash: passHash, createdAt: Date.now()
+                    });
+                    
+                    currentUser = { username: u, id: newDoc.id };
+                    window.authSystem.completeAuth();
+                } catch (e) { console.error(e); err.textContent = "Registration failed."; }
+            },
+            
+            completeAuth: () => {
+                // Save session
+                localStorage.setItem('aeonfall_user', JSON.stringify(currentUser));
+                
+                document.getElementById('auth-modal').classList.add('hidden');
+                document.getElementById('dashboard-screen').classList.remove('hidden-view');
+                document.getElementById('user-display-name').textContent = currentUser.username;
+                window.renderDashboard(); // Re-render to update any ownership visuals
+            }
+        };
+        
+        window.logout = () => {
+            localStorage.removeItem('aeonfall_user');
+            window.location.reload();
+        };
 
         // --- GLOBAL FUNCTIONS ---
 
@@ -575,8 +743,17 @@
 
         function createCard(c) {
             let statusClass = "border-amber-600", badgeHtml = "", imgStyle = "";
-            if (c.status === 'coma') { statusClass = "card-coma"; badgeHtml = `<span class="status-badge badge-coma">Coma</span>`; }
-            else if (c.status === 'dead') { statusClass = "card-dead"; badgeHtml = `<span class="status-badge badge-dead">Dead</span>`; imgStyle = "filter: grayscale(1)"; }
+            
+            if (c.status === 'coma') { statusClass = "card-coma"; badgeHtml += `<span class="status-badge badge-coma" style="right: 8px">Coma</span>`; }
+            else if (c.status === 'dead') { statusClass = "card-dead"; badgeHtml += `<span class="status-badge badge-dead" style="right: 8px">Dead</span>`; imgStyle = "filter: grayscale(1)"; }
+            
+            // Ownership badge
+            if (currentUser && c.owner === currentUser.username) {
+               badgeHtml += `<span class="status-badge bg-green-700 text-white" style="left: 8px; right: auto;">YOURS</span>`;
+            } else if (!c.owner) {
+                badgeHtml += `<span class="status-badge bg-gray-500 text-white" style="left: 8px; right: auto;">UNCLAIMED</span>`;
+            }
+
             const d = document.createElement('div'); 
             d.className = `bg-gray-800 p-5 rounded-xl card border-l-4 shadow-xl ${statusClass}`;
             d.onclick = () => window.openSheet(c.id);
@@ -600,10 +777,13 @@
         };
 
         window.createChar = async (type) => {
-            if (!user) return;
+            if (!user || !currentUser) return; // Wait for custom auth
             try {
                 const ref = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), {
-                    type, name: `New ${type}`, ownerId: user.uid, isDeleted: false, status: 'alive', hpMax: 10, hpCurrent: 10, level: 1,
+                    type, name: `New ${type}`, 
+                    ownerId: user.uid, // Technical owner
+                    owner: currentUser.username, // Display/Logic owner
+                    isDeleted: false, status: 'alive', hpMax: 10, hpCurrent: 10, level: 1,
                     str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10, profBonus: 2, scoresGenerated: false, languages: [], attacks: [], moves: [], dmWhispers: [], dsSucc: 0, dsFail: 0
                 });
                 window.openSheet(ref.id);
@@ -627,6 +807,54 @@
             const char = characters.find(c => c.id === activeCharId); if (!char) return;
             const ps = document.getElementById('party-select'); if (ps) { ps.innerHTML = '<option value="">Unassigned</option>'; parties.forEach(p => ps.innerHTML += `<option value="${p.id}">${p.name}</option>`); }
             
+            // --- ACCESS CONTROL ---
+            // Determine if the current user can edit this sheet
+            const isOwner = currentUser && char.owner === currentUser.username;
+            const isDM = activeRole === 'dm';
+            // Also allow edit if the char has no owner field at all (legacy compatibility) AND no technical owner match, 
+            // OR if it's purely unowned. For safety, we treat unowned as "Claimable" but View Only until claimed.
+            // Exception: Legacy characters created before this system might need open edit? 
+            // Let's go strict: Read Only unless Owner or DM.
+            const canEdit = isOwner || isDM;
+
+            // Apply Read Only state to inputs
+            const inputs = document.querySelectorAll('#sheet-container input, #sheet-container textarea, #sheet-container select');
+            inputs.forEach(el => {
+                // If it's a checkbox, we must disable it completely
+                if (el.type === 'checkbox') el.disabled = !canEdit;
+                // Text inputs get disabled styling
+                else el.disabled = !canEdit;
+            });
+            
+            // Hide/Show Edit Controls
+            const editControls = document.querySelectorAll('.read-only-hide, #add-attack-btn, #sync-btn, #delete-char-btn');
+            // Specific button logic
+            document.getElementById('add-attack-btn').style.display = canEdit ? 'block' : 'none';
+            document.getElementById('sync-btn').style.display = canEdit ? 'block' : 'none';
+            document.getElementById('delete-char-btn').style.display = canEdit ? 'block' : 'none';
+            document.querySelectorAll('.read-only-hide').forEach(el => el.classList.toggle('hidden', !canEdit));
+            
+            // Read Only Badge
+            document.getElementById('sheet-readonly-badge').classList.toggle('hidden', canEdit);
+
+            // Claim Button Logic: Show if no owner and user is logged in
+            const claimBtn = document.getElementById('claim-char-btn');
+            if (claimBtn) {
+                if (!char.owner && currentUser) {
+                    claimBtn.classList.remove('hidden');
+                } else {
+                    claimBtn.classList.add('hidden');
+                }
+            }
+
+            // Death Save Dots (Special Interaction)
+            document.querySelectorAll('.ds-dot').forEach(el => {
+                el.style.pointerEvents = canEdit ? 'auto' : 'none';
+                el.style.opacity = canEdit ? '1' : '0.5';
+            });
+            
+            // --- END ACCESS CONTROL ---
+
             document.querySelectorAll('[data-key]').forEach(el => {
                 if (el.type === 'checkbox') el.checked = !!char[el.dataset.key];
                 else { const v = char[el.dataset.key]; el.value = ((el.dataset.key === 'passivePerception' || el.dataset.key === 'stressThreshold') && (v === undefined || v === "")) ? 10 : (v || (el.type === 'number' ? 0 : '')); }
@@ -634,9 +862,22 @@
             
             const sCont = document.getElementById('sheet-container'); if (sCont) { sCont.classList.remove('status-coma', 'status-dead'); if (char.status === 'coma') sCont.classList.add('status-coma'); if (char.status === 'dead') sCont.classList.add('status-dead'); }
             
-            const isU = activeRole === 'dm' || char.ownerId === user?.uid;
-            const delBtn = document.getElementById('delete-char-btn'); 
-            if (delBtn) delBtn.style.display = isU ? 'block' : 'none';
+            // DM Whisper Logic
+            const whispersBox = document.getElementById('whisper-display-box');
+            // DM sees all, Owner sees theirs.
+            if (whispersBox) whispersBox.classList.toggle('hidden-view', !canEdit);
+            const wl = document.getElementById('whispers-list'); 
+            if (wl) {
+                wl.innerHTML = (char.dmWhispers || []).map((w, i) => `
+                    <div class="dm-whisper-box relative group">
+                        <div class="flex justify-between items-start">
+                            <span class="whisper-tag">DM SECRET</span>
+                            ${isDM ? `<button onclick="window.deleteWhisper(${i})" class="text-red-400 hover:text-red-600 font-bold text-[10px] leading-none p-1" title="Remove Whisper">✕</button>` : ''}
+                        </div>
+                        <p class="text-xs italic">${w.text}</p>
+                    </div>
+                `).reverse().join('');
+            }
 
             if (char.imageSrc) { const p = document.getElementById('portrait-preview'); if(p) { p.src = char.imageSrc; p.classList.remove('hidden'); } document.getElementById('portrait-placeholder')?.classList.add('hidden'); }
             
@@ -650,20 +891,23 @@
                 }
             }
 
-            const whispersBox = document.getElementById('whisper-display-box');
-            if (whispersBox) whispersBox.classList.toggle('hidden-view', !isU);
-            const wl = document.getElementById('whispers-list'); 
-            if (wl) wl.innerHTML = (char.dmWhispers || []).map(w => `<div class="dm-whisper-box"><span class="whisper-tag">DM SECRET</span><p class="text-xs italic">${w.text}</p></div>`).reverse().join('');
-
             const lc = document.getElementById('languages-list'); if (lc) { 
                 lc.innerHTML = ''; (char.languages || []).forEach(l => { 
-                    const d = document.createElement('div'); d.className = "bg-gray-100 px-2 py-0.5 rounded text-[10px] flex items-center gap-1 font-bold"; d.innerHTML = `<span>${l}</span><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-400">×</button>`; lc.appendChild(d); 
+                    const d = document.createElement('div'); d.className = "bg-gray-100 px-2 py-0.5 rounded text-[10px] flex items-center gap-1 font-bold"; 
+                    // Only allow delete button if editable
+                    const delBtn = canEdit ? `<button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-400">×</button>` : '';
+                    d.innerHTML = `<span>${l}</span>${delBtn}`; 
+                    lc.appendChild(d); 
                 }); 
             }
             const ac = document.getElementById('attacks-list'); if (ac) { 
                 ac.innerHTML = ''; (char.attacks || []).forEach(a => { 
                     const d = document.createElement('div'); d.className = "equip-row"; 
-                    d.innerHTML = `<input type="text" class="atk-name font-bold" value="${a.name}"><input type="text" class="atk-bonus text-center" value="${a.bonus}"><input type="text" class="atk-dmg text-center" value="${a.dmg}"><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-300">×</button>`; ac.appendChild(d); 
+                    // Disable inputs inside attacks list if read only
+                    const disabledAttr = !canEdit ? 'disabled' : '';
+                    const delBtn = canEdit ? `<button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-300">×</button>` : '';
+                    d.innerHTML = `<input type="text" class="atk-name font-bold" value="${a.name}" ${disabledAttr}><input type="text" class="atk-bonus text-center" value="${a.bonus}" ${disabledAttr}><input type="text" class="atk-dmg text-center" value="${a.dmg}" ${disabledAttr}>${delBtn}`; 
+                    ac.appendChild(d); 
                 }); 
             }
             window.calcMods(); window.renderMovesGrid();
@@ -777,15 +1021,25 @@
             const moves = char?.moves || [];
             let levels = (t === 'features') ? ['Level 1','Level 2','Level 3','Level 4','Level 5','Level 6','Level 7','Level 8','Level 9'] : ['Tricks (0)','Level 1','Level 2','Level 3','Level 4','Level 5','Level 6','Level 7','Level 8','Level 9'];
             
+            // Check Access
+            const isOwner = currentUser && char.owner === currentUser.username;
+            const canEdit = isOwner || activeRole === 'dm';
+
             levels.forEach(lvl => {
                 const card = document.createElement('div'); card.className = "lvl-card";
                 const filtered = moves.filter(m => m.lvl === lvl && m.type === t);
                 let html = `<div class="lvl-header">${lvl.toUpperCase()}</div><div class="flex-grow space-y-1">`;
                 filtered.forEach(m => {
                     const mIdx = moves.indexOf(m);
-                    html += `<div class="move-pill" onclick="window.openMoveModal('${lvl}', ${mIdx})"><span class="move-name">${m.name}</span><span class="move-roll">${m.roll || ''}</span></div>`;
+                    // Disable click edit if read only
+                    const onclick = canEdit ? `onclick="window.openMoveModal('${lvl}', ${mIdx})"` : '';
+                    html += `<div class="move-pill" ${onclick}><span class="move-name">${m.name}</span><span class="move-roll">${m.roll || ''}</span></div>`;
                 });
-                html += `</div><button onclick="window.openMoveModal('${lvl}')" class="text-[9px] font-black uppercase text-blue-500 text-center mt-2">+ ADD</button>`;
+                if (canEdit) {
+                    html += `</div><button onclick="window.openMoveModal('${lvl}')" class="text-[9px] font-black uppercase text-blue-500 text-center mt-2">+ ADD</button>`;
+                } else {
+                    html += `</div>`;
+                }
                 card.innerHTML = html; g.appendChild(card);
             });
         };
@@ -838,6 +1092,14 @@
 
         window.saveCurrentCharacter = (m) => {
             if (!activeCharId || !user) return;
+            
+            // Check permission before saving
+            const char = characters.find(c => c.id === activeCharId);
+            if (!char) return;
+            const isOwner = currentUser && char.owner === currentUser.username;
+            const isDM = activeRole === 'dm';
+            if (!isOwner && !isDM) return; // Silent fail if read-only user tries to save
+
             const data = {};
             document.querySelectorAll('[data-key]').forEach(el => data[el.dataset.key] = el.type === 'checkbox' ? el.checked : el.value);
             const p = document.getElementById('portrait-preview'); if (p) data.imageSrc = p.src || "";
@@ -845,11 +1107,21 @@
             data.attacks = Array.from(document.querySelectorAll('#attacks-list > div')).map(r => ({
                 name: r.querySelector('.atk-name')?.value || "", bonus: r.querySelector('.atk-bonus')?.value || "", dmg: r.querySelector('.atk-dmg')?.value || ""
             }));
-            const char = characters.find(c => c.id === activeCharId);
+            
             if (char) data.moves = char.moves || [];
             updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), data);
             if (m) window.showToast("Synced");
             const si = document.getElementById('sync-indicator'); if (si) { si.style.opacity = 1; setTimeout(()=>si.style.opacity = 0, 1000); }
+        };
+
+        window.claimCharacter = async () => {
+            if (!activeCharId || !currentUser) return;
+            const char = characters.find(c => c.id === activeCharId);
+            if (!char || char.owner) return;
+            
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { owner: currentUser.username });
+            window.showToast("Character Claimed");
+            syncSheetData(); // Refresh UI
         };
 
         window.calcMods = () => {
@@ -876,11 +1148,193 @@
         // --- UTILS ---
 
         window.updateCharStatus = async (s) => { if (!activeCharId) return; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { status: s }); window.showToast(s.toUpperCase()); };
-        window.handleImageUpload = (e) => { const f = e.target.files[0]; if (!f) return; const reader = new FileReader(); reader.onload = (ev) => { const p = document.getElementById('portrait-preview'); if (p) { p.src = ev.target.result; p.classList.remove('hidden'); } document.getElementById('portrait-placeholder')?.classList.add('hidden'); window.saveCurrentCharacter(); }; reader.readAsDataURL(f); };
+        
+        // Updated Image Handler: Resizes and Compresses image before saving
+        window.handleImageUpload = (e) => { 
+            const file = e.target.files[0]; 
+            if (!file) return; 
+
+            // Limit image dimensions to save space (Max 300x300 is plenty for a card)
+            const maxWidth = 300;
+            const maxHeight = 300;
+
+            const reader = new FileReader(); 
+            reader.onload = (readerEvent) => { 
+                const image = new Image();
+                image.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = image.width;
+                    let height = image.height;
+
+                    // Calculate new dimensions
+                    if (width > height) {
+                        if (width > maxWidth) {
+                            height *= maxWidth / width;
+                            width = maxWidth;
+                        }
+                    } else {
+                        if (height > maxHeight) {
+                            width *= maxHeight / height;
+                            height = maxHeight;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    // Draw to canvas and compress
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(image, 0, 0, width, height);
+                    
+                    // Convert to compact JPEG (0.7 quality)
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+
+                    // Update UI
+                    const p = document.getElementById('portrait-preview'); 
+                    if (p) { 
+                        p.src = dataUrl; 
+                        p.classList.remove('hidden'); 
+                    } 
+                    document.getElementById('portrait-placeholder')?.classList.add('hidden'); 
+                    
+                    // Save the smaller string to database
+                    window.saveCurrentCharacter();
+                    window.showToast("Image Uploaded");
+                };
+                image.src = readerEvent.target.result;
+            }; 
+            reader.readAsDataURL(file); 
+        };
+
         window.addAttackItem = () => { const c = document.getElementById('attacks-list'); if (!c) return; const d = document.createElement('div'); d.className = "equip-row"; d.innerHTML = `<input type="text" class="atk-name font-bold" placeholder="Weapon"><input type="text" class="atk-bonus text-center" placeholder="+0"><input type="text" class="atk-dmg text-center" placeholder="1d8"><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-300">×</button>`; c.appendChild(d); };
         window.addLanguageItem = () => { const i = document.getElementById('lang-input'); if (!i || !i.value) return; const c = document.getElementById('languages-list'), t = document.createElement('div'); t.className = "bg-gray-100 px-2 py-0.5 rounded text-[10px] flex items-center gap-1 font-bold"; t.innerHTML = `<span>${i.value}</span><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-400">×</button>`; if (c) c.appendChild(t); i.value = ''; window.saveCurrentCharacter(); };
         window.updateLevelDependencies = (v) => { const l = parseInt(v) || 1; const b = l >= 17 ? 6 : l >= 13 ? 5 : l >= 9 ? 4 : l >= 5 ? 3 : 2; const pi = document.querySelector('[data-key="profBonus"]'); if (pi) pi.value = b; window.calcMods(); window.saveCurrentCharacter(); };
-        window.rest = async (t) => { if (!activeCharId) return; const c = characters.find(x => x.id === activeCharId); if (t === 'long') await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { dsSucc: 0, dsFail: 0, hpCurrent: parseInt(c.hpMax) || 10, tempHp: 0 }); else window.showToast("Ready"); };
+        
+        window.rest = async (t) => { 
+            if (!activeCharId) return; 
+            const c = characters.find(x => x.id === activeCharId);
+            
+            // Permission check
+            if (!currentUser || (c.owner && c.owner !== currentUser.username && activeRole !== 'dm')) return;
+
+            const maxInput = document.querySelector('[data-key="hpMax"]');
+            const hpInput = document.querySelector('[data-key="hpCurrent"]');
+            
+            // Get values safely
+            const maxVal = maxInput ? (parseInt(maxInput.value) || 0) : (parseInt(c.hpMax) || 0);
+
+            if (t === 'long') {
+                if (maxVal > 0) {
+                    // OPTIMISTIC UPDATE: Update UI immediately
+                    if (hpInput) hpInput.value = maxVal;
+                    const tempHpInput = document.querySelector('[data-key="tempHp"]');
+                    if (tempHpInput) tempHpInput.value = 0;
+                    
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { 
+                        dsSucc: 0, dsFail: 0, 
+                        hpCurrent: maxVal, 
+                        tempHp: 0 
+                    });
+                    window.showToast("Long Rest: HP Restored");
+                } else {
+                    window.showToast("Set Max HP first");
+                }
+            } else if (t === 'short') {
+                // Initialize Short Rest Modal
+                
+                // 1. Calculate Con Mod
+                const conInput = document.querySelector('[data-key="con"]');
+                const conVal = conInput ? (parseInt(conInput.value) || 10) : (c.con || 10);
+                const conMod = Math.floor((conVal - 10) / 2);
+                document.getElementById('sr-con-mod-display').textContent = (conMod >= 0 ? '+' : '') + conMod;
+                document.getElementById('sr-con-mod-display').dataset.mod = conMod;
+
+                // 2. Try to pre-select Hit Die based on sheet
+                const hdInput = document.querySelector('[data-key="hd"]');
+                const hdText = hdInput ? hdInput.value : (c.hd || "1d8");
+                const match = hdText.match(/d(\d+)/);
+                const defaultDie = match ? parseInt(match[1]) : 8;
+                
+                // Select proper die visual
+                window.selectSrDie(defaultDie);
+                
+                // Reset Dice Count
+                document.getElementById('sr-num-dice').value = 1;
+
+                // Open Modal
+                document.getElementById('short-rest-modal').classList.remove('hidden');
+            }
+        };
+
+        window.selectSrDie = (die) => {
+            // Update hidden input
+            document.getElementById('sr-die-val').value = die;
+            
+            // Visual Update
+            document.querySelectorAll('.sr-die-btn').forEach(b => {
+                b.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600');
+                b.classList.add('text-gray-400', 'border-gray-200');
+            });
+            const btn = document.getElementById(`sr-btn-${die}`);
+            if (btn) {
+                btn.classList.remove('text-gray-400', 'border-gray-200');
+                btn.classList.add('bg-indigo-600', 'text-white', 'border-indigo-600');
+            }
+        };
+
+        window.confirmShortRest = async () => {
+            const numDice = parseInt(document.getElementById('sr-num-dice').value) || 1;
+            const dieSize = parseInt(document.getElementById('sr-die-val').value) || 8;
+            const conMod = parseInt(document.getElementById('sr-con-mod-display').dataset.mod) || 0;
+            
+            let totalHeal = 0;
+            let rolls = [];
+
+            for (let i = 0; i < numDice; i++) {
+                const roll = Math.floor(Math.random() * dieSize) + 1;
+                const heal = Math.max(0, roll + conMod); // Minimum 0 per die
+                totalHeal += heal;
+                rolls.push(roll);
+            }
+
+            // Apply healing
+            const maxInput = document.querySelector('[data-key="hpMax"]');
+            const hpInput = document.querySelector('[data-key="hpCurrent"]');
+            const char = characters.find(c => c.id === activeCharId);
+            
+            const maxVal = maxInput ? (parseInt(maxInput.value) || 0) : (parseInt(char.hpMax) || 0);
+            const currentHp = hpInput ? (parseInt(hpInput.value) || 0) : (parseInt(char.hpCurrent) || 0);
+            
+            const newHp = Math.min(maxVal, currentHp + totalHeal);
+
+            if (hpInput) hpInput.value = newHp;
+
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), {
+                hpCurrent: newHp
+            });
+
+            // Close modal & Feedback
+            document.getElementById('short-rest-modal').classList.add('hidden');
+            window.showToast(`Short Rest: +${totalHeal} HP`);
+            
+            // Format log nicely
+            const rollStr = rolls.map(r => `(${r}${conMod >=0 ? '+'+conMod : conMod})`).join(' + ');
+            addRollToHistory(`Short Rest (${numDice}d${dieSize})`, `${totalHeal} [${rollStr}]`);
+        };
+
+        window.deleteWhisper = async (idx) => {
+            if (!activeCharId || activeRole !== 'dm') return;
+            const char = characters.find(c => c.id === activeCharId);
+            if (!char) return;
+            
+            const newWhispers = [...(char.dmWhispers || [])];
+            if (idx >= 0 && idx < newWhispers.length) {
+                newWhispers.splice(idx, 1);
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { dmWhispers: newWhispers });
+                window.showToast("Whisper Removed");
+            }
+        };
+
         window.toggleDS = async (type, num) => { 
             const char = characters.find(c => c.id === activeCharId); if (!char) return; 
             const key = type === 'succ' ? 'dsSucc' : 'dsFail'; 
@@ -918,7 +1372,25 @@
         const initAuth = async () => {
             try {
                 await signInAnonymously(auth);
-                onAuthStateChanged(auth, (u) => { user = u; if (user) { setupListeners(); window.updateRoleUI(); } });
+                onAuthStateChanged(auth, (u) => { 
+                    user = u; 
+                    if (user) { 
+                        setupListeners(); 
+                        window.updateRoleUI(); 
+                        
+                        // Check for persisted login
+                        const savedUser = localStorage.getItem('aeonfall_user');
+                        if (savedUser) {
+                            try {
+                                currentUser = JSON.parse(savedUser);
+                                window.authSystem.completeAuth();
+                            } catch (e) {
+                                console.error("Session restore failed", e);
+                                localStorage.removeItem('aeonfall_user');
+                            }
+                        }
+                    } 
+                });
             } catch (err) { console.error("Firebase Auth failed:", err); }
         };
 
