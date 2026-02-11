@@ -1,1 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Aeonfall Campaign - Bestiary</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Roboto+Slab:wght@300;400;700&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans', sans-serif; background-color: #1a1a1a; color: #e2e8f0; overflow-x: hidden; }
+        .dashboard-bg { background-image: url('https://www.transparenttextures.com/patterns/dark-wood.png'); background-color: #0f0f0f; }
+        
+        /* Stat Block Aesthetic - Monster Manual Style */
+        #sheet-container { background-color: #fdfaf3; min-height: 100vh; padding-bottom: 120px; color: #1a1a1a; transition: all 0.3s ease; }
+        
+        .stat-block {
+            background-color: #fdfaf3;
+            border-top: 5px solid #7a1d1d;
+            border-bottom: 5px solid #7a1d1d;
+            padding: 32px;
+            max-width: 1100px;
+            margin: 0 auto;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
 
+        .beast-name-header {
+            font-family: 'Cinzel', serif;
+            font-weight: 900;
+            font-size: 38px;
+            color: #7a1d1d;
+            line-height: 1;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            width: 100%;
+        }
+
+        .beast-meta {
+            font-style: italic;
+            font-size: 15px;
+            color: #4b5563;
+            border-bottom: 2px solid #7a1d1d;
+            padding-bottom: 8px;
+            margin-bottom: 16px;
+        }
+
+        .stat-line { margin: 6px 0; color: #1a1a1a; font-size: 15px; border-bottom: 1px solid #7a1d1d33; padding-bottom: 2px; }
+        .stat-line b { color: #7a1d1d; font-weight: 900; }
+
+        /* Ability Table - Matches Reference */
+        .ability-table { width: 100%; border-collapse: collapse; margin: 24px 0; table-layout: fixed; }
+        .ability-table th { font-family: 'Cinzel', serif; font-weight: 900; color: #7a1d1d; font-size: 12px; padding: 4px; text-align: center; }
+        .ability-table td { background: #eee5ce; border: 2px solid #fdfaf3; padding: 10px; text-align: center; }
+        .ab-val { font-weight: 900; font-size: 18px; display: block; color: #111; }
+        .ab-mod { font-size: 13px; color: #7a1d1d; font-weight: 700; margin-top: 2px; display: block; }
+
+        .section-header {
+            font-family: 'Cinzel', serif;
+            font-weight: 900;
+            font-size: 22px;
+            color: #7a1d1d;
+            border-bottom: 1px solid #7a1d1d;
+            margin: 24px 0 12px;
+            text-transform: uppercase;
+        }
+
+        .trait-text { font-size: 15px; margin-bottom: 12px; line-height: 1.6; }
+        .trait-text b { font-style: italic; font-weight: 900; color: #111; }
+
+        /* Dashboard Cards */
+        .card { transition: all 0.2s; cursor: pointer; border-left-width: 4px; position: relative; }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.7); }
+        .status-badge { position: absolute; top: 8px; right: 8px; font-size: 8px; font-weight: 900; padding: 2px 6px; border-radius: 99px; text-transform: uppercase; }
+        
+        .nav-link { color: #94a3b8; font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; }
+        .nav-link.active { color: #f59e0b; border-bottom: 2px solid #f59e0b; padding-bottom: 4px; }
+
+        /* UI Elements */
+        .portrait-circle {
+            width: 180px;
+            height: 180px;
+            border: 6px solid #bba683;
+            outline: 2px solid #2c1810;
+            border-radius: 50%;
+            overflow: hidden;
+            background: #fff;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        input, textarea { background: transparent; border: none; width: 100%; color: inherit; font-size: inherit; }
+        input:focus, textarea:focus { outline: none; background: rgba(122, 29, 29, 0.04); }
+
+        .hidden-view { display: none !important; }
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 12px 24px; border-radius: 30px; z-index: 1000; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+        
+        .skill-row { display: flex; justify-content: space-between; border-bottom: 1px dotted #bba683; padding: 6px 0; font-size: 14px; }
+        .dm-panel { background: #1a1a1a; color: #fff; padding: 20px; border-radius: 12px; margin-bottom: 24px; border: 2px solid #f59e0b; }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <div id="toast" class="toast">Message</div>
+    <div id="sync-indicator">Cloud Synced</div>
+
+    <!-- AUTH MODAL -->
+    <div id="auth-modal" class="fixed inset-0 bg-gray-950 z-[300] flex items-center justify-center p-4 hidden">
+        <div class="bg-gray-800 border-2 border-amber-600 rounded-2xl p-8 max-w-md w-full shadow-2xl text-center relative">
+            <h1 class="text-4xl text-amber-500 font-bold mb-2 font-serif tracking-tight mt-4">Aeonfall</h1>
+            <p class="text-gray-400 text-xs uppercase tracking-widest font-bold mb-8">Bestiary Authentication</p>
+            <div class="space-y-4 mb-8">
+                <div class="text-left"><label class="text-[10px] font-black uppercase text-gray-500 ml-1">Username</label><input type="text" id="auth-username" class="w-full bg-gray-900 text-white rounded-lg p-3 border border-gray-700 focus:border-amber-500 transition-colors"></div>
+                <div class="text-left"><label class="text-[10px] font-black uppercase text-gray-500 ml-1">Password</label><input type="password" id="auth-password" class="w-full bg-gray-900 text-white rounded-lg p-3 border border-gray-700 focus:border-amber-500 transition-colors"></div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="window.authSystem.login()" class="bg-amber-600 hover:bg-amber-500 text-white py-3 rounded-xl font-bold uppercase text-xs">Login</button>
+                <button onclick="window.authSystem.register()" class="bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-xl font-bold uppercase text-xs">Register</button>
+            </div>
+            <p id="auth-error" class="text-red-500 text-xs mt-4 font-bold min-h-[1rem]"></p>
+        </div>
+    </div>
+
+    <!-- MAIN DASHBOARD -->
+    <div id="dashboard-screen" class="min-h-screen dashboard-bg p-4 md:p-8">
+        <div class="max-w-6xl mx-auto">
+            <header class="flex flex-col md:flex-row justify-between items-center mb-10 border-b border-gray-800 pb-8 gap-6">
+                <div>
+                    <h1 class="text-4xl md:text-6xl text-amber-500 font-bold mb-2 font-serif tracking-tight">Aeonfall</h1>
+                    <div class="flex items-center gap-4">
+                        <p class="text-gray-500 text-xs md:text-sm uppercase tracking-widest font-bold">Bestiary Codex</p>
+                        <div class="bg-gray-800 px-3 py-1 rounded-full border border-gray-700 flex items-center gap-2">
+                            <span id="user-status-dot" class="w-2 h-2 rounded-full bg-gray-500"></span>
+                            <span id="user-display-name" class="text-[10px] font-black text-gray-300 uppercase tracking-wider">Guest</span>
+                            <button onclick="window.logout()" id="logout-btn" class="text-[10px] text-red-400 hover:text-red-300 font-bold ml-2 border-l border-gray-600 pl-2">LOGOUT</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col items-center gap-4">
+                    <div class="flex items-center gap-2 bg-gray-900 p-1 rounded-xl shadow-2xl">
+                        <button id="role-player-btn" onclick="window.setRole('player')" class="px-6 py-3 rounded-lg text-sm font-bold bg-amber-600 text-white">Player</button>
+                        <button id="role-dm-btn" onclick="window.setRole('dm')" class="px-6 py-3 rounded-lg text-sm font-bold text-gray-500">DM</button>
+                    </div>
+                    <nav id="main-nav" class="flex gap-6">
+                        <a href="index.html" class="nav-link">Party</a>
+                        <a href="npcs.html" class="nav-link">NPCs</a>
+                        <a href="#" class="nav-link active">Bestiary</a>
+                    </nav>
+                </div>
+            </header>
+
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+                <h2 class="text-2xl font-serif text-gray-400 uppercase font-bold tracking-widest">Creature Codex</h2>
+                <div id="dm-actions" class="hidden flex gap-2">
+                    <button onclick="window.createBeast('public')" class="bg-amber-600 text-white px-4 py-2.5 rounded-lg text-[10px] font-black uppercase shadow-lg hover:bg-amber-500 transition-colors">+ NEW PUBLIC ENTRY</button>
+                    <button onclick="window.createBeast('unpublished')" class="bg-gray-700 text-white px-4 py-2.5 rounded-lg text-[10px] font-black uppercase shadow-lg hover:bg-gray-600 transition-colors">+ NEW DRAFT</button>
+                </div>
+            </div>
+
+            <div id="view-content" class="space-y-12">
+                <div id="sec-public">
+                    <div class="category-header">IDENTIFIED CREATURES <span class="cat-count" id="count-public">0</span></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="grid-public"></div>
+                </div>
+                <div id="sec-unpublished" class="hidden">
+                    <div class="category-header italic text-gray-600">DRAFTS (DM ONLY) <span class="cat-count" id="count-unpublished">0</span></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 opacity-60" id="grid-unpublished"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SHEET SCREEN -->
+    <div id="sheet-screen" class="hidden-view">
+        <div id="sheet-container">
+            <nav class="sticky top-0 z-[60] bg-gray-900 p-2 shadow-2xl border-b border-gray-800">
+                <div class="max-w-6xl mx-auto flex justify-between items-center text-white px-4">
+                    <button onclick="window.closeSheet()" class="text-gray-400 hover:text-white font-bold flex items-center gap-2"><span>←</span> Return to Codex</button>
+                    <div class="flex items-center gap-4">
+                        <span id="vis-badge" class="bg-gray-800 text-gray-300 px-3 py-1 rounded text-[10px] font-black uppercase border border-gray-700">Visibility</span>
+                        <div id="dm-sheet-controls" class="hidden flex gap-1">
+                            <button onclick="window.saveBeast(true)" class="bg-green-700 hover:bg-green-600 px-4 py-1 rounded text-[10px] font-black uppercase tracking-widest">SYNC</button>
+                            <button onclick="window.triggerDelete()" class="bg-red-900 px-3 py-1 rounded text-[10px] font-black uppercase">DELETE</button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="p-4 md:p-12">
+                <div id="dm-oversight" class="dm-panel max-w-[1100px] mx-auto mb-8 hidden text-white">
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                        <div>
+                            <h4 class="text-xs font-black uppercase text-amber-500 mb-2">Publish Control</h4>
+                            <div class="flex gap-2">
+                                <button onclick="window.updateVisibility('public')" class="bg-amber-600 px-3 py-2 rounded text-[9px] font-black uppercase">PUBLISH</button>
+                                <button onclick="window.updateVisibility('unpublished')" class="bg-gray-600 px-3 py-2 rounded text-[9px] font-black uppercase">DRAFT</button>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <h4 class="text-xs font-black uppercase text-amber-500 mb-2">Portrait Upload</h4>
+                            <input type="file" id="portrait-input-file" accept="image/*" onchange="window.handlePortrait(event)" class="text-[10px]">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-block">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-12">
+                        
+                        <!-- Header and Vitals -->
+                        <div class="md:col-span-8">
+                            <input type="text" data-key="name" class="beast-name-header" placeholder="BEAST NAME">
+                            <input type="text" data-key="summary" class="beast-meta" placeholder="Large Elemental, Neutral">
+                            
+                            <div class="stat-line"><b>Armor Class</b> <input type="number" data-key="ac" class="w-12 inline font-bold" placeholder="15"></div>
+                            <div class="stat-line"><b>Hit Points</b> <input type="text" data-key="hpDisplay" class="w-48 inline font-bold" placeholder="90 (12d10 + 24)"></div>
+                            <div class="stat-line"><b>Speed</b> <input type="text" data-key="speed" class="w-64 inline font-bold" placeholder="10 ft., fly 90 ft."></div>
+
+                            <table class="ability-table">
+                                <thead>
+                                    <tr><th>STR</th><th>DEX</th><th>CON</th><th>INT</th><th>WIS</th><th>CHA</th></tr>
+                                </thead>
+                                <tbody id="ability-row"></tbody>
+                            </table>
+
+                            <div class="stat-line"><b>Senses</b> <input type="text" data-key="senses" class="w-64 inline" placeholder="Darkvision 60 ft."></div>
+                            <div class="stat-line"><b>Languages</b> <input type="text" data-key="languages" class="w-64 inline" placeholder="Primordial"></div>
+                            <div class="stat-line"><b>Challenge</b> <input type="text" data-key="cr" class="w-64 inline" placeholder="5 (1,800 XP)"></div>
+
+                            <div class="section-header">Traits</div>
+                            <textarea data-key="description" class="trait-text w-full min-h-[150px]" placeholder="Traits..."></textarea>
+
+                            <div class="section-header">Actions</div>
+                            <textarea data-key="personality" class="trait-text w-full min-h-[250px]" placeholder="Actions..."></textarea>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="md:col-span-4 flex flex-col items-center">
+                            <div class="portrait-circle mb-10">
+                                <img id="portrait-preview" class="hidden w-full h-full object-cover">
+                                <div id="portrait-placeholder" class="absolute inset-0 flex items-center justify-center text-4xl opacity-20">🐉</div>
+                            </div>
+
+                            <div id="skills-section" class="w-full">
+                                <div class="section-header">Attacks & Bonuses</div>
+                                <div id="skills-list" class="space-y-1"></div>
+                                <div class="flex gap-2 mt-4" id="skill-add-ui">
+                                    <input type="text" id="skill-name-in" class="border-b border-gray-400 text-xs italic" placeholder="Skill name...">
+                                    <input type="text" id="skill-val-in" class="border-b border-gray-400 text-xs w-10 text-center font-bold" placeholder="+0">
+                                    <button onclick="window.addSkillItem()" class="bg-gray-200 px-2 rounded text-[10px] font-black">ADD</button>
+                                </div>
+                            </div>
+
+                            <div id="dm-secret-sec" class="hidden w-full">
+                                <div class="section-header !text-blue-900 !border-blue-900">DM SECRET NOTES</div>
+                                <textarea data-key="dmNotes" class="w-full min-h-[350px] leading-relaxed text-sm bg-blue-50/20 p-3 rounded italic" placeholder="Secrets..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALS -->
+    <div id="password-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[200] hidden">
+        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border-2 border-amber-600 text-white text-center shadow-2xl">
+            <h3 class="text-xl font-serif text-amber-500 font-bold mb-2">DM AUTHORIZATION</h3>
+            <input type="password" id="dm-password" class="w-full bg-gray-900 text-center text-2xl rounded-lg p-3 mb-6 border border-gray-700">
+            <button onclick="window.verifyDmPassword()" class="w-full bg-amber-600 py-3 rounded-xl font-bold uppercase text-xs">Enter</button>
+        </div>
+    </div>
+
+    <div id="delete-modal" class="fixed inset-0 bg-black/90 flex items-center justify-center z-[250] hidden text-gray-800">
+        <div class="bg-white p-8 rounded-2xl w-full max-w-sm border-4 border-red-600 text-center">
+            <h3 class="text-2xl font-serif text-red-700 font-bold mb-4 uppercase">Erase Creature</h3>
+            <p class="text-gray-500 text-sm mb-8 leading-relaxed">This action is permanent.</p>
+            <button onclick="window.executeDelete()" class="w-full bg-red-700 text-white py-3 rounded-xl font-bold uppercase text-xs mb-2 shadow-lg">Confirm Delete</button>
+            <button onclick="document.getElementById('delete-modal').classList.add('hidden')" class="w-full text-gray-400 text-[10px] font-bold">CANCEL</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, updateDoc, deleteDoc, onSnapshot, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Helper Functions
+        window.hashPassword = async (str) => {
+            const msgBuffer = new TextEncoder().encode(str);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+        };
+
+        const firebaseConfig = { apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI", authDomain: "aeonfall-523c1.firebaseapp.com", projectId: "aeonfall-523c1", storageBucket: "aeonfall-523c1.firebasestorage.app", messagingSenderId: "716207733913", appId: "1:716207733913:web:7aac43906a70e2b5f50c08" };
+        const appId = 'aeonfall-manager-v2';
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let characters = [], user = null, activeCharId = null, activeRole = 'player', currentUser = null; 
+        let autoSaveTimer = null;
+        const STATS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+
+        window.showToast = (m) => { const t = document.getElementById('toast'); if(t){ t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 3000); } };
+
+        window.logout = () => {
+            localStorage.removeItem('aeonfall_user');
+            localStorage.removeItem('aeonfall_role');
+            currentUser = null;
+            activeRole = 'player';
+            document.getElementById('dashboard-screen').classList.add('hidden-view');
+            document.getElementById('auth-modal').classList.remove('hidden');
+        };
+
+        window.authSystem = {
+            login: async () => {
+                const u = document.getElementById('auth-username').value.trim().toLowerCase();
+                const p = document.getElementById('auth-password').value;
+                if (!u || !p) return;
+                try {
+                    const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'players'), where('username', '==', u));
+                    const snap = await getDocs(q);
+                    if (snap.empty) { document.getElementById('auth-error').textContent = "User not found"; return; }
+                    const userData = snap.docs[0].data();
+                    const inputHash = await window.hashPassword(p);
+                    if (userData.passwordHash === inputHash) {
+                        currentUser = { username: u, id: snap.docs[0].id };
+                        localStorage.setItem('aeonfall_user', JSON.stringify(currentUser));
+                        document.getElementById('auth-modal').classList.add('hidden');
+                        document.getElementById('dashboard-screen').classList.remove('hidden-view');
+                        document.getElementById('user-display-name').textContent = currentUser.username;
+                        document.getElementById('user-status-dot').classList.add('bg-green-500', 'animate-pulse');
+                        window.renderDashboard();
+                    }
+                } catch (e) { console.error(e); }
+            },
+            register: async () => {
+                const u = document.getElementById('auth-username').value.trim().toLowerCase();
+                const p = document.getElementById('auth-password').value;
+                if (!u || !p) return;
+                try {
+                    const passHash = await window.hashPassword(p);
+                    const newDoc = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'players'), { username: u, passwordHash: passHash, createdAt: Date.now() });
+                    currentUser = { username: u, id: newDoc.id };
+                    localStorage.setItem('aeonfall_user', JSON.stringify(currentUser));
+                    document.getElementById('auth-modal').classList.add('hidden');
+                    document.getElementById('dashboard-screen').classList.remove('hidden-view');
+                    document.getElementById('user-display-name').textContent = currentUser.username;
+                    document.getElementById('user-status-dot').classList.add('bg-green-500', 'animate-pulse');
+                    window.renderDashboard();
+                } catch (e) { console.error(e); }
+            }
+        };
+
+        const checkSession = () => {
+            const saved = localStorage.getItem('aeonfall_user');
+            const role = localStorage.getItem('aeonfall_role');
+            if (!saved) { document.getElementById('auth-modal').classList.remove('hidden'); return false; }
+            currentUser = JSON.parse(saved);
+            activeRole = role || 'player';
+            document.getElementById('user-display-name').textContent = currentUser.username;
+            const dot = document.getElementById('user-status-dot');
+            if (dot) { dot.classList.add('bg-green-500', 'animate-pulse'); dot.classList.remove('bg-gray-500'); }
+            document.getElementById('dashboard-screen').classList.remove('hidden-view');
+            return true;
+        };
+
+        window.setRole = (r) => { if (r === 'dm') document.getElementById('password-modal').classList.remove('hidden'); else { activeRole = 'player'; localStorage.setItem('aeonfall_role', 'player'); window.updateRoleUI(); } };
+        window.verifyDmPassword = () => { if (document.getElementById('dm-password').value === 'Rew4994') { activeRole = 'dm'; localStorage.setItem('aeonfall_role', 'dm'); document.getElementById('password-modal').classList.add('hidden'); window.updateRoleUI(); } };
+
+        window.updateRoleUI = () => {
+            const isDM = activeRole === 'dm';
+            document.getElementById('role-player-btn').className = !isDM ? 'px-6 py-3 rounded-lg text-sm font-bold bg-amber-600 text-white shadow-lg' : 'px-6 py-3 text-gray-500 font-bold';
+            document.getElementById('role-dm-btn').className = isDM ? 'px-6 py-3 rounded-lg text-sm font-bold bg-amber-600 text-white shadow-lg' : 'px-6 py-3 text-gray-500 font-bold';
+            document.getElementById('dm-actions').classList.toggle('hidden', !isDM);
+            document.getElementById('dm-oversight').classList.toggle('hidden', !isDM);
+            document.getElementById('dm-sheet-controls').classList.toggle('hidden', !isDM);
+            window.renderDashboard();
+            if (activeCharId) syncSheetData();
+        };
+
+        window.renderDashboard = () => {
+            const grids = { public: document.getElementById('grid-public'), unpublished: document.getElementById('grid-unpublished') };
+            Object.values(grids).forEach(g => g.innerHTML = '');
+            let countMap = { public: 0, unpublished: 0 };
+            const isDM = activeRole === 'dm';
+
+            characters.filter(c => c.type === 'BEAST' && !c.isDeleted).forEach(b => {
+                let vis = b.visibility || 'public';
+                if (vis === 'public' || isDM) {
+                    countMap[vis]++;
+                    grids[vis].appendChild(createBeastCard(b));
+                }
+            });
+            document.getElementById('sec-unpublished').classList.toggle('hidden', !isDM);
+            document.getElementById('count-public').textContent = countMap.public;
+            document.getElementById('count-unpublished').textContent = countMap.unpublished;
+        };
+
+        function createBeastCard(b) {
+            const d = document.createElement('div');
+            let borderCol = b.visibility === 'unpublished' ? 'border-gray-500' : 'border-amber-600';
+            d.className = `bg-gray-800 p-5 rounded-xl card border-l-4 shadow-xl ${borderCol}`;
+            d.onclick = () => window.openSheet(b.id);
+            d.innerHTML = `<div class="flex items-center gap-4"><div class="w-12 h-12 rounded-lg bg-gray-700 overflow-hidden relative">${b.imageSrc ? `<img src="${b.imageSrc}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-xl">🐉</div>`}</div><div><h5 class="text-amber-500 font-serif font-bold uppercase text-xs">${b.name}</h5><p class="text-[10px] text-gray-400 uppercase">${b.summary || 'CR ?'}</p></div></div>`;
+            return d;
+        }
+
+        window.openSheet = (id) => { activeCharId = id; document.getElementById('dashboard-screen').classList.add('hidden-view'); document.getElementById('sheet-screen').classList.remove('hidden-view'); initGrid(); syncSheetData(); };
+        window.closeSheet = () => { activeCharId = null; document.getElementById('sheet-screen').classList.add('hidden-view'); document.getElementById('dashboard-screen').classList.remove('hidden-view'); };
+
+        function initGrid() {
+            const row = document.getElementById('ability-row');
+            row.innerHTML = STATS.map(s => `<td><span class="ab-val"><input type="number" data-key="${s}" class="text-center" onchange="window.calcMods()"></span><span class="ab-mod" id="mod-${s}">+0</span></td>`).join('');
+        }
+
+        function syncSheetData() {
+            const char = characters.find(c => c.id === activeCharId); if (!char) return;
+            const isDM = activeRole === 'dm';
+            
+            document.querySelectorAll('#sheet-screen input, #sheet-screen textarea').forEach(el => el.disabled = !isDM);
+            document.getElementById('dm-secret-sec').classList.toggle('hidden', !isDM);
+            document.getElementById('skill-add-ui').classList.toggle('hidden', !isDM);
+
+            const vBadge = document.getElementById('vis-badge');
+            if (vBadge) vBadge.textContent = (char.visibility || 'PUBLIC').toUpperCase();
+
+            document.querySelectorAll('#sheet-screen [data-key]').forEach(el => {
+                el.value = char[el.dataset.key] || (el.type === 'number' ? 0 : '');
+            });
+
+            const sL = document.getElementById('skills-list'); 
+            if (sL) {
+                sL.innerHTML = '';
+                (char.skills || []).forEach((sk, i) => { sL.innerHTML += `<div class="skill-row"><b>${sk.name}</b> <div><span>${sk.val}</span>${isDM ? `<button onclick="window.removeSkill(${i})" class="ml-2 text-red-700">✕</button>` : ''}</div></div>`; });
+            }
+
+            const prev = document.getElementById('portrait-preview');
+            const placeholder = document.getElementById('portrait-placeholder');
+            if (char.imageSrc) { prev.src = char.imageSrc; prev.classList.remove('hidden'); placeholder.classList.add('hidden'); }
+            else { prev.classList.add('hidden'); placeholder.classList.remove('hidden'); }
+            
+            window.calcMods();
+        }
+
+        window.calcMods = () => {
+            STATS.forEach(s => {
+                const el = document.querySelector(`#sheet-screen [data-key="${s}"]`);
+                if (el) {
+                    const v = parseInt(el.value) || 10;
+                    const m = Math.floor((v - 10) / 2);
+                    const modEl = document.getElementById(`mod-${s}`);
+                    if (modEl) modEl.textContent = (m >= 0 ? '+' : '') + m;
+                }
+            });
+        };
+
+        window.saveBeast = (m) => {
+            if (!activeCharId || activeRole !== 'dm') return;
+            const data = {};
+            document.querySelectorAll('#sheet-screen [data-key]').forEach(el => data[el.dataset.key] = el.value);
+            const p = document.getElementById('portrait-preview'); if (p && p.src && p.src.startsWith('data:')) data.imageSrc = p.src;
+            updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), data);
+            if (m) window.showToast("Codex Updated");
+        };
+
+        window.handlePortrait = (e) => {
+            const file = e.target.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 600; canvas.height = 450;
+                    canvas.getContext('2d').drawImage(img, 0, 0, 600, 450);
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+                    document.getElementById('portrait-preview').src = dataUrl;
+                    document.getElementById('portrait-preview').classList.remove('hidden');
+                    document.getElementById('portrait-placeholder').classList.add('hidden');
+                    window.saveBeast();
+                };
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(file);
+        };
+
+        window.createBeast = async (vis) => {
+            if (!currentUser || activeRole !== 'dm') return;
+            try {
+                const ref = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), {
+                    type: 'BEAST', visibility: vis, name: `UNKNOWN ENTITY`, summary: "Medium Beast, Unaligned", ac: 10, hpDisplay: "10 (2d8 + 2)",
+                    isDeleted: false, status: 'alive', str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10, skills: [], description: "", personality: "", dmNotes: ""
+                });
+                window.openSheet(ref.id);
+            } catch (e) { console.error(e); }
+        };
+
+        window.updateVisibility = async (v) => {
+            if (!activeCharId || activeRole !== 'dm') return;
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { visibility: v });
+            window.showToast(`Now ${v.toUpperCase()}`);
+            syncSheetData();
+        };
+
+        window.addSkillItem = async () => {
+            const name = document.getElementById('skill-name-in').value;
+            const val = document.getElementById('skill-val-in').value;
+            if (!name || !activeCharId) return;
+            const beast = characters.find(c => c.id === activeCharId);
+            const skills = [...(beast.skills || []), { name, val }];
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { skills });
+            document.getElementById('skill-name-in').value = '';
+        };
+
+        window.removeSkill = async (idx) => {
+            const beast = characters.find(c => c.id === activeCharId);
+            const skills = [...(beast.skills || [])];
+            skills.splice(idx, 1);
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { skills });
+        };
+
+        window.triggerDelete = () => document.getElementById('delete-modal').classList.remove('hidden');
+        window.executeDelete = async () => { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId)); document.getElementById('delete-modal').classList.add('hidden'); window.closeSheet(); };
+        window.resetDeleteModal = () => document.getElementById('delete-modal').classList.add('hidden');
+        window.showPermDeleteConfirm = () => { document.getElementById('delete-stage-1').classList.add('hidden'); document.getElementById('delete-stage-confirm').classList.remove('hidden'); };
+
+        const setupListeners = () => {
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), (snap) => {
+                characters = snap.docs.map(d => ({id: d.id, ...d.data()}));
+                window.renderDashboard();
+                if (activeCharId) syncSheetData();
+            });
+        };
+
+        const initAuth = async () => {
+            try {
+                await signInAnonymously(auth);
+                onAuthStateChanged(auth, (u) => { 
+                    if (u) { 
+                        user = u;
+                        setupListeners(); 
+                        checkSession();
+                        window.updateRoleUI();
+                    } 
+                });
+            } catch (err) { console.error(err); }
+        };
+
+        document.addEventListener('input', (e) => { if (e.target.dataset.key) { if (autoSaveTimer) clearTimeout(autoSaveTimer); autoSaveTimer = setTimeout(() => window.saveBeast(), 1500); } });
+
+        initAuth();
+    </script>
+</body>
+</html>
