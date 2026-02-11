@@ -102,7 +102,6 @@
                         <a href="npcs.html" class="nav-link">NPCs</a>
                         <a href="beasts.html" class="nav-link">Bestiary</a>
                         <a href="#" class="nav-link active">Backpack</a>
-                        <a href="index.html" onclick="window.setView('graveyard'); return false;" id="nav-graveyard" class="nav-link !text-red-900">Graveyard</a>
                     </nav>
                 </div>
             </header>
@@ -134,19 +133,19 @@
                         <!-- CURRENCY SECTION -->
                         <div class="grid grid-cols-4 gap-4 mb-10">
                             <div class="currency-box">
-                                <input type="number" data-currency="SC" id="cur-SC" class="currency-input" value="0" onchange="window.updateCurrency('SC', this.value)">
+                                <input type="number" id="cur-SC" class="currency-input" value="0" onchange="window.updateCurrency('SC', this.value)">
                                 <span class="currency-label">SC</span>
                             </div>
                             <div class="currency-box">
-                                <input type="number" data-currency="CR" id="cur-CR" class="currency-input" value="0" onchange="window.updateCurrency('CR', this.value)">
+                                <input type="number" id="cur-CR" class="currency-input" value="0" onchange="window.updateCurrency('CR', this.value)">
                                 <span class="currency-label">CR</span>
                             </div>
                             <div class="currency-box">
-                                <input type="number" data-currency="BYT" id="cur-BYT" class="currency-input" value="0" onchange="window.updateCurrency('BYT', this.value)">
+                                <input type="number" id="cur-BYT" class="currency-input" value="0" onchange="window.updateCurrency('BYT', this.value)">
                                 <span class="currency-label">BYT</span>
                             </div>
                             <div class="currency-box">
-                                <input type="number" data-currency="VT" id="cur-VT" class="currency-input" value="0" onchange="window.updateCurrency('VT', this.value)">
+                                <input type="number" id="cur-VT" class="currency-input" value="0" onchange="window.updateCurrency('VT', this.value)">
                                 <span class="currency-label">VT</span>
                             </div>
                         </div>
@@ -172,7 +171,7 @@
                         <h3 class="text-xs font-black uppercase text-amber-500 mb-4">DM: Manual Control</h3>
                         <input type="text" id="target-owner-in" class="bg-black/40 p-2 rounded text-xs mb-2 border border-gray-700" placeholder="Username...">
                         <button onclick="window.assignBackpackOwner()" class="w-full bg-amber-600 text-white py-2 rounded font-black text-[10px] uppercase">Force Assign</button>
-                        <button onclick="window.removeBackpackOwner()" class="w-full bg-red-900/50 text-red-200 py-2 rounded font-black text-[10px] uppercase mt-2">Remove Current Manager</button>
+                        <button onclick="window.removeBackpackOwner()" class="w-full bg-red-900/50 text-red-200 py-2 rounded font-black text-[10px] uppercase mt-2">Remove Manager</button>
                         <button onclick="window.startNewElection()" class="w-full bg-blue-700 text-white py-2 rounded font-black text-[10px] uppercase mt-2">Trigger Party Vote</button>
                     </div>
 
@@ -188,7 +187,7 @@
                         <h3 class="text-xs font-black uppercase text-blue-400 mb-4">Add Item</h3>
                         <div class="space-y-3">
                             <input type="text" id="new-item-name" class="bg-black/40 p-3 rounded border border-gray-700" placeholder="Item Name">
-                            <input type="number" id="new-item-slots" class="bg-black/40 p-3 rounded border border-gray-700" placeholder="Slots (Weight)" value="1">
+                            <input type="number" id="new-item-slots" class="bg-black/40 p-3 rounded border border-gray-700" placeholder="Slots" value="1">
                             <textarea id="new-item-desc" class="bg-black/40 p-3 rounded border border-gray-700 h-24 text-xs" placeholder="Description..."></textarea>
                             <button onclick="window.addItemToBackpack()" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-xl font-black text-xs uppercase shadow-lg">Store Item</button>
                         </div>
@@ -212,7 +211,7 @@
         <div class="modal-overlay absolute inset-0" onclick="document.getElementById('election-modal').classList.add('hidden')"></div>
         <div class="bg-gray-900 border-2 border-blue-500 p-8 rounded-3xl w-full max-w-sm relative z-10 shadow-2xl text-center">
             <h3 class="text-2xl font-serif font-black uppercase text-blue-400 mb-2">Nominate Owner</h3>
-            <p class="text-xs text-gray-500 mb-6 leading-relaxed">Enter the nominee's username. Everyone must agree to finalize the choice.</p>
+            <p class="text-xs text-gray-500 mb-6 leading-relaxed">Enter the nominee's username. Unanimity is required to finalize control.</p>
             <input type="text" id="vote-nominee-in" class="w-full bg-black/60 p-4 rounded-xl border border-gray-700 font-serif mb-6 text-center text-white tracking-widest uppercase" placeholder="USERNAME">
             <div id="vote-status-display" class="mb-4 text-[10px] text-gray-400"></div>
             <button onclick="window.submitVote()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase text-xs mb-3 shadow-xl">Submit Nomination</button>
@@ -225,7 +224,7 @@
         <div class="modal-overlay absolute inset-0" onclick="document.getElementById('transfer-modal').classList.add('hidden')"></div>
         <div class="bg-white text-gray-900 p-8 rounded-3xl w-full max-w-sm relative z-10 shadow-2xl border-4 border-blue-600 text-center">
             <h3 class="text-2xl font-serif font-black uppercase text-blue-700 mb-2" id="take-item-name">Take Item</h3>
-            <p class="text-xs text-gray-500 mb-6">Moving this to your personal inventory will remove it from the backpack.</p>
+            <p class="text-xs text-gray-500 mb-6">Moving this to your personal inventory will remove it from the backpack cache.</p>
             <label class="text-[10px] font-black uppercase text-gray-400 mb-1 block text-left">Your Recipient Character</label>
             <select id="target-pc-select" class="w-full bg-gray-100 p-3 rounded-lg border-2 border-gray-200 font-bold mb-6 text-black"></select>
             <button onclick="window.confirmTakeItem()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase text-xs mb-3 shadow-xl">Claim Item</button>
@@ -248,7 +247,7 @@
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, updateDoc, setDoc, onSnapshot, query, where, getDocs, getDoc, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Firebase Config
+        // Constants
         const firebaseConfig = { apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI", authDomain: "aeonfall-523c1.firebaseapp.com", projectId: "aeonfall-523c1", storageBucket: "aeonfall-523c1.firebasestorage.app", messagingSenderId: "716207733913", appId: "1:716207733913:web:7aac43906a70e2b5f50c08" };
         const appId = 'aeonfall-manager-v2';
         const app = initializeApp(firebaseConfig);
@@ -335,7 +334,6 @@
             activeRole = 'player';
             document.getElementById('app-screen').classList.add('hidden-view');
             document.getElementById('auth-modal').classList.remove('hidden');
-            window.showToast("Session Ended");
         };
 
         window.setRole = (r) => { 
@@ -353,7 +351,7 @@
                 localStorage.setItem('aeonfall_role', 'dm'); 
                 document.getElementById('password-modal').classList.add('hidden'); 
                 window.updateRoleUI(); 
-                window.showToast("Admin Access Granted");
+                window.showToast("DM Authorized");
             } else { 
                 window.showToast("Denied"); 
             } 
@@ -426,11 +424,10 @@
             const newVal = parseInt(val) || 0;
             const oldVal = backpackData[`currency${cur}`] || 0;
             if (newVal === oldVal) return;
-            
             const update = {};
             update[`currency${cur}`] = newVal;
             await updateDoc(backpackDocRef, update);
-            await addLog(`updated ${cur} from ${oldVal} to ${newVal}`);
+            await addLog(`adjusted ${cur} from ${oldVal} to ${newVal}`);
         };
 
         window.handleVoteClick = () => {
@@ -460,7 +457,7 @@
             if (uniqueVotes.size === 1 && Object.keys(votes).length >= 1) {
                 const winner = Array.from(uniqueVotes)[0];
                 await updateDoc(backpackDocRef, { votes, electionActive: false, designatedOwner: winner });
-                await addLog(`consensus reached: ${winner} is now manager`);
+                await addLog(`reached consensus: ${winner} is manager`);
                 document.getElementById('election-modal').classList.add('hidden');
             } else {
                 await updateDoc(backpackDocRef, { votes });
@@ -478,7 +475,6 @@
             await addLog(`stowed [${name}]`);
             document.getElementById('new-item-name').value = '';
             document.getElementById('new-item-desc').value = '';
-            window.showToast("Stored");
         };
 
         window.removeItem = async (idx) => {
@@ -486,7 +482,7 @@
             const item = items[idx];
             items.splice(idx, 1);
             await updateDoc(backpackDocRef, { items });
-            await addLog(`discarded [${item.name}]`);
+            await addLog(`removed [${item.name}]`);
         };
 
         window.assignBackpackOwner = async () => {
@@ -498,13 +494,9 @@
 
         window.removeBackpackOwner = async () => {
             if (activeRole !== 'dm') return;
-            await updateDoc(backpackDocRef, { 
-                designatedOwner: null,
-                votes: {},
-                electionActive: false 
-            });
-            await addLog(`(DM Override) removed current manager`);
-            window.showToast("Manager Removed");
+            await updateDoc(backpackDocRef, { designatedOwner: null, votes: {}, electionActive: false });
+            await addLog(`(DM Override) removed manager`);
+            window.showToast("Owner Cleared");
         };
 
         window.updateCapacity = async () => {
@@ -519,9 +511,16 @@
             document.getElementById('take-item-name').textContent = `Claim ${item.name}?`;
             const pcSelect = document.getElementById('target-pc-select');
             pcSelect.innerHTML = '';
-            const myChars = allCharacters.filter(c => c.owner === currentUser.username && c.type === 'PC');
-            if (myChars.length === 0) pcSelect.innerHTML = `<option value="">No Active Characters</option>`;
-            else myChars.forEach(c => pcSelect.innerHTML += `<option value="${c.id}">${c.name}</option>`);
+            
+            // Fix: Pull from allCharacters which is synced with Firestore
+            const myChars = allCharacters.filter(c => c.owner === currentUser.username && c.type === 'PC' && !c.isDeleted);
+            if (myChars.length === 0) {
+                pcSelect.innerHTML = `<option value="">No Active Characters Found</option>`;
+            } else {
+                myChars.forEach(c => {
+                    pcSelect.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+                });
+            }
             document.getElementById('transfer-modal').classList.remove('hidden');
         };
 
@@ -530,11 +529,13 @@
             if (!charId || itemToTakeIndex === null) return;
             const item = backpackData.items[itemToTakeIndex];
             const targetChar = allCharacters.find(c => c.id === charId);
-            let newInv = (targetChar.inventory || "") + `\n- ${item.name} (From Cache)`;
+            
+            let newInv = (targetChar.inventory || "") + `\n- ${item.name} (Claimed from Cache)`;
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', charId), { inventory: newInv });
             await addLog(`claimed [${item.name}] for ${targetChar.name}`);
             await window.removeItem(itemToTakeIndex);
             document.getElementById('transfer-modal').classList.add('hidden');
+            window.showToast("Item Claimed");
         };
 
         const initBackpack = async () => {
@@ -543,8 +544,10 @@
             onSnapshot(backpackDocRef, (d) => {
                 if (d.exists()) { backpackData = d.data(); window.renderBackpack(); }
             });
+            // Synchronization fix: This pulls all characters from the public collection used by index.html
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), (s) => {
                 allCharacters = s.docs.map(doc => ({id: doc.id, ...doc.data()}));
+                window.renderBackpack(); // Refresh UI to update claim buttons if needed
             });
         };
 
