@@ -52,6 +52,17 @@
         .currency-box { background: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 12px; text-align: center; }
         .currency-label { font-size: 9px; font-weight: 900; color: #555; text-transform: uppercase; display: block; margin-top: 4px; }
         .currency-input { font-family: 'Cinzel', serif; font-weight: 900; color: #3b82f6; font-size: 18px; text-align: center; }
+
+        .char-select-btn { border: 1px solid #444; background: #1a1a1a; padding: 8px; border-radius: 8px; text-align: left; font-size: 11px; cursor: pointer; transition: all 0.2s; }
+        .char-select-btn.selected { border-color: #3b82f6; background: #1e3a8a; }
+        
+        .conversion-hint { font-size: 8px; color: #666; text-transform: uppercase; letter-spacing: 1px; font-weight: 900; }
+
+        .toggle-container { display: flex; items-center; gap: 8px; background: #f1f5f9; padding: 4px 12px; border-radius: 20px; cursor: pointer; }
+        .toggle-indicator { width: 32px; height: 16px; background: #cbd5e1; border-radius: 8px; position: relative; transition: background 0.3s; }
+        .toggle-knob { width: 12px; height: 12px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: transform 0.3s; }
+        .active-toggle .toggle-indicator { background: #3b82f6; }
+        .active-toggle .toggle-knob { transform: translateX(16px); }
     </style>
 </head>
 <body class="min-h-screen">
@@ -108,7 +119,7 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 
-                <!-- LEFT SIDE: Inventory -->
+                <!-- LEFT SIDE -->
                 <div class="lg:col-span-8">
                     <div class="backpack-container p-6 md:p-10 min-h-[600px]">
                         <div class="flex justify-between items-end mb-4">
@@ -120,33 +131,39 @@
                                 <button id="btn-open-vote" onclick="window.handleVoteClick()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-1.5 rounded-full font-black text-[10px] uppercase shadow-lg transition-all">Vote</button>
                                 <div class="h-6 w-px bg-gray-700"></div>
                                 <div class="text-right">
-                                    <span class="text-xs font-black text-blue-400" id="capacity-text">0 / 20 Slots</span>
+                                    <span class="text-xs font-black text-blue-400" id="capacity-text">0 / 20 Items</span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- CAPACITY BAR -->
                         <div class="capacity-bar-bg mb-6">
                             <div id="capacity-fill" class="capacity-bar-fill bg-gradient-to-r from-blue-600 to-indigo-600" style="width: 0%"></div>
                         </div>
 
-                        <!-- CURRENCY SECTION -->
+                        <!-- CURRENCY -->
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="text-[10px] font-black uppercase text-gray-500 tracking-widest">Shared Funds</h3>
+                            <div class="flex items-center gap-4">
+                                <span class="conversion-hint">10 SC=1 CR | 10 CR=1 BYT | 10 BYT=1 VT</span>
+                                <button id="btn-distribute-funds" onclick="window.openDistributionModal()" class="hidden bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded font-black text-[9px] uppercase transition-all">Distribute Funds</button>
+                            </div>
+                        </div>
                         <div class="grid grid-cols-4 gap-4 mb-10">
                             <div class="currency-box">
-                                <input type="number" id="cur-SC" class="currency-input" value="0" onchange="window.updateCurrency('SC', this.value)">
-                                <span class="currency-label">SC</span>
+                                <input type="number" id="cur-VT" min="0" class="currency-input" value="0" onchange="window.updateCurrency('VT', this.value)">
+                                <span class="currency-label">VT</span>
                             </div>
                             <div class="currency-box">
-                                <input type="number" id="cur-CR" class="currency-input" value="0" onchange="window.updateCurrency('CR', this.value)">
-                                <span class="currency-label">CR</span>
-                            </div>
-                            <div class="currency-box">
-                                <input type="number" id="cur-BYT" class="currency-input" value="0" onchange="window.updateCurrency('BYT', this.value)">
+                                <input type="number" id="cur-BYT" min="0" class="currency-input" value="0" onchange="window.updateCurrency('BYT', this.value)">
                                 <span class="currency-label">BYT</span>
                             </div>
                             <div class="currency-box">
-                                <input type="number" id="cur-VT" class="currency-input" value="0" onchange="window.updateCurrency('VT', this.value)">
-                                <span class="currency-label">VT</span>
+                                <input type="number" id="cur-CR" min="0" class="currency-input" value="0" onchange="window.updateCurrency('CR', this.value)">
+                                <span class="currency-label">CR</span>
+                            </div>
+                            <div class="currency-box">
+                                <input type="number" id="cur-SC" min="0" class="currency-input" value="0" onchange="window.updateCurrency('SC', this.value)">
+                                <span class="currency-label">SC</span>
                             </div>
                         </div>
 
@@ -159,11 +176,10 @@
                     </div>
                 </div>
 
-                <!-- RIGHT SIDE: Controls -->
+                <!-- RIGHT SIDE -->
                 <div class="lg:col-span-4 space-y-6">
                     <div id="election-info-panel" class="hidden bg-blue-900/40 p-6 rounded-2xl border-2 border-blue-500 animate-pulse">
                         <h3 class="text-xs font-black uppercase text-white mb-2">Owner Election Active</h3>
-                        <p class="text-[10px] text-blue-200 mb-4">Nominate a manager. Agreement must be unanimous.</p>
                         <button onclick="window.openElectionModal()" class="w-full bg-blue-500 text-white py-3 rounded-xl font-black text-xs uppercase shadow-lg">Cast Vote</button>
                     </div>
 
@@ -172,13 +188,13 @@
                         <input type="text" id="target-owner-in" class="bg-black/40 p-2 rounded text-xs mb-2 border border-gray-700" placeholder="Username...">
                         <button onclick="window.assignBackpackOwner()" class="w-full bg-amber-600 text-white py-2 rounded font-black text-[10px] uppercase">Force Assign</button>
                         <button onclick="window.removeBackpackOwner()" class="w-full bg-red-900/50 text-red-200 py-2 rounded font-black text-[10px] uppercase mt-2">Remove Manager</button>
-                        <button onclick="window.startNewElection()" class="w-full bg-blue-700 text-white py-2 rounded font-black text-[10px] uppercase mt-2">Trigger Party Vote</button>
+                        <button onclick="window.startNewElection()" class="w-full bg-blue-700 text-white py-2 rounded font-black text-[10px] uppercase mt-2">Trigger Vote</button>
                     </div>
 
                     <div id="dm-upgrade-panel" class="hidden bg-gray-800/50 p-6 rounded-2xl border border-green-600/30">
-                        <h3 class="text-xs font-black uppercase text-green-500 mb-4">DM: Capacity Upgrade</h3>
+                        <h3 class="text-xs font-black uppercase text-green-500 mb-4">DM: Capacity</h3>
                         <div class="flex items-center gap-4">
-                            <input type="number" id="capacity-limit-in" class="bg-black/40 p-2 rounded text-xl font-black w-24 text-center border border-gray-700">
+                            <input type="number" id="capacity-limit-in" min="1" class="bg-black/40 p-2 rounded text-xl font-black w-24 text-center border border-gray-700">
                             <button onclick="window.updateCapacity()" class="flex-1 bg-green-700 text-white py-3 rounded font-black text-[10px] uppercase">Set Max</button>
                         </div>
                     </div>
@@ -187,17 +203,17 @@
                         <h3 class="text-xs font-black uppercase text-blue-400 mb-4">Add Item</h3>
                         <div class="space-y-3">
                             <input type="text" id="new-item-name" class="bg-black/40 p-3 rounded border border-gray-700" placeholder="Item Name">
-                            <input type="number" id="new-item-slots" class="bg-black/40 p-3 rounded border border-gray-700" placeholder="Slots" value="1">
+                            <input type="number" id="new-item-slots" min="1" class="bg-black/40 p-3 rounded border border-gray-700" placeholder="Amount" value="1">
                             <textarea id="new-item-desc" class="bg-black/40 p-3 rounded border border-gray-700 h-24 text-xs" placeholder="Description..."></textarea>
                             <button onclick="window.addItemToBackpack()" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-xl font-black text-xs uppercase shadow-lg">Store Item</button>
                         </div>
                     </div>
 
                     <div id="guest-notice" class="bg-gray-800/30 p-6 rounded-2xl border border-gray-700 text-center italic text-xs text-gray-500">
-                        Only the designated owner or DM can add items. The party must agree on an owner to begin.
+                        Only the designated owner or DM can add items.
                     </div>
 
-                    <div class="bg-black/30 p-6 rounded-2xl border border-gray-800 flex flex-col h-[300px]">
+                    <div class="bg-black/30 p-6 rounded-2xl border border-gray-800 flex flex-col h-[350px]">
                         <h3 class="text-[10px] font-black uppercase text-gray-400 mb-4 tracking-widest border-b border-gray-800 pb-2">Item Log History</h3>
                         <div id="log-container" class="flex-grow overflow-y-auto pr-2"></div>
                     </div>
@@ -211,11 +227,55 @@
         <div class="modal-overlay absolute inset-0" onclick="document.getElementById('election-modal').classList.add('hidden')"></div>
         <div class="bg-gray-900 border-2 border-blue-500 p-8 rounded-3xl w-full max-w-sm relative z-10 shadow-2xl text-center">
             <h3 class="text-2xl font-serif font-black uppercase text-blue-400 mb-2">Nominate Owner</h3>
-            <p class="text-xs text-gray-500 mb-6 leading-relaxed">Enter the nominee's username. Unanimity is required to finalize control.</p>
             <input type="text" id="vote-nominee-in" class="w-full bg-black/60 p-4 rounded-xl border border-gray-700 font-serif mb-6 text-center text-white tracking-widest uppercase" placeholder="USERNAME">
             <div id="vote-status-display" class="mb-4 text-[10px] text-gray-400"></div>
-            <button onclick="window.submitVote()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase text-xs mb-3 shadow-xl">Submit Nomination</button>
+            <button onclick="window.submitVote()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase text-xs mb-3 shadow-xl">Submit</button>
             <button onclick="document.getElementById('election-modal').classList.add('hidden')" class="w-full text-gray-500 font-bold text-[10px] uppercase">Cancel</button>
+        </div>
+    </div>
+
+    <!-- CURRENCY DISTRIBUTION MODAL -->
+    <div id="distribute-modal" class="fixed inset-0 z-[450] flex items-center justify-center p-4 hidden">
+        <div class="modal-overlay absolute inset-0" onclick="document.getElementById('distribute-modal').classList.add('hidden')"></div>
+        <div class="bg-white text-gray-900 p-8 rounded-3xl w-full max-w-2xl relative z-10 shadow-2xl border-4 border-blue-600">
+            <div class="flex justify-between items-start mb-2">
+                <h3 class="text-2xl font-serif font-black uppercase text-blue-700">Divide Funds</h3>
+                <div class="toggle-container active-toggle" id="conversion-toggle-btn" onclick="window.toggleConversion()">
+                    <span class="text-[9px] font-black uppercase text-gray-600">Auto-Convert</span>
+                    <div class="toggle-indicator">
+                        <div class="toggle-knob"></div>
+                    </div>
+                </div>
+            </div>
+            <p class="text-xs text-gray-500 mb-6 italic" id="conversion-desc">ON: Breaks down higher units to split perfectly. OFF: Sends exact units only (remainders stay in cache).</p>
+            
+            <div class="grid grid-cols-4 gap-3 mb-6">
+                <div><label class="text-[9px] font-black uppercase text-gray-400 mb-1 block">VT</label><input type="number" id="dist-VT" min="0" class="w-full bg-gray-100 p-2 rounded-lg border border-gray-200 font-bold text-center" value="0" oninput="window.calcDistribution()"></div>
+                <div><label class="text-[9px] font-black uppercase text-gray-400 mb-1 block">BYT</label><input type="number" id="dist-BYT" min="0" class="w-full bg-gray-100 p-2 rounded-lg border border-gray-200 font-bold text-center" value="0" oninput="window.calcDistribution()"></div>
+                <div><label class="text-[9px] font-black uppercase text-gray-400 mb-1 block">CR</label><input type="number" id="dist-CR" min="0" class="w-full bg-gray-100 p-2 rounded-lg border border-gray-200 font-bold text-center" value="0" oninput="window.calcDistribution()"></div>
+                <div><label class="text-[9px] font-black uppercase text-gray-400 mb-1 block">SC</label><input type="number" id="dist-SC" min="0" class="w-full bg-gray-100 p-2 rounded-lg border border-gray-200 font-bold text-center" value="0" oninput="window.calcDistribution()"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="text-[9px] font-black uppercase text-gray-400 mb-2 block">Recipients</label>
+                    <div id="dist-char-list" class="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto pr-2"></div>
+                </div>
+                <div>
+                    <label class="text-[9px] font-black uppercase text-gray-400 mb-2 block">Calculated Share</label>
+                    <div class="bg-blue-50 p-4 rounded-xl text-center border border-blue-100">
+                        <span class="text-[10px] font-bold text-blue-600 uppercase block mb-2">Each person receives:</span>
+                        <div id="dist-share-preview" class="space-y-1 font-black text-blue-800 text-sm">
+                            <div>0 VT, 0 BYT, 0 CR, 0 SC</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 flex gap-3">
+                <button onclick="window.confirmDistribution()" class="flex-grow bg-blue-600 text-white py-4 rounded-2xl font-black uppercase text-xs shadow-xl hover:bg-blue-500 transition-all">Confirm & Distribute</button>
+                <button onclick="document.getElementById('distribute-modal').classList.add('hidden')" class="px-6 bg-gray-100 text-gray-500 font-bold text-[10px] uppercase rounded-2xl">Cancel</button>
+            </div>
         </div>
     </div>
 
@@ -224,21 +284,21 @@
         <div class="modal-overlay absolute inset-0" onclick="document.getElementById('transfer-modal').classList.add('hidden')"></div>
         <div class="bg-white text-gray-900 p-8 rounded-3xl w-full max-w-sm relative z-10 shadow-2xl border-4 border-blue-600 text-center">
             <h3 class="text-2xl font-serif font-black uppercase text-blue-700 mb-2" id="take-item-name">Take Item</h3>
-            <p class="text-xs text-gray-500 mb-6">Moving this to your personal inventory will remove it from the backpack cache.</p>
+            <p class="text-xs text-gray-500 mb-6">Moving this to your character will transfer ALL its details to your Inventory Notes.</p>
             <label class="text-[10px] font-black uppercase text-gray-400 mb-1 block text-left">Your Recipient Character</label>
             <select id="target-pc-select" class="w-full bg-gray-100 p-3 rounded-lg border-2 border-gray-200 font-bold mb-6 text-black"></select>
-            <button onclick="window.confirmTakeItem()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase text-xs mb-3 shadow-xl">Claim Item</button>
+            <button onclick="window.confirmTakeItem()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase text-xs mb-3 shadow-xl">Claim Item & Details</button>
             <button onclick="document.getElementById('transfer-modal').classList.add('hidden')" class="w-full text-gray-500 font-bold text-[10px] uppercase">Cancel</button>
         </div>
     </div>
 
     <!-- DM PASSWORD MODAL -->
     <div id="password-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[350] hidden">
-        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border-2 border-amber-600 text-white text-center shadow-2xl">
-            <h3 class="text-xl font-serif text-amber-500 font-bold mb-2">DM AUTHORIZATION</h3>
+        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border-2 border-amber-600 text-white text-center">
+            <h3 class="text-xl font-serif text-amber-500 font-bold mb-2 uppercase">Authorization</h3>
             <input type="password" id="dm-password" class="w-full bg-gray-900 text-center text-2xl rounded-lg p-3 mb-6 border border-gray-700">
-            <button onclick="window.verifyDmPassword()" class="w-full bg-amber-600 py-3 rounded-xl font-bold uppercase text-xs">Enter</button>
-            <button onclick="document.getElementById('password-modal').classList.add('hidden')" class="w-full text-gray-500 mt-4 text-[10px] font-bold uppercase">Back</button>
+            <button onclick="window.verifyDmPassword()" class="w-full bg-amber-600 text-white py-3 rounded-xl font-bold uppercase text-xs">Enter</button>
+            <button onclick="document.getElementById('password-modal').classList.add('hidden')" class="w-full text-gray-500 mt-4 text-[10px] uppercase font-bold">Back</button>
         </div>
     </div>
 
@@ -247,7 +307,6 @@
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, updateDoc, setDoc, onSnapshot, query, where, getDocs, getDoc, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Constants
         const firebaseConfig = { apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI", authDomain: "aeonfall-523c1.firebaseapp.com", projectId: "aeonfall-523c1", storageBucket: "aeonfall-523c1.firebasestorage.app", messagingSenderId: "716207733913", appId: "1:716207733913:web:7aac43906a70e2b5f50c08" };
         const appId = 'aeonfall-manager-v2';
         const app = initializeApp(firebaseConfig);
@@ -255,12 +314,11 @@
         const db = getFirestore(app);
 
         let user = null, currentUser = null, activeRole = 'player';
-        let backpackData = { 
-            items: [], capacity: 20, designatedOwner: null, electionActive: false, votes: {}, log: [],
-            currencySC: 0, currencyCR: 0, currencyBYT: 0, currencyVT: 0
-        };
+        let backpackData = { items: [], capacity: 20, designatedOwner: null, electionActive: false, votes: {}, log: [], currencyVT: 0, currencyBYT: 0, currencyCR: 0, currencySC: 0 };
         let allCharacters = [];
         let itemToTakeIndex = null;
+        let selectedDistributionChars = new Set();
+        let distributionConversionEnabled = true;
 
         const backpackDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'backpacks', 'party-cache');
 
@@ -316,10 +374,10 @@
 
         const checkSession = () => {
             const savedUser = localStorage.getItem('aeonfall_user');
-            const savedRole = localStorage.getItem('aeonfall_role');
+            const role = localStorage.getItem('aeonfall_role');
             if (savedUser) { 
                 currentUser = JSON.parse(savedUser);
-                activeRole = savedRole || 'player';
+                activeRole = role || 'player';
                 completeLoginUI();
                 return true;
             }
@@ -327,35 +385,10 @@
             return false;
         };
 
-        window.logout = () => {
-            localStorage.removeItem('aeonfall_user');
-            localStorage.removeItem('aeonfall_role');
-            currentUser = null;
-            activeRole = 'player';
-            document.getElementById('app-screen').classList.add('hidden-view');
-            document.getElementById('auth-modal').classList.remove('hidden');
-        };
+        window.logout = () => { localStorage.removeItem('aeonfall_user'); localStorage.removeItem('aeonfall_role'); window.location.reload(); };
 
-        window.setRole = (r) => { 
-            if (r === 'dm') document.getElementById('password-modal').classList.remove('hidden'); 
-            else { 
-                activeRole = 'player'; 
-                localStorage.setItem('aeonfall_role', 'player'); 
-                window.updateRoleUI(); 
-            } 
-        };
-        
-        window.verifyDmPassword = () => { 
-            if (document.getElementById('dm-password').value === 'Rew4994') { 
-                activeRole = 'dm'; 
-                localStorage.setItem('aeonfall_role', 'dm'); 
-                document.getElementById('password-modal').classList.add('hidden'); 
-                window.updateRoleUI(); 
-                window.showToast("DM Authorized");
-            } else { 
-                window.showToast("Denied"); 
-            } 
-        };
+        window.setRole = (r) => { if (r === 'dm') document.getElementById('password-modal').classList.remove('hidden'); else { activeRole = 'player'; localStorage.setItem('aeonfall_role', 'player'); window.updateRoleUI(); } };
+        window.verifyDmPassword = () => { if (document.getElementById('dm-password').value === 'Rew4994') { activeRole = 'dm'; localStorage.setItem('aeonfall_role', 'dm'); document.getElementById('password-modal').classList.add('hidden'); window.updateRoleUI(); } else { window.showToast("Denied"); } };
 
         window.updateRoleUI = () => {
             const isDM = activeRole === 'dm';
@@ -366,15 +399,20 @@
 
         const addLog = async (actionText) => {
             if (!currentUser) return;
-            const newLog = { 
-                text: actionText, 
-                user: currentUser.username, 
-                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) 
-            };
+            const newLog = { text: actionText, user: currentUser.username, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) };
             const currentLogs = [...(backpackData.log || [])].slice(-49);
             currentLogs.push(newLog);
             await updateDoc(backpackDocRef, { log: currentLogs });
         };
+
+        // --- CONVERSION LOGIC ---
+        const unitsToSC = (vt, byt, cr, sc) => (parseInt(vt) || 0) * 1000 + (parseInt(byt) || 0) * 100 + (parseInt(cr) || 0) * 10 + (parseInt(sc) || 0);
+        const scToUnits = (total) => ({
+            VT: Math.max(0, Math.floor(total / 1000)),
+            BYT: Math.max(0, Math.floor((total % 1000) / 100)),
+            CR: Math.max(0, Math.floor((total % 100) / 10)),
+            SC: Math.max(0, total % 10)
+        });
 
         window.renderBackpack = () => {
             if (!currentUser) return;
@@ -389,138 +427,195 @@
             document.getElementById('add-item-panel').classList.toggle('hidden', !canEdit);
             document.getElementById('guest-notice').classList.toggle('hidden', canEdit);
             document.getElementById('election-info-panel').classList.toggle('hidden', !backpackData.electionActive);
+            document.getElementById('btn-distribute-funds').classList.toggle('hidden', !canEdit);
 
-            const currencies = ['SC', 'CR', 'BYT', 'VT'];
-            currencies.forEach(cur => {
+            ['VT', 'BYT', 'CR', 'SC'].forEach(cur => {
                 const el = document.getElementById(`cur-${cur}`);
-                el.value = backpackData[`currency${cur}`] || 0;
-                el.disabled = !canEdit;
+                if (el) { el.value = Math.max(0, backpackData[`currency${cur}`] || 0); el.disabled = !canEdit; }
             });
 
-            const grid = document.getElementById('item-grid');
-            grid.innerHTML = '';
-            let usedSlots = 0;
-            const items = backpackData.items || [];
-            items.forEach((item, i) => {
-                usedSlots += parseInt(item.slots) || 0;
+            const grid = document.getElementById('item-grid'); grid.innerHTML = '';
+            let usedAmount = 0;
+            (backpackData.items || []).forEach((item, i) => {
+                usedAmount += parseInt(item.slots) || 0;
                 const card = document.createElement('div');
                 card.className = "item-card p-4";
                 card.onclick = () => window.openTakeModal(i);
-                card.innerHTML = `<div class="flex justify-between items-start mb-2"><span class="item-tag">${item.slots} Slots</span>${canEdit ? `<button onclick="event.stopPropagation(); window.removeItem(${i})" class="text-red-500">✕</button>` : ''}</div><h4 class="font-serif font-black uppercase text-sm mb-1 text-blue-100">${item.name}</h4><p class="text-[10px] text-gray-500 line-clamp-2">${item.description || ''}</p>`;
+                card.innerHTML = `<div class="flex justify-between items-start mb-2"><span class="item-tag">Amount: ${item.slots}</span>${canEdit ? `<button onclick="event.stopPropagation(); window.removeItem(${i})" class="text-red-500">✕</button>` : ''}</div><h4 class="font-serif font-black uppercase text-sm mb-1 text-blue-100">${item.name}</h4><p class="text-[10px] text-gray-500 line-clamp-2">${item.description || ''}</p>`;
                 grid.appendChild(card);
             });
-            document.getElementById('empty-state').classList.toggle('hidden', items.length > 0);
-
-            const limit = backpackData.capacity || 20;
-            const pct = Math.min(100, (usedSlots / limit) * 100);
+            document.getElementById('empty-state').classList.toggle('hidden', (backpackData.items || []).length > 0);
+            const pct = Math.min(100, (usedAmount / (backpackData.capacity || 20)) * 100);
             document.getElementById('capacity-fill').style.width = `${pct}%`;
-            document.getElementById('capacity-text').textContent = `${usedSlots} / ${limit} Slots`;
-
+            document.getElementById('capacity-text').textContent = `${usedAmount} / ${backpackData.capacity || 20} Items`;
             const logCont = document.getElementById('log-container');
             logCont.innerHTML = (backpackData.log || []).slice().reverse().map(l => `<div class="log-entry"><span class="log-time">${l.time}</span> <span class="log-user">${l.user.toUpperCase()}</span> <span class="log-action">${l.text}</span></div>`).join('');
         };
 
+        // --- DISTRIBUTION ---
+        window.toggleConversion = () => {
+            distributionConversionEnabled = !distributionConversionEnabled;
+            document.getElementById('conversion-toggle-btn').classList.toggle('active-toggle', distributionConversionEnabled);
+            window.calcDistribution();
+        };
+
+        window.openDistributionModal = () => {
+            const list = document.getElementById('dist-char-list'); list.innerHTML = '';
+            selectedDistributionChars.clear();
+            allCharacters.filter(c => c.type === 'PC' && !c.isDeleted).forEach(pc => {
+                const btn = document.createElement('div');
+                btn.className = "char-select-btn text-black"; btn.id = `dist-pc-${pc.id}`; btn.textContent = pc.name;
+                btn.onclick = () => window.toggleDistChar(pc.id);
+                list.appendChild(btn);
+            });
+            ['VT', 'BYT', 'CR', 'SC'].forEach(cur => document.getElementById(`dist-${cur}`).value = 0);
+            window.calcDistribution();
+            document.getElementById('distribute-modal').classList.remove('hidden');
+        };
+
+        window.toggleDistChar = (id) => {
+            const el = document.getElementById(`dist-pc-${id}`);
+            if (selectedDistributionChars.has(id)) { selectedDistributionChars.delete(id); el.classList.remove('selected', 'text-white'); }
+            else { selectedDistributionChars.add(id); el.classList.add('selected', 'text-white'); }
+            window.calcDistribution();
+        };
+
+        window.calcDistribution = () => {
+            const count = selectedDistributionChars.size;
+            const summary = document.getElementById('dist-share-preview');
+            if (distributionConversionEnabled) {
+                const totalInSC = unitsToSC(document.getElementById('dist-VT').value, document.getElementById('dist-BYT').value, document.getElementById('dist-CR').value, document.getElementById('dist-SC').value);
+                const shareSC = count > 0 ? Math.floor(totalInSC / count) : 0;
+                const units = scToUnits(shareSC);
+                summary.innerHTML = `<div>${units.VT} VT, ${units.BYT} BYT, ${units.CR} CR, ${units.SC} SC</div>`;
+            } else {
+                summary.innerHTML = ['VT', 'BYT', 'CR', 'SC'].map(cur => {
+                    const total = parseInt(document.getElementById(`dist-${cur}`).value) || 0;
+                    const share = count > 0 ? Math.floor(total / count) : 0;
+                    return `<div>${share} ${cur}</div>`;
+                }).join('');
+            }
+        };
+
+        window.confirmDistribution = async () => {
+            const count = selectedDistributionChars.size;
+            if (count <= 0) return window.showToast("Select recipients");
+            const currencies = ['VT', 'BYT', 'CR', 'SC'];
+            let charShares = {}; let totalDeductions = {};
+
+            if (distributionConversionEnabled) {
+                const inputTotalSC = unitsToSC(document.getElementById('dist-VT').value, document.getElementById('dist-BYT').value, document.getElementById('dist-CR').value, document.getElementById('dist-SC').value);
+                const backpackTotalSC = unitsToSC(backpackData.currencyVT, backpackData.currencyBYT, backpackData.currencyCR, backpackData.currencySC);
+                if (inputTotalSC > backpackTotalSC) return window.showToast("Insufficient balance");
+                const shareSC = Math.floor(inputTotalSC / count);
+                if (shareSC <= 0) return window.showToast("Amount too small to split");
+                charShares = scToUnits(shareSC);
+                const distributedTotalSC = shareSC * count;
+                totalDeductions = scToUnits(distributedTotalSC);
+            } else {
+                currencies.forEach(cur => {
+                    const val = parseInt(document.getElementById(`dist-${cur}`).value) || 0;
+                    const balance = backpackData[`currency${cur}`] || 0;
+                    if (val > balance) return window.showToast(`Insufficient ${cur}`);
+                    const share = Math.floor(val / count);
+                    charShares[cur] = share;
+                    totalDeductions[cur] = share * count;
+                });
+            }
+
+            // Update Characters
+            for (let charId of selectedDistributionChars) {
+                const char = allCharacters.find(c => c.id === charId);
+                const updates = {};
+                if (distributionConversionEnabled) {
+                    const charExistingSC = unitsToSC(char.currencyVT, char.currencyBYT, char.currencyCR, char.currencySC);
+                    const charNewSC = charExistingSC + unitsToSC(charShares.VT, charShares.BYT, charShares.CR, charShares.SC);
+                    const newUnits = scToUnits(charNewSC);
+                    currencies.forEach(cur => updates[`currency${cur}`] = newUnits[cur]);
+                } else {
+                    currencies.forEach(cur => updates[`currency${cur}`] = (parseInt(char[`currency${cur}`]) || 0) + charShares[cur]);
+                }
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', charId), updates);
+            }
+
+            // Update Backpack
+            const backpackUpdates = {};
+            currencies.forEach(cur => {
+                const current = backpackData[`currency${cur}`] || 0;
+                backpackUpdates[`currency${cur}`] = Math.max(0, current - totalDeductions[cur]);
+            });
+            await updateDoc(backpackDocRef, backpackUpdates);
+            await addLog(`${distributionConversionEnabled ? 'Converted' : 'Exact'} split among ${count} players. Cache never drops below 0.`);
+            document.getElementById('distribute-modal').classList.add('hidden');
+            window.showToast("Funds Split Successfully");
+        };
+
         window.updateCurrency = async (cur, val) => {
-            const newVal = parseInt(val) || 0;
+            const newVal = Math.max(0, parseInt(val) || 0);
             const oldVal = backpackData[`currency${cur}`] || 0;
             if (newVal === oldVal) return;
-            const update = {};
-            update[`currency${cur}`] = newVal;
-            await updateDoc(backpackDocRef, update);
-            await addLog(`adjusted ${cur} from ${oldVal} to ${newVal}`);
+            await updateDoc(backpackDocRef, { [`currency${cur}`]: newVal });
+            await addLog(`Vault adjusted ${cur}: ${oldVal} -> ${newVal}`);
         };
 
-        window.handleVoteClick = () => {
-            if (backpackData.electionActive) window.openElectionModal();
-            else window.startNewElection();
-        };
-
-        window.startNewElection = async () => {
-            await updateDoc(backpackDocRef, { electionActive: true, votes: {}, designatedOwner: null });
-            window.showToast("Election Started");
-            window.openElectionModal();
-        };
-
-        window.openElectionModal = () => {
-            const votes = backpackData.votes || {};
-            document.getElementById('vote-status-display').textContent = `${Object.keys(votes).length} participant(s) nominated...`;
-            document.getElementById('election-modal').classList.remove('hidden');
-        };
-
+        window.handleVoteClick = () => { if (backpackData.electionActive) window.openElectionModal(); else window.startNewElection(); };
+        window.startNewElection = async () => { await updateDoc(backpackDocRef, { electionActive: true, votes: {}, designatedOwner: null }); window.openElectionModal(); };
+        window.openElectionModal = () => { const votes = backpackData.votes || {}; document.getElementById('vote-status-display').textContent = `${Object.keys(votes).length} participant(s) nominated...`; document.getElementById('election-modal').classList.remove('hidden'); };
         window.submitVote = async () => {
             const nominee = document.getElementById('vote-nominee-in').value.trim().toLowerCase();
-            if (!nominee) return window.showToast("Nominee required");
-            const votes = { ...(backpackData.votes || {}) };
-            votes[currentUser.id] = nominee;
-            
+            if (!nominee) return;
+            const votes = { ...(backpackData.votes || {}) }; votes[currentUser.id] = nominee;
             const uniqueVotes = new Set(Object.values(votes));
             if (uniqueVotes.size === 1 && Object.keys(votes).length >= 1) {
                 const winner = Array.from(uniqueVotes)[0];
                 await updateDoc(backpackDocRef, { votes, electionActive: false, designatedOwner: winner });
-                await addLog(`reached consensus: ${winner} is manager`);
+                await addLog(`Election settled: ${winner} is manager`);
                 document.getElementById('election-modal').classList.add('hidden');
-            } else {
-                await updateDoc(backpackDocRef, { votes });
-                window.showToast("Vote Logged");
-            }
+            } else { await updateDoc(backpackDocRef, { votes }); window.showToast("Nomination Logged"); }
         };
 
         window.addItemToBackpack = async () => {
             const name = document.getElementById('new-item-name').value.trim();
-            const slots = parseInt(document.getElementById('new-item-slots').value) || 1;
+            const slots = Math.max(1, parseInt(document.getElementById('new-item-slots').value) || 1);
             const desc = document.getElementById('new-item-desc').value.trim();
             if (!name) return;
             const items = [...(backpackData.items || []), { name, slots, description: desc, id: crypto.randomUUID() }];
             await updateDoc(backpackDocRef, { items });
-            await addLog(`stowed [${name}]`);
-            document.getElementById('new-item-name').value = '';
-            document.getElementById('new-item-desc').value = '';
+            await addLog(`stowed [${name}] x${slots}`);
+            document.getElementById('new-item-name').value = ''; document.getElementById('new-item-desc').value = '';
         };
 
         window.removeItem = async (idx) => {
-            const items = [...backpackData.items];
-            const item = items[idx];
-            items.splice(idx, 1);
-            await updateDoc(backpackDocRef, { items });
-            await addLog(`removed [${item.name}]`);
+            const items = [...backpackData.items]; const item = items[idx]; items.splice(idx, 1);
+            await updateDoc(backpackDocRef, { items }); await addLog(`removed [${item.name}]`);
         };
 
         window.assignBackpackOwner = async () => {
             const target = document.getElementById('target-owner-in').value.trim().toLowerCase();
             if (!target) return;
             await updateDoc(backpackDocRef, { designatedOwner: target, electionActive: false });
-            await addLog(`(DM Override) assigned manager to ${target}`);
+            await addLog(`DM assigned manager to ${target}`);
         };
 
         window.removeBackpackOwner = async () => {
             if (activeRole !== 'dm') return;
             await updateDoc(backpackDocRef, { designatedOwner: null, votes: {}, electionActive: false });
-            await addLog(`(DM Override) removed manager`);
-            window.showToast("Owner Cleared");
+            await addLog(`DM removed manager`);
         };
 
         window.updateCapacity = async () => {
-            const cap = parseInt(document.getElementById('capacity-limit-in').value) || 20;
+            const cap = Math.max(1, parseInt(document.getElementById('capacity-limit-in').value) || 20);
             await updateDoc(backpackDocRef, { capacity: cap });
-            await addLog(`(DM Override) set limit to ${cap}`);
+            await addLog(`DM adjusted capacity to ${cap}`);
         };
 
         window.openTakeModal = (idx) => {
-            itemToTakeIndex = idx;
-            const item = backpackData.items[idx];
+            itemToTakeIndex = idx; const item = backpackData.items[idx];
             document.getElementById('take-item-name').textContent = `Claim ${item.name}?`;
-            const pcSelect = document.getElementById('target-pc-select');
-            pcSelect.innerHTML = '';
-            
-            // Fix: Pull from allCharacters which is synced with Firestore
+            const pcSelect = document.getElementById('target-pc-select'); pcSelect.innerHTML = '';
             const myChars = allCharacters.filter(c => c.owner === currentUser.username && c.type === 'PC' && !c.isDeleted);
-            if (myChars.length === 0) {
-                pcSelect.innerHTML = `<option value="">No Active Characters Found</option>`;
-            } else {
-                myChars.forEach(c => {
-                    pcSelect.innerHTML += `<option value="${c.id}">${c.name}</option>`;
-                });
-            }
+            if (myChars.length === 0) pcSelect.innerHTML = `<option value="">No Active Characters</option>`;
+            else myChars.forEach(c => pcSelect.innerHTML += `<option value="${c.id}">${c.name}</option>`);
             document.getElementById('transfer-modal').classList.remove('hidden');
         };
 
@@ -529,37 +624,28 @@
             if (!charId || itemToTakeIndex === null) return;
             const item = backpackData.items[itemToTakeIndex];
             const targetChar = allCharacters.find(c => c.id === charId);
-            
-            let newInv = (targetChar.inventory || "") + `\n- ${item.name} (Claimed from Cache)`;
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', charId), { inventory: newInv });
+            const itemNote = `\n- ${item.name.toUpperCase()} (Amount: ${item.slots})\n  ${item.description || 'No description provided.'}\n`;
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', charId), { inventory: (targetChar.inventory || "") + itemNote });
             await addLog(`claimed [${item.name}] for ${targetChar.name}`);
             await window.removeItem(itemToTakeIndex);
             document.getElementById('transfer-modal').classList.add('hidden');
-            window.showToast("Item Claimed");
+            window.showToast("Moved to Inventory");
         };
 
         const initBackpack = async () => {
             const snap = await getDoc(backpackDocRef);
             if (!snap.exists()) await setDoc(backpackDocRef, backpackData);
-            onSnapshot(backpackDocRef, (d) => {
-                if (d.exists()) { backpackData = d.data(); window.renderBackpack(); }
-            });
-            // Synchronization fix: This pulls all characters from the public collection used by index.html
+            onSnapshot(backpackDocRef, (d) => { if (d.exists()) { backpackData = d.data(); window.renderBackpack(); } });
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), (s) => {
                 allCharacters = s.docs.map(doc => ({id: doc.id, ...doc.data()}));
-                window.renderBackpack(); // Refresh UI to update claim buttons if needed
+                window.renderBackpack();
             });
         };
 
         const initAuth = async () => {
             try {
                 await signInAnonymously(auth);
-                onAuthStateChanged(auth, (u) => { 
-                    if (u) { 
-                        user = u;
-                        checkSession();
-                    } 
-                });
+                onAuthStateChanged(auth, (u) => { if (u) { user = u; checkSession(); } });
             } catch (err) { console.error(err); }
         };
 
