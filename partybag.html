@@ -63,6 +63,66 @@
         .toggle-knob { width: 12px; height: 12px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: transform 0.3s; }
         .active-toggle .toggle-indicator { background: #3b82f6; }
         .active-toggle .toggle-knob { transform: translateX(16px); }
+
+        /* Map Interaction Styles */
+        .map-rolled {
+            width: 80px; height: 40px;
+            background: #d4c4a8;
+            border: 2px solid #8b7355;
+            border-radius: 50px;
+            display: flex; items-center; justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        .map-rolled:hover { transform: scale(1.1) rotate(-5deg); background: #e3d5bb; }
+        .map-rolled::before, .map-rolled::after { content: ''; position: absolute; width: 10px; height: 100%; background: #8b7355; }
+        .map-rolled::before { left: 10px; } .map-rolled::after { right: 10px; }
+
+        .map-viewer-parchment {
+            background-color: #e3d9c3;
+            border: 12px solid #bba683;
+            outline: 2px solid #2c1810;
+            outline-offset: -8px;
+            width: 95vw; height: 85vh;
+            position: relative;
+            box-shadow: 0 0 100px rgba(0,0,0,0.8);
+            transform: scale(0.8);
+            opacity: 0;
+            transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .active-map .map-viewer-parchment { transform: scale(1); opacity: 1; }
+        
+        .map-viewport { flex-grow: 1; overflow: hidden; position: relative; cursor: grab; background: #c5ba9e; touch-action: none; }
+        .map-viewport:active { cursor: grabbing; }
+        .map-image { 
+            position: absolute; 
+            top: 0; left: 0; 
+            transform-origin: 0 0; 
+            transition: none; 
+            pointer-events: none; 
+            user-select: none;
+        }
+
+        .map-controls {
+            position: absolute; bottom: 24px; right: 24px;
+            display: flex; flex-direction: column; gap: 8px;
+            z-index: 10;
+        }
+        .map-btn {
+            width: 44px; height: 44px; background: #fdfaf3; border: 2px solid #bba683; border-radius: 8px;
+            display: flex; items-center; justify-content: center; font-weight: 900; color: #7a1d1d;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2); transition: all 0.2s;
+        }
+        .map-btn:hover { background: #fff; transform: translateY(-2px); }
+        .map-btn:active { transform: translateY(0); }
+
+        .dm-map-trigger { border: 2px dashed #f59e0b; padding: 12px; border-radius: 12px; cursor: pointer; transition: background 0.2s; position: relative; overflow: hidden; }
+        .dm-map-trigger:hover { background: rgba(245, 158, 11, 0.1); }
+        .dm-clickable-hint { position: absolute; bottom: 4px; right: 4px; font-size: 7px; font-weight: 900; color: #f59e0b; opacity: 0.7; }
     </style>
 </head>
 <body class="min-h-screen">
@@ -119,7 +179,7 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 
-                <!-- LEFT SIDE -->
+                <!-- LEFT SIDE: Inventory -->
                 <div class="lg:col-span-8">
                     <div class="backpack-container p-6 md:p-10 min-h-[600px]">
                         <div class="flex justify-between items-end mb-4">
@@ -136,34 +196,47 @@
                             </div>
                         </div>
 
+                        <!-- CAPACITY BAR -->
                         <div class="capacity-bar-bg mb-6">
                             <div id="capacity-fill" class="capacity-bar-fill bg-gradient-to-r from-blue-600 to-indigo-600" style="width: 0%"></div>
                         </div>
 
-                        <!-- CURRENCY -->
+                        <!-- CURRENCY & MAP SECTION -->
                         <div class="flex justify-between items-center mb-2">
-                            <h3 class="text-[10px] font-black uppercase text-gray-500 tracking-widest">Shared Funds</h3>
+                            <h3 class="text-[10px] font-black uppercase text-gray-500 tracking-widest">Shared Assets</h3>
                             <div class="flex items-center gap-4">
                                 <span class="conversion-hint">10 SC=1 CR | 10 CR=1 BYT | 10 BYT=1 VT</span>
                                 <button id="btn-distribute-funds" onclick="window.openDistributionModal()" class="hidden bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded font-black text-[9px] uppercase transition-all">Distribute Funds</button>
                             </div>
                         </div>
-                        <div class="grid grid-cols-4 gap-4 mb-10">
-                            <div class="currency-box">
-                                <input type="number" id="cur-VT" min="0" class="currency-input" value="0" onchange="window.updateCurrency('VT', this.value)">
-                                <span class="currency-label">VT</span>
+                        
+                        <div class="flex flex-col md:flex-row gap-6 mb-10 items-center">
+                            <!-- MAP ICON -->
+                            <div class="flex flex-col items-center gap-2">
+                                <div class="map-rolled" onclick="window.openMap()">
+                                    <span class="text-[10px] font-black text-amber-900 uppercase tracking-tighter">MAP</span>
+                                </div>
+                                <span class="text-[9px] font-black text-gray-600 uppercase">World Codex</span>
                             </div>
-                            <div class="currency-box">
-                                <input type="number" id="cur-BYT" min="0" class="currency-input" value="0" onchange="window.updateCurrency('BYT', this.value)">
-                                <span class="currency-label">BYT</span>
-                            </div>
-                            <div class="currency-box">
-                                <input type="number" id="cur-CR" min="0" class="currency-input" value="0" onchange="window.updateCurrency('CR', this.value)">
-                                <span class="currency-label">CR</span>
-                            </div>
-                            <div class="currency-box">
-                                <input type="number" id="cur-SC" min="0" class="currency-input" value="0" onchange="window.updateCurrency('SC', this.value)">
-                                <span class="currency-label">SC</span>
+
+                            <!-- CURRENCIES -->
+                            <div class="grid grid-cols-4 gap-2 flex-grow">
+                                <div class="currency-box">
+                                    <input type="number" id="cur-VT" min="0" class="currency-input" value="0" onchange="window.updateCurrency('VT', this.value)">
+                                    <span class="currency-label">VT</span>
+                                </div>
+                                <div class="currency-box">
+                                    <input type="number" id="cur-BYT" min="0" class="currency-input" value="0" onchange="window.updateCurrency('BYT', this.value)">
+                                    <span class="currency-label">BYT</span>
+                                </div>
+                                <div class="currency-box">
+                                    <input type="number" id="cur-CR" min="0" class="currency-input" value="0" onchange="window.updateCurrency('CR', this.value)">
+                                    <span class="currency-label">CR</span>
+                                </div>
+                                <div class="currency-box">
+                                    <input type="number" id="cur-SC" min="0" class="currency-input" value="0" onchange="window.updateCurrency('SC', this.value)">
+                                    <span class="currency-label">SC</span>
+                                </div>
                             </div>
                         </div>
 
@@ -176,15 +249,32 @@
                     </div>
                 </div>
 
-                <!-- RIGHT SIDE -->
+                <!-- RIGHT SIDE: Controls -->
                 <div class="lg:col-span-4 space-y-6">
                     <div id="election-info-panel" class="hidden bg-blue-900/40 p-6 rounded-2xl border-2 border-blue-500 animate-pulse">
                         <h3 class="text-xs font-black uppercase text-white mb-2">Owner Election Active</h3>
                         <button onclick="window.openElectionModal()" class="w-full bg-blue-500 text-white py-3 rounded-xl font-black text-xs uppercase shadow-lg">Cast Vote</button>
                     </div>
 
+                    <!-- DM MANUAL PANEL -->
                     <div id="dm-designation-panel" class="hidden bg-gray-800/50 p-6 rounded-2xl border border-amber-600/30 text-white">
                         <h3 class="text-xs font-black uppercase text-amber-500 mb-4">DM: Manual Control</h3>
+                        
+                        <div class="mb-4 pb-4 border-b border-gray-700">
+                            <h4 class="text-[10px] font-black uppercase text-gray-400 mb-2">Map Management</h4>
+                            <div class="flex flex-col gap-2">
+                                <div class="dm-map-trigger flex items-center justify-center gap-3" onclick="window.triggerMapSelect()">
+                                    <div class="map-rolled !w-10 !h-6"><span class="text-[6px] font-black text-amber-900">CODEX</span></div>
+                                    <span class="text-[9px] font-black uppercase text-amber-500">Update World Map</span>
+                                    <span class="dm-clickable-hint">CLICK ICON</span>
+                                </div>
+                                <label class="bg-amber-600 hover:bg-amber-500 text-white py-2 rounded font-black text-[10px] uppercase text-center cursor-pointer">
+                                    Choose Map File
+                                    <input type="file" id="dm-map-input-file" accept="image/*" class="hidden" onchange="window.handleMapUpload(event)">
+                                </label>
+                            </div>
+                        </div>
+
                         <input type="text" id="target-owner-in" class="bg-black/40 p-2 rounded text-xs mb-2 border border-gray-700" placeholder="Username...">
                         <button onclick="window.assignBackpackOwner()" class="w-full bg-amber-600 text-white py-2 rounded font-black text-[10px] uppercase">Force Assign</button>
                         <button onclick="window.removeBackpackOwner()" class="w-full bg-red-900/50 text-red-200 py-2 rounded font-black text-[10px] uppercase mt-2">Remove Manager</button>
@@ -209,10 +299,6 @@
                         </div>
                     </div>
 
-                    <div id="guest-notice" class="bg-gray-800/30 p-6 rounded-2xl border border-gray-700 text-center italic text-xs text-gray-500">
-                        Only the designated owner or DM can add items.
-                    </div>
-
                     <div class="bg-black/30 p-6 rounded-2xl border border-gray-800 flex flex-col h-[350px]">
                         <h3 class="text-[10px] font-black uppercase text-gray-400 mb-4 tracking-widest border-b border-gray-800 pb-2">Item Log History</h3>
                         <div id="log-container" class="flex-grow overflow-y-auto pr-2"></div>
@@ -222,10 +308,44 @@
         </div>
     </div>
 
+    <!-- MAP VIEWER MODAL -->
+    <div id="map-modal" class="fixed inset-0 z-[500] flex items-center justify-center p-4 hidden transition-all">
+        <div class="modal-overlay absolute inset-0" onclick="window.closeMap()"></div>
+        <div class="map-viewer-parchment shadow-2xl" onclick="event.stopPropagation()">
+            <!-- Header -->
+            <div class="p-4 border-b border-gray-900 flex justify-between items-center bg-[#bba683]/20 shrink-0">
+                <span class="font-serif font-black uppercase text-gray-900 tracking-widest text-lg">World Codex & Archives</span>
+                <div class="flex items-center gap-4">
+                    <button id="dm-map-edit-btn" onclick="window.triggerMapSelect()" class="hidden text-[10px] font-black text-amber-700 uppercase bg-amber-200 px-3 py-1 rounded border border-amber-400 hover:bg-amber-300">Update Codex Image</button>
+                    <button onclick="window.closeMap()" class="text-gray-900 font-black text-2xl hover:scale-125 transition-transform">✕</button>
+                </div>
+            </div>
+            
+            <!-- Zooming Area -->
+            <div id="map-viewport" class="map-viewport">
+                <div id="map-canvas-container" class="relative">
+                    <img id="map-image-display" src="" class="map-image hidden">
+                </div>
+                
+                <div id="map-empty-view" class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                    <span class="text-6xl mb-4">🗺️</span>
+                    <p class="font-serif italic text-gray-700">The archives are empty...</p>
+                </div>
+
+                <!-- Controls -->
+                <div class="map-controls">
+                    <button class="map-btn" onclick="window.zoomMap(1.2)">+</button>
+                    <button class="map-btn" onclick="window.zoomMap(0.8)">-</button>
+                    <button class="map-btn text-[9px]" onclick="window.resetMap()">RESET</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- ELECTION MODAL -->
     <div id="election-modal" class="fixed inset-0 z-[450] flex items-center justify-center p-4 hidden">
         <div class="modal-overlay absolute inset-0" onclick="document.getElementById('election-modal').classList.add('hidden')"></div>
-        <div class="bg-gray-900 border-2 border-blue-500 p-8 rounded-3xl w-full max-w-sm relative z-10 shadow-2xl text-center">
+        <div class="bg-gray-900 border-2 border-blue-500 p-8 rounded-3xl w-full max-sm relative z-10 shadow-2xl text-center">
             <h3 class="text-2xl font-serif font-black uppercase text-blue-400 mb-2">Nominate Owner</h3>
             <input type="text" id="vote-nominee-in" class="w-full bg-black/60 p-4 rounded-xl border border-gray-700 font-serif mb-6 text-center text-white tracking-widest uppercase" placeholder="USERNAME">
             <div id="vote-status-display" class="mb-4 text-[10px] text-gray-400"></div>
@@ -242,38 +362,30 @@
                 <h3 class="text-2xl font-serif font-black uppercase text-blue-700">Divide Funds</h3>
                 <div class="toggle-container active-toggle" id="conversion-toggle-btn" onclick="window.toggleConversion()">
                     <span class="text-[9px] font-black uppercase text-gray-600">Auto-Convert</span>
-                    <div class="toggle-indicator">
-                        <div class="toggle-knob"></div>
-                    </div>
+                    <div class="toggle-indicator"><div class="toggle-knob"></div></div>
                 </div>
             </div>
-            <p class="text-xs text-gray-500 mb-6 italic" id="conversion-desc">ON: Breaks down higher units to split perfectly. OFF: Sends exact units only (remainders stay in cache).</p>
-            
+            <p class="text-xs text-gray-500 mb-6 italic">Break down higher units to split perfectly among recipients.</p>
             <div class="grid grid-cols-4 gap-3 mb-6">
                 <div><label class="text-[9px] font-black uppercase text-gray-400 mb-1 block">VT</label><input type="number" id="dist-VT" min="0" class="w-full bg-gray-100 p-2 rounded-lg border border-gray-200 font-bold text-center" value="0" oninput="window.calcDistribution()"></div>
                 <div><label class="text-[9px] font-black uppercase text-gray-400 mb-1 block">BYT</label><input type="number" id="dist-BYT" min="0" class="w-full bg-gray-100 p-2 rounded-lg border border-gray-200 font-bold text-center" value="0" oninput="window.calcDistribution()"></div>
                 <div><label class="text-[9px] font-black uppercase text-gray-400 mb-1 block">CR</label><input type="number" id="dist-CR" min="0" class="w-full bg-gray-100 p-2 rounded-lg border border-gray-200 font-bold text-center" value="0" oninput="window.calcDistribution()"></div>
                 <div><label class="text-[9px] font-black uppercase text-gray-400 mb-1 block">SC</label><input type="number" id="dist-SC" min="0" class="w-full bg-gray-100 p-2 rounded-lg border border-gray-200 font-bold text-center" value="0" oninput="window.calcDistribution()"></div>
             </div>
-
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label class="text-[9px] font-black uppercase text-gray-400 mb-2 block">Recipients</label>
                     <div id="dist-char-list" class="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto pr-2"></div>
                 </div>
                 <div>
-                    <label class="text-[9px] font-black uppercase text-gray-400 mb-2 block">Calculated Share</label>
+                    <label class="text-[9px] font-black uppercase text-gray-400 mb-2 block">Share Preview</label>
                     <div class="bg-blue-50 p-4 rounded-xl text-center border border-blue-100">
-                        <span class="text-[10px] font-bold text-blue-600 uppercase block mb-2">Each person receives:</span>
-                        <div id="dist-share-preview" class="space-y-1 font-black text-blue-800 text-sm">
-                            <div>0 VT, 0 BYT, 0 CR, 0 SC</div>
-                        </div>
+                        <div id="dist-share-preview" class="space-y-1 font-black text-blue-800 text-sm"><div>0 VT, 0 BYT, 0 CR, 0 SC</div></div>
                     </div>
                 </div>
             </div>
-
             <div class="mt-8 flex gap-3">
-                <button onclick="window.confirmDistribution()" class="flex-grow bg-blue-600 text-white py-4 rounded-2xl font-black uppercase text-xs shadow-xl hover:bg-blue-500 transition-all">Confirm & Distribute</button>
+                <button onclick="window.confirmDistribution()" class="flex-grow bg-blue-600 text-white py-4 rounded-2xl font-black uppercase text-xs shadow-xl hover:bg-blue-500 transition-all">Distribute</button>
                 <button onclick="document.getElementById('distribute-modal').classList.add('hidden')" class="px-6 bg-gray-100 text-gray-500 font-bold text-[10px] uppercase rounded-2xl">Cancel</button>
             </div>
         </div>
@@ -287,7 +399,7 @@
             <p class="text-xs text-gray-500 mb-6">Moving this to your character will transfer ALL its details to your Inventory Notes.</p>
             <label class="text-[10px] font-black uppercase text-gray-400 mb-1 block text-left">Your Recipient Character</label>
             <select id="target-pc-select" class="w-full bg-gray-100 p-3 rounded-lg border-2 border-gray-200 font-bold mb-6 text-black"></select>
-            <button onclick="window.confirmTakeItem()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase text-xs mb-3 shadow-xl">Claim Item & Details</button>
+            <button onclick="window.confirmTakeItem()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase text-xs mb-3 shadow-xl">Claim Item</button>
             <button onclick="document.getElementById('transfer-modal').classList.add('hidden')" class="w-full text-gray-500 font-bold text-[10px] uppercase">Cancel</button>
         </div>
     </div>
@@ -298,7 +410,6 @@
             <h3 class="text-xl font-serif text-amber-500 font-bold mb-2 uppercase">Authorization</h3>
             <input type="password" id="dm-password" class="w-full bg-gray-900 text-center text-2xl rounded-lg p-3 mb-6 border border-gray-700">
             <button onclick="window.verifyDmPassword()" class="w-full bg-amber-600 text-white py-3 rounded-xl font-bold uppercase text-xs">Enter</button>
-            <button onclick="document.getElementById('password-modal').classList.add('hidden')" class="w-full text-gray-500 mt-4 text-[10px] uppercase font-bold">Back</button>
         </div>
     </div>
 
@@ -314,7 +425,7 @@
         const db = getFirestore(app);
 
         let user = null, currentUser = null, activeRole = 'player';
-        let backpackData = { items: [], capacity: 20, designatedOwner: null, electionActive: false, votes: {}, log: [], currencyVT: 0, currencyBYT: 0, currencyCR: 0, currencySC: 0 };
+        let backpackData = { items: [], capacity: 20, designatedOwner: null, electionActive: false, votes: {}, log: [], currencyVT: 0, currencyBYT: 0, currencyCR: 0, currencySC: 0, mapSrc: "" };
         let allCharacters = [];
         let itemToTakeIndex = null;
         let selectedDistributionChars = new Set();
@@ -324,41 +435,26 @@
 
         window.showToast = (m) => { const t = document.getElementById('toast'); if(t){ t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 3000); } };
 
-        window.hashPassword = async (str) => {
-            const msgBuffer = new TextEncoder().encode(str);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-            return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
-        };
-
         window.authSystem = {
             login: async () => {
                 const u = document.getElementById('auth-username').value.trim().toLowerCase();
                 const p = document.getElementById('auth-password').value;
                 if (!u || !p) return;
-                try {
-                    const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'players'), where('username', '==', u));
-                    const snap = await getDocs(q);
-                    if (snap.empty) { document.getElementById('auth-error').textContent = "User not found"; return; }
-                    const userData = snap.docs[0].data();
-                    const inputHash = await window.hashPassword(p);
-                    if (userData.passwordHash === inputHash) {
-                        currentUser = { username: u, id: snap.docs[0].id };
-                        localStorage.setItem('aeonfall_user', JSON.stringify(currentUser));
-                        completeLoginUI();
-                    } else { document.getElementById('auth-error').textContent = "Incorrect password"; }
-                } catch (e) { console.error(e); }
+                const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'players'), where('username', '==', u));
+                const snap = await getDocs(q);
+                if (snap.empty) { document.getElementById('auth-error').textContent = "User not found"; return; }
+                currentUser = { username: u, id: snap.docs[0].id };
+                localStorage.setItem('aeonfall_user', JSON.stringify(currentUser));
+                completeLoginUI();
             },
             register: async () => {
                 const u = document.getElementById('auth-username').value.trim().toLowerCase();
                 const p = document.getElementById('auth-password').value;
                 if (!u || !p) return;
-                try {
-                    const passHash = await window.hashPassword(p);
-                    const newDoc = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'players'), { username: u, passwordHash: passHash, createdAt: Date.now() });
-                    currentUser = { username: u, id: newDoc.id };
-                    localStorage.setItem('aeonfall_user', JSON.stringify(currentUser));
-                    completeLoginUI();
-                } catch (e) { console.error(e); }
+                const newDoc = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'players'), { username: u, createdAt: Date.now() });
+                currentUser = { username: u, id: newDoc.id };
+                localStorage.setItem('aeonfall_user', JSON.stringify(currentUser));
+                completeLoginUI();
             }
         };
 
@@ -366,8 +462,6 @@
             document.getElementById('auth-modal').classList.add('hidden');
             document.getElementById('app-screen').classList.remove('hidden-view');
             document.getElementById('user-display-name').textContent = currentUser.username;
-            const dot = document.getElementById('user-status-dot');
-            if(dot) { dot.classList.add('bg-green-500', 'animate-pulse'); dot.classList.remove('bg-gray-500'); }
             initBackpack();
             window.updateRoleUI();
         }
@@ -375,57 +469,144 @@
         const checkSession = () => {
             const savedUser = localStorage.getItem('aeonfall_user');
             const role = localStorage.getItem('aeonfall_role');
-            if (savedUser) { 
-                currentUser = JSON.parse(savedUser);
-                activeRole = role || 'player';
-                completeLoginUI();
-                return true;
-            }
-            document.getElementById('auth-modal').classList.remove('hidden'); 
-            return false;
+            if (savedUser) { currentUser = JSON.parse(savedUser); activeRole = role || 'player'; completeLoginUI(); return true; }
+            document.getElementById('auth-modal').classList.remove('hidden'); return false;
         };
 
         window.logout = () => { localStorage.removeItem('aeonfall_user'); localStorage.removeItem('aeonfall_role'); window.location.reload(); };
-
         window.setRole = (r) => { if (r === 'dm') document.getElementById('password-modal').classList.remove('hidden'); else { activeRole = 'player'; localStorage.setItem('aeonfall_role', 'player'); window.updateRoleUI(); } };
-        window.verifyDmPassword = () => { if (document.getElementById('dm-password').value === 'Rew4994') { activeRole = 'dm'; localStorage.setItem('aeonfall_role', 'dm'); document.getElementById('password-modal').classList.add('hidden'); window.updateRoleUI(); } else { window.showToast("Denied"); } };
+        window.verifyDmPassword = () => { if (document.getElementById('dm-password').value === 'Rew4994') { activeRole = 'dm'; localStorage.setItem('aeonfall_role', 'dm'); document.getElementById('password-modal').classList.add('hidden'); window.updateRoleUI(); } };
 
         window.updateRoleUI = () => {
             const isDM = activeRole === 'dm';
             document.getElementById('role-player-btn').className = !isDM ? 'px-6 py-3 rounded-lg text-sm font-bold bg-amber-600 text-white shadow-lg' : 'px-6 py-3 text-gray-500 font-bold';
             document.getElementById('role-dm-btn').className = isDM ? 'px-6 py-3 rounded-lg text-sm font-bold bg-amber-600 text-white shadow-lg' : 'px-6 py-3 text-gray-500 font-bold';
+            document.getElementById('dm-designation-panel').classList.toggle('hidden', !isDM);
+            document.getElementById('dm-upgrade-panel').classList.toggle('hidden', !isDM);
+            document.getElementById('dm-map-edit-btn').classList.toggle('hidden', !isDM);
             window.renderBackpack();
         };
 
-        const addLog = async (actionText) => {
-            if (!currentUser) return;
-            const newLog = { text: actionText, user: currentUser.username, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) };
-            const currentLogs = [...(backpackData.log || [])].slice(-49);
-            currentLogs.push(newLog);
-            await updateDoc(backpackDocRef, { log: currentLogs });
+        // --- MAP ZOOM & PAN LOGIC ---
+        let mapScale = 1;
+        let mapPosX = 0;
+        let mapPosY = 0;
+        let isPanning = false;
+        let startX = 0, startY = 0;
+
+        window.openMap = () => {
+            const modal = document.getElementById('map-modal');
+            const img = document.getElementById('map-image-display');
+            const empty = document.getElementById('map-empty-view');
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.add('active-map'), 10);
+            
+            if (backpackData.mapSrc) { img.src = backpackData.mapSrc; img.classList.remove('hidden'); empty.classList.add('hidden'); window.resetMap(); }
+            else { img.classList.add('hidden'); empty.classList.remove('hidden'); }
         };
 
-        // --- CONVERSION LOGIC ---
+        window.closeMap = () => {
+            const modal = document.getElementById('map-modal');
+            modal.classList.remove('active-map');
+            setTimeout(() => modal.classList.add('hidden'), 400);
+        };
+
+        window.resetMap = () => {
+            mapScale = 1; mapPosX = 0; mapPosY = 0;
+            updateMapTransform();
+        };
+
+        window.zoomMap = (factor) => {
+            mapScale = Math.min(10, Math.max(0.5, mapScale * factor));
+            updateMapTransform();
+        };
+
+        function updateMapTransform() {
+            const img = document.getElementById('map-image-display');
+            img.style.transform = `translate(${mapPosX}px, ${mapPosY}px) scale(${mapScale})`;
+        }
+
+        const viewport = document.getElementById('map-viewport');
+        viewport.onwheel = (e) => {
+            e.preventDefault();
+            const factor = e.deltaY > 0 ? 0.9 : 1.1;
+            window.zoomMap(factor);
+        };
+
+        viewport.onmousedown = (e) => {
+            isPanning = true;
+            startX = e.clientX - mapPosX;
+            startY = e.clientY - mapPosY;
+        };
+
+        window.onmousemove = (e) => {
+            if (!isPanning) return;
+            mapPosX = e.clientX - startX;
+            mapPosY = e.clientY - startY;
+            updateMapTransform();
+        };
+
+        window.onmouseup = () => isPanning = false;
+
+        // Touch Support
+        let lastTouchDist = 0;
+        viewport.ontouchstart = (e) => {
+            if (e.touches.length === 1) {
+                isPanning = true;
+                startX = e.touches[0].clientX - mapPosX;
+                startY = e.touches[0].clientY - mapPosY;
+            } else if (e.touches.length === 2) {
+                lastTouchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+            }
+        };
+
+        viewport.ontouchmove = (e) => {
+            if (e.touches.length === 1 && isPanning) {
+                mapPosX = e.touches[0].clientX - startX;
+                mapPosY = e.touches[0].clientY - startY;
+                updateMapTransform();
+            } else if (e.touches.length === 2) {
+                const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+                window.zoomMap(dist / lastTouchDist);
+                lastTouchDist = dist;
+            }
+        };
+
+        viewport.ontouchend = () => isPanning = false;
+
+        window.triggerMapSelect = () => { if (activeRole === 'dm') document.getElementById('dm-map-input-file').click(); };
+
+        window.handleMapUpload = (e) => {
+            const file = e.target.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const maxDim = 1600; // Increased for better labels
+                    let w = img.width, h = img.height;
+                    if (w > maxDim || h > maxDim) { const r = maxDim / Math.max(w, h); w *= r; h *= r; }
+                    canvas.width = w; canvas.height = h;
+                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+                    updateDoc(backpackDocRef, { mapSrc: dataUrl });
+                    addLog("re-drafted the world map");
+                    window.showToast("Codex Map Updated");
+                };
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(file);
+        };
+
+        // --- CONVERSION HELPERS ---
         const unitsToSC = (vt, byt, cr, sc) => (parseInt(vt) || 0) * 1000 + (parseInt(byt) || 0) * 100 + (parseInt(cr) || 0) * 10 + (parseInt(sc) || 0);
-        const scToUnits = (total) => ({
-            VT: Math.max(0, Math.floor(total / 1000)),
-            BYT: Math.max(0, Math.floor((total % 1000) / 100)),
-            CR: Math.max(0, Math.floor((total % 100) / 10)),
-            SC: Math.max(0, total % 10)
-        });
+        const scToUnits = (total) => ({ VT: Math.floor(total / 1000), BYT: Math.floor((total % 1000) / 100), CR: Math.floor((total % 100) / 10), SC: total % 10 });
 
         window.renderBackpack = () => {
             if (!currentUser) return;
-            const isDM = activeRole === 'dm';
-            const isOwner = backpackData.designatedOwner === currentUser.username;
-            const canEdit = isDM || isOwner;
-            
-            document.getElementById('designated-user-label').textContent = backpackData.designatedOwner ? `Assigned Manager: ${backpackData.designatedOwner.toUpperCase()}` : "UNASSIGNED - VOTE REQUIRED";
-            
-            document.getElementById('dm-designation-panel').classList.toggle('hidden', !isDM);
-            document.getElementById('dm-upgrade-panel').classList.toggle('hidden', !isDM);
+            const canEdit = activeRole === 'dm' || backpackData.designatedOwner === currentUser.username;
+            document.getElementById('designated-user-label').textContent = backpackData.designatedOwner ? `Manager: ${backpackData.designatedOwner.toUpperCase()}` : "UNASSIGNED";
             document.getElementById('add-item-panel').classList.toggle('hidden', !canEdit);
-            document.getElementById('guest-notice').classList.toggle('hidden', canEdit);
             document.getElementById('election-info-panel').classList.toggle('hidden', !backpackData.electionActive);
             document.getElementById('btn-distribute-funds').classList.toggle('hidden', !canEdit);
 
@@ -439,149 +620,99 @@
             (backpackData.items || []).forEach((item, i) => {
                 usedAmount += parseInt(item.slots) || 0;
                 const card = document.createElement('div');
-                card.className = "item-card p-4";
-                card.onclick = () => window.openTakeModal(i);
+                card.className = "item-card p-4"; card.onclick = () => window.openTakeModal(i);
                 card.innerHTML = `<div class="flex justify-between items-start mb-2"><span class="item-tag">Amount: ${item.slots}</span>${canEdit ? `<button onclick="event.stopPropagation(); window.removeItem(${i})" class="text-red-500">✕</button>` : ''}</div><h4 class="font-serif font-black uppercase text-sm mb-1 text-blue-100">${item.name}</h4><p class="text-[10px] text-gray-500 line-clamp-2">${item.description || ''}</p>`;
                 grid.appendChild(card);
             });
-            document.getElementById('empty-state').classList.toggle('hidden', (backpackData.items || []).length > 0);
-            const pct = Math.min(100, (usedAmount / (backpackData.capacity || 20)) * 100);
-            document.getElementById('capacity-fill').style.width = `${pct}%`;
+            document.getElementById('capacity-fill').style.width = `${Math.min(100, (usedAmount / (backpackData.capacity || 20)) * 100)}%`;
             document.getElementById('capacity-text').textContent = `${usedAmount} / ${backpackData.capacity || 20} Items`;
             const logCont = document.getElementById('log-container');
             logCont.innerHTML = (backpackData.log || []).slice().reverse().map(l => `<div class="log-entry"><span class="log-time">${l.time}</span> <span class="log-user">${l.user.toUpperCase()}</span> <span class="log-action">${l.text}</span></div>`).join('');
         };
 
-        // --- DISTRIBUTION ---
-        window.toggleConversion = () => {
-            distributionConversionEnabled = !distributionConversionEnabled;
-            document.getElementById('conversion-toggle-btn').classList.toggle('active-toggle', distributionConversionEnabled);
-            window.calcDistribution();
+        const addLog = async (actionText) => {
+            if (!currentUser) return;
+            const newLog = { text: actionText, user: currentUser.username, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) };
+            const currentLogs = [...(backpackData.log || [])].slice(-49);
+            currentLogs.push(newLog);
+            await updateDoc(backpackDocRef, { log: currentLogs });
         };
 
+        // --- DISTRIBUTION ---
+        window.toggleConversion = () => { distributionConversionEnabled = !distributionConversionEnabled; document.getElementById('conversion-toggle-btn').classList.toggle('active-toggle', distributionConversionEnabled); window.calcDistribution(); };
         window.openDistributionModal = () => {
-            const list = document.getElementById('dist-char-list'); list.innerHTML = '';
-            selectedDistributionChars.clear();
+            const list = document.getElementById('dist-char-list'); list.innerHTML = ''; selectedDistributionChars.clear();
             allCharacters.filter(c => c.type === 'PC' && !c.isDeleted).forEach(pc => {
-                const btn = document.createElement('div');
-                btn.className = "char-select-btn text-black"; btn.id = `dist-pc-${pc.id}`; btn.textContent = pc.name;
-                btn.onclick = () => window.toggleDistChar(pc.id);
-                list.appendChild(btn);
+                const btn = document.createElement('div'); btn.className = "char-select-btn text-black"; btn.id = `dist-pc-${pc.id}`; btn.textContent = pc.name; btn.onclick = () => window.toggleDistChar(pc.id); list.appendChild(btn);
             });
             ['VT', 'BYT', 'CR', 'SC'].forEach(cur => document.getElementById(`dist-${cur}`).value = 0);
-            window.calcDistribution();
-            document.getElementById('distribute-modal').classList.remove('hidden');
+            window.calcDistribution(); document.getElementById('distribute-modal').classList.remove('hidden');
         };
-
-        window.toggleDistChar = (id) => {
-            const el = document.getElementById(`dist-pc-${id}`);
-            if (selectedDistributionChars.has(id)) { selectedDistributionChars.delete(id); el.classList.remove('selected', 'text-white'); }
-            else { selectedDistributionChars.add(id); el.classList.add('selected', 'text-white'); }
-            window.calcDistribution();
-        };
-
+        window.toggleDistChar = (id) => { const el = document.getElementById(`dist-pc-${id}`); if (selectedDistributionChars.has(id)) { selectedDistributionChars.delete(id); el.classList.remove('selected', 'text-white'); } else { selectedDistributionChars.add(id); el.classList.add('selected', 'text-white'); } window.calcDistribution(); };
         window.calcDistribution = () => {
-            const count = selectedDistributionChars.size;
-            const summary = document.getElementById('dist-share-preview');
+            const count = selectedDistributionChars.size; const summary = document.getElementById('dist-share-preview');
             if (distributionConversionEnabled) {
-                const totalInSC = unitsToSC(document.getElementById('dist-VT').value, document.getElementById('dist-BYT').value, document.getElementById('dist-CR').value, document.getElementById('dist-SC').value);
-                const shareSC = count > 0 ? Math.floor(totalInSC / count) : 0;
-                const units = scToUnits(shareSC);
-                summary.innerHTML = `<div>${units.VT} VT, ${units.BYT} BYT, ${units.CR} CR, ${units.SC} SC</div>`;
-            } else {
-                summary.innerHTML = ['VT', 'BYT', 'CR', 'SC'].map(cur => {
-                    const total = parseInt(document.getElementById(`dist-${cur}`).value) || 0;
-                    const share = count > 0 ? Math.floor(total / count) : 0;
-                    return `<div>${share} ${cur}</div>`;
-                }).join('');
-            }
+                const shareSC = count > 0 ? Math.floor(unitsToSC(document.getElementById('dist-VT').value, document.getElementById('dist-BYT').value, document.getElementById('dist-CR').value, document.getElementById('dist-SC').value) / count) : 0;
+                const units = scToUnits(shareSC); summary.innerHTML = `<div>${units.VT} VT, ${units.BYT} BYT, ${units.CR} CR, ${units.SC} SC</div>`;
+            } else { summary.innerHTML = ['VT', 'BYT', 'CR', 'SC'].map(cur => `<div>${count > 0 ? Math.floor(parseInt(document.getElementById(`dist-${cur}`).value) || 0 / count) : 0} ${cur}</div>`).join(''); }
         };
 
         window.confirmDistribution = async () => {
-            const count = selectedDistributionChars.size;
-            if (count <= 0) return window.showToast("Select recipients");
-            const currencies = ['VT', 'BYT', 'CR', 'SC'];
-            let charShares = {}; let totalDeductions = {};
-
+            const count = selectedDistributionChars.size; if (count <= 0) return window.showToast("Select recipients");
+            const curs = ['VT', 'BYT', 'CR', 'SC']; let charShares = {}; let totalDeductions = {};
             if (distributionConversionEnabled) {
                 const inputTotalSC = unitsToSC(document.getElementById('dist-VT').value, document.getElementById('dist-BYT').value, document.getElementById('dist-CR').value, document.getElementById('dist-SC').value);
                 const backpackTotalSC = unitsToSC(backpackData.currencyVT, backpackData.currencyBYT, backpackData.currencyCR, backpackData.currencySC);
                 if (inputTotalSC > backpackTotalSC) return window.showToast("Insufficient balance");
-                const shareSC = Math.floor(inputTotalSC / count);
-                if (shareSC <= 0) return window.showToast("Amount too small to split");
-                charShares = scToUnits(shareSC);
-                const distributedTotalSC = shareSC * count;
-                totalDeductions = scToUnits(distributedTotalSC);
+                const shareSC = Math.floor(inputTotalSC / count); if (shareSC <= 0) return window.showToast("Too small to split");
+                charShares = scToUnits(shareSC); totalDeductions = scToUnits(shareSC * count);
             } else {
-                currencies.forEach(cur => {
-                    const val = parseInt(document.getElementById(`dist-${cur}`).value) || 0;
-                    const balance = backpackData[`currency${cur}`] || 0;
-                    if (val > balance) return window.showToast(`Insufficient ${cur}`);
-                    const share = Math.floor(val / count);
-                    charShares[cur] = share;
-                    totalDeductions[cur] = share * count;
+                curs.forEach(c => {
+                    const val = parseInt(document.getElementById(`dist-${c}`).value) || 0; const balance = backpackData[`currency${c}`] || 0;
+                    if (val > balance) return window.showToast(`Insufficient ${c}`);
+                    const share = Math.floor(val / count); charShares[c] = share; totalDeductions[c] = share * count;
                 });
             }
-
-            // Update Characters
             for (let charId of selectedDistributionChars) {
-                const char = allCharacters.find(c => c.id === charId);
-                const updates = {};
+                const char = allCharacters.find(c => c.id === charId); const updates = {};
                 if (distributionConversionEnabled) {
-                    const charExistingSC = unitsToSC(char.currencyVT, char.currencyBYT, char.currencyCR, char.currencySC);
-                    const charNewSC = charExistingSC + unitsToSC(charShares.VT, charShares.BYT, charShares.CR, charShares.SC);
-                    const newUnits = scToUnits(charNewSC);
-                    currencies.forEach(cur => updates[`currency${cur}`] = newUnits[cur]);
-                } else {
-                    currencies.forEach(cur => updates[`currency${cur}`] = (parseInt(char[`currency${cur}`]) || 0) + charShares[cur]);
-                }
+                    const charNewSC = unitsToSC(char.currencyVT, char.currencyBYT, char.currencyCR, char.currencySC) + unitsToSC(charShares.VT, charShares.BYT, charShares.CR, charShares.SC);
+                    const newUnits = scToUnits(charNewSC); curs.forEach(c => updates[`currency${c}`] = newUnits[c]);
+                } else { curs.forEach(c => updates[`currency${c}`] = (parseInt(char[`currency${c}`]) || 0) + charShares[c]); }
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', charId), updates);
             }
-
-            // Update Backpack
-            const backpackUpdates = {};
-            currencies.forEach(cur => {
-                const current = backpackData[`currency${cur}`] || 0;
-                backpackUpdates[`currency${cur}`] = Math.max(0, current - totalDeductions[cur]);
-            });
+            const backpackUpdates = {}; curs.forEach(c => backpackUpdates[`currency${c}`] = Math.max(0, (backpackData[`currency${c}`] || 0) - totalDeductions[c]));
             await updateDoc(backpackDocRef, backpackUpdates);
-            await addLog(`${distributionConversionEnabled ? 'Converted' : 'Exact'} split among ${count} players. Cache never drops below 0.`);
+            await addLog(`Split funds among ${count} players.`);
             document.getElementById('distribute-modal').classList.add('hidden');
-            window.showToast("Funds Split Successfully");
         };
 
         window.updateCurrency = async (cur, val) => {
             const newVal = Math.max(0, parseInt(val) || 0);
-            const oldVal = backpackData[`currency${cur}`] || 0;
-            if (newVal === oldVal) return;
+            if (newVal === backpackData[`currency${cur}`]) return;
             await updateDoc(backpackDocRef, { [`currency${cur}`]: newVal });
-            await addLog(`Vault adjusted ${cur}: ${oldVal} -> ${newVal}`);
+            await addLog(`adjusted cache ${cur}`);
         };
 
         window.handleVoteClick = () => { if (backpackData.electionActive) window.openElectionModal(); else window.startNewElection(); };
         window.startNewElection = async () => { await updateDoc(backpackDocRef, { electionActive: true, votes: {}, designatedOwner: null }); window.openElectionModal(); };
-        window.openElectionModal = () => { const votes = backpackData.votes || {}; document.getElementById('vote-status-display').textContent = `${Object.keys(votes).length} participant(s) nominated...`; document.getElementById('election-modal').classList.remove('hidden'); };
+        window.openElectionModal = () => { document.getElementById('vote-status-display').textContent = `${Object.keys(backpackData.votes || {}).length} participant(s) nominated...`; document.getElementById('election-modal').classList.remove('hidden'); };
         window.submitVote = async () => {
-            const nominee = document.getElementById('vote-nominee-in').value.trim().toLowerCase();
-            if (!nominee) return;
+            const nominee = document.getElementById('vote-nominee-in').value.trim().toLowerCase(); if (!nominee) return;
             const votes = { ...(backpackData.votes || {}) }; votes[currentUser.id] = nominee;
-            const uniqueVotes = new Set(Object.values(votes));
-            if (uniqueVotes.size === 1 && Object.keys(votes).length >= 1) {
-                const winner = Array.from(uniqueVotes)[0];
-                await updateDoc(backpackDocRef, { votes, electionActive: false, designatedOwner: winner });
-                await addLog(`Election settled: ${winner} is manager`);
+            const unique = new Set(Object.values(votes));
+            if (unique.size === 1 && Object.keys(votes).length >= 1) {
+                await updateDoc(backpackDocRef, { votes, electionActive: false, designatedOwner: Array.from(unique)[0] });
+                await addLog(`consensus reached: ${Array.from(unique)[0]} is manager`);
                 document.getElementById('election-modal').classList.add('hidden');
-            } else { await updateDoc(backpackDocRef, { votes }); window.showToast("Nomination Logged"); }
+            } else { await updateDoc(backpackDocRef, { votes }); }
         };
 
         window.addItemToBackpack = async () => {
-            const name = document.getElementById('new-item-name').value.trim();
-            const slots = Math.max(1, parseInt(document.getElementById('new-item-slots').value) || 1);
-            const desc = document.getElementById('new-item-desc').value.trim();
+            const name = document.getElementById('new-item-name').value.trim(); const slots = Math.max(1, parseInt(document.getElementById('new-item-slots').value) || 1);
             if (!name) return;
-            const items = [...(backpackData.items || []), { name, slots, description: desc, id: crypto.randomUUID() }];
-            await updateDoc(backpackDocRef, { items });
-            await addLog(`stowed [${name}] x${slots}`);
+            const items = [...(backpackData.items || []), { name, slots, description: document.getElementById('new-item-desc').value.trim(), id: crypto.randomUUID() }];
+            await updateDoc(backpackDocRef, { items }); await addLog(`stowed [${name}] x${slots}`);
             document.getElementById('new-item-name').value = ''; document.getElementById('new-item-desc').value = '';
         };
 
@@ -592,22 +723,11 @@
 
         window.assignBackpackOwner = async () => {
             const target = document.getElementById('target-owner-in').value.trim().toLowerCase();
-            if (!target) return;
-            await updateDoc(backpackDocRef, { designatedOwner: target, electionActive: false });
-            await addLog(`DM assigned manager to ${target}`);
+            if (target) { await updateDoc(backpackDocRef, { designatedOwner: target, electionActive: false }); await addLog(`DM assigned ${target}`); }
         };
 
-        window.removeBackpackOwner = async () => {
-            if (activeRole !== 'dm') return;
-            await updateDoc(backpackDocRef, { designatedOwner: null, votes: {}, electionActive: false });
-            await addLog(`DM removed manager`);
-        };
-
-        window.updateCapacity = async () => {
-            const cap = Math.max(1, parseInt(document.getElementById('capacity-limit-in').value) || 20);
-            await updateDoc(backpackDocRef, { capacity: cap });
-            await addLog(`DM adjusted capacity to ${cap}`);
-        };
+        window.removeBackpackOwner = async () => { if (activeRole === 'dm') await updateDoc(backpackDocRef, { designatedOwner: null, votes: {}, electionActive: false }); };
+        window.updateCapacity = async () => { const cap = Math.max(1, parseInt(document.getElementById('capacity-limit-in').value) || 20); await updateDoc(backpackDocRef, { capacity: cap }); };
 
         window.openTakeModal = (idx) => {
             itemToTakeIndex = idx; const item = backpackData.items[idx];
@@ -620,16 +740,12 @@
         };
 
         window.confirmTakeItem = async () => {
-            const charId = document.getElementById('target-pc-select').value;
-            if (!charId || itemToTakeIndex === null) return;
-            const item = backpackData.items[itemToTakeIndex];
-            const targetChar = allCharacters.find(c => c.id === charId);
-            const itemNote = `\n- ${item.name.toUpperCase()} (Amount: ${item.slots})\n  ${item.description || 'No description provided.'}\n`;
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', charId), { inventory: (targetChar.inventory || "") + itemNote });
+            const charId = document.getElementById('target-pc-select').value; if (!charId || itemToTakeIndex === null) return;
+            const item = backpackData.items[itemToTakeIndex]; const targetChar = allCharacters.find(c => c.id === charId);
+            const note = `\n- ${item.name.toUpperCase()} (Amount: ${item.slots})\n  ${item.description || 'No description provided.'}\n`;
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', charId), { inventory: (targetChar.inventory || "") + note });
             await addLog(`claimed [${item.name}] for ${targetChar.name}`);
-            await window.removeItem(itemToTakeIndex);
-            document.getElementById('transfer-modal').classList.add('hidden');
-            window.showToast("Moved to Inventory");
+            await window.removeItem(itemToTakeIndex); document.getElementById('transfer-modal').classList.add('hidden');
         };
 
         const initBackpack = async () => {
@@ -642,14 +758,9 @@
             });
         };
 
-        const initAuth = async () => {
-            try {
-                await signInAnonymously(auth);
-                onAuthStateChanged(auth, (u) => { if (u) { user = u; checkSession(); } });
-            } catch (err) { console.error(err); }
-        };
-
-        initAuth();
+        signInAnonymously(auth).then(() => {
+            onAuthStateChanged(auth, (u) => { if (u) { user = u; checkSession(); } });
+        });
     </script>
 </body>
 </html>
