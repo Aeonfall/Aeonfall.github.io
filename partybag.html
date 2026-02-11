@@ -49,7 +49,6 @@
         .log-user { color: #3b82f6; font-weight: 700; }
         .log-action { color: #ccc; }
 
-        /* Currency specific styles */
         .currency-box { background: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 12px; text-align: center; }
         .currency-label { font-size: 9px; font-weight: 900; color: #555; text-transform: uppercase; display: block; margin-top: 4px; }
         .currency-input { font-family: 'Cinzel', serif; font-weight: 900; color: #3b82f6; font-size: 18px; text-align: center; }
@@ -103,7 +102,7 @@
                         <a href="npcs.html" class="nav-link">NPCs</a>
                         <a href="beasts.html" class="nav-link">Bestiary</a>
                         <a href="#" class="nav-link active">Backpack</a>
-                        <a href="#" onclick="window.setView('graveyard'); return false;" id="nav-graveyard" class="nav-link !text-red-900">Graveyard</a>
+                        <a href="index.html" onclick="window.setView('graveyard'); return false;" id="nav-graveyard" class="nav-link !text-red-900">Graveyard</a>
                     </nav>
                 </div>
             </header>
@@ -169,10 +168,11 @@
                         <button onclick="window.openElectionModal()" class="w-full bg-blue-500 text-white py-3 rounded-xl font-black text-xs uppercase shadow-lg">Cast Vote</button>
                     </div>
 
-                    <div id="dm-designation-panel" class="hidden bg-gray-800/50 p-6 rounded-2xl border border-amber-600/30">
+                    <div id="dm-designation-panel" class="hidden bg-gray-800/50 p-6 rounded-2xl border border-amber-600/30 text-white">
                         <h3 class="text-xs font-black uppercase text-amber-500 mb-4">DM: Manual Control</h3>
                         <input type="text" id="target-owner-in" class="bg-black/40 p-2 rounded text-xs mb-2 border border-gray-700" placeholder="Username...">
                         <button onclick="window.assignBackpackOwner()" class="w-full bg-amber-600 text-white py-2 rounded font-black text-[10px] uppercase">Force Assign</button>
+                        <button onclick="window.removeBackpackOwner()" class="w-full bg-red-900/50 text-red-200 py-2 rounded font-black text-[10px] uppercase mt-2">Remove Current Manager</button>
                         <button onclick="window.startNewElection()" class="w-full bg-blue-700 text-white py-2 rounded font-black text-[10px] uppercase mt-2">Trigger Party Vote</button>
                     </div>
 
@@ -198,7 +198,7 @@
                         Only the designated owner or DM can add items. The party must agree on an owner to begin.
                     </div>
 
-                    <div class="bg-black/30 p-6 rounded-2xl border border-gray-800 flex flex-col h-[350px]">
+                    <div class="bg-black/30 p-6 rounded-2xl border border-gray-800 flex flex-col h-[300px]">
                         <h3 class="text-[10px] font-black uppercase text-gray-400 mb-4 tracking-widest border-b border-gray-800 pb-2">Item Log History</h3>
                         <div id="log-container" class="flex-grow overflow-y-auto pr-2"></div>
                     </div>
@@ -317,10 +317,10 @@
 
         const checkSession = () => {
             const savedUser = localStorage.getItem('aeonfall_user');
-            const role = localStorage.getItem('aeonfall_role');
+            const savedRole = localStorage.getItem('aeonfall_role');
             if (savedUser) { 
                 currentUser = JSON.parse(savedUser);
-                activeRole = role || 'player';
+                activeRole = savedRole || 'player';
                 completeLoginUI();
                 return true;
             }
@@ -392,7 +392,6 @@
             document.getElementById('guest-notice').classList.toggle('hidden', canEdit);
             document.getElementById('election-info-panel').classList.toggle('hidden', !backpackData.electionActive);
 
-            // Currencies
             const currencies = ['SC', 'CR', 'BYT', 'VT'];
             currencies.forEach(cur => {
                 const el = document.getElementById(`cur-${cur}`);
@@ -400,7 +399,6 @@
                 el.disabled = !canEdit;
             });
 
-            // Items
             const grid = document.getElementById('item-grid');
             grid.innerHTML = '';
             let usedSlots = 0;
@@ -462,7 +460,7 @@
             if (uniqueVotes.size === 1 && Object.keys(votes).length >= 1) {
                 const winner = Array.from(uniqueVotes)[0];
                 await updateDoc(backpackDocRef, { votes, electionActive: false, designatedOwner: winner });
-                await addLog(`consensus reached: ${winner} is now cache manager`);
+                await addLog(`consensus reached: ${winner} is now manager`);
                 document.getElementById('election-modal').classList.add('hidden');
             } else {
                 await updateDoc(backpackDocRef, { votes });
@@ -496,6 +494,17 @@
             if (!target) return;
             await updateDoc(backpackDocRef, { designatedOwner: target, electionActive: false });
             await addLog(`(DM Override) assigned manager to ${target}`);
+        };
+
+        window.removeBackpackOwner = async () => {
+            if (activeRole !== 'dm') return;
+            await updateDoc(backpackDocRef, { 
+                designatedOwner: null,
+                votes: {},
+                electionActive: false 
+            });
+            await addLog(`(DM Override) removed current manager`);
+            window.showToast("Manager Removed");
         };
 
         window.updateCapacity = async () => {
