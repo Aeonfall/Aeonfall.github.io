@@ -10,7 +10,6 @@
         body { font-family: 'Noto Sans', sans-serif; background-color: #1a1a1a; color: #e2e8f0; overflow-x: hidden; }
         .dashboard-bg { background-image: url('https://www.transparenttextures.com/patterns/dark-wood.png'); background-color: #0f0f0f; }
         
-        /* Stat Block Aesthetic - Monster Manual Style */
         #sheet-container { background-color: #fdfaf3; min-height: 100vh; padding-bottom: 120px; color: #1a1a1a; transition: all 0.3s ease; }
         
         .stat-block {
@@ -47,7 +46,6 @@
         .stat-line { margin: 6px 0; color: #1a1a1a; font-size: 15px; border-bottom: 1px solid #7a1d1d33; padding-bottom: 2px; }
         .stat-line b { color: #7a1d1d; font-weight: 900; }
 
-        /* Ability Table - Matches Reference */
         .ability-table { width: 100%; border-collapse: collapse; margin: 24px 0; table-layout: fixed; }
         .ability-table th { font-family: 'Cinzel', serif; font-weight: 900; color: #7a1d1d; font-size: 12px; padding: 4px; text-align: center; }
         .ability-table td { background: #eee5ce; border: 2px solid #fdfaf3; padding: 10px; text-align: center; }
@@ -67,15 +65,12 @@
         .trait-text { font-size: 15px; margin-bottom: 12px; line-height: 1.6; }
         .trait-text b { font-style: italic; font-weight: 900; color: #111; }
 
-        /* Dashboard Cards */
         .card { transition: all 0.2s; cursor: pointer; border-left-width: 4px; position: relative; }
         .card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.7); }
-        .status-badge { position: absolute; top: 8px; right: 8px; font-size: 8px; font-weight: 900; padding: 2px 6px; border-radius: 99px; text-transform: uppercase; }
         
-        .nav-link { color: #94a3b8; font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; }
+        .nav-link { color: #94a3b8; font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; text-decoration: none; }
         .nav-link.active { color: #f59e0b; border-bottom: 2px solid #f59e0b; padding-bottom: 4px; }
 
-        /* UI Elements */
         .portrait-circle {
             width: 180px;
             height: 180px;
@@ -96,12 +91,14 @@
         
         .skill-row { display: flex; justify-content: space-between; border-bottom: 1px dotted #bba683; padding: 6px 0; font-size: 14px; }
         .dm-panel { background: #1a1a1a; color: #fff; padding: 20px; border-radius: 12px; margin-bottom: 24px; border: 2px solid #f59e0b; }
+        
+        .category-header { font-family: 'Cinzel', serif; font-size: 18px; font-weight: 900; border-bottom: 2px solid #333; padding-bottom: 8px; margin-top: 32px; margin-bottom: 16px; color: #94a3b8; display: flex; justify-content: space-between; align-items: center; }
+        .cat-count { background: #333; color: #fff; font-size: 10px; padding: 2px 8px; border-radius: 99px; }
     </style>
 </head>
 <body class="min-h-screen">
 
     <div id="toast" class="toast">Message</div>
-    <div id="sync-indicator">Cloud Synced</div>
 
     <!-- AUTH MODAL -->
     <div id="auth-modal" class="fixed inset-0 bg-gray-950 z-[300] flex items-center justify-center p-4 hidden">
@@ -137,15 +134,13 @@
                 </div>
                 <div class="flex flex-col items-center gap-4">
                     <div class="flex items-center gap-2 bg-gray-900 p-1 rounded-xl shadow-2xl">
-                        <button id="role-player-btn" onclick="window.setRole('player')" class="px-6 py-3 rounded-lg text-sm font-bold bg-amber-600 text-white">Player</button>
-                        <button id="role-dm-btn" onclick="window.setRole('dm')" class="px-6 py-3 rounded-lg text-sm font-bold text-gray-500">DM</button>
+                        <button id="role-player-btn" onclick="window.setRole('player')" class="px-6 py-3 rounded-lg text-sm font-bold bg-amber-600 text-white shadow-lg">Player</button>
+                        <button id="role-dm-btn" onclick="window.setRole('dm')" class="px-6 py-3 rounded-lg text-sm font-bold text-gray-500 shadow-lg">DM</button>
                     </div>
                     <nav id="main-nav" class="flex gap-6">
                         <a href="index.html" class="nav-link">Party</a>
                         <a href="npcs.html" class="nav-link">NPCs</a>
-                        <a href="beasts.html" class="nav-link active">Bestiary</a>
-                        <a href="partybag.html" class="nav-link">Backpack</a>
-                        <a href="#index.html" onclick="window.setView('graveyard'); return false;" id="nav-graveyard" class="nav-link !text-red-900">Graveyard</a>
+                        <a href="#" class="nav-link active">Bestiary</a>
                     </nav>
                 </div>
             </header>
@@ -163,6 +158,10 @@
                     <div class="category-header">IDENTIFIED CREATURES <span class="cat-count" id="count-public">0</span></div>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="grid-public"></div>
                 </div>
+                <div id="sec-private">
+                    <div class="category-header">PETS <span class="cat-count" id="count-private">0</span></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="grid-private"></div>
+                </div>
                 <div id="sec-unpublished" class="hidden">
                     <div class="category-header italic text-gray-600">DRAFTS (DM ONLY) <span class="cat-count" id="count-unpublished">0</span></div>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 opacity-60" id="grid-unpublished"></div>
@@ -179,6 +178,7 @@
                     <button onclick="window.closeSheet()" class="text-gray-400 hover:text-white font-bold flex items-center gap-2"><span>←</span> Return to Codex</button>
                     <div class="flex items-center gap-4">
                         <span id="vis-badge" class="bg-gray-800 text-gray-300 px-3 py-1 rounded text-[10px] font-black uppercase border border-gray-700">Visibility</span>
+                        <div id="view-only-badge" class="hidden bg-red-900 text-white px-3 py-1 rounded text-[10px] font-black uppercase border border-red-700">View Only</div>
                         <div id="dm-sheet-controls" class="hidden flex gap-1">
                             <button onclick="window.saveBeast(true)" class="bg-green-700 hover:bg-green-600 px-4 py-1 rounded text-[10px] font-black uppercase tracking-widest">SYNC</button>
                             <button onclick="window.triggerDelete()" class="bg-red-900 px-3 py-1 rounded text-[10px] font-black uppercase">DELETE</button>
@@ -190,11 +190,12 @@
             <div class="p-4 md:p-12">
                 <div id="dm-oversight" class="dm-panel max-w-[1100px] mx-auto mb-8 hidden text-white">
                     <div class="flex flex-col md:flex-row justify-between items-center gap-6">
-                        <div>
-                            <h4 class="text-xs font-black uppercase text-amber-500 mb-2">Publish Control</h4>
+                        <div class="flex-grow">
+                            <h4 class="text-xs font-black uppercase text-amber-500 mb-2">Visibility Control</h4>
                             <div class="flex gap-2">
-                                <button onclick="window.updateVisibility('public')" class="bg-amber-600 px-3 py-2 rounded text-[9px] font-black uppercase">PUBLISH</button>
+                                <button onclick="window.updateVisibility('public')" class="bg-amber-600 px-3 py-2 rounded text-[9px] font-black uppercase">PUBLIC</button>
                                 <button onclick="window.updateVisibility('unpublished')" class="bg-gray-600 px-3 py-2 rounded text-[9px] font-black uppercase">DRAFT</button>
+                                <button onclick="window.openPrivateLinkModal()" class="bg-purple-600 px-3 py-2 rounded text-[9px] font-black uppercase">PRIVATE TIE</button>
                             </div>
                         </div>
                         <div class="text-right">
@@ -224,8 +225,8 @@
                             </table>
 
                             <div class="stat-line"><b>Senses</b> <input type="text" data-key="senses" class="w-64 inline" placeholder="Darkvision 60 ft."></div>
-                            <div class="stat-line"><b>Languages</b> <input type="text" data-key="languages" class="w-64 inline" placeholder="Primordial"></div>
-                            <div class="stat-line"><b>Challenge</b> <input type="text" data-key="cr" class="w-64 inline" placeholder="5 (1,800 XP)"></div>
+                            <div class="stat-line"><b>Languages</b> <input type="text" data-key="languages" class="w-64 inline" placeholder="Bestiari Tongues"></div>
+                            <div class="stat-line"><b>Level</b> <input type="text" data-key="cr" class="w-64 inline" placeholder="1"></div>
 
                             <div class="section-header">Traits</div>
                             <textarea data-key="description" class="trait-text w-full min-h-[150px]" placeholder="Traits..."></textarea>
@@ -276,16 +277,25 @@
             <h3 class="text-2xl font-serif text-red-700 font-bold mb-4 uppercase">Erase Creature</h3>
             <p class="text-gray-500 text-sm mb-8 leading-relaxed">This action is permanent.</p>
             <button onclick="window.executeDelete()" class="w-full bg-red-700 text-white py-3 rounded-xl font-bold uppercase text-xs mb-2 shadow-lg">Confirm Delete</button>
-            <button onclick="document.getElementById('delete-modal').classList.add('hidden')" class="w-full text-gray-400 text-[10px] font-bold">CANCEL</button>
+            <button onclick="document.getElementById('delete-modal').classList.add('hidden')" class="w-full text-gray-500 font-bold text-[10px]">CANCEL</button>
+        </div>
+    </div>
+
+    <div id="private-link-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[250] hidden">
+        <div class="bg-gray-800 p-8 rounded-2xl w-full max-sm border-2 border-purple-500 text-center text-white">
+            <h3 class="text-xl font-serif text-purple-400 font-bold mb-4 uppercase">Link Private Tie</h3>
+            <p class="text-[10px] text-gray-400 mb-6 uppercase">Grant a player edit permissions for this pet/beast.</p>
+            <input type="text" id="private-target-user" class="w-full bg-gray-900 rounded-lg p-3 border border-gray-700 mb-6 text-center uppercase" placeholder="USERNAME">
+            <button onclick="window.confirmLinkPrivateBeast()" class="w-full bg-purple-600 py-3 rounded-xl font-bold uppercase text-xs mb-2">Assign Owner</button>
+            <button onclick="document.getElementById('private-link-modal').classList.add('hidden')" class="w-full text-gray-500 text-[10px] uppercase font-bold">Cancel</button>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, updateDoc, deleteDoc, onSnapshot, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, doc, updateDoc, deleteDoc, onSnapshot, addDoc, query, where, getDocs, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Global Helper Functions
         window.hashPassword = async (str) => {
             const msgBuffer = new TextEncoder().encode(str);
             const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
@@ -298,20 +308,13 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        let characters = [], user = null, activeCharId = null, activeRole = 'player', currentUser = null; 
+        let characters = [], activeCharId = null, activeRole = 'player', currentUser = null, user = null; 
         let autoSaveTimer = null;
         const STATS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
 
         window.showToast = (m) => { const t = document.getElementById('toast'); if(t){ t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 3000); } };
 
-        window.logout = () => {
-            localStorage.removeItem('aeonfall_user');
-            localStorage.removeItem('aeonfall_role');
-            currentUser = null;
-            activeRole = 'player';
-            document.getElementById('dashboard-screen').classList.add('hidden-view');
-            document.getElementById('auth-modal').classList.remove('hidden');
-        };
+        window.logout = () => { localStorage.removeItem('aeonfall_user'); localStorage.removeItem('aeonfall_role'); window.location.reload(); };
 
         window.authSystem = {
             login: async () => {
@@ -330,7 +333,6 @@
                         document.getElementById('auth-modal').classList.add('hidden');
                         document.getElementById('dashboard-screen').classList.remove('hidden-view');
                         document.getElementById('user-display-name').textContent = currentUser.username;
-                        document.getElementById('user-status-dot').classList.add('bg-green-500', 'animate-pulse');
                         window.renderDashboard();
                     }
                 } catch (e) { console.error(e); }
@@ -347,7 +349,6 @@
                     document.getElementById('auth-modal').classList.add('hidden');
                     document.getElementById('dashboard-screen').classList.remove('hidden-view');
                     document.getElementById('user-display-name').textContent = currentUser.username;
-                    document.getElementById('user-status-dot').classList.add('bg-green-500', 'animate-pulse');
                     window.renderDashboard();
                 } catch (e) { console.error(e); }
             }
@@ -360,8 +361,6 @@
             currentUser = JSON.parse(saved);
             activeRole = role || 'player';
             document.getElementById('user-display-name').textContent = currentUser.username;
-            const dot = document.getElementById('user-status-dot');
-            if (dot) { dot.classList.add('bg-green-500', 'animate-pulse'); dot.classList.remove('bg-gray-500'); }
             document.getElementById('dashboard-screen').classList.remove('hidden-view');
             return true;
         };
@@ -381,14 +380,14 @@
         };
 
         window.renderDashboard = () => {
-            const grids = { public: document.getElementById('grid-public'), unpublished: document.getElementById('grid-unpublished') };
+            const grids = { public: document.getElementById('grid-public'), unpublished: document.getElementById('grid-unpublished'), private: document.getElementById('grid-private') };
             Object.values(grids).forEach(g => g.innerHTML = '');
-            let countMap = { public: 0, unpublished: 0 };
+            let countMap = { public: 0, unpublished: 0, private: 0 };
             const isDM = activeRole === 'dm';
 
             characters.filter(c => c.type === 'BEAST' && !c.isDeleted).forEach(b => {
                 let vis = b.visibility || 'public';
-                if (vis === 'public' || isDM) {
+                if (vis === 'public' || vis === 'private' || isDM) {
                     countMap[vis]++;
                     grids[vis].appendChild(createBeastCard(b));
                 }
@@ -396,14 +395,16 @@
             document.getElementById('sec-unpublished').classList.toggle('hidden', !isDM);
             document.getElementById('count-public').textContent = countMap.public;
             document.getElementById('count-unpublished').textContent = countMap.unpublished;
+            document.getElementById('count-private').textContent = countMap.private;
         };
 
         function createBeastCard(b) {
             const d = document.createElement('div');
-            let borderCol = b.visibility === 'unpublished' ? 'border-gray-500' : 'border-amber-600';
+            let vis = b.visibility || 'public';
+            let borderCol = vis === 'unpublished' ? 'border-gray-500' : (vis === 'private' ? 'border-purple-600' : 'border-amber-600');
             d.className = `bg-gray-800 p-5 rounded-xl card border-l-4 shadow-xl ${borderCol}`;
             d.onclick = () => window.openSheet(b.id);
-            d.innerHTML = `<div class="flex items-center gap-4"><div class="w-12 h-12 rounded-lg bg-gray-700 overflow-hidden relative">${b.imageSrc ? `<img src="${b.imageSrc}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-xl">🐉</div>`}</div><div><h5 class="text-amber-500 font-serif font-bold uppercase text-xs">${b.name}</h5><p class="text-[10px] text-gray-400 uppercase">${b.summary || 'CR ?'}</p></div></div>`;
+            d.innerHTML = `<div class="flex items-center gap-4"><div class="w-12 h-12 rounded-lg bg-gray-700 overflow-hidden relative">${b.imageSrc ? `<img src="${b.imageSrc}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-xl">🐉</div>`}</div><div><h5 class="text-amber-500 font-serif font-bold uppercase text-xs">${b.name}</h5><p class="text-[10px] text-gray-400 uppercase">${vis === 'private' ? `Pet of ${b.linkedUsername || 'Unknown'}` : (b.summary || 'Level 1')}</p></div></div>`;
             return d;
         }
 
@@ -416,29 +417,34 @@
         }
 
         function syncSheetData() {
-            const char = characters.find(c => c.id === activeCharId); if (!char) return;
+            const beast = characters.find(c => c.id === activeCharId); if (!beast) return;
             const isDM = activeRole === 'dm';
+            const isOwner = currentUser && beast.linkedUsername === currentUser.username;
+            const canEdit = isDM || isOwner;
             
-            document.querySelectorAll('#sheet-screen input, #sheet-screen textarea').forEach(el => el.disabled = !isDM);
+            document.querySelectorAll('#sheet-screen input, #sheet-screen textarea').forEach(el => el.disabled = !canEdit);
+            document.getElementById('portrait-input-file').disabled = !canEdit;
             document.getElementById('dm-secret-sec').classList.toggle('hidden', !isDM);
-            document.getElementById('skill-add-ui').classList.toggle('hidden', !isDM);
+            document.getElementById('skill-add-ui').classList.toggle('hidden', !canEdit);
+            document.getElementById('dm-sheet-controls').classList.toggle('hidden', !canEdit);
+            document.getElementById('view-only-badge').classList.toggle('hidden', canEdit);
 
             const vBadge = document.getElementById('vis-badge');
-            if (vBadge) vBadge.textContent = (char.visibility || 'PUBLIC').toUpperCase();
+            if (vBadge) vBadge.textContent = (beast.visibility || 'PUBLIC').toUpperCase();
 
             document.querySelectorAll('#sheet-screen [data-key]').forEach(el => {
-                el.value = char[el.dataset.key] || (el.type === 'number' ? 0 : '');
+                el.value = beast[el.dataset.key] || (el.type === 'number' ? 0 : '');
             });
 
             const sL = document.getElementById('skills-list'); 
             if (sL) {
                 sL.innerHTML = '';
-                (char.skills || []).forEach((sk, i) => { sL.innerHTML += `<div class="skill-row"><b>${sk.name}</b> <div><span>${sk.val}</span>${isDM ? `<button onclick="window.removeSkill(${i})" class="ml-2 text-red-700">✕</button>` : ''}</div></div>`; });
+                (beast.skills || []).forEach((sk, i) => { sL.innerHTML += `<div class="skill-row"><b>${sk.name}</b> <div><span>${sk.val}</span>${canEdit ? `<button onclick="window.removeSkill(${i})" class="ml-2 text-red-700">✕</button>` : ''}</div></div>`; });
             }
 
             const prev = document.getElementById('portrait-preview');
             const placeholder = document.getElementById('portrait-placeholder');
-            if (char.imageSrc) { prev.src = char.imageSrc; prev.classList.remove('hidden'); placeholder.classList.add('hidden'); }
+            if (beast.imageSrc) { prev.src = beast.imageSrc; prev.classList.remove('hidden'); placeholder.classList.add('hidden'); }
             else { prev.classList.add('hidden'); placeholder.classList.remove('hidden'); }
             
             window.calcMods();
@@ -457,7 +463,11 @@
         };
 
         window.saveBeast = (m) => {
-            if (!activeCharId || activeRole !== 'dm') return;
+            const beast = characters.find(c => c.id === activeCharId);
+            if (!beast) return;
+            const isOwner = currentUser && beast.linkedUsername === currentUser.username;
+            if (!activeCharId || (activeRole !== 'dm' && !isOwner)) return;
+            
             const data = {};
             document.querySelectorAll('#sheet-screen [data-key]').forEach(el => data[el.dataset.key] = el.value);
             const p = document.getElementById('portrait-preview'); if (p && p.src && p.src.startsWith('data:')) data.imageSrc = p.src;
@@ -485,11 +495,11 @@
             reader.readAsDataURL(file);
         };
 
-        window.createBeast = async (vis) => {
+        window.createBeast = async (vis, linked = null) => {
             if (!currentUser || activeRole !== 'dm') return;
             try {
                 const ref = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), {
-                    type: 'BEAST', visibility: vis, name: `UNKNOWN ENTITY`, summary: "Medium Beast, Unaligned", ac: 10, hpDisplay: "10 (2d8 + 2)",
+                    type: 'BEAST', visibility: vis, linkedUsername: linked, name: `UNKNOWN ENTITY`, summary: "Medium Beast, Unaligned", ac: 10, hpDisplay: "10 (2d8 + 2)",
                     isDeleted: false, status: 'alive', str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10, skills: [], description: "", personality: "", dmNotes: ""
                 });
                 window.openSheet(ref.id);
@@ -500,6 +510,19 @@
             if (!activeCharId || activeRole !== 'dm') return;
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { visibility: v });
             window.showToast(`Now ${v.toUpperCase()}`);
+            syncSheetData();
+        };
+
+        window.openPrivateLinkModal = () => { document.getElementById('private-link-modal').classList.remove('hidden'); };
+        window.confirmLinkPrivateBeast = async () => {
+            const target = document.getElementById('private-target-user').value.trim().toLowerCase();
+            if (!target || !activeCharId) return;
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { 
+                visibility: 'private', 
+                linkedUsername: target 
+            });
+            document.getElementById('private-link-modal').classList.add('hidden');
+            window.showToast(`Linked to ${target}`);
             syncSheetData();
         };
 
@@ -522,8 +545,6 @@
 
         window.triggerDelete = () => document.getElementById('delete-modal').classList.remove('hidden');
         window.executeDelete = async () => { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId)); document.getElementById('delete-modal').classList.add('hidden'); window.closeSheet(); };
-        window.resetDeleteModal = () => document.getElementById('delete-modal').classList.add('hidden');
-        window.showPermDeleteConfirm = () => { document.getElementById('delete-stage-1').classList.add('hidden'); document.getElementById('delete-stage-confirm').classList.remove('hidden'); };
 
         const setupListeners = () => {
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), (snap) => {
