@@ -40,6 +40,7 @@
         .script-prop-list { list-style: disc; margin-left: 20px; font-size: 14px; margin-bottom: 16px; }
         .script-prop-list li { margin-bottom: 2px; }
         .script-prop-list b { font-weight: 900; }
+        
         .script-body { font-size: 14px; line-height: 1.6; white-space: pre-wrap; flex-grow: 1; }
         .script-higher-levels { font-size: 13px; margin-top: 12px; padding-top: 12px; border-top: 1px dotted #7a1d1d33; }
         .script-higher-levels b { font-weight: 900; }
@@ -52,7 +53,7 @@
         .classification-none { opacity: 0.4; font-style: normal; font-weight: 400; }
 
         /* Tooltip */
-        .term-hover { position: relative; border-bottom: 1px dotted #7a1d1d; cursor: help; }
+        .term-hover { position: relative; border-bottom: 1px dotted #7a1d1d; cursor: help; display: inline; }
         .tooltip-content {
             visibility: hidden; width: 220px; background-color: #fdfaf3; color: #2c1810;
             text-align: left; border: 2px solid #7a1d1d; border-radius: 6px; padding: 10px;
@@ -103,6 +104,9 @@
             position: absolute; top: -12px; left: 20px; background: #7a1d1d; color: #fff; 
             font-size: 10px; font-weight: 900; padding: 2px 8px; border-radius: 4px; text-transform: uppercase;
         }
+        
+        /* Markdown Specific Styling */
+        .script-bold-term { font-weight: 900; color: #1a1a1a; border-bottom: 1px solid rgba(122, 29, 29, 0.2); }
     </style>
 </head>
 <body class="min-h-screen dashboard-bg">
@@ -266,7 +270,15 @@
             "Duration": "How long the reality-distortion persists before the script expires.",
             "At Higher Levels": "Scaling effects when using higher level script slots.",
             "Concord": "Ritual Protocol: This script can be initialized through ritualistic focus, conserving internal energy reserves.",
-            "Mechanum": "Technomagic Protocol: This script utilizes specialized hardware and digital distortion to warp reality through code."
+            "Mechanum": "Technomagic Protocol: This script utilizes specialized hardware and digital distortion to warp reality through code.",
+            "Attack Roll": "A d20 roll + modifiers used to determine if an offensive script strike lands.",
+            "Saving Throw": "A roll made by the target to resist or mitigate the incoming script's effects.",
+            "Concentration": "Requires continuous focus. Ends if incapacitated or if you fail a check when taking damage.",
+            "Damage": "Physical, energy, or digital integrity loss caused by the script output.",
+            "V": "Verbal: Requires spoken command strings.",
+            "S": "Somatic: Requires precise hand gestures.",
+            "M": "Material: Requires a specific component consumed by the distortion.",
+            "Script Lists": "Authorized user-groups for this specific code block."
         };
 
         let currentClass = "Heartbound";
@@ -324,6 +336,32 @@
         };
         
         window.selectLevel = (l) => { currentLevel = l; renderNavs(); renderLists(); };
+
+        // --- MARKDOWN & TOOLTIP PARSER ---
+        function parseAeonfallContent(text, isDM) {
+            if (!text) return '';
+            
+            // DMs see the raw text symbols in the contenteditable area for easier control
+            if (isDM) return text;
+
+            // 1. Handle Bold with potential Tooltips
+            let html = text.replace(/\*\*(.*?)\*\*/g, (match, p1) => {
+                const term = p1.trim();
+                // Check if term exists in our dictionary
+                if (TOOLTIPS[term]) {
+                    return `<span class="term-hover script-bold-term">${p1}<span class="tooltip-content">${TOOLTIPS[term]}</span></span>`;
+                }
+                return `<b class="script-bold">${p1}</b>`;
+            });
+
+            // 2. Handle Italics
+            html = html.replace(/\*(.*?)\*/g, '<i>$1</i>');
+
+            // 3. Handle Underline
+            html = html.replace(/__(.*?)__/g, '<u>$1</u>');
+
+            return html;
+        }
 
         function wrapWithTooltip(label, termKey) {
             const key = termKey || label;
@@ -411,7 +449,8 @@
                             <li><b>${wrapWithTooltip('Components')}:</b> <span class="${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'components', this.innerText)">${compHtml}</span></li>
                             <li><b>${wrapWithTooltip('Duration')}:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'duration', this.innerText)">${s.duration || 'Instantaneous'}</span></li>
                         </ul>
-                        <div class="script-body dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'content', this.innerText)">${s.content}</div>
+                        <div class="script-body ${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'content', this.innerText)">${parseAeonfallContent(s.content, isDM)}</div>
+                        
                         <div class="script-higher-levels"><b>${wrapWithTooltip('At Higher Levels')}.</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'higherLevels', this.innerText)">${s.higherLevels || 'No scaling details.'}</span></div>
                         <div class="script-footer"><b>Script Lists:</b> <span class="${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'scriptLists', this.innerText)">${isDM ? (s.scriptLists || currentClass) : linkifyClasses(s.scriptLists || currentClass)}</span></div>
                         
@@ -547,7 +586,7 @@
         };
 
         window.addScriptEntry = async () => {
-            const data = { title: "NEW SCRIPT", content: "...", school: "Dominion", classification: "", activationTime: "1 Action", range: "30 feet", components: "V, S", duration: "Instant", higherLevels: "...", scriptLists: currentClass, className: currentClass, level: currentLevel, createdAt: Date.now() };
+            const data = { title: "NEW SCRIPT", content: "Description...", school: "Dominion", classification: "", activationTime: "1 Action", range: "30 feet", components: "V, S", duration: "Instant", higherLevels: "...", scriptLists: currentClass, className: currentClass, level: currentLevel, createdAt: Date.now() };
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookScripts'), data);
         };
         
