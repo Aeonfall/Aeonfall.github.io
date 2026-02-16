@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Aeonfall - Player's Handbook</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Roboto+Slab:wght@300;400;700&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Roboto Slab', serif; background-color: #1a1a1a; color: #e2e8f0; overflow-x: hidden; }
+        .dashboard-bg { background-image: url('https://www.transparenttextures.com/patterns/dark-wood.png'); background-color: #0c0c0c; }
+        
+        /* HEADER STYLING - MATCHING SCREENSHOT */
+        .brand-title { font-family: 'Cinzel', serif; font-weight: 900; color: #f59e0b; font-size: 3.5rem; line-height: 1; margin-bottom: 0.2rem; }
+        .brand-sub { font-family: 'Cinzel', serif; font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.15em; text-transform: uppercase; }
+        
+        .user-pill { background: rgba(30, 41, 59, 0.6); border: 1px solid #334155; padding: 6px 16px; border-radius: 99px; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        .status-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 10px #22c55e; }
+        .user-name-text { font-family: 'Cinzel', serif; font-size: 11px; font-weight: 900; color: #e2e8f0; text-transform: uppercase; }
+        .logout-btn { font-family: 'Cinzel', serif; font-size: 10px; font-weight: 700; color: #ef4444; border-left: 1px solid #475569; padding-left: 10px; margin-left: 4px; cursor: pointer; }
+        
+        .role-selector { background: #0f172a; border-radius: 12px; padding: 4px; display: flex; gap: 4px; border: 1px solid #1e293b; }
+        .role-btn { padding: 8px 24px; font-family: 'Cinzel', serif; font-size: 11px; font-weight: 900; border-radius: 8px; transition: all 0.3s; color: #475569; text-transform: uppercase; }
+        .role-btn.active { background: #d97706; color: white; box-shadow: 0 4px 12px rgba(217, 119, 6, 0.4); }
+
+        .nav-link { font-family: 'Cinzel', serif; color: #94a3b8; font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.2s; padding-bottom: 6px; border-bottom: 2px solid transparent; }
+        .nav-link:hover { color: #f59e0b; }
+        .nav-link.active { color: #f59e0b; border-bottom-color: #f59e0b; }
+        .nav-link.graveyard { color: #7f1d1d; }
+
+        /* SCRIPT CARD Aesthetic */
+        .script-card {
+            background-color: #fdfaf3; border: 2px solid #bba683; border-radius: 12px;
+            padding: 24px; color: #2c1810; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            position: relative; height: 100%; display: flex; flex-direction: column;
+        }
+        .script-card-header { border-bottom: 2px solid #7a1d1d; margin-bottom: 8px; padding-bottom: 4px; }
+        .script-card-title { font-family: 'Cinzel', serif; font-weight: 900; font-size: 24px; color: #7a1d1d; text-transform: uppercase; }
+        .script-card-level { font-style: italic; font-size: 14px; margin-bottom: 12px; display: block; }
+        .script-prop-list { list-style: disc; margin-left: 20px; font-size: 14px; margin-bottom: 16px; }
+        .script-prop-list li { margin-bottom: 2px; }
+        .script-prop-list b { font-weight: 900; }
+        .script-body { font-size: 14px; line-height: 1.6; white-space: pre-wrap; flex-grow: 1; }
+        .script-higher-levels { font-size: 13px; margin-top: 12px; padding-top: 12px; border-top: 1px dotted #7a1d1d33; }
+        .script-higher-levels b { font-weight: 900; }
+        .script-footer { font-style: italic; font-size: 12px; margin-top: 12px; border-top: 1px solid #7a1d1d33; padding-top: 8px; }
+        .script-footer b { font-weight: 900; font-style: normal; }
+
+        /* Tooltip */
+        .term-hover { position: relative; border-bottom: 1px dotted #7a1d1d; cursor: help; }
+        .tooltip-content {
+            visibility: hidden; width: 220px; background-color: #fdfaf3; color: #2c1810;
+            text-align: left; border: 2px solid #7a1d1d; border-radius: 6px; padding: 10px;
+            position: absolute; z-index: 100; bottom: 125%; left: 50%; margin-left: -110px;
+            opacity: 0; transition: opacity 0.3s; font-size: 11px; line-height: 1.4;
+            font-family: 'Roboto Slab', serif; box-shadow: 0 5px 15px rgba(0,0,0,0.3); pointer-events: none; font-style: normal;
+        }
+        .tooltip-content::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px; border-width: 5px; border-style: solid; border-color: #7a1d1d transparent transparent transparent; }
+        .term-hover:hover .tooltip-content { visibility: visible; opacity: 1; }
+
+        .class-link { color: #7a1d1d; text-decoration: underline; text-decoration-style: dotted; cursor: pointer; font-weight: 700; transition: color 0.2s; }
+        .class-link:hover { color: #f59e0b; }
+
+        /* Hub Buttons */
+        .archive-button {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid #334155; border-radius: 16px; padding: 24px;
+            display: flex; align-items: center; gap: 20px; transition: all 0.3s;
+            cursor: pointer; width: 100%;
+        }
+        .archive-button:hover { transform: translateY(-4px); border-color: #f59e0b; }
+        .button-label { font-family: 'Cinzel', serif; font-weight: 900; font-size: 18px; color: #f59e0b; text-transform: uppercase; }
+        .button-desc { font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; margin-top: 2px; }
+
+        .hidden-view { display: none !important; }
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1e293b; color: #fff; padding: 12px 24px; border-radius: 30px; z-index: 2000; opacity: 0; transition: opacity 0.3s; pointer-events: none; border: 1px solid #3b82f6; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        
+        /* DM Edit Overlays */
+        .dm-editable { transition: background 0.2s; border-radius: 4px; }
+        .dm-active-edit .dm-editable { background: rgba(122, 29, 29, 0.05); outline: 1px dashed #7a1d1d; padding: 2px; }
+        
+        .class-tab { padding: 8px 16px; font-size: 10px; font-weight: 900; text-transform: uppercase; cursor: pointer; border: 1px solid #333; border-radius: 4px; color: #94a3b8; }
+        .class-tab.active { background: #f59e0b; color: #000; border-color: #f59e0b; }
+        .level-bubble { width: 30px; height: 30px; border-radius: 50%; display: flex; items-center; justify-content: center; font-weight: 900; font-size: 11px; cursor: pointer; border: 2px solid #bba683; background: #fdfaf3; }
+        .level-bubble.active { background: #7a1d1d; color: #fff; border-color: #7a1d1d; }
+
+        input, textarea { background: transparent; border: none; width: 100%; color: inherit; }
+        .modal-overlay { background: rgba(0,0,0,0.95); backdrop-filter: blur(8px); }
+
+        /* Session Log Specific Styling */
+        .session-field-group { margin-bottom: 8px; font-size: 14px; }
+        .session-field-group b { font-weight: 900; text-transform: uppercase; color: #7a1d1d; margin-right: 4px; }
+        .dm-intel-box { 
+            background: rgba(122, 29, 29, 0.05); border: 2px solid #7a1d1d; border-radius: 8px; 
+            padding: 20px; margin-top: 32px; position: relative;
+        }
+        .dm-intel-label { 
+            position: absolute; top: -12px; left: 20px; background: #7a1d1d; color: #fff; 
+            font-size: 10px; font-weight: 900; padding: 2px 8px; border-radius: 4px; text-transform: uppercase;
+        }
+    </style>
+</head>
+<body class="min-h-screen dashboard-bg">
+
+    <div id="toast" class="toast">Message</div>
+
+    <!-- MAIN HUB -->
+    <div id="hub-view" class="p-4 md:p-8">
+        <div class="max-w-7xl mx-auto">
+            
+            <header class="flex flex-col md:flex-row justify-between items-end mb-12 border-b border-gray-800/50 pb-8 gap-6">
+                <div class="flex flex-col items-start">
+                    <h1 class="brand-title">Aeonfall</h1>
+                    <div class="flex items-center gap-6">
+                        <p class="brand-sub">Campaign Management Suite</p>
+                        <div class="user-pill">
+                            <span class="status-dot"></span>
+                            <span id="user-display-name" class="user-name-text">Guest</span>
+                            <button onclick="window.logout()" class="logout-btn uppercase">Logout</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-end gap-6 w-full md:w-auto">
+                    <div class="role-selector">
+                        <button id="role-player-btn" onclick="window.setRole('player')" class="role-btn">Player</button>
+                        <button id="role-dm-btn" onclick="window.setRole('dm')" class="role-btn">DM</button>
+                    </div>
+                    <nav class="flex gap-8 items-center">
+                        <a href="index.html" class="nav-link">Party</a>
+                        <a href="npcs.html" class="nav-link">NPCs</a>
+                        <a href="beasts.html" class="nav-link">Bestiary</a>
+                        <a href="backpack.html" class="nav-link">Backpack</a>
+                        <a href="#" class="nav-link active">Handbook</a>
+                        <a href="index.html" class="nav-link graveyard uppercase">Graveyard</a>
+                    </nav>
+                </div>
+            </header>
+
+            <div class="flex flex-col gap-5 max-w-2xl mx-auto mt-16">
+                <a href="https://homebrewery.naturalcrit.com/share/he6P3R1e5dgq" target="_blank" class="archive-button no-underline">
+                    <span class="text-4xl">📖</span>
+                    <div class="flex flex-col">
+                        <span class="button-label">Players Handbook</span>
+                        <span class="button-desc">Official Aeonfall Rules & Mechanics</span>
+                    </div>
+                    <span class="ml-auto text-amber-900 font-black">→</span>
+                </a>
+
+                <div onclick="window.switchView('scripts')" class="archive-button">
+                    <span class="text-4xl">📜</span>
+                    <div class="flex flex-col">
+                        <span class="button-label">Script Codex</span>
+                        <span class="button-desc">Class Abilities & Tech Schools</span>
+                    </div>
+                    <span class="ml-auto text-amber-900 font-black">→</span>
+                </div>
+
+                <div onclick="window.switchView('sessions')" class="archive-button">
+                    <span class="text-4xl">🖋️</span>
+                    <div class="flex flex-col">
+                        <span class="button-label">Session Logs</span>
+                        <span class="button-desc">Chronicles of the Party Deeds</span>
+                    </div>
+                    <span class="ml-auto text-amber-900 font-black">→</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS VIEW -->
+    <div id="scripts-view" class="hidden-view p-4 md:p-8">
+        <div class="max-w-6xl mx-auto">
+            <button onclick="window.switchView('hub')" class="text-amber-500 font-black text-xs uppercase mb-8 hover:text-amber-400">← Back to Archives</button>
+            <div class="flex flex-wrap gap-2 mb-8" id="class-tabs"></div>
+            
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+                <div class="text-center md:text-left">
+                    <h2 class="font-serif font-black text-3xl uppercase text-amber-500" id="current-class-title">Scripts</h2>
+                    <div class="flex items-center gap-3 mt-4" id="level-nav"></div>
+                </div>
+                <button id="add-script-btn" onclick="window.addScriptEntry()" class="hidden bg-amber-600 text-white px-8 py-3 rounded-full font-black text-xs uppercase shadow-xl hover:bg-amber-500">+ Inscribe New Script</button>
+            </div>
+            <div id="scripts-list" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div>
+        </div>
+    </div>
+
+    <!-- SESSIONS VIEW -->
+    <div id="sessions-view" class="hidden-view p-4 md:p-8">
+        <div class="max-w-6xl mx-auto">
+            <button onclick="window.switchView('hub')" class="text-amber-500 font-black text-xs uppercase mb-8 hover:text-amber-400">← Back to Archives</button>
+            <div class="bg-[#fdfaf3] border-8 border-[#bba683] p-10 text-gray-900 min-h-[600px] shadow-2xl relative">
+                <div class="absolute inset-0 border-2 border-[#2c1810] pointer-events-none" style="margin: 4px;"></div>
+                <div class="flex justify-between items-end mb-8 border-b-2 border-gray-900 pb-4">
+                    <h2 class="font-serif font-black text-3xl uppercase tracking-widest text-[#7a1d1d]">Campaign Chronicles</h2>
+                    <button id="add-session-btn" onclick="window.addSessionEntry()" class="hidden bg-amber-800 text-white px-6 py-2 rounded-full font-black text-[10px] uppercase shadow-lg">+ New Session</button>
+                </div>
+                <div id="sessions-list" class="space-y-20"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DELETE CONFIRMATION MODAL -->
+    <div id="delete-modal" class="fixed inset-0 z-[600] flex items-center justify-center p-4 hidden">
+        <div class="modal-overlay absolute inset-0" onclick="document.getElementById('delete-modal').classList.add('hidden')"></div>
+        <div class="bg-white p-8 rounded-2xl w-full max-w-sm border-4 border-red-600 text-center text-gray-900 relative z-10 shadow-2xl">
+            <h3 class="text-2xl font-serif font-black text-red-700 uppercase mb-4">Archive Disposal</h3>
+            <p class="text-sm text-gray-500 mb-8 italic leading-relaxed">This record will be permanently erased. This action is irreversible.</p>
+            <div class="flex flex-col gap-3">
+                <button id="confirm-delete-btn" class="w-full bg-red-700 hover:bg-red-800 text-white py-4 rounded-xl font-black text-xs uppercase shadow-lg">Yes, Erase Permanently</button>
+                <button onclick="document.getElementById('delete-modal').classList.add('hidden')" class="w-full bg-gray-100 text-gray-500 py-3 rounded-xl font-black text-[10px] uppercase">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DM PASSWORD MODAL -->
+    <div id="password-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[500] hidden">
+        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border-2 border-amber-600 text-white text-center shadow-2xl">
+            <h3 class="text-xl font-serif text-amber-500 font-bold mb-2 uppercase">Dungeon Master Access</h3>
+            <input type="password" id="dm-password" class="w-full bg-gray-900 text-center text-2xl rounded-lg p-3 mb-6 border border-gray-700">
+            <button onclick="window.verifyDmPassword()" class="w-full bg-amber-600 text-white py-3 rounded-xl font-bold uppercase text-xs">Unlock Archives</button>
+            <button onclick="document.getElementById('password-modal').classList.add('hidden')" class="w-full text-gray-500 mt-4 text-[10px] uppercase font-bold">Cancel</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, doc, updateDoc, setDoc, onSnapshot, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI", authDomain: "aeonfall-523c1.firebaseapp.com", projectId: "aeonfall-523c1", storageBucket: "aeonfall-523c1.firebasestorage.app", messagingSenderId: "716207733913", appId: "1:716207733913:web:7aac43906a70e2b5f50c08" };
+        const appId = 'aeonfall-manager-v2';
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        const CLASSES = ["Heartbound", "Nomad", "Wilderness Warden", "Chronicler", "Orator", "Scriptweaver", "War-Touched", "Archivist", "Fabricator"];
+        const TOOLTIPS = {
+            "Activation Time": "The amount of time required to initialize this script and push it to reality.",
+            "Range/Area": "The maximum distance the script can reach, or the spatial dimensions of its effect.",
+            "Components": "Triggers: Verbal (Commands), Somatic (Gestures), or Material (Items).",
+            "Duration": "How long the reality-distortion persists before the script expires.",
+            "At Higher Levels": "Scaling effects when using higher level script slots."
+        };
+
+        let currentClass = "Heartbound";
+        let currentLevel = 1; 
+        let activeRole = 'player';
+        let scripts = [], sessions = [];
+        let autoSaveTimer = null;
+        let itemToDeleteId = null;
+        let deleteType = ''; 
+
+        window.showToast = (m) => { const t = document.getElementById('toast'); t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 3000); };
+
+        window.setRole = (r) => { 
+            if (r === 'dm') {
+                if (localStorage.getItem('aeonfall_role') === 'dm') return;
+                document.getElementById('password-modal').classList.remove('hidden'); 
+            } else { 
+                activeRole = 'player'; localStorage.setItem('aeonfall_role', 'player'); window.updateRoleUI(); 
+            } 
+        };
+        
+        window.verifyDmPassword = () => { 
+            if (document.getElementById('dm-password').value === 'Rew4994') { 
+                activeRole = 'dm'; localStorage.setItem('aeonfall_role', 'dm'); document.getElementById('password-modal').classList.add('hidden'); window.updateRoleUI(); 
+            } else { window.showToast("Access Denied"); } 
+        };
+
+        window.logout = () => { localStorage.removeItem('aeonfall_user'); localStorage.removeItem('aeonfall_role'); window.location.reload(); };
+
+        window.updateRoleUI = () => {
+            const isDM = activeRole === 'dm';
+            document.getElementById('role-player-btn').classList.toggle('active', !isDM);
+            document.getElementById('role-dm-btn').classList.toggle('active', isDM);
+            document.getElementById('add-script-btn').classList.toggle('hidden', !isDM);
+            document.getElementById('add-session-btn').classList.toggle('hidden', !isDM);
+            renderLists();
+            renderNavs();
+        };
+
+        window.switchView = (v) => {
+            ['hub', 'scripts', 'sessions'].forEach(id => document.getElementById(`${id}-view`).classList.add('hidden-view'));
+            document.getElementById(`${v}-view`).classList.remove('hidden-view');
+            window.scrollTo(0,0);
+        };
+
+        window.selectClass = (c) => { 
+            currentClass = c; 
+            const shortClasses = ["Heartbound", "Nomad", "Fabricator"];
+            if (shortClasses.includes(c)) { if (currentLevel < 1) currentLevel = 1; if (currentLevel > 5) currentLevel = 5; }
+            renderNavs(); renderLists(); 
+        };
+        
+        window.selectLevel = (l) => { currentLevel = l; renderNavs(); renderLists(); };
+
+        function wrapWithTooltip(label, termKey) {
+            const key = termKey || label;
+            if (TOOLTIPS[key]) return `<span class="term-hover">${label}<span class="tooltip-content">${TOOLTIPS[key]}</span></span>`;
+            return label;
+        }
+
+        function linkifyClasses(text) {
+            if (!text) return '';
+            let linkedText = text;
+            CLASSES.forEach(cls => {
+                const regex = new RegExp(`\\b${cls}\\b`, 'g');
+                linkedText = linkedText.replace(regex, `<span class="class-link" onclick="event.stopPropagation(); window.selectClass('${cls}')">${cls}</span>`);
+            });
+            return linkedText;
+        }
+
+        function renderNavs() {
+            const tabs = document.getElementById('class-tabs');
+            if (tabs) tabs.innerHTML = CLASSES.map(c => `<div class="class-tab ${currentClass === c ? 'active' : ''}" onclick="window.selectClass('${c}')">${c}</div>`).join('');
+
+            const lNav = document.getElementById('level-nav');
+            if (lNav) {
+                const shortClasses = ["Heartbound", "Nomad", "Fabricator"];
+                let levels = shortClasses.includes(currentClass) ? [1, 2, 3, 4, 5] : [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+                lNav.innerHTML = levels.map(l => `<div class="level-bubble ${currentLevel === l ? 'active' : ''}" onclick="window.selectLevel(${l})">${l === 0 ? 'T' : l}</div>`).join('');
+            }
+            const title = document.getElementById('current-class-title');
+            if (title) title.textContent = `${currentClass} ${currentLevel === 0 ? 'Tricks' : 'Lv. ' + currentLevel}`;
+        }
+
+        const renderLists = () => {
+            const isDM = activeRole === 'dm';
+            
+            // Scripts Rendering
+            const sList = document.getElementById('scripts-list');
+            if (sList) {
+                sList.innerHTML = '';
+                const filteredScripts = scripts.filter(s => s.className === currentClass && parseInt(s.level) === currentLevel);
+                filteredScripts.forEach(s => {
+                    const card = document.createElement('div');
+                    card.className = `script-card ${isDM ? 'dm-active-edit' : ''}`;
+                    card.innerHTML = `
+                        <div class="script-card-header">
+                            <div class="script-card-title dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'title', this.innerText)">${s.title}</div>
+                            ${isDM ? `<button onclick="window.triggerDeleteScript('${s.id}')" class="absolute top-4 right-4 text-red-700 opacity-30 hover:opacity-100">✕</button>` : ''}
+                        </div>
+                        <span class="script-card-level">${s.level === 0 ? 'Trick' : s.level + '-level'} — <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'school', this.innerText)">${s.school || 'Dominion'}</span></span>
+                        <ul class="script-prop-list">
+                            <li><b>${wrapWithTooltip('Activation Time')}:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'activationTime', this.innerText)">${s.activationTime || '1 Action'}</span></li>
+                            <li><b>${wrapWithTooltip('Range/Area')}:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'range', this.innerText)">${s.range || '30 feet'}</span></li>
+                            <li><b>${wrapWithTooltip('Components')}:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'components', this.innerText)">${s.components || 'V, S'}</span></li>
+                            <li><b>${wrapWithTooltip('Duration')}:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'duration', this.innerText)">${s.duration || 'Instantaneous'}</span></li>
+                        </ul>
+                        <div class="script-body dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'content', this.innerText)">${s.content}</div>
+                        <div class="script-higher-levels"><b>${wrapWithTooltip('At Higher Levels')}.</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'higherLevels', this.innerText)">${s.higherLevels || 'No scaling details.'}</span></div>
+                        <div class="script-footer"><b>Script Lists:</b> <span class="${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'scriptLists', this.innerText)">${isDM ? (s.scriptLists || currentClass) : linkifyClasses(s.scriptLists || currentClass)}</span></div>
+                    `;
+                    sList.appendChild(card);
+                });
+            }
+
+            // Session Log Rendering
+            const sessList = document.getElementById('sessions-list');
+            if (sessList) {
+                sessList.innerHTML = '';
+                sessions.forEach(s => {
+                    const div = document.createElement('div');
+                    div.className = `relative ${isDM ? 'dm-active-edit' : ''}`;
+                    
+                    // Main Session Body
+                    let html = `
+                        <div class="flex justify-between items-start mb-6 border-b border-gray-900/10 pb-2">
+                            <div class="font-serif font-black text-4xl uppercase text-[#7a1d1d] dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'title', this.innerText)">${s.title}</div>
+                            ${isDM ? `<button onclick="window.triggerDeleteSession('${s.id}')" class="text-red-700 font-black text-[10px] uppercase border border-red-200 px-2 py-1 rounded">Erase Log</button>` : ''}
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12">
+                            <div>
+                                <div class="session-field-group"><b>Date:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'date', this.innerText)">${s.date}</span></div>
+                                <div class="session-field-group"><b>Starting Point:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'startingPoint', this.innerText)">${s.startingPoint || '...'}</span></div>
+                                <div class="session-field-group"><b>Summary of Last Session:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'lastSessionSummary', this.innerText)">${s.lastSessionSummary || '...'}</span></div>
+                            </div>
+                        </div>
+
+                        <div class="mt-8">
+                            <h4 class="font-serif font-black text-xl uppercase text-[#7a1d1d] mb-4">Scenes / Beats</h4>
+                            <div class="space-y-4">
+                                <div class="session-field-group"><b>1. Hook / Opening:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene1', this.innerText)">${s.scene1 || '...'}</div></div>
+                                <div class="session-field-group"><b>2. Key NPCs & Goals:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene2', this.innerText)">${s.scene2 || '...'}</div></div>
+                                <div class="session-field-group"><b>3. Challenges / Encounters:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene3', this.innerText)">${s.scene3 || '...'}</div></div>
+                                <div class="session-field-group"><b>4. Secrets or Clues:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene4', this.innerText)">${s.scene4 || '...'}</div></div>
+                                <div class="session-field-group"><b>5. Closing Scene / Cliffhanger:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene5', this.innerText)">${s.scene5 || '...'}</div></div>
+                            </div>
+                        </div>
+                    `;
+
+                    // DM ONLY INTEL BOX
+                    if (isDM) {
+                        html += `
+                            <div class="dm-intel-box">
+                                <span class="dm-intel-label">DM Intel — Private</span>
+                                <div class="mb-6">
+                                    <div class="font-black text-[11px] uppercase text-[#7a1d1d] mb-2">Session Goals</div>
+                                    <div class="text-sm italic mb-2">How do I want them to feel? What revelations happen?</div>
+                                    <div class="dm-editable min-h-[60px] bg-white/50 p-2 rounded" contenteditable="true" oninput="window.debounceUpdateSession('${s.id}', 'dmGoals', this.innerText)">${s.dmGoals || '...'}</div>
+                                </div>
+                                <div class="mb-6">
+                                    <div class="font-black text-[11px] uppercase text-[#7a1d1d] mb-2">Running Notes (Live Play)</div>
+                                    <div class="dm-editable min-h-[100px] bg-white/50 p-2 rounded" contenteditable="true" oninput="window.debounceUpdateSession('${s.id}', 'dmRunningNotes', this.innerText)">${s.dmRunningNotes || '...'}</div>
+                                </div>
+                                <div>
+                                    <div class="font-black text-[11px] uppercase text-[#7a1d1d] mb-2">The Aftermath</div>
+                                    <div class="text-sm italic mb-2">NPC deaths, world changes, new items/leads...</div>
+                                    <div class="dm-editable min-h-[80px] bg-white/50 p-2 rounded" contenteditable="true" oninput="window.debounceUpdateSession('${s.id}', 'dmAftermath', this.innerText)">${s.dmAftermath || '...'}</div>
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    div.innerHTML = html;
+                    sessList.appendChild(div);
+                });
+            }
+        };
+
+        window.debounceUpdate = (id, field, val) => {
+            if (autoSaveTimer) clearTimeout(autoSaveTimer);
+            autoSaveTimer = setTimeout(() => { updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookScripts', id), { [field]: val }); }, 1000);
+        };
+        window.debounceUpdateSession = (id, field, val) => {
+            if (autoSaveTimer) clearTimeout(autoSaveTimer);
+            autoSaveTimer = setTimeout(() => { updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookSessions', id), { [field]: val }); }, 1000);
+        };
+
+        window.triggerDeleteScript = (id) => { itemToDeleteId = id; deleteType = 'script'; document.getElementById('delete-modal').classList.remove('hidden'); };
+        window.triggerDeleteSession = (id) => { itemToDeleteId = id; deleteType = 'session'; document.getElementById('delete-modal').classList.remove('hidden'); };
+
+        document.getElementById('confirm-delete-btn').onclick = async () => {
+            if (!itemToDeleteId) return;
+            const collectionName = deleteType === 'script' ? 'handbookScripts' : 'handbookSessions';
+            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', collectionName, itemToDeleteId));
+            document.getElementById('delete-modal').classList.add('hidden');
+            window.showToast("Erased");
+            itemToDeleteId = null;
+        };
+
+        window.addScriptEntry = async () => {
+            const data = { title: "NEW SCRIPT", content: "...", school: "Dominion", activationTime: "1 Action", range: "30 feet", components: "V, S", duration: "Instant", higherLevels: "...", scriptLists: currentClass, className: currentClass, level: currentLevel, createdAt: Date.now() };
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookScripts'), data);
+        };
+        
+        window.addSessionEntry = async () => {
+            const data = { 
+                title: "SESSION #", date: new Date().toLocaleDateString(), startingPoint: "...", lastSessionSummary: "...",
+                scene1: "...", scene2: "...", scene3: "...", scene4: "...", scene5: "...",
+                dmGoals: "...", dmRunningNotes: "...", dmAftermath: "...",
+                createdAt: Date.now() 
+            };
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookSessions'), data);
+        };
+
+        const init = async () => {
+            await signInAnonymously(auth);
+            const saved = localStorage.getItem('aeonfall_user');
+            if (saved) document.getElementById('user-display-name').textContent = JSON.parse(saved).username;
+            const role = localStorage.getItem('aeonfall_role');
+            if (role) activeRole = role;
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookScripts'), (snap) => { scripts = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => a.createdAt - b.createdAt); renderLists(); });
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookSessions'), (snap) => { sessions = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => b.createdAt - a.createdAt); renderLists(); });
+            window.updateRoleUI();
+        };
+        init();
+    </script>
+</body>
+</html>
