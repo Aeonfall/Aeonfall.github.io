@@ -250,8 +250,8 @@
             "Components": "Triggers: Verbal (Commands), Somatic (Gestures), or Material (Items).",
             "Duration": "How long the reality-distortion persists before the script expires.",
             "At Higher Levels": "Scaling effects when using higher level script slots.",
-            "Concord": "Concards are repeatable, rule-bound procedures that produce reliable outcomes through precise sequencing, timing, and execution.",
-            "Mechanum": "Mechanum is the application of advanced technology that exploits unknown or poorly understood physical principles to alter matter, energy, or systems in controlled ways.",
+            "Concord": "Ritual Protocol: This script can be initialized through ritualistic focus, conserving internal energy reserves.",
+            "Mechanum": "Technomagic Protocol: This script utilizes specialized hardware and digital distortion to warp reality through code.",
             "Attack Roll": "A d20 roll + modifiers used to determine if an offensive script strike lands.",
             "Saving Throw": "A roll made by the target to resist or mitigate the incoming script's effects.",
             "Concentration": "Requires continuous focus. Ends if incapacitated or if you fail a check when taking damage.",
@@ -265,15 +265,7 @@
             "d8": "An eight-sided die, typically used for significant physical or kinetic impact.",
             "d10": "A ten-sided die for heavy-duty calculations and high-output scripts.",
             "d12": "A twelve-sided die for massive atmospheric or biological shifts.",
-            "d20": "A twenty-sided die used to determine the success of an action.",
-            "Aegis": "Aegis School of Tech: Aegis governs protection, prevention, and resistance, creating wards that block, absorb, or negate harm.",
-            "Calling": "Calling School of Tech: Calling governs summoning and creation, drawing creatures, objects, or forces into existence or from elsewhere.",
-            "Sight": "Sight School of Tech: Sight governs information and foresight, revealing truths, patterns, and possibilities beyond normal perception.",
-            "Dominion": "Dominion School of Tech: Dominion governs will and influence, shaping thoughts, emotions, and behavior through directed intent.",
-            "Ruin": "Ruin School of Tech: Ruin governs raw energy and destruction, unleashing elemental and forceful power to damage or overwhelm.",
-            "Veil": "Veil School of Tech: Veil governs sensory manipulation, altering what creatures see, hear, or believe to create deception.",
-            "Mortis": "Mortis School of Tech: Mortis governs biological failure and recovery, managing decay, stabilization, and vitality at the edge of life.",
-            "Forge": "Forge School of Tech: Forge governs transformation, reshaping matter, bodies, and materials into new forms."
+            "d20": "A twenty-sided die used to determine the success of an action."
         };
 
         let currentClass = "Heartbound";
@@ -386,6 +378,43 @@
             window.showToast(newVal ? `Script Type: ${newVal}` : "Classification Removed");
         };
 
+        // --- CLIPBOARD LOGIC ---
+        window.copyScript = (id) => {
+            const s = scripts.find(script => script.id === id);
+            if (!s) return;
+
+            // Strip formatting symbols AND definition text (handle &&Term|Definition&&)
+            const cleanContent = (s.content || "")
+                .replace(/&&([^|&]+)(?:\|[^&]+)?&&/g, '$1') // Replaces &&Term|Def&& with Term
+                .replace(/\*\*|\*|__/g, '');
+
+            const text = `--- AEONFALL SCRIPT DATA ---\n` +
+                `NAME: ${s.title.toUpperCase()}\n` +
+                `LEVEL: ${s.level === 0 ? 'Trick' : s.level}\n` +
+                `SCHOOL: ${s.school || 'Dominion'}\n` +
+                `TYPE: ${s.classification || 'Standard'}\n` +
+                `ACTIVATION: ${s.activationTime || '1 Action'}\n` +
+                `RANGE: ${s.range || '30 feet'}\n` +
+                `COMPONENTS: ${s.components || 'V, S'}\n` +
+                `DURATION: ${s.duration || 'Instant'}\n\n` +
+                `EFFECT:\n${cleanContent}\n\n` +
+                `SCALING:\n${s.higherLevels || 'None'}\n\n` +
+                `AUTHORIZED USERS: ${s.scriptLists || s.className || 'General'}`;
+
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                // Using document.execCommand for better compatibility in isolated environments
+                document.execCommand('copy');
+                window.showToast("Data Compiled & Copied to Clipboard");
+            } catch (err) {
+                window.showToast("Failed to access system clipboard");
+            }
+            document.body.removeChild(textArea);
+        };
+
         const renderLists = () => {
             const isDM = activeRole === 'dm';
             
@@ -435,6 +464,10 @@
                         
                         <div class="script-higher-levels"><b>${wrapWithTooltip('At Higher Levels')}.</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'higherLevels', this.innerText)">${s.higherLevels || 'No scaling details.'}</span></div>
                         <div class="script-footer"><b>Script Lists:</b> <span class="${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'scriptLists', this.innerText)">${isDM ? (s.scriptLists || currentClass) : linkifyClasses(s.scriptLists || currentClass)}</span></div>
+                        
+                        <button onclick="window.copyScript('${s.id}')" class="mt-6 w-full bg-[#2c1810]/5 hover:bg-[#7a1d1d]/10 border border-[#7a1d1d33] py-2 rounded-lg text-[#7a1d1d] font-black text-[10px] uppercase transition-all flex items-center justify-center gap-2">
+                            <span>📋</span> Copy Script Data
+                        </button>
                     `;
                     sList.appendChild(card);
                 });
@@ -546,9 +579,6 @@
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookSessions'), (snap) => {
                 sessions = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => b.createdAt - a.createdAt);
                 renderLists();
-            });
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), (snap) => {
-                allCharacters = snap.docs.map(d => ({id: d.id, ...d.data()}));
             });
             window.updateRoleUI();
         };
