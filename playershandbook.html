@@ -10,14 +10,20 @@
         body { font-family: 'Roboto Slab', serif; background-color: #1a1a1a; color: #e2e8f0; overflow-x: hidden; }
         .dashboard-bg { background-image: url('https://www.transparenttextures.com/patterns/dark-wood.png'); background-color: #0c0c0c; }
         
-        /* HEADER STYLING - MATCHING BRANDING */
+        /* HEADER STYLING */
         .brand-title { font-family: 'Cinzel', serif; font-weight: 900; color: #f59e0b; font-size: 3.5rem; line-height: 1; margin-bottom: 0.2rem; }
         .brand-sub { font-family: 'Cinzel', serif; font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.15em; text-transform: uppercase; }
         
-        .user-pill { background: rgba(30, 41, 59, 0.6); border: 1px solid #334155; padding: 6px 16px; border-radius: 99px; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        .user-pill { background: rgba(30, 41, 59, 0.8); border: 1px solid #334155; padding: 8px 16px; border-radius: 99px; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); position: relative; z-index: 100; pointer-events: auto; }
         .status-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 10px #22c55e; }
+        .status-dot.offline { background: #64748b; box-shadow: none; }
         .user-name-text { font-family: 'Cinzel', serif; font-size: 11px; font-weight: 900; color: #e2e8f0; text-transform: uppercase; }
-        .logout-btn { font-family: 'Cinzel', serif; font-size: 10px; font-weight: 700; color: #ef4444; border-left: 1px solid #475569; padding-left: 10px; margin-left: 4px; cursor: pointer; }
+        
+        .auth-btn { font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; border-left: 1px solid #475569; padding: 4px 4px 4px 12px; margin-left: 4px; cursor: pointer; transition: all 0.2s; text-transform: uppercase; }
+        .logout-btn { color: #ef4444; }
+        .logout-btn:hover { color: #f87171; }
+        .login-btn { color: #22c55e; }
+        .login-btn:hover { color: #4ade80; }
         
         .role-selector { background: #0f172a; border-radius: 12px; padding: 4px; display: flex; gap: 4px; border: 1px solid #1e293b; }
         .role-btn { padding: 8px 24px; font-family: 'Cinzel', serif; font-size: 11px; font-weight: 900; border-radius: 8px; transition: all 0.3s; color: #475569; text-transform: uppercase; }
@@ -28,7 +34,7 @@
         .nav-link.active { color: #f59e0b; border-bottom-color: #f59e0b; }
         .nav-link.graveyard { color: #7f1d1d; }
 
-        /* SCRIPT CARD Aesthetic */
+        /* SCRIPT CARD */
         .script-card {
             background-color: #fdfaf3; border: 2px solid #bba683; border-radius: 12px;
             padding: 24px; color: #2c1810; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
@@ -36,20 +42,7 @@
         }
         .script-card-header { border-bottom: 2px solid #7a1d1d; margin-bottom: 8px; padding-bottom: 4px; }
         .script-card-title { font-family: 'Cinzel', serif; font-weight: 900; font-size: 24px; color: #7a1d1d; text-transform: uppercase; }
-        .script-card-level { font-style: italic; font-size: 14px; margin-bottom: 12px; display: block; }
-        .script-prop-list { list-style: disc; margin-left: 20px; font-size: 14px; margin-bottom: 16px; }
-        .script-prop-list li { margin-bottom: 2px; }
-        .script-prop-list b { font-weight: 900; }
         .script-body { font-size: 14px; line-height: 1.6; white-space: pre-wrap; flex-grow: 1; }
-        .script-higher-levels { font-size: 13px; margin-top: 12px; padding-top: 12px; border-top: 1px dotted #7a1d1d33; }
-        .script-higher-levels b { font-weight: 900; }
-        .script-footer { font-style: italic; font-size: 12px; margin-top: 12px; border-top: 1px solid #7a1d1d33; padding-top: 8px; }
-        .script-footer b { font-weight: 900; font-style: normal; }
-
-        /* Classification Styling */
-        .classification-pill { font-weight: 900; color: #7a1d1d; cursor: pointer; border-bottom: 1px dashed rgba(122, 29, 29, 0.4); transition: color 0.2s; }
-        .classification-pill:hover { color: #f59e0b; }
-        .classification-none { opacity: 0.4; font-style: normal; font-weight: 400; }
 
         /* Tooltip */
         .term-hover { position: relative; border-bottom: 1px dotted #7a1d1d; cursor: help; display: inline; }
@@ -57,19 +50,11 @@
             visibility: hidden; width: 220px; background-color: #fdfaf3; color: #2c1810;
             text-align: left; border: 2px solid #7a1d1d; border-radius: 6px; padding: 10px;
             position: absolute; z-index: 100; bottom: 125%; left: 50%; margin-left: -110px;
-            opacity: 0; transition: opacity 0.3s; font-size: 11px; line-height: 1.4;
-            font-family: 'Roboto Slab', serif; box-shadow: 0 5px 15px rgba(0,0,0,0.3); pointer-events: none; font-style: normal;
+            opacity: 0; transition: opacity 0.3s; font-size: 11px; font-family: 'Roboto Slab', serif;
         }
-        .tooltip-content::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px; border-width: 5px; border-style: solid; border-color: #7a1d1d transparent transparent transparent; }
         .term-hover:hover .tooltip-content { visibility: visible; opacity: 1; }
 
-        .class-link { color: #7a1d1d; text-decoration: underline; text-decoration-style: dotted; cursor: pointer; font-weight: 700; transition: color 0.2s; }
-        .class-link:hover { color: #f59e0b; }
-
-        /* Formatting Scraps */
-        .def-term { color: #7a1d1d; font-weight: 900; border-bottom: 1px dashed #7a1d1d; }
-
-        /* Hub Buttons */
+        /* Archive Buttons */
         .archive-button {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             border: 1px solid #334155; border-radius: 16px; padding: 24px;
@@ -78,34 +63,19 @@
         }
         .archive-button:hover { transform: translateY(-4px); border-color: #f59e0b; }
         .button-label { font-family: 'Cinzel', serif; font-weight: 900; font-size: 18px; color: #f59e0b; text-transform: uppercase; }
-        .button-desc { font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; margin-top: 2px; }
 
         .hidden-view { display: none !important; }
         .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1e293b; color: #fff; padding: 12px 24px; border-radius: 30px; z-index: 2000; opacity: 0; transition: opacity 0.3s; pointer-events: none; border: 1px solid #3b82f6; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         
-        /* DM Edit Overlays */
+        .class-tab { padding: 8px 16px; font-size: 10px; font-weight: 900; text-transform: uppercase; cursor: pointer; border: 1px solid #333; border-radius: 4px; color: #94a3b8; }
+        .class-tab.active { background: #f59e0b; color: #000; border-color: #f59e0b; }
+        .level-bubble { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 11px; cursor: pointer; border: 2px solid #bba683; background: #fdfaf3; }
+        .level-bubble.active { background: #7a1d1d; color: #fff; border-color: #7a1d1d; }
+
         .dm-editable { transition: background 0.2s; border-radius: 4px; }
         .dm-active-edit .dm-editable { background: rgba(122, 29, 29, 0.05); outline: 1px dashed #7a1d1d; padding: 2px; }
         
-        .class-tab { padding: 8px 16px; font-size: 10px; font-weight: 900; text-transform: uppercase; cursor: pointer; border: 1px solid #333; border-radius: 4px; color: #94a3b8; }
-        .class-tab.active { background: #f59e0b; color: #000; border-color: #f59e0b; }
-        .level-bubble { width: 30px; height: 30px; border-radius: 50%; display: flex; items-center; justify-content: center; font-weight: 900; font-size: 11px; cursor: pointer; border: 2px solid #bba683; background: #fdfaf3; }
-        .level-bubble.active { background: #7a1d1d; color: #fff; border-color: #7a1d1d; }
-
-        input, textarea { background: transparent; border: none; width: 100%; color: inherit; }
         .modal-overlay { background: rgba(0,0,0,0.95); backdrop-filter: blur(8px); }
-
-        /* Session Log Styling */
-        .session-field-group { margin-bottom: 8px; font-size: 14px; }
-        .session-field-group b { font-weight: 900; text-transform: uppercase; color: #7a1d1d; margin-right: 4px; }
-        .dm-intel-box { 
-            background: rgba(122, 29, 29, 0.05); border: 2px solid #7a1d1d; border-radius: 8px; 
-            padding: 20px; margin-top: 32px; position: relative;
-        }
-        .dm-intel-label { 
-            position: absolute; top: -12px; left: 20px; background: #7a1d1d; color: #fff; 
-            font-size: 10px; font-weight: 900; padding: 2px 8px; border-radius: 4px; text-transform: uppercase;
-        }
     </style>
 </head>
 <body class="min-h-screen dashboard-bg">
@@ -122,9 +92,11 @@
                     <div class="flex items-center gap-6">
                         <p class="brand-sub">Campaign Management Suite</p>
                         <div class="user-pill">
-                            <span class="status-dot"></span>
+                            <span id="auth-status-dot" class="status-dot"></span>
                             <span id="user-display-name" class="user-name-text">Guest</span>
-                            <button onclick="window.logout()" class="logout-btn uppercase">Logout</button>
+                            <div id="auth-button-container">
+                                <!-- Login/Logout Buttons -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -150,7 +122,7 @@
                     <span class="text-4xl">📖</span>
                     <div class="flex flex-col">
                         <span class="button-label">Players Handbook</span>
-                        <span class="button-desc">Official Aeonfall Rules & Mechanics</span>
+                        <span class="button-desc text-[#64748b] text-[10px] font-bold uppercase">Aeonfall Rules & Mechanics</span>
                     </div>
                     <span class="ml-auto text-amber-900 font-black">→</span>
                 </a>
@@ -159,7 +131,7 @@
                     <span class="text-4xl">📜</span>
                     <div class="flex flex-col">
                         <span class="button-label">Script Codex</span>
-                        <span class="button-desc">Class Abilities & Tech Schools</span>
+                        <span class="button-desc text-[#64748b] text-[10px] font-bold uppercase">Class Abilities & Tech Schools</span>
                     </div>
                     <span class="ml-auto text-amber-900 font-black">→</span>
                 </div>
@@ -168,7 +140,7 @@
                     <span class="text-4xl">🖋️</span>
                     <div class="flex flex-col">
                         <span class="button-label">Session Logs</span>
-                        <span class="button-desc">Chronicles of the Party Deeds</span>
+                        <span class="button-desc text-[#64748b] text-[10px] font-bold uppercase">Chronicles of the Party Deeds</span>
                     </div>
                     <span class="ml-auto text-amber-900 font-black">→</span>
                 </div>
@@ -208,42 +180,40 @@
         </div>
     </div>
 
+    <!-- AUTHENTICATION MODAL -->
+    <div id="login-modal" class="fixed inset-0 z-[700] flex items-center justify-center p-4 hidden">
+        <div class="modal-overlay absolute inset-0" onclick="document.getElementById('login-modal').classList.add('hidden')"></div>
+        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border-2 border-amber-600 text-white text-center shadow-2xl relative z-10">
+            <h3 class="text-xl font-serif text-amber-500 font-bold mb-2 uppercase">Identify Yourself</h3>
+            <p class="text-[10px] text-gray-400 mb-6 uppercase tracking-widest">Archive Identity Initialization</p>
+            <input type="text" id="login-username-input" placeholder="Enter Player Name" class="w-full bg-gray-900 text-center text-xl rounded-lg p-3 mb-6 border border-gray-700 text-white focus:border-amber-500 focus:outline-none">
+            <button onclick="window.confirmLogin()" class="w-full bg-amber-600 hover:bg-amber-500 text-white py-4 rounded-xl font-bold uppercase text-xs transition-all shadow-lg">Access Archives</button>
+            <button onclick="document.getElementById('login-modal').classList.add('hidden')" class="w-full text-gray-500 mt-4 text-[10px] uppercase font-bold">Cancel</button>
+        </div>
+    </div>
+
     <!-- CLAIM SCRIPT MODAL -->
     <div id="claim-modal" class="fixed inset-0 z-[600] flex items-center justify-center p-4 hidden">
         <div class="modal-overlay absolute inset-0" onclick="document.getElementById('claim-modal').classList.add('hidden')"></div>
         <div class="bg-[#fdfaf3] p-8 rounded-2xl w-full max-w-sm border-8 border-[#bba683] text-center text-gray-900 relative z-10 shadow-2xl">
             <div class="absolute inset-0 border-2 border-[#2c1810] pointer-events-none" style="margin: 4px;"></div>
             <h3 class="text-2xl font-serif font-black text-[#7a1d1d] uppercase mb-4">Initialize Script</h3>
-            <p class="text-xs text-gray-600 mb-6 italic">Select the biological or mechanical entity to initialize this code into their memory banks.</p>
             <div class="text-left mb-6">
                 <label class="text-[9px] font-black uppercase text-gray-400 ml-1">Choose Character</label>
                 <select id="claim-pc-select" class="w-full bg-white/50 border-2 border-[#bba683] rounded-lg p-3 font-serif text-sm font-bold mt-1 text-[#2c1810] focus:outline-none"></select>
             </div>
             <div class="flex flex-col gap-3">
-                <button id="confirm-claim-btn" onclick="window.confirmAddScript()" class="w-full bg-[#7a1d1d] hover:bg-[#902020] text-white py-4 rounded-xl font-black text-xs uppercase shadow-lg transition-all active:scale-95">Link Script Memory</button>
+                <button onclick="window.confirmAddScript()" class="w-full bg-[#7a1d1d] hover:bg-[#902020] text-white py-4 rounded-xl font-black text-xs uppercase shadow-lg transition-all active:scale-95">Link Script Memory</button>
                 <button onclick="document.getElementById('claim-modal').classList.add('hidden')" class="w-full text-gray-500 py-2 font-black text-[10px] uppercase">Abort Link</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- DELETE CONFIRMATION MODAL -->
-    <div id="delete-modal" class="fixed inset-0 z-[600] flex items-center justify-center p-4 hidden">
-        <div class="modal-overlay absolute inset-0" onclick="document.getElementById('delete-modal').classList.add('hidden')"></div>
-        <div class="bg-white p-8 rounded-2xl w-full max-w-sm border-4 border-red-600 text-center text-gray-900 relative z-10 shadow-2xl">
-            <h3 class="text-2xl font-serif font-black text-red-700 uppercase mb-4">Archive Disposal</h3>
-            <p class="text-sm text-gray-500 mb-8 italic leading-relaxed">This record will be permanently erased. This action is irreversible.</p>
-            <div class="flex flex-col gap-3">
-                <button id="confirm-delete-btn" class="w-full bg-red-700 hover:bg-red-800 text-white py-4 rounded-xl font-black text-xs uppercase shadow-lg transition-all active:scale-95">Yes, Erase Permanently</button>
-                <button onclick="document.getElementById('delete-modal').classList.add('hidden')" class="w-full bg-gray-100 text-gray-500 py-3 rounded-xl font-black text-[10px] uppercase">Cancel</button>
             </div>
         </div>
     </div>
 
     <!-- DM PASSWORD MODAL -->
     <div id="password-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[500] hidden">
-        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border-2 border-amber-600 text-white text-center shadow-2xl">
+        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border-2 border-amber-600 text-white text-center shadow-2xl relative z-10">
             <h3 class="text-xl font-serif text-amber-500 font-bold mb-2 uppercase">Dungeon Master Access</h3>
-            <input type="password" id="dm-password" class="w-full bg-gray-900 text-center text-2xl rounded-lg p-3 mb-6 border border-gray-700">
+            <input type="password" id="dm-password" class="w-full bg-gray-900 text-center text-2xl rounded-lg p-3 mb-6 border border-gray-700 text-white">
             <button onclick="window.verifyDmPassword()" class="w-full bg-amber-600 text-white py-3 rounded-xl font-bold uppercase text-xs">Unlock Archives</button>
             <button onclick="document.getElementById('password-modal').classList.add('hidden')" class="w-full text-gray-500 mt-4 text-[10px] uppercase font-bold">Cancel</button>
         </div>
@@ -251,7 +221,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, doc, updateDoc, setDoc, onSnapshot, addDoc, deleteDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, doc, updateDoc, onSnapshot, addDoc, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
         const firebaseConfig = { apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI", authDomain: "aeonfall-523c1.firebaseapp.com", projectId: "aeonfall-523c1", storageBucket: "aeonfall-523c1.firebasestorage.app", messagingSenderId: "716207733913", appId: "1:716207733913:web:7aac43906a70e2b5f50c08" };
@@ -261,58 +231,85 @@
         const auth = getAuth(app);
 
         const CLASSES = ["Heartbound", "Nomad", "Wilderness Warden", "Chronicler", "Orator", "Scriptweaver", "War-Touched", "Archivist", "Fabricator"];
-        
-        const TOOLTIPS = {
-            "Activation Time": "The amount of time required to initialize this script and push it to reality.",
-            "Range/Area": "The maximum distance the script can reach, or the spatial dimensions of its effect.",
-            "Components": "Triggers: Verbal (Commands), Somatic (Gestures), or Material (Items).",
-            "Duration": "How long the reality-distortion persists before the script expires.",
-            "At Higher Levels": "Scaling effects when using higher level script slots.",
-            "Concord": "Ritual Protocol: This script can be initialized through ritualistic focus, conserving internal energy reserves.",
-            "Mechanum": "Technomagic Protocol: This script utilizes specialized hardware and digital distortion to warp reality through code.",
-            "Attack Roll": "A d20 roll + modifiers used to determine if an offensive script strike lands.",
-            "Saving Throw": "A roll made by the target to resist or mitigate the incoming script's effects.",
-            "Concentration": "Requires continuous focus. Ends if incapacitated or if you fail a check when taking damage.",
-            "Damage": "Physical, energy, or digital integrity loss caused by the script output.",
-            "V": "Verbal: Requires spoken command strings.",
-            "S": "Somatic: Requires precise hand gestures.",
-            "M": "Material: Requires a specific component consumed by the distortion.",
-            "Script Lists": "Authorized user-groups for this specific code block.",
-            "d4": "A four-sided die commonly used for minor adjustments or predictive boosts.",
-            "d6": "A six-sided die, the standard unit for energy-output measurement.",
-            "d8": "An eight-sided die, typically used for significant physical or kinetic impact.",
-            "d10": "A ten-sided die for heavy-duty calculations and high-output scripts.",
-            "d12": "A twelve-sided die for massive atmospheric or biological shifts.",
-            "d20": "A twenty-sided die used to determine the success of an action."
-        };
+        const TOOLTIPS = { "Activation Time": "Time to initialize.", "Range/Area": "Maximum distance.", "Components": "Triggers: V, S, M.", "Duration": "How long distortion persists." };
 
         let currentClass = "Heartbound";
         let currentLevel = 1; 
         let activeRole = 'player';
         let scripts = [], sessions = [], allCharacters = [];
         let autoSaveTimer = null;
-        let itemToDeleteId = null;
-        let deleteType = ''; 
         let scriptToClaim = null;
 
-        window.showToast = (m) => { const t = document.getElementById('toast'); t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 3000); };
+        // --- AUTH & LOGIN (Synced with Index) ---
 
-        window.setRole = (r) => { 
-            if (r === 'dm') {
+        window.updateAuthUI = () => {
+            const savedUser = localStorage.getItem('aeonfall_user');
+            const savedRole = localStorage.getItem('aeonfall_role');
+            const userDisplay = document.getElementById('user-display-name');
+            const statusDot = document.getElementById('auth-status-dot');
+            const authContainer = document.getElementById('auth-button-container');
+
+            if (savedRole === 'dm') activeRole = 'dm';
+
+            if (savedUser) {
+                const user = JSON.parse(savedUser);
+                userDisplay.textContent = user.username;
+                statusDot.classList.remove('offline');
+                authContainer.innerHTML = `<button onclick="window.logout()" class="auth-btn logout-btn">Logout</button>`;
+            } else {
+                userDisplay.textContent = "Guest";
+                statusDot.classList.add('offline');
+                authContainer.innerHTML = `<button onclick="window.openLogin()" class="auth-btn login-btn">Login</button>`;
+            }
+            window.updateRoleUI();
+        };
+
+        window.openLogin = () => {
+            document.getElementById('login-modal').classList.remove('hidden');
+            document.getElementById('login-username-input').focus();
+        };
+
+        window.confirmLogin = () => {
+            const name = document.getElementById('login-username-input').value;
+            if (name && name.trim()) {
+                const user = { username: name.trim() };
+                localStorage.setItem('aeonfall_user', JSON.stringify(user));
+                document.getElementById('login-modal').classList.add('hidden');
+                window.updateAuthUI();
+                window.showToast("Archive Identity Verified");
+            }
+        };
+
+        window.logout = () => {
+            localStorage.removeItem('aeonfall_user');
+            localStorage.removeItem('aeonfall_role');
+            activeRole = 'player';
+            window.updateAuthUI();
+            window.showToast("Identity Terminated");
+        };
+
+        window.setRole = (role) => {
+            if (role === 'dm') {
                 if (localStorage.getItem('aeonfall_role') === 'dm') return;
-                document.getElementById('password-modal').classList.remove('hidden'); 
-            } else { 
-                activeRole = 'player'; localStorage.setItem('aeonfall_role', 'player'); window.updateRoleUI(); 
-            } 
-        };
-        
-        window.verifyDmPassword = () => { 
-            if (document.getElementById('dm-password').value === 'Rew4994') { 
-                activeRole = 'dm'; localStorage.setItem('aeonfall_role', 'dm'); document.getElementById('password-modal').classList.add('hidden'); window.updateRoleUI(); 
-            } else { window.showToast("Access Denied"); } 
+                document.getElementById('password-modal').classList.remove('hidden');
+            } else {
+                activeRole = 'player';
+                localStorage.setItem('aeonfall_role', 'player');
+                window.updateRoleUI();
+            }
         };
 
-        window.logout = () => { localStorage.removeItem('aeonfall_user'); localStorage.removeItem('aeonfall_role'); window.location.reload(); };
+        window.verifyDmPassword = () => {
+            if (document.getElementById('dm-password').value === 'Rew4994') {
+                activeRole = 'dm';
+                localStorage.setItem('aeonfall_role', 'dm');
+                document.getElementById('password-modal').classList.add('hidden');
+                window.updateRoleUI();
+                window.showToast("DM Access Granted");
+            } else {
+                window.showToast("Unauthorized Command");
+            }
+        };
 
         window.updateRoleUI = () => {
             const isDM = activeRole === 'dm';
@@ -324,198 +321,71 @@
             renderNavs();
         };
 
+        // --- CORE UI ---
+
+        window.showToast = (m) => { const t = document.getElementById('toast'); t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 3000); };
         window.switchView = (v) => {
-            ['hub', 'scripts', 'sessions'].forEach(id => {
-                const el = document.getElementById(`${id}-view`);
-                if(el) el.classList.add('hidden-view');
-            });
+            ['hub', 'scripts', 'sessions'].forEach(id => document.getElementById(`${id}-view`).classList.add('hidden-view'));
             document.getElementById(`${v}-view`).classList.remove('hidden-view');
             window.scrollTo(0,0);
         };
-
         window.selectClass = (c) => { 
             currentClass = c; 
-            const shortClasses = ["Heartbound", "Nomad", "Fabricator"];
-            if (shortClasses.includes(c)) { if (currentLevel < 1) currentLevel = 1; if (currentLevel > 5) currentLevel = 5; }
+            if (["Heartbound", "Nomad", "Fabricator"].includes(c)) { if (currentLevel < 1) currentLevel = 1; if (currentLevel > 5) currentLevel = 5; }
             renderNavs(); renderLists(); 
         };
-        
         window.selectLevel = (l) => { currentLevel = l; renderNavs(); renderLists(); };
 
-        // --- ENHANCED PARSER (Markdown + Custom Tooltips) ---
         function parseAeonfallContent(text, isDM) {
             if (!text) return '';
             if (isDM) return text; 
-
-            // 1. Handle Definitions &&Term|Definition&& or &&Term&&
             let html = text.replace(/&&([^&]+)&&/g, (match, content) => {
                 const parts = content.split('|');
                 const term = parts[0].trim();
-                const definition = parts.length > 1 ? parts[1].trim() : (TOOLTIPS[term] || "No technical record found in archives.");
+                const definition = parts.length > 1 ? parts[1].trim() : (TOOLTIPS[term] || "Restricted.");
                 return `<span class="term-hover def-term">${term}<span class="tooltip-content">${definition}</span></span>`;
             });
-
-            // 2. Handle Bold **Text**
-            html = html.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-
-            // 3. Handle Italics *Text*
-            html = html.replace(/\*(.*?)\*/g, '<i>$1</i>');
-
-            // 4. Handle Underline __Text__
-            html = html.replace(/__(.*?)__/g, '<u>$1</u>');
-
+            html = html.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*(.*?)\*/g, '<i>$1</i>').replace(/__(.*?)__/g, '<u>$1</u>');
             return html;
         }
 
-        function wrapWithTooltip(label, termKey) {
-            const key = termKey || label;
-            if (TOOLTIPS[key]) return `<span class="term-hover">${label}<span class="tooltip-content">${TOOLTIPS[key]}</span></span>`;
-            return label;
-        }
-
-        function linkifyClasses(text) {
-            if (!text) return '';
-            let linkedText = text;
-            CLASSES.forEach(cls => {
-                const regex = new RegExp(`\\b${cls}\\b`, 'g');
-                linkedText = linkedText.replace(regex, `<span class="class-link" onclick="event.stopPropagation(); window.selectClass('${cls}')">${cls}</span>`);
-            });
-            return linkedText;
-        }
-
-        function renderNavs() {
+        const renderNavs = () => {
             const tabs = document.getElementById('class-tabs');
             if (tabs) tabs.innerHTML = CLASSES.map(c => `<div class="class-tab ${currentClass === c ? 'active' : ''}" onclick="window.selectClass('${c}')">${c}</div>`).join('');
-
             const lNav = document.getElementById('level-nav');
             if (lNav) {
-                const shortClasses = ["Heartbound", "Nomad", "Fabricator"];
-                let levels = shortClasses.includes(currentClass) ? [1, 2, 3, 4, 5] : [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+                let levels = ["Heartbound", "Nomad", "Fabricator"].includes(currentClass) ? [1, 2, 3, 4, 5] : [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
                 lNav.innerHTML = levels.map(l => `<div class="level-bubble ${currentLevel === l ? 'active' : ''}" onclick="window.selectLevel(${l})">${l === 0 ? 'T' : l}</div>`).join('');
             }
             const title = document.getElementById('current-class-title');
             if (title) title.textContent = `${currentClass} ${currentLevel === 0 ? 'Tricks' : 'Lv. ' + currentLevel}`;
-        }
-
-        window.cycleClassification = async (id, currentVal) => {
-            if (activeRole !== 'dm') return;
-            const states = ['Mechanum', 'Concord', ''];
-            let currentIndex = states.indexOf(currentVal || '');
-            let nextIndex = (currentIndex + 1) % states.length;
-            const newVal = states[nextIndex];
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookScripts', id), { classification: newVal });
-            window.showToast(newVal ? `Script Type: ${newVal}` : "Classification Removed");
         };
 
         const renderLists = () => {
             const isDM = activeRole === 'dm';
-            
-            // Scripts Rendering
             const sList = document.getElementById('scripts-list');
             if (sList) {
                 sList.innerHTML = '';
-                const filteredScripts = scripts.filter(s => {
-                    if (parseInt(s.level) !== currentLevel) return false;
-                    const listText = (s.scriptLists || s.className || '').toLowerCase();
-                    return listText.includes(currentClass.toLowerCase());
-                });
-
-                filteredScripts.forEach(s => {
+                scripts.filter(s => parseInt(s.level) === currentLevel && (s.scriptLists || '').toLowerCase().includes(currentClass.toLowerCase())).forEach(s => {
                     const card = document.createElement('div');
-                    card.className = `script-card ${isDM ? 'dm-active-edit' : ''}`;
-                    
-                    let compHtml = s.components || 'V, S';
-                    if (!isDM) {
-                        compHtml = compHtml.replace(/\bV\b/g, wrapWithTooltip('V', 'V'))
-                                         .replace(/\bS\b/g, wrapWithTooltip('S', 'S'))
-                                         .replace(/\bM\b/g, wrapWithTooltip('M', 'M'));
-                    }
-
-                    const classif = s.classification || '';
-                    const classifHtml = isDM 
-                        ? ` [<span class="classification-pill ${!classif ? 'classification-none' : ''}" onclick="window.cycleClassification('${s.id}', '${classif}')">${wrapWithTooltip(classif || ' + ', classif)}</span>]`
-                        : (classif ? ` [${wrapWithTooltip(classif)}]` : '');
-
+                    card.className = "script-card";
                     card.innerHTML = `
-                        <div class="script-card-header">
-                            <div class="script-card-title dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'title', this.innerText)">${s.title}</div>
-                            ${isDM ? `<button onclick="window.triggerDeleteScript('${s.id}')" class="absolute top-4 right-4 text-red-700 opacity-30 hover:opacity-100">✕</button>` : ''}
-                        </div>
-                        <span class="script-card-level">
-                            ${s.level === 0 ? 'Trick' : s.level + '-level'} — 
-                            <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'school', this.innerText)">${s.school || 'Dominion'}</span> 
-                            ${classifHtml}
-                        </span>
-                        
-                        <ul class="script-prop-list">
-                            <li><b>${wrapWithTooltip('Activation Time')}:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'activationTime', this.innerText)">${s.activationTime || '1 Action'}</span></li>
-                            <li><b>${wrapWithTooltip('Range/Area')}:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'range', this.innerText)">${s.range || '30 feet'}</span></li>
-                            <li><b>${wrapWithTooltip('Components')}:</b> <span class="${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'components', this.innerText)">${compHtml}</span></li>
-                            <li><b>${wrapWithTooltip('Duration')}:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'duration', this.innerText)">${s.duration || 'Instantaneous'}</span></li>
-                        </ul>
-                        <div class="script-body ${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'content', this.innerText)">${parseAeonfallContent(s.content, isDM)}</div>
-                        
-                        <div class="script-higher-levels"><b>${wrapWithTooltip('At Higher Levels')}.</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'higherLevels', this.innerText)">${s.higherLevels || 'No scaling details.'}</span></div>
-                        <div class="script-footer"><b>Script Lists:</b> <span class="${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'scriptLists', this.innerText)">${isDM ? (s.scriptLists || currentClass) : linkifyClasses(s.scriptLists || currentClass)}</span></div>
-                        
-                        <button onclick="window.openClaimModal('${s.id}')" class="mt-6 w-full bg-[#2c1810]/5 hover:bg-[#7a1d1d]/10 border border-[#7a1d1d33] py-2 rounded-lg text-[#7a1d1d] font-black text-[10px] uppercase transition-all">+ Claim Script</button>
+                        <div class="script-card-header"><div class="script-card-title dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'title', this.innerText)">${s.title}</div></div>
+                        <span class="script-card-level">${s.level === 0 ? 'Trick' : s.level + '-level'} — <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'school', this.innerText)">${s.school || 'Dominion'}</span></span>
+                        <div class="script-body py-4 ${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'content', this.innerText)">${parseAeonfallContent(s.content, isDM)}</div>
+                        <button onclick="window.openClaimModal('${s.id}')" class="mt-auto w-full bg-[#2c1810]/5 border border-[#7a1d1d33] py-2 rounded-lg text-[#7a1d1d] font-black text-[10px] uppercase transition-all">+ Claim Script</button>
                     `;
                     sList.appendChild(card);
                 });
-                if (filteredScripts.length === 0) sList.innerHTML = `<p class="col-span-full text-center italic opacity-40 py-24 uppercase font-black text-amber-900 tracking-widest">Entry Restricted or Unavailable</p>`;
             }
-
-            // Session Log Rendering
+            // Sessions Log logic
             const sessList = document.getElementById('sessions-list');
             if (sessList) {
                 sessList.innerHTML = '';
                 sessions.forEach(s => {
                     const div = document.createElement('div');
-                    div.className = `relative ${isDM ? 'dm-active-edit' : ''}`;
-                    let html = `
-                        <div class="flex justify-between items-start mb-6 border-b border-gray-900/10 pb-2">
-                            <div class="font-serif font-black text-4xl uppercase text-[#7a1d1d] dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'title', this.innerText)">${s.title}</div>
-                            ${isDM ? `<button onclick="window.triggerDeleteSession('${s.id}')" class="text-red-700 font-black text-[10px] uppercase border border-red-200 px-2 py-1 rounded">Erase Log</button>` : ''}
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12">
-                            <div>
-                                <div class="session-field-group"><b>Date:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'date', this.innerText)">${s.date}</span></div>
-                                <div class="session-field-group"><b>Starting Point:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'startingPoint', this.innerText)">${s.startingPoint || '...'}</span></div>
-                                <div class="session-field-group"><b>Summary:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'lastSessionSummary', this.innerText)">${s.lastSessionSummary || '...'}</span></div>
-                            </div>
-                        </div>
-                        <div class="mt-8">
-                            <h4 class="font-serif font-black text-xl uppercase text-[#7a1d1d] mb-4">Scenes / Beats</h4>
-                            <div class="space-y-4">
-                                <div class="session-field-group"><b>1. Hook / Opening:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene1', this.innerText)">${s.scene1 || '...'}</div></div>
-                                <div class="session-field-group"><b>2. Key NPCs & Goals:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene2', this.innerText)">${s.scene2 || '...'}</div></div>
-                                <div class="session-field-group"><b>3. Challenges / Encounters:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene3', this.innerText)">${s.scene3 || '...'}</div></div>
-                                <div class="session-field-group)<b>4. Secrets or Clues:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene4', this.innerText)">${s.scene4 || '...'}</div></div>
-                                <div class="session-field-group"><b>5. Closing Scene:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene5', this.innerText)">${s.scene5 || '...'}</div></div>
-                            </div>
-                        </div>
-                    `;
-
-                    if (isDM) {
-                        html += `
-                            <div class="dm-intel-box">
-                                <span class="dm-intel-label">DM Intel — Private</span>
-                                <div class="mb-6">
-                                    <div class="font-black text-[11px] uppercase text-[#7a1d1d] mb-2">Session Goals</div>
-                                    <div class="dm-editable min-h-[60px] bg-white/50 p-2 rounded" contenteditable="true" oninput="window.debounceUpdateSession('${s.id}', 'dmGoals', this.innerText)">${s.dmGoals || '...'}</div>
-                                </div>
-                                <div class="mb-6">
-                                    <div class="font-black text-[11px] uppercase text-[#7a1d1d] mb-2">Running Notes</div>
-                                    <div class="dm-editable min-h-[100px] bg-white/50 p-2 rounded" contenteditable="true" oninput="window.debounceUpdateSession('${s.id}', 'dmRunningNotes', this.innerText)">${s.dmRunningNotes || '...'}</div>
-                                </div>
-                                <div>
-                                    <div class="font-black text-[11px] uppercase text-[#7a1d1d] mb-2">Aftermath</div>
-                                    <div class="dm-editable min-h-[80px] bg-white/50 p-2 rounded" contenteditable="true" oninput="window.debounceUpdateSession('${s.id}', 'dmAftermath', this.innerText)">${s.dmAftermath || '...'}</div>
-                                </div>
-                            </div>
-                        `;
-                    }
-                    div.innerHTML = html;
+                    div.className = "relative p-4 border-b border-gray-100";
+                    div.innerHTML = `<h4 class="font-bold">${s.title}</h4><p class="text-sm italic">${s.date}</p>`;
                     sessList.appendChild(div);
                 });
             }
@@ -523,23 +393,14 @@
 
         window.openClaimModal = (scriptId) => {
             scriptToClaim = scripts.find(s => s.id === scriptId);
-            if (!scriptToClaim) return;
             const select = document.getElementById('claim-pc-select');
             select.innerHTML = '';
             const saved = localStorage.getItem('aeonfall_user');
-            if (!saved) return window.showToast("Identity Verification Required");
+            if (!saved) return window.showToast("Identify yourself to initialize script.");
             const userObj = JSON.parse(saved);
             const myChars = allCharacters.filter(c => c.owner === userObj.username && c.type === 'PC' && !c.isDeleted);
-            if (myChars.length === 0) {
-                select.innerHTML = '<option value="">No characters discovered...</option>';
-            } else {
-                myChars.forEach(c => {
-                    const opt = document.createElement('option');
-                    opt.value = c.id;
-                    opt.textContent = c.name;
-                    select.appendChild(opt);
-                });
-            }
+            if (myChars.length === 0) select.innerHTML = '<option value="">No characters discovered.</option>';
+            else myChars.forEach(c => { const opt = document.createElement('option'); opt.value = c.id; opt.textContent = c.name; select.appendChild(opt); });
             document.getElementById('claim-modal').classList.remove('hidden');
         };
 
@@ -547,18 +408,10 @@
             const charId = document.getElementById('claim-pc-select').value;
             if (!charId || !scriptToClaim) return;
             const char = allCharacters.find(c => c.id === charId);
-            if (!char) return;
-
-            // Strip formatting symbols AND definition text (handle &&Term|Definition&&)
-            const cleanContent = scriptToClaim.content
-                .replace(/&&([^|&]+)(?:\|[^&]+)?&&/g, '$1') // Replaces &&Term|Def&& with Term
-                .replace(/\*\*|\*|__/g, '');
-
-            const scriptNote = `\n--- SCRIPT INITIALIZED ---\nNAME: ${scriptToClaim.title.toUpperCase()}\nTYPE: ${scriptToClaim.classification || 'Standard'}\nLEVEL: ${scriptToClaim.level === 0 ? 'Trick' : scriptToClaim.level}\nTECH: ${scriptToClaim.school || 'Dominion'}\nACT: ${scriptToClaim.activationTime || '1 Action'}\nRANGE: ${scriptToClaim.range || '30 feet'}\nDUR: ${scriptToClaim.duration || 'Instant'}\nEFFECT: ${cleanContent}\nHIGHER: ${scriptToClaim.higherLevels || 'Standard Scaling'}\n`;
-
-            const existingNotes = char.scriptcasting || "";
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', charId), { scriptcasting: existingNotes + scriptNote });
-            window.showToast(`Script Linked to ${char.name.toUpperCase()}`);
+            const cleanContent = scriptToClaim.content.replace(/&&([^|&]+)(?:\|[^&]+)?&&/g, '$1').replace(/\*\*|\*|__/g, '');
+            const scriptNote = `\n[ ${scriptToClaim.title.toUpperCase()} ]\nLevel: ${scriptToClaim.level === 0 ? 'Trick' : scriptToClaim.level} | Effect: ${cleanContent}\n`;
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', charId), { scriptcasting: (char.scriptcasting || "") + scriptNote });
+            window.showToast("Linked to " + char.name.toUpperCase());
             document.getElementById('claim-modal').classList.add('hidden');
         };
 
@@ -566,59 +419,16 @@
             if (autoSaveTimer) clearTimeout(autoSaveTimer);
             autoSaveTimer = setTimeout(() => { updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookScripts', id), { [field]: val }); }, 1000);
         };
-        window.debounceUpdateSession = (id, field, val) => {
-            if (autoSaveTimer) clearTimeout(autoSaveTimer);
-            autoSaveTimer = setTimeout(() => { updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookSessions', id), { [field]: val }); }, 1000);
-        };
 
-        window.triggerDeleteScript = (id) => { itemToDeleteId = id; deleteType = 'script'; document.getElementById('delete-modal').classList.remove('hidden'); };
-        window.triggerDeleteSession = (id) => { itemToDeleteId = id; deleteType = 'session'; document.getElementById('delete-modal').classList.remove('hidden'); };
-
-        document.getElementById('confirm-delete-btn').onclick = async () => {
-            if (!itemToDeleteId) return;
-            const collectionName = deleteType === 'script' ? 'handbookScripts' : 'handbookSessions';
-            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', collectionName, itemToDeleteId));
-            document.getElementById('delete-modal').classList.add('hidden');
-            window.showToast("Erased");
-            itemToDeleteId = null;
-        };
-
-        window.addScriptEntry = async () => {
-            const data = { title: "NEW SCRIPT", content: "Use &&Term|Definition&& for custom tooltips, **Bold**, *Italic*, __Underline__", school: "Dominion", classification: "", activationTime: "1 Action", range: "30 feet", components: "V, S", duration: "Instant", higherLevels: "...", scriptLists: currentClass, className: currentClass, level: currentLevel, createdAt: Date.now() };
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookScripts'), data);
-        };
-        
-        window.addSessionEntry = async () => {
-            const data = { 
-                title: "SESSION #", date: new Date().toLocaleDateString(), startingPoint: "...", lastSessionSummary: "...",
-                scene1: "...", scene2: "...", scene3: "...", scene4: "...", scene5: "...",
-                dmGoals: "...", dmRunningNotes: "...", dmAftermath: "...",
-                createdAt: Date.now() 
-            };
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookSessions'), data);
-        };
-
-        const init = async () => {
+        // Initialize
+        (async () => {
             await signInAnonymously(auth);
-            const saved = localStorage.getItem('aeonfall_user');
-            if (saved) document.getElementById('user-display-name').textContent = JSON.parse(saved).username;
-            const role = localStorage.getItem('aeonfall_role');
-            if (role) activeRole = role;
-            
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookScripts'), (snap) => {
-                scripts = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => a.createdAt - b.createdAt);
-                renderLists();
-            });
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookSessions'), (snap) => {
-                sessions = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => b.createdAt - a.createdAt);
-                renderLists();
-            });
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), (snap) => {
-                allCharacters = snap.docs.map(d => ({id: d.id, ...d.data()}));
-            });
-            window.updateRoleUI();
-        };
-        init();
+            window.updateAuthUI();
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookScripts'), (snap) => { scripts = snap.docs.map(d => ({id: d.id, ...d.data()})); renderLists(); });
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookSessions'), (snap) => { sessions = snap.docs.map(d => ({id: d.id, ...d.data()})); renderLists(); });
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), (snap) => { allCharacters = snap.docs.map(d => ({id: d.id, ...d.data()})); });
+        })();
+
     </script>
 </body>
 </html>
