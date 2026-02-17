@@ -342,16 +342,17 @@
         
         window.selectLevel = (l) => { currentLevel = l; renderNavs(); renderLists(); };
 
-        // --- ENHANCED PARSER (Markdown + Tooltips) ---
+        // --- ENHANCED PARSER (Markdown + Custom Tooltips) ---
         function parseAeonfallContent(text, isDM) {
             if (!text) return '';
-            if (isDM) return text; // Raw for DM
+            if (isDM) return text; 
 
-            // 1. Handle Definitions &&Term&&
-            let html = text.replace(/&&([^&]+)&&/g, (match, p1) => {
-                const term = p1.trim();
-                const definition = TOOLTIPS[term] || "No technical record found in archives.";
-                return `<span class="term-hover def-term">${p1}<span class="tooltip-content">${definition}</span></span>`;
+            // 1. Handle Definitions &&Term|Definition&& or &&Term&&
+            let html = text.replace(/&&([^&]+)&&/g, (match, content) => {
+                const parts = content.split('|');
+                const term = parts[0].trim();
+                const definition = parts.length > 1 ? parts[1].trim() : (TOOLTIPS[term] || "No technical record found in archives.");
+                return `<span class="term-hover def-term">${term}<span class="tooltip-content">${definition}</span></span>`;
             });
 
             // 2. Handle Bold **Text**
@@ -408,6 +409,8 @@
 
         const renderLists = () => {
             const isDM = activeRole === 'dm';
+            
+            // Scripts Rendering
             const sList = document.getElementById('scripts-list');
             if (sList) {
                 sList.innerHTML = '';
@@ -462,6 +465,7 @@
                 if (filteredScripts.length === 0) sList.innerHTML = `<p class="col-span-full text-center italic opacity-40 py-24 uppercase font-black text-amber-900 tracking-widest">Entry Restricted or Unavailable</p>`;
             }
 
+            // Session Log Rendering
             const sessList = document.getElementById('sessions-list');
             if (sessList) {
                 sessList.innerHTML = '';
@@ -486,7 +490,7 @@
                                 <div class="session-field-group"><b>1. Hook / Opening:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene1', this.innerText)">${s.scene1 || '...'}</div></div>
                                 <div class="session-field-group"><b>2. Key NPCs & Goals:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene2', this.innerText)">${s.scene2 || '...'}</div></div>
                                 <div class="session-field-group"><b>3. Challenges / Encounters:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene3', this.innerText)">${s.scene3 || '...'}</div></div>
-                                <div class="session-field-group"><b>4. Secrets or Clues:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene4', this.innerText)">${s.scene4 || '...'}</div></div>
+                                <div class="session-field-group)<b>4. Secrets or Clues:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene4', this.innerText)">${s.scene4 || '...'}</div></div>
                                 <div class="session-field-group"><b>5. Closing Scene:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene5', this.innerText)">${s.scene5 || '...'}</div></div>
                             </div>
                         </div>
@@ -544,7 +548,14 @@
             if (!charId || !scriptToClaim) return;
             const char = allCharacters.find(c => c.id === charId);
             if (!char) return;
-            const scriptNote = `\n--- SCRIPT INITIALIZED ---\nNAME: ${scriptToClaim.title.toUpperCase()}\nTYPE: ${scriptToClaim.classification || 'Standard'}\nLEVEL: ${scriptToClaim.level === 0 ? 'Trick' : scriptToClaim.level}\nTECH: ${scriptToClaim.school || 'Dominion'}\nACT: ${scriptToClaim.activationTime || '1 Action'}\nRANGE: ${scriptToClaim.range || '30 feet'}\nDUR: ${scriptToClaim.duration || 'Instant'}\nEFFECT: ${scriptToClaim.content.replace(/&&|\*\*|\*|__/g, '')}\nHIGHER: ${scriptToClaim.higherLevels || 'Standard Scaling'}\n`;
+
+            // Strip formatting symbols AND definition text (handle &&Term|Definition&&)
+            const cleanContent = scriptToClaim.content
+                .replace(/&&([^|&]+)(?:\|[^&]+)?&&/g, '$1') // Replaces &&Term|Def&& with Term
+                .replace(/\*\*|\*|__/g, '');
+
+            const scriptNote = `\n--- SCRIPT INITIALIZED ---\nNAME: ${scriptToClaim.title.toUpperCase()}\nTYPE: ${scriptToClaim.classification || 'Standard'}\nLEVEL: ${scriptToClaim.level === 0 ? 'Trick' : scriptToClaim.level}\nTECH: ${scriptToClaim.school || 'Dominion'}\nACT: ${scriptToClaim.activationTime || '1 Action'}\nRANGE: ${scriptToClaim.range || '30 feet'}\nDUR: ${scriptToClaim.duration || 'Instant'}\nEFFECT: ${cleanContent}\nHIGHER: ${scriptToClaim.higherLevels || 'Standard Scaling'}\n`;
+
             const existingNotes = char.scriptcasting || "";
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', charId), { scriptcasting: existingNotes + scriptNote });
             window.showToast(`Script Linked to ${char.name.toUpperCase()}`);
@@ -573,12 +584,17 @@
         };
 
         window.addScriptEntry = async () => {
-            const data = { title: "NEW SCRIPT", content: "Use &&Term&& for definitions, **Bold**, *Italic*, __Underline__", school: "Dominion", classification: "", activationTime: "1 Action", range: "30 feet", components: "V, S", duration: "Instant", higherLevels: "...", scriptLists: currentClass, className: currentClass, level: currentLevel, createdAt: Date.now() };
+            const data = { title: "NEW SCRIPT", content: "Use &&Term|Definition&& for custom tooltips, **Bold**, *Italic*, __Underline__", school: "Dominion", classification: "", activationTime: "1 Action", range: "30 feet", components: "V, S", duration: "Instant", higherLevels: "...", scriptLists: currentClass, className: currentClass, level: currentLevel, createdAt: Date.now() };
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookScripts'), data);
         };
         
         window.addSessionEntry = async () => {
-            const data = { title: "SESSION #", date: new Date().toLocaleDateString(), startingPoint: "...", lastSessionSummary: "...", scene1: "...", scene2: "...", scene3: "...", scene4: "...", scene5: "...", dmGoals: "...", dmRunningNotes: "...", dmAftermath: "...", createdAt: Date.now() };
+            const data = { 
+                title: "SESSION #", date: new Date().toLocaleDateString(), startingPoint: "...", lastSessionSummary: "...",
+                scene1: "...", scene2: "...", scene3: "...", scene4: "...", scene5: "...",
+                dmGoals: "...", dmRunningNotes: "...", dmAftermath: "...",
+                createdAt: Date.now() 
+            };
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookSessions'), data);
         };
 
@@ -589,9 +605,17 @@
             const role = localStorage.getItem('aeonfall_role');
             if (role) activeRole = role;
             
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookScripts'), (snap) => { scripts = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => b.createdAt - a.createdAt); renderLists(); });
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookSessions'), (snap) => { sessions = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => b.createdAt - a.createdAt); renderLists(); });
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), (snap) => { allCharacters = snap.docs.map(d => ({id: d.id, ...d.data()})); });
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookScripts'), (snap) => {
+                scripts = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => a.createdAt - b.createdAt);
+                renderLists();
+            });
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookSessions'), (snap) => {
+                sessions = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => b.createdAt - a.createdAt);
+                renderLists();
+            });
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), (snap) => {
+                allCharacters = snap.docs.map(d => ({id: d.id, ...d.data()}));
+            });
             window.updateRoleUI();
         };
         init();
