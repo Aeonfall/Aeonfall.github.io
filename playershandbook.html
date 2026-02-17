@@ -28,11 +28,12 @@
         .nav-link.active { color: #f59e0b; border-bottom-color: #f59e0b; }
         .nav-link.graveyard { color: #7f1d1d; }
 
-        /* SCRIPT CARD Aesthetic */
+        /* SCRIPT/ITEM CARD Aesthetic */
         .script-card {
             background-color: #fdfaf3; border: 2px solid #bba683; border-radius: 12px;
             padding: 24px; color: #2c1810; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             position: relative; height: 100%; display: flex; flex-direction: column;
+            transition: all 0.5s;
         }
         .script-card-header { border-bottom: 2px solid #7a1d1d; margin-bottom: 8px; padding-bottom: 4px; }
         .script-card-title { font-family: 'Cinzel', serif; font-weight: 900; font-size: 24px; color: #7a1d1d; text-transform: uppercase; }
@@ -45,6 +46,38 @@
         .script-higher-levels b { font-weight: 900; }
         .script-footer { font-style: italic; font-size: 12px; margin-top: 12px; border-top: 1px solid #7a1d1d33; padding-top: 8px; }
         .script-footer b { font-weight: 900; font-style: normal; }
+
+        /* Item Linking */
+        .item-reference-link {
+            color: #7a1d1d; text-decoration: underline; text-decoration-style: dotted; cursor: pointer; font-weight: 700;
+        }
+        .item-reference-link:hover { color: #f59e0b; }
+        
+        @keyframes highlight-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); transform: scale(1); }
+            50% { box-shadow: 0 0 30px 10px rgba(245, 158, 11, 0.4); transform: scale(1.02); }
+            100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); transform: scale(1); }
+        }
+        .highlight-glow { animation: highlight-pulse 2s ease-in-out 2; z-index: 50; }
+
+        /* Item Image Styling */
+        .item-preview-img {
+            width: 100%; height: 160px; object-fit: cover; border-radius: 8px; border: 2px solid #bba683;
+            margin-bottom: 16px; cursor: zoom-in; transition: transform 0.2s, filter 0.2s; background: #e5e7eb;
+        }
+        .item-preview-img:hover { filter: brightness(1.1); transform: scale(1.02); }
+        .item-url-input { font-size: 10px; color: #7a1d1d; opacity: 0.6; margin-bottom: 12px; display: block; background: rgba(0,0,0,0.03); padding: 4px 8px; border-radius: 4px; }
+
+        /* Rarity Color Coding */
+        .rarity-common { color: #64748b !important; }
+        .rarity-uncommon { color: #16a34a !important; font-weight: 900; }
+        .rarity-rare { color: #2563eb !important; font-weight: 900; }
+        .rarity-very-rare { color: #9333ea !important; font-weight: 900; }
+        .rarity-legendary { color: #d97706 !important; font-weight: 900; text-shadow: 0 0 1px rgba(217, 119, 6, 0.2); }
+
+        /* Lightbox Styling */
+        .lightbox-modal { background: rgba(0,0,0,0.95); backdrop-filter: blur(12px); }
+        .lightbox-img { max-width: 90vw; max-height: 80vh; object-fit: contain; border: 4px solid #f59e0b; border-radius: 8px; box-shadow: 0 0 60px rgba(0,0,0,1); }
 
         /* Classification Styling */
         .classification-pill { font-weight: 900; color: #7a1d1d; cursor: pointer; border-bottom: 1px dashed rgba(122, 29, 29, 0.4); transition: color 0.2s; }
@@ -135,7 +168,7 @@
                         <button id="role-dm-btn" onclick="window.setRole('dm')" class="role-btn">DM</button>
                     </div>
                     <nav class="flex gap-8 items-center">
-                        <a href="index.html" class="nav-link">Party</a>
+                      <a href="index.html" class="nav-link">Party</a>
                         <a href="npcs.html" class="nav-link">NPCs</a>
                         <a href="beasts.html" class="nav-link">Bestiary</a>
                         <a href="partybag.html" class="nav-link">Backpack</a>
@@ -172,6 +205,15 @@
                     </div>
                     <span class="ml-auto text-amber-900 font-black">→</span>
                 </div>
+
+                <div onclick="window.switchView('items')" class="archive-button">
+                    <span class="text-4xl">⚔️</span>
+                    <div class="flex flex-col">
+                        <span class="button-label">Gear & Artifacts</span>
+                        <span class="button-desc">Equipment, Loot, and Scavenged Tech</span>
+                    </div>
+                    <span class="ml-auto text-amber-900 font-black">→</span>
+                </div>
             </div>
         </div>
     </div>
@@ -205,6 +247,30 @@
                 </div>
                 <div id="sessions-list" class="space-y-20"></div>
             </div>
+        </div>
+    </div>
+
+    <!-- ITEMS VIEW -->
+    <div id="items-view" class="hidden-view p-4 md:p-8">
+        <div class="max-w-6xl mx-auto">
+            <button onclick="window.switchView('hub')" class="text-amber-500 font-black text-xs uppercase mb-8 hover:text-amber-400">← Back to Archives</button>
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+                <div class="text-center md:text-left">
+                    <h2 class="font-serif font-black text-3xl uppercase text-amber-500">Gear & Artifacts</h2>
+                    <p class="text-xs text-amber-900/60 font-black uppercase tracking-widest mt-2">Equipment Database</p>
+                </div>
+                <button id="add-item-btn" onclick="window.addItemEntry()" class="hidden bg-amber-600 text-white px-8 py-3 rounded-full font-black text-xs uppercase shadow-xl hover:bg-amber-500">+ Log New Item</button>
+            </div>
+            <div id="items-list" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div>
+        </div>
+    </div>
+
+    <!-- LIGHTBOX MODAL -->
+    <div id="lightbox-modal" class="fixed inset-0 z-[1000] flex items-center justify-center p-4 hidden">
+        <div class="modal-overlay lightbox-modal absolute inset-0" onclick="document.getElementById('lightbox-modal').classList.add('hidden')"></div>
+        <div class="relative z-10 flex flex-col items-center gap-4">
+            <img id="lightbox-img" src="" alt="Zoomed Asset" class="lightbox-img">
+            <button onclick="document.getElementById('lightbox-modal').classList.add('hidden')" class="bg-amber-600 text-white px-8 py-3 rounded-full font-black text-[11px] uppercase tracking-widest shadow-2xl border-2 border-white/20 active:scale-95 transition-transform">Close Optical Feed</button>
         </div>
     </div>
 
@@ -279,7 +345,7 @@
         let currentClass = "Heartbound";
         let currentLevel = 1; 
         let activeRole = 'player';
-        let scripts = [], sessions = [], allCharacters = [];
+        let scripts = [], sessions = [], items = [], allCharacters = [];
         let autoSaveTimer = null;
         let itemToDeleteId = null;
         let deleteType = ''; 
@@ -309,12 +375,13 @@
             document.getElementById('role-dm-btn').classList.toggle('active', isDM);
             document.getElementById('add-script-btn').classList.toggle('hidden', !isDM);
             document.getElementById('add-session-btn').classList.toggle('hidden', !isDM);
+            document.getElementById('add-item-btn').classList.toggle('hidden', !isDM);
             renderLists();
             renderNavs();
         };
 
         window.switchView = (v) => {
-            ['hub', 'scripts', 'sessions'].forEach(id => {
+            ['hub', 'scripts', 'sessions', 'items'].forEach(id => {
                 const el = document.getElementById(`${id}-view`);
                 if(el) el.classList.add('hidden-view');
             });
@@ -362,6 +429,47 @@
             return linkedText;
         }
 
+        function linkifyComponents(text, isDM) {
+            if (!text) return '';
+            if (isDM) return text;
+
+            // Standard tooltips for V, S, M
+            let linked = text.replace(/\bV\b/g, wrapWithTooltip('V', 'V'))
+                             .replace(/\bS\b/g, wrapWithTooltip('S', 'S'))
+                             .replace(/\bM\b/g, wrapWithTooltip('M', 'M'));
+
+            // Every item name in parentheses becomes a link to jumpToItem
+            linked = linked.replace(/\(([^)]+)\)/g, (match, itemName) => {
+                return `(<span class="item-reference-link" onclick="window.jumpToItem('${itemName.replace(/'/g, "\\'")}')">${itemName}</span>)`;
+            });
+
+            return linked;
+        }
+
+        window.jumpToItem = (itemName) => {
+            // Find the item entry in our items array
+            const matchItem = items.find(i => i.title.toLowerCase() === itemName.toLowerCase());
+            
+            if (matchItem) {
+                window.switchView('items');
+                // Allow view switch to settle before scrolling
+                setTimeout(() => {
+                    const itemEntryTitles = Array.from(document.querySelectorAll('#items-list .script-card-title'));
+                    const targetEl = itemEntryTitles.find(el => el.innerText.toLowerCase() === itemName.toLowerCase());
+                    
+                    if (targetEl) {
+                        const card = targetEl.closest('.script-card');
+                        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        card.classList.add('highlight-glow');
+                        setTimeout(() => card.classList.remove('highlight-glow'), 4000);
+                    }
+                }, 150);
+            } else {
+                // If item doesn't exist, trigger the reminder notification
+                window.showToast(`Resource "${itemName}" is not registered. Remind your DM to add it to Gear & Artifacts!`);
+            }
+        };
+
         function renderNavs() {
             const tabs = document.getElementById('class-tabs');
             if (tabs) tabs.innerHTML = CLASSES.map(c => `<div class="class-tab ${currentClass === c ? 'active' : ''}" onclick="window.selectClass('${c}')">${c}</div>`).join('');
@@ -375,6 +483,13 @@
             const title = document.getElementById('current-class-title');
             if (title) title.textContent = `${currentClass} ${currentLevel === 0 ? 'Tricks' : 'Lv. ' + currentLevel}`;
         }
+
+        window.zoomImage = (url) => {
+            const modal = document.getElementById('lightbox-modal');
+            const img = document.getElementById('lightbox-img');
+            img.src = url;
+            modal.classList.remove('hidden');
+        };
 
         window.cycleClassification = async (id, currentVal) => {
             if (activeRole !== 'dm') return;
@@ -390,42 +505,46 @@
         window.copyScript = (id) => {
             const s = scripts.find(script => script.id === id);
             if (!s) return;
+            const cleanContent = (s.content || "").replace(/&&([^|&]+)(?:\|[^&]+)?&&/g, '$1').replace(/\*\*|\*|__/g, '');
+            const text = `--- AEONFALL SCRIPT DATA ---\nNAME: ${s.title.toUpperCase()}\nLEVEL: ${s.level === 0 ? 'Trick' : s.level}\nSCHOOL: ${s.school || 'Dominion'}\nTYPE: ${s.classification || 'Standard'}\nACTIVATION: ${s.activationTime || '1 Action'}\nRANGE: ${s.range || '30 feet'}\nCOMPONENTS: ${s.components || 'V, S'}\nDURATION: ${s.duration || 'Instant'}\n\nEFFECT:\n${cleanContent}\n\nSCALING:\n${s.higherLevels || 'None'}\n\nAUTHORIZED USERS: ${s.scriptLists || s.className || 'General'}`;
+            copyToClipboard(text);
+        };
 
-            // Strip formatting symbols AND definition text (handle &&Term|Definition&&)
-            const cleanContent = (s.content || "")
-                .replace(/&&([^|&]+)(?:\|[^&]+)?&&/g, '$1') // Replaces &&Term|Def&& with Term
-                .replace(/\*\*|\*|__/g, '');
+        window.copyItem = (id) => {
+            const i = items.find(item => item.id === id);
+            if (!i) return;
+            const cleanContent = (i.content || "").replace(/&&([^|&]+)(?:\|[^&]+)?&&/g, '$1').replace(/\*\*|\*|__/g, '');
+            const text = `--- AEONFALL ITEM DATA ---\nNAME: ${i.title.toUpperCase()}\nTYPE: ${i.type || 'Gear'}\nRARITY: ${i.rarity || 'Common'}\nWEIGHT: ${i.weight || '1 lb'}\nCOST: ${i.cost || '-'}\n\nDESCRIPTION:\n${cleanContent}\n\nPROPERTIES:\n${i.properties || 'None'}`;
+            copyToClipboard(text);
+        };
 
-            const text = `--- AEONFALL SCRIPT DATA ---\n` +
-                `NAME: ${s.title.toUpperCase()}\n` +
-                `LEVEL: ${s.level === 0 ? 'Trick' : s.level}\n` +
-                `SCHOOL: ${s.school || 'Dominion'}\n` +
-                `TYPE: ${s.classification || 'Standard'}\n` +
-                `ACTIVATION: ${s.activationTime || '1 Action'}\n` +
-                `RANGE: ${s.range || '30 feet'}\n` +
-                `COMPONENTS: ${s.components || 'V, S'}\n` +
-                `DURATION: ${s.duration || 'Instant'}\n\n` +
-                `EFFECT:\n${cleanContent}\n\n` +
-                `SCALING:\n${s.higherLevels || 'None'}\n\n` +
-                `AUTHORIZED USERS: ${s.scriptLists || s.className || 'General'}`;
-
+        function copyToClipboard(text) {
             const textArea = document.createElement("textarea");
             textArea.value = text;
             document.body.appendChild(textArea);
             textArea.select();
             try {
-                // Using document.execCommand for better compatibility in isolated environments
                 document.execCommand('copy');
                 window.showToast("Data Compiled & Copied to Clipboard");
             } catch (err) {
                 window.showToast("Failed to access system clipboard");
             }
             document.body.removeChild(textArea);
+        }
+
+        const getRarityClass = (rarity) => {
+            const r = (rarity || '').toLowerCase();
+            if (r.includes('legendary')) return 'rarity-legendary';
+            if (r.includes('very rare')) return 'rarity-very-rare';
+            if (r.includes('rare')) return 'rarity-rare';
+            if (r.includes('uncommon')) return 'rarity-uncommon';
+            return 'rarity-common';
         };
 
         const renderLists = () => {
             const isDM = activeRole === 'dm';
             
+            // Render Scripts
             const sList = document.getElementById('scripts-list');
             if (sList) {
                 sList.innerHTML = '';
@@ -438,18 +557,8 @@
                 filteredScripts.forEach(s => {
                     const card = document.createElement('div');
                     card.className = `script-card ${isDM ? 'dm-active-edit' : ''}`;
-                    
-                    let compHtml = s.components || 'V, S';
-                    if (!isDM) {
-                        compHtml = compHtml.replace(/\bV\b/g, wrapWithTooltip('V', 'V'))
-                                         .replace(/\bS\b/g, wrapWithTooltip('S', 'S'))
-                                         .replace(/\bM\b/g, wrapWithTooltip('M', 'M'));
-                    }
-
                     const classif = s.classification || '';
-                    const classifHtml = isDM 
-                        ? ` [<span class="classification-pill ${!classif ? 'classification-none' : ''}" onclick="window.cycleClassification('${s.id}', '${classif}')">${wrapWithTooltip(classif || ' + ', classif)}</span>]`
-                        : (classif ? ` [${wrapWithTooltip(classif)}]` : '');
+                    const classifHtml = isDM ? ` [<span class="classification-pill ${!classif ? 'classification-none' : ''}" onclick="window.cycleClassification('${s.id}', '${classif}')">${wrapWithTooltip(classif || ' + ', classif)}</span>]` : (classif ? ` [${wrapWithTooltip(classif)}]` : '');
 
                     card.innerHTML = `
                         <div class="script-card-header">
@@ -461,27 +570,66 @@
                             <span class="${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'school', this.innerText)">${isDM ? (s.school || 'Dominion') : wrapWithTooltip(s.school || 'Dominion')}</span> 
                             ${classifHtml}
                         </span>
-                        
                         <ul class="script-prop-list">
                             <li><b>${wrapWithTooltip('Activation Time')}:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'activationTime', this.innerText)">${s.activationTime || '1 Action'}</span></li>
                             <li><b>${wrapWithTooltip('Range/Area')}:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'range', this.innerText)">${s.range || '30 feet'}</span></li>
-                            <li><b>${wrapWithTooltip('Components')}:</b> <span class="${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'components', this.innerText)">${compHtml}</span></li>
+                            <li><b>${wrapWithTooltip('Components')}:</b> <span class="${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'components', this.innerText)">${linkifyComponents(s.components || 'V, S', isDM)}</span></li>
                             <li><b>${wrapWithTooltip('Duration')}:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'duration', this.innerText)">${s.duration || 'Instantaneous'}</span></li>
                         </ul>
                         <div class="script-body ${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'content', this.innerText)">${parseAeonfallContent(s.content, isDM)}</div>
-                        
                         <div class="script-higher-levels"><b>${wrapWithTooltip('At Higher Levels')}.</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'higherLevels', this.innerText)">${s.higherLevels || 'No scaling details.'}</span></div>
                         <div class="script-footer"><b>Script Lists:</b> <span class="${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'scriptLists', this.innerText)">${isDM ? (s.scriptLists || currentClass) : linkifyClasses(s.scriptLists || currentClass)}</span></div>
-                        
-                        <button onclick="window.copyScript('${s.id}')" class="mt-6 w-full bg-[#2c1810]/5 hover:bg-[#7a1d1d]/10 border border-[#7a1d1d33] py-2 rounded-lg text-[#7a1d1d] font-black text-[10px] uppercase transition-all flex items-center justify-center gap-2">
-                            <span>📋</span> Copy Script Data
-                        </button>
+                        <button onclick="window.copyScript('${s.id}')" class="mt-6 w-full bg-[#2c1810]/5 hover:bg-[#7a1d1d]/10 border border-[#7a1d1d33] py-2 rounded-lg text-[#7a1d1d] font-black text-[10px] uppercase transition-all flex items-center justify-center gap-2"><span>📋</span> Copy Script Data</button>
                     `;
                     sList.appendChild(card);
                 });
                 if (filteredScripts.length === 0) sList.innerHTML = `<p class="col-span-full text-center italic opacity-40 py-24 uppercase font-black text-amber-900 tracking-widest">Entry Restricted or Unavailable</p>`;
             }
 
+            // Render Items
+            const iList = document.getElementById('items-list');
+            if (iList) {
+                iList.innerHTML = '';
+                items.forEach(i => {
+                    const card = document.createElement('div');
+                    card.className = `script-card ${isDM ? 'dm-active-edit' : ''}`;
+                    
+                    const imgUrl = (i.imageUrl || '').trim();
+                    let imgHtml = '';
+                    
+                    if (imgUrl) {
+                        imgHtml = `<img src="${imgUrl}" class="item-preview-img" onclick="window.zoomImage('${imgUrl}')" onerror="this.src='https://placehold.co/400x400/000000/f59e0b?text=ASSET+LOST'">`;
+                    } else if (isDM) {
+                        imgHtml = `<div class="w-full h-12 bg-black/5 border-dashed border-2 border-amber-900/20 rounded-lg flex items-center justify-center text-[10px] uppercase font-black opacity-40 mb-4 tracking-widest">No Signal: Input Asset Link Below</div>`;
+                    }
+                    
+                    card.innerHTML = `
+                        <div class="script-card-header">
+                            <div class="script-card-title dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'title', this.innerText)">${i.title}</div>
+                            ${isDM ? `<button onclick="window.triggerDeleteItem('${i.id}')" class="absolute top-4 right-4 text-red-700 opacity-30 hover:opacity-100">✕</button>` : ''}
+                        </div>
+                        <span class="script-card-level">
+                            <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'type', this.innerText)">${i.type || 'Gear'}</span> — 
+                            <span class="dm-editable ${getRarityClass(i.rarity)}" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'rarity', this.innerText)">${i.rarity || 'Common'}</span>
+                        </span>
+
+                        ${imgHtml}
+                        ${isDM ? `<span class="item-url-input">Optical Asset Link: <span class="dm-editable inline-block min-w-[50px] border-b border-amber-900/20" contenteditable="true" oninput="window.debounceUpdateItem('${i.id}', 'imageUrl', this.innerText)">${imgUrl}</span></span>` : ''}
+
+                        <ul class="script-prop-list">
+                            <li><b>Weight:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'weight', this.innerText)">${i.weight || '1 lb'}</span></li>
+                            <li><b>Value:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'cost', this.innerText)">${i.cost || '-'}</span></li>
+                        </ul>
+                        <div class="script-body ${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'content', this.innerText)">${parseAeonfallContent(i.content, isDM)}</div>
+                        <div class="script-higher-levels"><b>Properties.</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'properties', this.innerText)">${i.properties || 'None.'}</span></div>
+                        <button onclick="window.copyItem('${i.id}')" class="mt-6 w-full bg-[#2c1810]/5 hover:bg-[#7a1d1d]/10 border border-[#7a1d1d33] py-2 rounded-lg text-[#7a1d1d] font-black text-[10px] uppercase transition-all flex items-center justify-center gap-2"><span>📋</span> Copy Item Data</button>
+                    `;
+                    iList.appendChild(card);
+                });
+                if (items.length === 0) iList.innerHTML = `<p class="col-span-full text-center italic opacity-40 py-24 uppercase font-black text-amber-900 tracking-widest">No Items Registered</p>`;
+            }
+
+            // Render Sessions
             const sessList = document.getElementById('sessions-list');
             if (sessList) {
                 sessList.innerHTML = '';
@@ -511,26 +659,12 @@
                             </div>
                         </div>
                     `;
-
-                    if (isDM) {
-                        html += `
-                            <div class="dm-intel-box">
-                                <span class="dm-intel-label">DM Intel — Private</span>
-                                <div class="mb-6">
-                                    <div class="font-black text-[11px] uppercase text-[#7a1d1d] mb-2">Session Goals</div>
-                                    <div class="dm-editable min-h-[60px] bg-white/50 p-2 rounded" contenteditable="true" oninput="window.debounceUpdateSession('${s.id}', 'dmGoals', this.innerText)">${s.dmGoals || '...'}</div>
-                                </div>
-                                <div class="mb-6">
-                                    <div class="font-black text-[11px] uppercase text-[#7a1d1d] mb-2">Running Notes</div>
-                                    <div class="dm-editable min-h-[100px] bg-white/50 p-2 rounded" contenteditable="true" oninput="window.debounceUpdateSession('${s.id}', 'dmRunningNotes', this.innerText)">${s.dmRunningNotes || '...'}</div>
-                                </div>
-                                <div>
-                                    <div class="font-black text-[11px] uppercase text-[#7a1d1d] mb-2">Aftermath</div>
-                                    <div class="dm-editable min-h-[80px] bg-white/50 p-2 rounded" contenteditable="true" oninput="window.debounceUpdateSession('${s.id}', 'dmAftermath', this.innerText)">${s.dmAftermath || '...'}</div>
-                                </div>
-                            </div>
-                        `;
-                    }
+                    if (isDM) html += `
+                        <div class="dm-intel-box"><span class="dm-intel-label">DM Intel — Private</span>
+                            <div class="mb-6"><div class="font-black text-[11px] uppercase text-[#7a1d1d] mb-2">Session Goals</div><div class="dm-editable min-h-[60px] bg-white/50 p-2 rounded" contenteditable="true" oninput="window.debounceUpdateSession('${s.id}', 'dmGoals', this.innerText)">${s.dmGoals || '...'}</div></div>
+                            <div class="mb-6"><div class="font-black text-[11px] uppercase text-[#7a1d1d] mb-2">Running Notes</div><div class="dm-editable min-h-[100px] bg-white/50 p-2 rounded" contenteditable="true" oninput="window.debounceUpdateSession('${s.id}', 'dmRunningNotes', this.innerText)">${s.dmRunningNotes || '...'}</div></div>
+                            <div><div class="font-black text-[11px] uppercase text-[#7a1d1d] mb-2">Aftermath</div><div class="dm-editable min-h-[80px] bg-white/50 p-2 rounded" contenteditable="true" oninput="window.debounceUpdateSession('${s.id}', 'dmAftermath', this.innerText)">${s.dmAftermath || '...'}</div></div>
+                        </div>`;
                     div.innerHTML = html;
                     sessList.appendChild(div);
                 });
@@ -545,13 +679,18 @@
             if (autoSaveTimer) clearTimeout(autoSaveTimer);
             autoSaveTimer = setTimeout(() => { updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookSessions', id), { [field]: val }); }, 1000);
         };
+        window.debounceUpdateItem = (id, field, val) => {
+            if (autoSaveTimer) clearTimeout(autoSaveTimer);
+            autoSaveTimer = setTimeout(() => { updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookItems', id), { [field]: val }); }, 1000);
+        };
 
         window.triggerDeleteScript = (id) => { itemToDeleteId = id; deleteType = 'script'; document.getElementById('delete-modal').classList.remove('hidden'); };
         window.triggerDeleteSession = (id) => { itemToDeleteId = id; deleteType = 'session'; document.getElementById('delete-modal').classList.remove('hidden'); };
+        window.triggerDeleteItem = (id) => { itemToDeleteId = id; deleteType = 'item'; document.getElementById('delete-modal').classList.remove('hidden'); };
 
         document.getElementById('confirm-delete-btn').onclick = async () => {
             if (!itemToDeleteId) return;
-            const collectionName = deleteType === 'script' ? 'handbookScripts' : 'handbookSessions';
+            const collectionName = deleteType === 'script' ? 'handbookScripts' : deleteType === 'session' ? 'handbookSessions' : 'handbookItems';
             await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', collectionName, itemToDeleteId));
             document.getElementById('delete-modal').classList.add('hidden');
             window.showToast("Erased");
@@ -559,18 +698,18 @@
         };
 
         window.addScriptEntry = async () => {
-            const data = { title: "NEW SCRIPT", content: "Use &&Term|Definition&& for custom tooltips, **Bold**, *Italic*, __Underline__", school: "Dominion", classification: "", activationTime: "1 Action", range: "30 feet", components: "V, S", duration: "Instant", higherLevels: "...", scriptLists: currentClass, className: currentClass, level: currentLevel, createdAt: Date.now() };
+            const data = { title: "NEW SCRIPT", content: "...", school: "Dominion", classification: "", activationTime: "1 Action", range: "30 feet", components: "V, S", duration: "Instant", higherLevels: "...", scriptLists: currentClass, className: currentClass, level: currentLevel, createdAt: Date.now() };
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookScripts'), data);
         };
         
         window.addSessionEntry = async () => {
-            const data = { 
-                title: "SESSION #", date: new Date().toLocaleDateString(), startingPoint: "...", lastSessionSummary: "...",
-                scene1: "...", scene2: "...", scene3: "...", scene4: "...", scene5: "...",
-                dmGoals: "...", dmRunningNotes: "...", dmAftermath: "...",
-                createdAt: Date.now() 
-            };
+            const data = { title: "SESSION #", date: new Date().toLocaleDateString(), startingPoint: "...", lastSessionSummary: "...", scene1: "...", scene2: "...", scene3: "...", scene4: "...", scene5: "...", dmGoals: "...", dmRunningNotes: "...", dmAftermath: "...", createdAt: Date.now() };
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookSessions'), data);
+        };
+
+        window.addItemEntry = async () => {
+            const data = { title: "NEW ITEM", content: "Description of the gear...", type: "Gear", rarity: "Common", weight: "1 lb", cost: "-", properties: "None", imageUrl: "", createdAt: Date.now() };
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookItems'), data);
         };
 
         const init = async () => {
@@ -586,6 +725,10 @@
             });
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookSessions'), (snap) => {
                 sessions = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => b.createdAt - a.createdAt);
+                renderLists();
+            });
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookItems'), (snap) => {
+                items = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => a.createdAt - b.createdAt);
                 renderLists();
             });
             window.updateRoleUI();
