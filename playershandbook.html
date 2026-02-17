@@ -168,7 +168,7 @@
                         <button id="role-dm-btn" onclick="window.setRole('dm')" class="role-btn">DM</button>
                     </div>
                     <nav class="flex gap-8 items-center">
-                      <a href="index.html" class="nav-link">Party</a>
+                        <a href="index.html" class="nav-link">Party</a>
                         <a href="npcs.html" class="nav-link">NPCs</a>
                         <a href="beasts.html" class="nav-link">Bestiary</a>
                         <a href="partybag.html" class="nav-link">Backpack</a>
@@ -254,10 +254,12 @@
     <div id="items-view" class="hidden-view p-4 md:p-8">
         <div class="max-w-6xl mx-auto">
             <button onclick="window.switchView('hub')" class="text-amber-500 font-black text-xs uppercase mb-8 hover:text-amber-400">← Back to Archives</button>
+            <div class="flex flex-wrap gap-2 mb-8" id="item-category-tabs"></div>
+            
             <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
                 <div class="text-center md:text-left">
                     <h2 class="font-serif font-black text-3xl uppercase text-amber-500">Gear & Artifacts</h2>
-                    <p class="text-xs text-amber-900/60 font-black uppercase tracking-widest mt-2">Equipment Database</p>
+                    <p class="text-xs text-amber-900/60 font-black uppercase tracking-widest mt-2" id="current-item-category-title">All Equipment</p>
                 </div>
                 <button id="add-item-btn" onclick="window.addItemEntry()" class="hidden bg-amber-600 text-white px-8 py-3 rounded-full font-black text-xs uppercase shadow-xl hover:bg-amber-500">+ Log New Item</button>
             </div>
@@ -309,6 +311,7 @@
         const auth = getAuth(app);
 
         const CLASSES = ["Heartbound", "Nomad", "Wilderness Warden", "Chronicler", "Orator", "Scriptweaver", "War-Touched", "Archivist", "Fabricator"];
+        const ITEM_CATEGORIES = ["All", "Weapons", "Armor", "Material Component", "Adventuring Gear", "Artifacts", "Recipes & Consumables"];
         
         const TOOLTIPS = {
             "Activation Time": "The amount of time required to initialize this script and push it to reality.",
@@ -344,13 +347,14 @@
 
         let currentClass = "Heartbound";
         let currentLevel = 1; 
+        let currentItemCategory = "All";
         let activeRole = 'player';
         let scripts = [], sessions = [], items = [], allCharacters = [];
         let autoSaveTimer = null;
         let itemToDeleteId = null;
         let deleteType = ''; 
 
-        window.showToast = (m) => { const t = document.getElementById('toast'); t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 3000); };
+        window.showToast = (m) => { const t = document.getElementById('toast'); t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 4000); };
 
         window.setRole = (r) => { 
             if (r === 'dm') {
@@ -397,6 +401,12 @@
         };
         
         window.selectLevel = (l) => { currentLevel = l; renderNavs(); renderLists(); };
+
+        window.selectItemCategory = (cat) => {
+            currentItemCategory = cat;
+            renderNavs();
+            renderLists();
+        };
 
         function parseAeonfallContent(text, isDM) {
             if (!text) return '';
@@ -447,12 +457,14 @@
         }
 
         window.jumpToItem = (itemName) => {
-            // Find the item entry in our items array
             const matchItem = items.find(i => i.title.toLowerCase() === itemName.toLowerCase());
             
             if (matchItem) {
+                // Set category to the item's category to ensure it's visible
+                currentItemCategory = matchItem.category || "All";
                 window.switchView('items');
-                // Allow view switch to settle before scrolling
+                renderNavs();
+                
                 setTimeout(() => {
                     const itemEntryTitles = Array.from(document.querySelectorAll('#items-list .script-card-title'));
                     const targetEl = itemEntryTitles.find(el => el.innerText.toLowerCase() === itemName.toLowerCase());
@@ -463,9 +475,8 @@
                         card.classList.add('highlight-glow');
                         setTimeout(() => card.classList.remove('highlight-glow'), 4000);
                     }
-                }, 150);
+                }, 200);
             } else {
-                // If item doesn't exist, trigger the reminder notification
                 window.showToast(`Resource "${itemName}" is not registered. Remind your DM to add it to Gear & Artifacts!`);
             }
         };
@@ -482,6 +493,15 @@
             }
             const title = document.getElementById('current-class-title');
             if (title) title.textContent = `${currentClass} ${currentLevel === 0 ? 'Tricks' : 'Lv. ' + currentLevel}`;
+
+            const iTabs = document.getElementById('item-category-tabs');
+            if (iTabs) {
+                iTabs.innerHTML = ITEM_CATEGORIES.map(cat => 
+                    `<div class="class-tab ${currentItemCategory === cat ? 'active' : ''}" onclick="window.selectItemCategory('${cat}')">${cat}</div>`
+                ).join('');
+            }
+            const iTitle = document.getElementById('current-item-category-title');
+            if (iTitle) iTitle.textContent = currentItemCategory === "All" ? "All Equipment" : currentItemCategory;
         }
 
         window.zoomImage = (url) => {
@@ -514,7 +534,7 @@
             const i = items.find(item => item.id === id);
             if (!i) return;
             const cleanContent = (i.content || "").replace(/&&([^|&]+)(?:\|[^&]+)?&&/g, '$1').replace(/\*\*|\*|__/g, '');
-            const text = `--- AEONFALL ITEM DATA ---\nNAME: ${i.title.toUpperCase()}\nTYPE: ${i.type || 'Gear'}\nRARITY: ${i.rarity || 'Common'}\nWEIGHT: ${i.weight || '1 lb'}\nCOST: ${i.cost || '-'}\n\nDESCRIPTION:\n${cleanContent}\n\nPROPERTIES:\n${i.properties || 'None'}`;
+            const text = `--- AEONFALL ITEM DATA ---\nNAME: ${i.title.toUpperCase()}\nCATEGORY: ${i.category || 'General'}\nTYPE: ${i.type || 'Gear'}\nRARITY: ${i.rarity || 'Common'}\nWEIGHT: ${i.weight || '1 lb'}\nCOST: ${i.cost || '-'}\n\nDESCRIPTION:\n${cleanContent}\n\nPROPERTIES:\n${i.properties || 'None'}`;
             copyToClipboard(text);
         };
 
@@ -590,7 +610,12 @@
             const iList = document.getElementById('items-list');
             if (iList) {
                 iList.innerHTML = '';
-                items.forEach(i => {
+                const filteredItems = items.filter(i => {
+                    if (currentItemCategory === "All") return true;
+                    return (i.category || 'General').toLowerCase() === currentItemCategory.toLowerCase();
+                });
+
+                filteredItems.forEach(i => {
                     const card = document.createElement('div');
                     card.className = `script-card ${isDM ? 'dm-active-edit' : ''}`;
                     
@@ -609,6 +634,7 @@
                             ${isDM ? `<button onclick="window.triggerDeleteItem('${i.id}')" class="absolute top-4 right-4 text-red-700 opacity-30 hover:opacity-100">✕</button>` : ''}
                         </div>
                         <span class="script-card-level">
+                            <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'category', this.innerText)">${i.category || 'General'}</span> — 
                             <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'type', this.innerText)">${i.type || 'Gear'}</span> — 
                             <span class="dm-editable ${getRarityClass(i.rarity)}" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'rarity', this.innerText)">${i.rarity || 'Common'}</span>
                         </span>
@@ -626,7 +652,7 @@
                     `;
                     iList.appendChild(card);
                 });
-                if (items.length === 0) iList.innerHTML = `<p class="col-span-full text-center italic opacity-40 py-24 uppercase font-black text-amber-900 tracking-widest">No Items Registered</p>`;
+                if (filteredItems.length === 0) iList.innerHTML = `<p class="col-span-full text-center italic opacity-40 py-24 uppercase font-black text-amber-900 tracking-widest">No Items Registered in this category</p>`;
             }
 
             // Render Sessions
@@ -708,7 +734,18 @@
         };
 
         window.addItemEntry = async () => {
-            const data = { title: "NEW ITEM", content: "Description of the gear...", type: "Gear", rarity: "Common", weight: "1 lb", cost: "-", properties: "None", imageUrl: "", createdAt: Date.now() };
+            const data = { 
+                title: "NEW ITEM", 
+                content: "Description of the gear...", 
+                category: currentItemCategory === "All" ? "Adventuring Gear" : currentItemCategory,
+                type: "Gear", 
+                rarity: "Common", 
+                weight: "1 lb", 
+                cost: "-", 
+                properties: "None", 
+                imageUrl: "", 
+                createdAt: Date.now() 
+            };
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookItems'), data);
         };
 
@@ -730,6 +767,7 @@
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookItems'), (snap) => {
                 items = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => a.createdAt - b.createdAt);
                 renderLists();
+                renderNavs();
             });
             window.updateRoleUI();
         };
