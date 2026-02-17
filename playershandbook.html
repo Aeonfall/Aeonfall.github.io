@@ -54,7 +54,7 @@
         }
         .term-hover:hover .tooltip-content { visibility: visible; opacity: 1; }
 
-        /* Archive Buttons */
+        /* Hub Buttons */
         .archive-button {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             border: 1px solid #334155; border-radius: 16px; padding: 24px;
@@ -408,10 +408,31 @@
             const charId = document.getElementById('claim-pc-select').value;
             if (!charId || !scriptToClaim) return;
             const char = allCharacters.find(c => c.id === charId);
+            
+            // Format for the "Scriptcasting" boxes in index.html
+            const level = scriptToClaim.level === 0 ? "0" : String(scriptToClaim.level);
             const cleanContent = scriptToClaim.content.replace(/&&([^|&]+)(?:\|[^&]+)?&&/g, '$1').replace(/\*\*|\*|__/g, '');
-            const scriptNote = `\n[ ${scriptToClaim.title.toUpperCase()} ]\nLevel: ${scriptToClaim.level === 0 ? 'Trick' : scriptToClaim.level} | Effect: ${cleanContent}\n`;
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', charId), { scriptcasting: (char.scriptcasting || "") + scriptNote });
-            window.showToast("Linked to " + char.name.toUpperCase());
+            
+            // Entry format specifically for the grid boxes shown in your screenshot
+            const scriptEntry = `[${scriptToClaim.title.toUpperCase()}]\n${cleanContent}\n\n`;
+            
+            // Handle structured scriptcasting (Object/Map based on level)
+            let scData = char.scriptcasting || {};
+            
+            // If current scriptcasting is a string (old format), convert to object
+            if (typeof scData === 'string') {
+                scData = { "0": scData };
+            }
+            
+            // Append to the specific level bucket
+            const existingLevelData = scData[level] || "";
+            scData[level] = existingLevelData + scriptEntry;
+            
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', charId), { 
+                scriptcasting: scData 
+            });
+            
+            window.showToast(`Claimed: ${scriptToClaim.title} (Level ${level})`);
             document.getElementById('claim-modal').classList.add('hidden');
         };
 
