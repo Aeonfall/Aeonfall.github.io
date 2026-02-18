@@ -57,12 +57,10 @@
         .progression-table th { 
             font-family: 'Cinzel', serif; font-weight: 900; text-transform: uppercase; 
             color: #7a1d1d; border-bottom: 2px solid #7a1d1d; padding: 12px 8px; text-align: left;
+            background: rgba(122, 29, 29, 0.02);
         }
         .progression-table td { padding: 10px 8px; border-bottom: 1px solid rgba(122, 29, 29, 0.1); }
         .progression-table tr:hover { background: rgba(122, 29, 29, 0.03); }
-        .progression-table .lvl-col { font-weight: 900; color: #7a1d1d; width: 60px; text-align: center; }
-        .progression-table .prof-col { font-weight: 700; width: 80px; text-align: center; }
-        .progression-table .feat-col { font-style: italic; }
 
         /* Archetype Heading Styling */
         .archetype-divider { 
@@ -75,6 +73,7 @@
         .archetype-controls { display: flex; gap: 8px; }
         .arch-btn { font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 6px 12px; border-radius: 4px; transition: all 0.2s; cursor: pointer; }
         .arch-btn-add { background: #22c55e; color: white; }
+        .arch-btn-util { background: #64748b; color: white; }
         .arch-btn-delete { background: #ef4444; color: white; opacity: 0.4; }
         .arch-btn-delete:hover { opacity: 1; }
 
@@ -224,7 +223,7 @@
                 <div onclick="window.switchView('features')" class="archive-button">
                     <span class="text-4xl">💥</span>
                     <div class="flex flex-col">
-                        <span class="button-label">Feature Moves</span>
+                        <span class="button-label">Feature Moves & Archetypes</span>
                         <span class="button-desc">Unique Class Skills & Combat Arts</span>
                     </div>
                     <span class="ml-auto text-amber-900 font-black">→</span>
@@ -720,7 +719,9 @@
                             <h3 class="font-serif font-black uppercase text-xl text-[#7a1d1d] dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateTable('${t.id}', 'title', this.innerText)">${t.title}</h3>
                             ${isDM ? `
                                 <div class="flex gap-2">
-                                    <button onclick="window.addRowToTable('${t.id}')" class="arch-btn arch-btn-add">+ Add Row</button>
+                                    <button onclick="window.addRowToTable('${t.id}')" class="arch-btn arch-btn-add">+ Row</button>
+                                    <button onclick="window.addColumnToTable('${t.id}')" class="arch-btn arch-btn-util">+ Col</button>
+                                    <button onclick="window.removeColumnFromTable('${t.id}')" class="arch-btn arch-btn-util">- Col</button>
                                     <button onclick="window.triggerDeleteTable('${t.id}')" class="arch-btn arch-btn-delete">Dispose Table</button>
                                 </div>
                             ` : ''}
@@ -853,7 +854,7 @@
                                 <div class="session-field-group"><b>1. Hook / Opening:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene1', this.innerText)">${s.scene1 || '...'}</div></div>
                                 <div class="session-field-group"><b>2. Key NPCs & Goals:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene2', this.innerText)">${s.scene2 || '...'}</div></div>
                                 <div class="session-field-group"><b>3. Challenges / Encounters:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene3', this.innerText)">${s.scene3 || '...'}</div></div>
-                                <div class="session-field-group)<b>4. Secrets or Clues:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene4', this.innerText)">${s.scene4 || '...'}</div></div>
+                                <div class="session-field-group"><b>4. Secrets or Clues:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene4', this.innerText)">${s.scene4 || '...'}</div></div>
                                 <div class="session-field-group"><b>5. Closing Scene:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene5', this.innerText)">${s.scene5 || '...'}</div></div>
                             </div>
                         </div>
@@ -902,6 +903,32 @@
             const updatedRows = [...table.rows, newRow];
             await updateDoc(tableRef, { rows: JSON.stringify(updatedRows) });
             window.showToast("Row Appended");
+        };
+
+        window.addColumnToTable = async (id) => {
+            const tableRef = doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id);
+            const table = tables.find(t => t.id === id);
+            if (!table) return;
+            const updatedHeaders = [...table.headers, "New Section"];
+            const updatedRows = table.rows.map(row => [...row, "..."]);
+            await updateDoc(tableRef, { 
+                headers: updatedHeaders,
+                rows: JSON.stringify(updatedRows)
+            });
+            window.showToast("Column Added");
+        };
+
+        window.removeColumnFromTable = async (id) => {
+            const tableRef = doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id);
+            const table = tables.find(t => t.id === id);
+            if (!table || table.headers.length <= 1) return;
+            const updatedHeaders = table.headers.slice(0, -1);
+            const updatedRows = table.rows.map(row => row.slice(0, -1));
+            await updateDoc(tableRef, { 
+                headers: updatedHeaders,
+                rows: JSON.stringify(updatedRows)
+            });
+            window.showToast("Column Removed");
         };
 
         window.debounceUpdateArchetype = (id, field, val) => {
@@ -999,28 +1026,34 @@
                     };
                 }).sort((a,b) => a.createdAt - b.createdAt);
                 renderLists();
-            });
+            }, (err) => console.error("Table fetch failed:", err));
+
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookArchetypes'), (snap) => {
                 archetypes = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => a.createdAt - b.createdAt);
                 renderLists();
-            });
+            }, (err) => console.error("Archetype fetch failed:", err));
+
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookFeatures'), (snap) => {
                 features = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => a.createdAt - b.createdAt);
                 renderLists();
-            });
+            }, (err) => console.error("Feature fetch failed:", err));
+
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookScripts'), (snap) => {
                 scripts = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => a.createdAt - b.createdAt);
                 renderLists();
-            });
+            }, (err) => console.error("Script fetch failed:", err));
+
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookSessions'), (snap) => {
                 sessions = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => b.createdAt - a.createdAt);
                 renderLists();
-            });
+            }, (err) => console.error("Session fetch failed:", err));
+
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookItems'), (snap) => {
                 items = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => a.createdAt - b.createdAt);
                 renderLists();
                 renderNavs();
-            });
+            }, (err) => console.error("Item fetch failed:", err));
+
             window.updateRoleUI();
         };
         init();
