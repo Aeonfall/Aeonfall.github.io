@@ -144,7 +144,7 @@
         .button-desc { font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; margin-top: 2px; }
 
         .hidden-view { display: none !important; }
-        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1e293b; color: #fff; padding: 12px 24px; border-radius: 30px; z-index: 2000; opacity: 0; transition: opacity 0.3s; pointer-events: none; border: 1px solid #3b82f6; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(50%); background: #1e293b; color: #fff; padding: 12px 24px; border-radius: 30px; z-index: 2000; opacity: 0; transition: opacity 0.3s; pointer-events: none; border: 1px solid #3b82f6; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         
         /* DM Edit Overlays */
         .dm-editable { transition: background 0.2s; border-radius: 4px; }
@@ -223,7 +223,7 @@
                 <div onclick="window.switchView('features')" class="archive-button">
                     <span class="text-4xl">💥</span>
                     <div class="flex flex-col">
-                        <span class="button-label">Feature Moves & Archetypes</span>
+                        <span class="button-label">Feature Moves</span>
                         <span class="button-desc">Unique Class Skills & Combat Arts</span>
                     </div>
                     <span class="ml-auto text-amber-900 font-black">→</span>
@@ -284,9 +284,7 @@
                 </div>
             </div>
 
-            <!-- DYNAMIC TABLES AREA -->
-            <div id="class-tables-list" class="space-y-8"></div>
-
+            <!-- FEATURES LIST (Includes Tables & Archetypes) -->
             <div id="features-list" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div>
         </div>
     </div>
@@ -695,56 +693,55 @@
             `;
         }
 
+        function createTableHtml(t, isDM) {
+            let headersHtml = t.headers.map((h, i) => `<th contenteditable="${isDM}" oninput="window.debounceUpdateTableCell('${t.id}', 'headers', ${i}, this.innerText)">${h}</th>`).join('');
+            let rowsHtml = t.rows.map((row, rowIdx) => {
+                let cellsHtml = row.map((cell, cellIdx) => `<td contenteditable="${isDM}" oninput="window.debounceUpdateTableCell('${t.id}', 'rows', ${rowIdx}, this.innerText, ${cellIdx})">${cell}</td>`).join('');
+                return `<tr>${cellsHtml}</tr>`;
+            }).join('');
+
+            return `
+                <div class="progression-table-container shadow-2xl mb-12 grid-column-span-full" style="grid-column: 1 / -1;">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="font-serif font-black uppercase text-xl text-[#7a1d1d] dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateTable('${t.id}', 'title', this.innerText)">${t.title}</h3>
+                        ${isDM ? `
+                            <div class="flex gap-2">
+                                <button onclick="window.addRowToTable('${t.id}')" class="arch-btn arch-btn-add">+ Row</button>
+                                <button onclick="window.addColumnToTable('${t.id}')" class="arch-btn arch-btn-util">+ Col</button>
+                                <button onclick="window.removeColumnFromTable('${t.id}')" class="arch-btn arch-btn-util">- Col</button>
+                                <button onclick="window.triggerDeleteTable('${t.id}')" class="arch-btn arch-btn-delete">Dispose Table</button>
+                            </div>
+                        ` : ''}
+                    </div>
+                    <table class="progression-table">
+                        <thead><tr>${headersHtml}</tr></thead>
+                        <tbody>${rowsHtml}</tbody>
+                    </table>
+                </div>
+            `;
+        }
+
         const renderLists = () => {
             const isDM = activeRole === 'dm';
             
-            // Render Dynamic Tables for Current Class
-            const tList = document.getElementById('class-tables-list');
-            if (tList) {
-                tList.innerHTML = '';
-                const activeTables = tables.filter(t => t.parentClass === currentFeatureClass);
-                activeTables.forEach(t => {
-                    const div = document.createElement('div');
-                    div.className = "progression-table-container shadow-2xl";
-                    
-                    let headersHtml = t.headers.map((h, i) => `<th contenteditable="${isDM}" oninput="window.debounceUpdateTableCell('${t.id}', 'headers', ${i}, this.innerText)">${h}</th>`).join('');
-                    
-                    let rowsHtml = t.rows.map((row, rowIdx) => {
-                        let cellsHtml = row.map((cell, cellIdx) => `<td contenteditable="${isDM}" oninput="window.debounceUpdateTableCell('${t.id}', 'rows', ${rowIdx}, this.innerText, ${cellIdx})">${cell}</td>`).join('');
-                        return `<tr>${cellsHtml}</tr>`;
-                    }).join('');
-
-                    div.innerHTML = `
-                        <div class="flex justify-between items-center mb-6">
-                            <h3 class="font-serif font-black uppercase text-xl text-[#7a1d1d] dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateTable('${t.id}', 'title', this.innerText)">${t.title}</h3>
-                            ${isDM ? `
-                                <div class="flex gap-2">
-                                    <button onclick="window.addRowToTable('${t.id}')" class="arch-btn arch-btn-add">+ Row</button>
-                                    <button onclick="window.addColumnToTable('${t.id}')" class="arch-btn arch-btn-util">+ Col</button>
-                                    <button onclick="window.removeColumnFromTable('${t.id}')" class="arch-btn arch-btn-util">- Col</button>
-                                    <button onclick="window.triggerDeleteTable('${t.id}')" class="arch-btn arch-btn-delete">Dispose Table</button>
-                                </div>
-                            ` : ''}
-                        </div>
-                        <table class="progression-table">
-                            <thead><tr>${headersHtml}</tr></thead>
-                            <tbody>${rowsHtml}</tbody>
-                        </table>
-                    `;
-                    tList.appendChild(div);
-                });
-            }
-
-            // Render Features View (Includes Archetypes & linked scripts)
+            // Render Features View (Includes Tables, Archetypes & linked scripts)
             const fList = document.getElementById('features-list');
             if (fList) {
                 fList.innerHTML = '';
+                
+                // Get general resources (no archetype)
+                const classTables = tables.filter(t => t.parentClass === currentFeatureClass && !t.archetypeId);
                 const generalFeatures = features.filter(f => f.className === currentFeatureClass && !f.archetypeId);
                 const classArchetypes = archetypes.filter(a => a.parentClass === currentFeatureClass);
 
+                // Render Top Level Tables
+                classTables.forEach(t => fList.innerHTML += createTableHtml(t, isDM));
+                // Render Top Level Features
                 generalFeatures.forEach(f => fList.innerHTML += createFeatureCard(f, isDM));
 
+                // Render Archetype Sections
                 classArchetypes.forEach(arch => {
+                    const archTables = tables.filter(t => t.archetypeId === arch.id);
                     const archFeatures = features.filter(f => f.archetypeId === arch.id);
                     const archScripts = scripts.filter(s => s.archetypeId === arch.id);
 
@@ -754,6 +751,7 @@
                         <div class="archetype-name dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateArchetype('${arch.id}', 'name', this.innerText)">${arch.name}</div>
                         ${isDM ? `
                             <div class="archetype-controls">
+                                <button onclick="window.addTableEntry('${arch.id}')" class="arch-btn arch-btn-add">+ Table</button>
                                 <button onclick="window.addFeatureEntry('${arch.id}')" class="arch-btn arch-btn-add">+ Feature</button>
                                 <button onclick="window.addScriptEntry(null, '${arch.id}')" class="arch-btn arch-btn-add">+ Script</button>
                                 <button onclick="window.triggerDeleteArchetype('${arch.id}')" class="arch-btn arch-btn-delete">Dispose Archetype</button>
@@ -762,10 +760,11 @@
                     `;
                     fList.appendChild(divider);
 
+                    archTables.forEach(t => fList.innerHTML += createTableHtml(t, isDM));
                     archFeatures.forEach(f => fList.innerHTML += createFeatureCard(f, isDM));
                     archScripts.forEach(s => fList.innerHTML += createScriptCard(s, isDM));
 
-                    if (archFeatures.length === 0 && archScripts.length === 0) {
+                    if (archTables.length === 0 && archFeatures.length === 0 && archScripts.length === 0) {
                         const empty = document.createElement('p');
                         empty.className = 'col-span-full text-center italic opacity-30 py-8 text-xs uppercase font-black';
                         empty.textContent = 'Archetype Data Buffer Empty';
@@ -773,7 +772,7 @@
                     }
                 });
 
-                if (generalFeatures.length === 0 && classArchetypes.length === 0) {
+                if (generalFeatures.length === 0 && classArchetypes.length === 0 && classTables.length === 0) {
                     fList.innerHTML = `<p class="col-span-full text-center italic opacity-40 py-24 uppercase font-black text-amber-900 tracking-widest">No Class Records Available</p>`;
                 }
             }
@@ -968,10 +967,11 @@
             itemToDeleteId = null;
         };
 
-        window.addTableEntry = async () => {
+        window.addTableEntry = async (archId = null) => {
             const data = { 
                 title: "NEW PROGRESSION", 
                 parentClass: currentFeatureClass, 
+                archetypeId: archId,
                 headers: ["Level", "Prof.", "Features"], 
                 rows: JSON.stringify([["1st", "+2", "..."]]), 
                 createdAt: Date.now() 
