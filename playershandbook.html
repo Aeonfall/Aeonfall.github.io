@@ -47,6 +47,37 @@
         .script-footer { font-style: italic; font-size: 12px; margin-top: 12px; border-top: 1px solid #7a1d1d33; padding-top: 8px; }
         .script-footer b { font-weight: 900; font-style: normal; }
 
+        /* Progression Table Styling */
+        .progression-table-container { 
+            background-color: #fdfaf3; border: 4px double #bba683; border-radius: 12px; 
+            padding: 20px; color: #2c1810; margin-bottom: 32px; overflow-x: auto;
+            position: relative;
+        }
+        .progression-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .progression-table th { 
+            font-family: 'Cinzel', serif; font-weight: 900; text-transform: uppercase; 
+            color: #7a1d1d; border-bottom: 2px solid #7a1d1d; padding: 12px 8px; text-align: left;
+        }
+        .progression-table td { padding: 10px 8px; border-bottom: 1px solid rgba(122, 29, 29, 0.1); }
+        .progression-table tr:hover { background: rgba(122, 29, 29, 0.03); }
+        .progression-table .lvl-col { font-weight: 900; color: #7a1d1d; width: 60px; text-align: center; }
+        .progression-table .prof-col { font-weight: 700; width: 80px; text-align: center; }
+        .progression-table .feat-col { font-style: italic; }
+
+        /* Archetype Heading Styling */
+        .archetype-divider { 
+            grid-column: 1 / -1; margin: 48px 0 24px 0; 
+            border-left: 8px solid #f59e0b; background: rgba(245, 158, 11, 0.05);
+            padding: 16px 24px; border-radius: 4px 16px 16px 4px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .archetype-name { font-family: 'Cinzel', serif; font-weight: 900; font-size: 24px; color: #f59e0b; text-transform: uppercase; letter-spacing: 0.1em; }
+        .archetype-controls { display: flex; gap: 8px; }
+        .arch-btn { font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 6px 12px; border-radius: 4px; transition: all 0.2s; cursor: pointer; }
+        .arch-btn-add { background: #22c55e; color: white; }
+        .arch-btn-delete { background: #ef4444; color: white; opacity: 0.4; }
+        .arch-btn-delete:hover { opacity: 1; }
+
         /* Item Linking */
         .item-reference-link {
             color: #7a1d1d; text-decoration: underline; text-decoration-style: dotted; cursor: pointer; font-weight: 700;
@@ -125,6 +156,8 @@
         .level-bubble { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 11px; cursor: pointer; border: 2px solid #bba683; background: #fdfaf3; }
         .level-bubble.active { background: #7a1d1d; color: #fff; border-color: #7a1d1d; }
 
+        .section-label { font-size: 10px; text-transform: uppercase; font-weight: 900; color: #f59e0b; opacity: 0.5; margin-bottom: 8px; letter-spacing: 0.2em; display: block; border-bottom: 1px solid rgba(245, 158, 11, 0.1); padding-bottom: 4px; }
+
         input, textarea { background: transparent; border: none; width: 100%; color: inherit; }
         .modal-overlay { background: rgba(0,0,0,0.95); backdrop-filter: blur(8px); }
 
@@ -188,6 +221,15 @@
                     <span class="ml-auto text-amber-900 font-black">→</span>
                 </a>
 
+                <div onclick="window.switchView('features')" class="archive-button">
+                    <span class="text-4xl">💥</span>
+                    <div class="flex flex-col">
+                        <span class="button-label">Feature Moves</span>
+                        <span class="button-desc">Unique Class Skills & Combat Arts</span>
+                    </div>
+                    <span class="ml-auto text-amber-900 font-black">→</span>
+                </div>
+
                 <div onclick="window.switchView('scripts')" class="archive-button">
                     <span class="text-4xl">📜</span>
                     <div class="flex flex-col">
@@ -218,6 +260,38 @@
         </div>
     </div>
 
+    <!-- FEATURES VIEW -->
+    <div id="features-view" class="hidden-view p-4 md:p-8">
+        <div class="max-w-6xl mx-auto">
+            <button onclick="window.switchView('hub')" class="text-amber-500 font-black text-xs uppercase mb-8 hover:text-amber-400">← Back to Archives</button>
+            
+            <div class="mb-8">
+                <span class="section-label">Martial Classes</span>
+                <div class="flex flex-wrap gap-2 mb-6" id="feature-martial-tabs"></div>
+                
+                <span class="section-label">Script Users</span>
+                <div class="flex flex-wrap gap-2" id="feature-script-tabs"></div>
+            </div>
+            
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+                <div class="text-center md:text-left">
+                    <h2 class="font-serif font-black text-3xl uppercase text-amber-500" id="current-feature-title">Feature Moves</h2>
+                    <p class="text-xs text-amber-900/60 font-black uppercase tracking-widest mt-2" id="current-feature-class-label">Vanguard Features</p>
+                </div>
+                <div class="flex gap-2 flex-wrap">
+                    <button id="add-table-btn" onclick="window.addTableEntry()" class="hidden bg-amber-900/80 text-white px-6 py-3 rounded-full font-black text-xs uppercase shadow-xl hover:bg-amber-800 active:scale-95 transition-all">Add Table</button>
+                    <button id="add-archetype-btn" onclick="window.addArchetypeEntry()" class="hidden bg-amber-800 text-white px-6 py-3 rounded-full font-black text-xs uppercase shadow-xl hover:bg-amber-700 active:scale-95 transition-all">Add Archetype</button>
+                    <button id="add-feature-btn" onclick="window.addFeatureEntry()" class="hidden bg-amber-600 text-white px-8 py-3 rounded-full font-black text-xs uppercase shadow-xl hover:bg-amber-500 active:scale-95 transition-all">+ Document Move</button>
+                </div>
+            </div>
+
+            <!-- DYNAMIC TABLES AREA -->
+            <div id="class-tables-list" class="space-y-8"></div>
+
+            <div id="features-list" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div>
+        </div>
+    </div>
+
     <!-- SCRIPTS VIEW -->
     <div id="scripts-view" class="hidden-view p-4 md:p-8">
         <div class="max-w-6xl mx-auto">
@@ -229,7 +303,7 @@
                     <h2 class="font-serif font-black text-3xl uppercase text-amber-500" id="current-class-title">Scripts</h2>
                     <div class="flex items-center gap-3 mt-4" id="level-nav"></div>
                 </div>
-                <button id="add-script-btn" onclick="window.addScriptEntry()" class="hidden bg-amber-600 text-white px-8 py-3 rounded-full font-black text-xs uppercase shadow-xl hover:bg-amber-500">+ Inscribe New Script</button>
+                <button id="add-script-btn" onclick="window.addScriptEntry()" class="hidden bg-amber-600 text-white px-8 py-3 rounded-full font-black text-xs uppercase shadow-xl hover:bg-amber-500 active:scale-95 transition-all">+ Inscribe New Script</button>
             </div>
             <div id="scripts-list" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div>
         </div>
@@ -261,7 +335,7 @@
                     <h2 class="font-serif font-black text-3xl uppercase text-amber-500">Gear & Artifacts</h2>
                     <p class="text-xs text-amber-900/60 font-black uppercase tracking-widest mt-2" id="current-item-category-title">All Equipment</p>
                 </div>
-                <button id="add-item-btn" onclick="window.addItemEntry()" class="hidden bg-amber-600 text-white px-8 py-3 rounded-full font-black text-xs uppercase shadow-xl hover:bg-amber-500">+ Log New Item</button>
+                <button id="add-item-btn" onclick="window.addItemEntry()" class="hidden bg-amber-600 text-white px-8 py-3 rounded-full font-black text-xs uppercase shadow-xl hover:bg-amber-500 active:scale-95 transition-all">+ Log New Item</button>
             </div>
             <div id="items-list" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div>
         </div>
@@ -279,7 +353,7 @@
     <!-- DELETE CONFIRMATION MODAL -->
     <div id="delete-modal" class="fixed inset-0 z-[600] flex items-center justify-center p-4 hidden">
         <div class="modal-overlay absolute inset-0" onclick="document.getElementById('delete-modal').classList.add('hidden')"></div>
-        <div class="bg-white p-8 rounded-2xl w-full max-w-sm border-4 border-red-600 text-center text-gray-900 relative z-10 shadow-2xl">
+        <div class="bg-white p-8 rounded-2xl w-full max-sm border-4 border-red-600 text-center text-gray-900 relative z-10 shadow-2xl">
             <h3 class="text-2xl font-serif font-black text-red-700 uppercase mb-4">Archive Disposal</h3>
             <p class="text-sm text-gray-500 mb-8 italic leading-relaxed">This record will be permanently erased. This action is irreversible.</p>
             <div class="flex flex-col gap-3">
@@ -291,7 +365,7 @@
 
     <!-- DM PASSWORD MODAL -->
     <div id="password-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[500] hidden">
-        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border-2 border-amber-600 text-white text-center shadow-2xl">
+        <div class="bg-gray-800 p-8 rounded-2xl w-full max-sm border-2 border-amber-600 text-white text-center shadow-2xl">
             <h3 class="text-xl font-serif text-amber-500 font-bold mb-2 uppercase">Dungeon Master Access</h3>
             <input type="password" id="dm-password" class="w-full bg-gray-900 text-center text-2xl rounded-lg p-3 mb-6 border border-gray-700">
             <button onclick="window.verifyDmPassword()" class="w-full bg-amber-600 text-white py-3 rounded-xl font-bold uppercase text-xs">Unlock Archives</button>
@@ -311,6 +385,7 @@
         const auth = getAuth(app);
 
         const CLASSES = ["Heartbound", "Nomad", "Wilderness Warden", "Chronicler", "Orator", "Scriptweaver", "War-Touched", "Archivist", "Fabricator"];
+        const FEATURE_MARTIAL_CLASSES = ["Vanguard", "Warrior", "Peacekeeper", "Scavenger"];
         const ITEM_CATEGORIES = ["All", "Weapons", "Armor", "Material Component", "Adventuring Gear", "Artifacts", "Recipes & Consumables"];
         
         const TOOLTIPS = {
@@ -346,10 +421,11 @@
         };
 
         let currentClass = "Heartbound";
+        let currentFeatureClass = "Vanguard";
         let currentLevel = 1; 
         let currentItemCategory = "All";
         let activeRole = 'player';
-        let scripts = [], sessions = [], items = [], allCharacters = [];
+        let scripts = [], sessions = [], items = [], features = [], archetypes = [], tables = [];
         let autoSaveTimer = null;
         let itemToDeleteId = null;
         let deleteType = ''; 
@@ -380,12 +456,15 @@
             document.getElementById('add-script-btn').classList.toggle('hidden', !isDM);
             document.getElementById('add-session-btn').classList.toggle('hidden', !isDM);
             document.getElementById('add-item-btn').classList.toggle('hidden', !isDM);
+            document.getElementById('add-feature-btn').classList.toggle('hidden', !isDM);
+            document.getElementById('add-archetype-btn').classList.toggle('hidden', !isDM);
+            document.getElementById('add-table-btn').classList.toggle('hidden', !isDM);
             renderLists();
             renderNavs();
         };
 
         window.switchView = (v) => {
-            ['hub', 'scripts', 'sessions', 'items'].forEach(id => {
+            ['hub', 'scripts', 'sessions', 'items', 'features'].forEach(id => {
                 const el = document.getElementById(`${id}-view`);
                 if(el) el.classList.add('hidden-view');
             });
@@ -398,6 +477,11 @@
             const shortClasses = ["Heartbound", "Nomad", "Fabricator"];
             if (shortClasses.includes(c)) { if (currentLevel < 1) currentLevel = 1; if (currentLevel > 5) currentLevel = 5; }
             renderNavs(); renderLists(); 
+        };
+
+        window.selectFeatureClass = (c) => {
+            currentFeatureClass = c;
+            renderNavs(); renderLists();
         };
         
         window.selectLevel = (l) => { currentLevel = l; renderNavs(); renderLists(); };
@@ -432,7 +516,7 @@
         function linkifyClasses(text) {
             if (!text) return '';
             let linkedText = text;
-            CLASSES.forEach(cls => {
+            CLASSES.concat(FEATURE_MARTIAL_CLASSES).forEach(cls => {
                 const regex = new RegExp(`\\b${cls}\\b`, 'g');
                 linkedText = linkedText.replace(regex, `<span class="class-link" onclick="event.stopPropagation(); window.selectClass('${cls}')">${cls}</span>`);
             });
@@ -442,33 +526,24 @@
         function linkifyComponents(text, isDM) {
             if (!text) return '';
             if (isDM) return text;
-
-            // Standard tooltips for V, S, M
             let linked = text.replace(/\bV\b/g, wrapWithTooltip('V', 'V'))
                              .replace(/\bS\b/g, wrapWithTooltip('S', 'S'))
                              .replace(/\bM\b/g, wrapWithTooltip('M', 'M'));
-
-            // Every item name in parentheses becomes a link to jumpToItem
             linked = linked.replace(/\(([^)]+)\)/g, (match, itemName) => {
                 return `(<span class="item-reference-link" onclick="window.jumpToItem('${itemName.replace(/'/g, "\\'")}')">${itemName}</span>)`;
             });
-
             return linked;
         }
 
         window.jumpToItem = (itemName) => {
             const matchItem = items.find(i => i.title.toLowerCase() === itemName.toLowerCase());
-            
             if (matchItem) {
-                // Set category to the item's category to ensure it's visible
                 currentItemCategory = matchItem.category || "All";
                 window.switchView('items');
                 renderNavs();
-                
                 setTimeout(() => {
                     const itemEntryTitles = Array.from(document.querySelectorAll('#items-list .script-card-title'));
                     const targetEl = itemEntryTitles.find(el => el.innerText.toLowerCase() === itemName.toLowerCase());
-                    
                     if (targetEl) {
                         const card = targetEl.closest('.script-card');
                         card.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -485,6 +560,12 @@
             const tabs = document.getElementById('class-tabs');
             if (tabs) tabs.innerHTML = CLASSES.map(c => `<div class="class-tab ${currentClass === c ? 'active' : ''}" onclick="window.selectClass('${c}')">${c}</div>`).join('');
 
+            const martialTabs = document.getElementById('feature-martial-tabs');
+            if (martialTabs) martialTabs.innerHTML = FEATURE_MARTIAL_CLASSES.map(c => `<div class="class-tab ${currentFeatureClass === c ? 'active' : ''}" onclick="window.selectFeatureClass('${c}')">${c}</div>`).join('');
+
+            const scriptTabs = document.getElementById('feature-script-tabs');
+            if (scriptTabs) scriptTabs.innerHTML = CLASSES.map(c => `<div class="class-tab ${currentFeatureClass === c ? 'active' : ''}" onclick="window.selectFeatureClass('${c}')">${c}</div>`).join('');
+
             const lNav = document.getElementById('level-nav');
             if (lNav) {
                 const shortClasses = ["Heartbound", "Nomad", "Fabricator"];
@@ -493,6 +574,9 @@
             }
             const title = document.getElementById('current-class-title');
             if (title) title.textContent = `${currentClass} ${currentLevel === 0 ? 'Tricks' : 'Lv. ' + currentLevel}`;
+
+            const fLabel = document.getElementById('current-feature-class-label');
+            if (fLabel) fLabel.textContent = `${currentFeatureClass} Features`;
 
             const iTabs = document.getElementById('item-category-tabs');
             if (iTabs) {
@@ -521,12 +605,19 @@
             window.showToast(newVal ? `Script Type: ${newVal}` : "Classification Removed");
         };
 
-        // --- CLIPBOARD LOGIC ---
         window.copyScript = (id) => {
             const s = scripts.find(script => script.id === id);
             if (!s) return;
             const cleanContent = (s.content || "").replace(/&&([^|&]+)(?:\|[^&]+)?&&/g, '$1').replace(/\*\*|\*|__/g, '');
             const text = `--- AEONFALL SCRIPT DATA ---\nNAME: ${s.title.toUpperCase()}\nLEVEL: ${s.level === 0 ? 'Trick' : s.level}\nSCHOOL: ${s.school || 'Dominion'}\nTYPE: ${s.classification || 'Standard'}\nACTIVATION: ${s.activationTime || '1 Action'}\nRANGE: ${s.range || '30 feet'}\nCOMPONENTS: ${s.components || 'V, S'}\nDURATION: ${s.duration || 'Instant'}\n\nEFFECT:\n${cleanContent}\n\nSCALING:\n${s.higherLevels || 'None'}\n\nAUTHORIZED USERS: ${s.scriptLists || s.className || 'General'}`;
+            copyToClipboard(text);
+        };
+
+        window.copyFeature = (id) => {
+            const f = features.find(feat => feat.id === id);
+            if (!f) return;
+            const cleanContent = (f.content || "").replace(/&&([^|&]+)(?:\|[^&]+)?&&/g, '$1').replace(/\*\*|\*|__/g, '');
+            const text = `--- AEONFALL FEATURE DATA ---\nNAME: ${f.title.toUpperCase()}\nCLASS: ${f.className}\nTYPE: ${f.type || 'Feature'}\n\nEFFECT:\n${cleanContent}`;
             copyToClipboard(text);
         };
 
@@ -561,10 +652,132 @@
             return 'rarity-common';
         };
 
+        function createScriptCard(s, isDM) {
+            const classif = s.classification || '';
+            const classifHtml = isDM ? ` [<span class="classification-pill ${!classif ? 'classification-none' : ''}" onclick="window.cycleClassification('${s.id}', '${classif}')">${wrapWithTooltip(classif || ' + ', classif)}</span>]` : (classif ? ` [${wrapWithTooltip(classif)}]` : '');
+            return `
+                <div class="script-card ${isDM ? 'dm-active-edit' : ''}">
+                    <div class="script-card-header">
+                        <div class="script-card-title dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'title', this.innerText)">${s.title}</div>
+                        ${isDM ? `<button onclick="window.triggerDeleteScript('${s.id}')" class="absolute top-4 right-4 text-red-700 opacity-30 hover:opacity-100">✕</button>` : ''}
+                    </div>
+                    <span class="script-card-level">
+                        ${s.level === 0 ? 'Trick' : s.level + '-level'} — 
+                        <span class="${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'school', this.innerText)">${isDM ? (s.school || 'Dominion') : wrapWithTooltip(s.school || 'Dominion')}</span> 
+                        ${classifHtml}
+                    </span>
+                    <ul class="script-prop-list">
+                        <li><b>${wrapWithTooltip('Activation Time')}:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'activationTime', this.innerText)">${s.activationTime || '1 Action'}</span></li>
+                        <li><b>${wrapWithTooltip('Range/Area')}:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'range', this.innerText)">${s.range || '30 feet'}</span></li>
+                        <li><b>${wrapWithTooltip('Components')}:</b> <span class="${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'components', this.innerText)">${linkifyComponents(s.components || 'V, S', isDM)}</span></li>
+                        <li><b>${wrapWithTooltip('Duration')}:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'duration', this.innerText)">${s.duration || 'Instantaneous'}</span></li>
+                    </ul>
+                    <div class="script-body ${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'content', this.innerText)">${parseAeonfallContent(s.content, isDM)}</div>
+                    <div class="script-higher-levels"><b>${wrapWithTooltip('At Higher Levels')}.</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'higherLevels', this.innerText)">${s.higherLevels || 'No scaling details.'}</span></div>
+                    <div class="script-footer"><b>Script Lists:</b> <span class="${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'scriptLists', this.innerText)">${isDM ? (s.scriptLists || currentClass) : linkifyClasses(s.scriptLists || currentClass)}</span></div>
+                    <button onclick="window.copyScript('${s.id}')" class="mt-6 w-full bg-[#2c1810]/5 hover:bg-[#7a1d1d]/10 border border-[#7a1d1d33] py-2 rounded-lg text-[#7a1d1d] font-black text-[10px] uppercase transition-all flex items-center justify-center gap-2"><span>📋</span> Copy Script Data</button>
+                </div>
+            `;
+        }
+
+        function createFeatureCard(f, isDM) {
+            return `
+                <div class="script-card ${isDM ? 'dm-active-edit' : ''}">
+                    <div class="script-card-header">
+                        <div class="script-card-title dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateFeature('${f.id}', 'title', this.innerText)">${f.title}</div>
+                        ${isDM ? `<button onclick="window.triggerDeleteFeature('${f.id}')" class="absolute top-4 right-4 text-red-700 opacity-30 hover:opacity-100">✕</button>` : ''}
+                    </div>
+                    <span class="script-card-level">
+                        <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateFeature('${f.id}', 'type', this.innerText)">${f.type || 'Feature Move'}</span>
+                    </span>
+                    <div class="script-body mt-4 ${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdateFeature('${f.id}', 'content', this.innerText)">${parseAeonfallContent(f.content, isDM)}</div>
+                    <button onclick="window.copyFeature('${f.id}')" class="mt-6 w-full bg-[#2c1810]/5 hover:bg-[#7a1d1d]/10 border border-[#7a1d1d33] py-2 rounded-lg text-[#7a1d1d] font-black text-[10px] uppercase transition-all flex items-center justify-center gap-2"><span>📋</span> Copy Feature Data</button>
+                </div>
+            `;
+        }
+
         const renderLists = () => {
             const isDM = activeRole === 'dm';
             
-            // Render Scripts
+            // Render Dynamic Tables for Current Class
+            const tList = document.getElementById('class-tables-list');
+            if (tList) {
+                tList.innerHTML = '';
+                const activeTables = tables.filter(t => t.parentClass === currentFeatureClass);
+                activeTables.forEach(t => {
+                    const div = document.createElement('div');
+                    div.className = "progression-table-container shadow-2xl";
+                    
+                    let headersHtml = t.headers.map((h, i) => `<th contenteditable="${isDM}" oninput="window.debounceUpdateTableCell('${t.id}', 'headers', ${i}, this.innerText)">${h}</th>`).join('');
+                    
+                    let rowsHtml = t.rows.map((row, rowIdx) => {
+                        let cellsHtml = row.map((cell, cellIdx) => `<td contenteditable="${isDM}" oninput="window.debounceUpdateTableCell('${t.id}', 'rows', ${rowIdx}, this.innerText, ${cellIdx})">${cell}</td>`).join('');
+                        return `<tr>${cellsHtml}</tr>`;
+                    }).join('');
+
+                    div.innerHTML = `
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="font-serif font-black uppercase text-xl text-[#7a1d1d] dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateTable('${t.id}', 'title', this.innerText)">${t.title}</h3>
+                            ${isDM ? `
+                                <div class="flex gap-2">
+                                    <button onclick="window.addRowToTable('${t.id}')" class="arch-btn arch-btn-add">+ Add Row</button>
+                                    <button onclick="window.triggerDeleteTable('${t.id}')" class="arch-btn arch-btn-delete">Dispose Table</button>
+                                </div>
+                            ` : ''}
+                        </div>
+                        <table class="progression-table">
+                            <thead><tr>${headersHtml}</tr></thead>
+                            <tbody>${rowsHtml}</tbody>
+                        </table>
+                    `;
+                    tList.appendChild(div);
+                });
+            }
+
+            // Render Features View (Includes Archetypes & linked scripts)
+            const fList = document.getElementById('features-list');
+            if (fList) {
+                fList.innerHTML = '';
+                const generalFeatures = features.filter(f => f.className === currentFeatureClass && !f.archetypeId);
+                const classArchetypes = archetypes.filter(a => a.parentClass === currentFeatureClass);
+
+                generalFeatures.forEach(f => fList.innerHTML += createFeatureCard(f, isDM));
+
+                classArchetypes.forEach(arch => {
+                    const archFeatures = features.filter(f => f.archetypeId === arch.id);
+                    const archScripts = scripts.filter(s => s.archetypeId === arch.id);
+
+                    const divider = document.createElement('div');
+                    divider.className = 'archetype-divider shadow-md';
+                    divider.innerHTML = `
+                        <div class="archetype-name dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateArchetype('${arch.id}', 'name', this.innerText)">${arch.name}</div>
+                        ${isDM ? `
+                            <div class="archetype-controls">
+                                <button onclick="window.addFeatureEntry('${arch.id}')" class="arch-btn arch-btn-add">+ Feature</button>
+                                <button onclick="window.addScriptEntry(null, '${arch.id}')" class="arch-btn arch-btn-add">+ Script</button>
+                                <button onclick="window.triggerDeleteArchetype('${arch.id}')" class="arch-btn arch-btn-delete">Dispose Archetype</button>
+                            </div>
+                        ` : ''}
+                    `;
+                    fList.appendChild(divider);
+
+                    archFeatures.forEach(f => fList.innerHTML += createFeatureCard(f, isDM));
+                    archScripts.forEach(s => fList.innerHTML += createScriptCard(s, isDM));
+
+                    if (archFeatures.length === 0 && archScripts.length === 0) {
+                        const empty = document.createElement('p');
+                        empty.className = 'col-span-full text-center italic opacity-30 py-8 text-xs uppercase font-black';
+                        empty.textContent = 'Archetype Data Buffer Empty';
+                        fList.appendChild(empty);
+                    }
+                });
+
+                if (generalFeatures.length === 0 && classArchetypes.length === 0) {
+                    fList.innerHTML = `<p class="col-span-full text-center italic opacity-40 py-24 uppercase font-black text-amber-900 tracking-widest">No Class Records Available</p>`;
+                }
+            }
+
+            // Render Script Codex View
             const sList = document.getElementById('scripts-list');
             if (sList) {
                 sList.innerHTML = '';
@@ -573,36 +786,7 @@
                     const listText = (s.scriptLists || s.className || '').toLowerCase();
                     return listText.includes(currentClass.toLowerCase());
                 });
-
-                filteredScripts.forEach(s => {
-                    const card = document.createElement('div');
-                    card.className = `script-card ${isDM ? 'dm-active-edit' : ''}`;
-                    const classif = s.classification || '';
-                    const classifHtml = isDM ? ` [<span class="classification-pill ${!classif ? 'classification-none' : ''}" onclick="window.cycleClassification('${s.id}', '${classif}')">${wrapWithTooltip(classif || ' + ', classif)}</span>]` : (classif ? ` [${wrapWithTooltip(classif)}]` : '');
-
-                    card.innerHTML = `
-                        <div class="script-card-header">
-                            <div class="script-card-title dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'title', this.innerText)">${s.title}</div>
-                            ${isDM ? `<button onclick="window.triggerDeleteScript('${s.id}')" class="absolute top-4 right-4 text-red-700 opacity-30 hover:opacity-100">✕</button>` : ''}
-                        </div>
-                        <span class="script-card-level">
-                            ${s.level === 0 ? 'Trick' : s.level + '-level'} — 
-                            <span class="${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'school', this.innerText)">${isDM ? (s.school || 'Dominion') : wrapWithTooltip(s.school || 'Dominion')}</span> 
-                            ${classifHtml}
-                        </span>
-                        <ul class="script-prop-list">
-                            <li><b>${wrapWithTooltip('Activation Time')}:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'activationTime', this.innerText)">${s.activationTime || '1 Action'}</span></li>
-                            <li><b>${wrapWithTooltip('Range/Area')}:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'range', this.innerText)">${s.range || '30 feet'}</span></li>
-                            <li><b>${wrapWithTooltip('Components')}:</b> <span class="${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'components', this.innerText)">${linkifyComponents(s.components || 'V, S', isDM)}</span></li>
-                            <li><b>${wrapWithTooltip('Duration')}:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'duration', this.innerText)">${s.duration || 'Instantaneous'}</span></li>
-                        </ul>
-                        <div class="script-body ${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'content', this.innerText)">${parseAeonfallContent(s.content, isDM)}</div>
-                        <div class="script-higher-levels"><b>${wrapWithTooltip('At Higher Levels')}.</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'higherLevels', this.innerText)">${s.higherLevels || 'No scaling details.'}</span></div>
-                        <div class="script-footer"><b>Script Lists:</b> <span class="${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'scriptLists', this.innerText)">${isDM ? (s.scriptLists || currentClass) : linkifyClasses(s.scriptLists || currentClass)}</span></div>
-                        <button onclick="window.copyScript('${s.id}')" class="mt-6 w-full bg-[#2c1810]/5 hover:bg-[#7a1d1d]/10 border border-[#7a1d1d33] py-2 rounded-lg text-[#7a1d1d] font-black text-[10px] uppercase transition-all flex items-center justify-center gap-2"><span>📋</span> Copy Script Data</button>
-                    `;
-                    sList.appendChild(card);
-                });
+                filteredScripts.forEach(s => sList.innerHTML += createScriptCard(s, isDM));
                 if (filteredScripts.length === 0) sList.innerHTML = `<p class="col-span-full text-center italic opacity-40 py-24 uppercase font-black text-amber-900 tracking-widest">Entry Restricted or Unavailable</p>`;
             }
 
@@ -614,20 +798,11 @@
                     if (currentItemCategory === "All") return true;
                     return (i.category || 'General').toLowerCase() === currentItemCategory.toLowerCase();
                 });
-
                 filteredItems.forEach(i => {
                     const card = document.createElement('div');
                     card.className = `script-card ${isDM ? 'dm-active-edit' : ''}`;
-                    
                     const imgUrl = (i.imageUrl || '').trim();
-                    let imgHtml = '';
-                    
-                    if (imgUrl) {
-                        imgHtml = `<img src="${imgUrl}" class="item-preview-img" onclick="window.zoomImage('${imgUrl}')" onerror="this.src='https://placehold.co/400x400/000000/f59e0b?text=ASSET+LOST'">`;
-                    } else if (isDM) {
-                        imgHtml = `<div class="w-full h-12 bg-black/5 border-dashed border-2 border-amber-900/20 rounded-lg flex items-center justify-center text-[10px] uppercase font-black opacity-40 mb-4 tracking-widest">No Signal: Input Asset Link Below</div>`;
-                    }
-                    
+                    let imgHtml = imgUrl ? `<img src="${imgUrl}" class="item-preview-img" onclick="window.zoomImage('${imgUrl}')" onerror="this.src='https://placehold.co/400x400/000000/f59e0b?text=ASSET+LOST'">` : (isDM ? `<div class="w-full h-12 bg-black/5 border-dashed border-2 border-amber-900/20 rounded-lg flex items-center justify-center text-[10px] uppercase font-black opacity-40 mb-4 tracking-widest">No Signal: Input Asset Link Below</div>` : '');
                     card.innerHTML = `
                         <div class="script-card-header">
                             <div class="script-card-title dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'title', this.innerText)">${i.title}</div>
@@ -638,10 +813,8 @@
                             <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'type', this.innerText)">${i.type || 'Gear'}</span> — 
                             <span class="dm-editable ${getRarityClass(i.rarity)}" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'rarity', this.innerText)">${i.rarity || 'Common'}</span>
                         </span>
-
                         ${imgHtml}
                         ${isDM ? `<span class="item-url-input">Optical Asset Link: <span class="dm-editable inline-block min-w-[50px] border-b border-amber-900/20" contenteditable="true" oninput="window.debounceUpdateItem('${i.id}', 'imageUrl', this.innerText)">${imgUrl}</span></span>` : ''}
-
                         <ul class="script-prop-list">
                             <li><b>Weight:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'weight', this.innerText)">${i.weight || '1 lb'}</span></li>
                             <li><b>Value:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'cost', this.innerText)">${i.cost || '-'}</span></li>
@@ -680,7 +853,7 @@
                                 <div class="session-field-group"><b>1. Hook / Opening:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene1', this.innerText)">${s.scene1 || '...'}</div></div>
                                 <div class="session-field-group"><b>2. Key NPCs & Goals:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene2', this.innerText)">${s.scene2 || '...'}</div></div>
                                 <div class="session-field-group"><b>3. Challenges / Encounters:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene3', this.innerText)">${s.scene3 || '...'}</div></div>
-                                <div class="session-field-group"><b>4. Secrets or Clues:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene4', this.innerText)">${s.scene4 || '...'}</div></div>
+                                <div class="session-field-group)<b>4. Secrets or Clues:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene4', this.innerText)">${s.scene4 || '...'}</div></div>
                                 <div class="session-field-group"><b>5. Closing Scene:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene5', this.innerText)">${s.scene5 || '...'}</div></div>
                             </div>
                         </div>
@@ -697,6 +870,48 @@
             }
         };
 
+        window.debounceUpdateTable = (id, field, val) => {
+            if (autoSaveTimer) clearTimeout(autoSaveTimer);
+            autoSaveTimer = setTimeout(() => { updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id), { [field]: val }); }, 1000);
+        };
+        
+        window.debounceUpdateTableCell = (id, field, idx, val, cellIdx = null) => {
+            if (autoSaveTimer) clearTimeout(autoSaveTimer);
+            autoSaveTimer = setTimeout(async () => {
+                const tableRef = doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id);
+                const table = tables.find(t => t.id === id);
+                if (!table) return;
+                
+                if (field === 'headers') {
+                    const newHeaders = [...table.headers];
+                    newHeaders[idx] = val;
+                    await updateDoc(tableRef, { headers: newHeaders });
+                } else if (field === 'rows') {
+                    const newRows = [...table.rows];
+                    newRows[idx][cellIdx] = val;
+                    await updateDoc(tableRef, { rows: JSON.stringify(newRows) });
+                }
+            }, 1000);
+        };
+
+        window.addRowToTable = async (id) => {
+            const tableRef = doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id);
+            const table = tables.find(t => t.id === id);
+            if (!table) return;
+            const newRow = new Array(table.headers.length).fill("...");
+            const updatedRows = [...table.rows, newRow];
+            await updateDoc(tableRef, { rows: JSON.stringify(updatedRows) });
+            window.showToast("Row Appended");
+        };
+
+        window.debounceUpdateArchetype = (id, field, val) => {
+            if (autoSaveTimer) clearTimeout(autoSaveTimer);
+            autoSaveTimer = setTimeout(() => { updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookArchetypes', id), { [field]: val }); }, 1000);
+        };
+        window.debounceUpdateFeature = (id, field, val) => {
+            if (autoSaveTimer) clearTimeout(autoSaveTimer);
+            autoSaveTimer = setTimeout(() => { updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookFeatures', id), { [field]: val }); }, 1000);
+        };
         window.debounceUpdate = (id, field, val) => {
             if (autoSaveTimer) clearTimeout(autoSaveTimer);
             autoSaveTimer = setTimeout(() => { updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookScripts', id), { [field]: val }); }, 1000);
@@ -710,21 +925,50 @@
             autoSaveTimer = setTimeout(() => { updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookItems', id), { [field]: val }); }, 1000);
         };
 
+        window.triggerDeleteTable = (id) => { itemToDeleteId = id; deleteType = 'table'; document.getElementById('delete-modal').classList.remove('hidden'); };
+        window.triggerDeleteArchetype = (id) => { itemToDeleteId = id; deleteType = 'archetype'; document.getElementById('delete-modal').classList.remove('hidden'); };
+        window.triggerDeleteFeature = (id) => { itemToDeleteId = id; deleteType = 'feature'; document.getElementById('delete-modal').classList.remove('hidden'); };
         window.triggerDeleteScript = (id) => { itemToDeleteId = id; deleteType = 'script'; document.getElementById('delete-modal').classList.remove('hidden'); };
         window.triggerDeleteSession = (id) => { itemToDeleteId = id; deleteType = 'session'; document.getElementById('delete-modal').classList.remove('hidden'); };
         window.triggerDeleteItem = (id) => { itemToDeleteId = id; deleteType = 'item'; document.getElementById('delete-modal').classList.remove('hidden'); };
 
         document.getElementById('confirm-delete-btn').onclick = async () => {
             if (!itemToDeleteId) return;
-            const collectionName = deleteType === 'script' ? 'handbookScripts' : deleteType === 'session' ? 'handbookSessions' : 'handbookItems';
+            const collectionName = deleteType === 'script' ? 'handbookScripts' : deleteType === 'session' ? 'handbookSessions' : deleteType === 'feature' ? 'handbookFeatures' : deleteType === 'archetype' ? 'handbookArchetypes' : deleteType === 'table' ? 'handbookTables' : 'handbookItems';
             await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', collectionName, itemToDeleteId));
             document.getElementById('delete-modal').classList.add('hidden');
             window.showToast("Erased");
             itemToDeleteId = null;
         };
 
-        window.addScriptEntry = async () => {
-            const data = { title: "NEW SCRIPT", content: "...", school: "Dominion", classification: "", activationTime: "1 Action", range: "30 feet", components: "V, S", duration: "Instant", higherLevels: "...", scriptLists: currentClass, className: currentClass, level: currentLevel, createdAt: Date.now() };
+        window.addTableEntry = async () => {
+            const data = { 
+                title: "NEW PROGRESSION", 
+                parentClass: currentFeatureClass, 
+                headers: ["Level", "Prof.", "Features"], 
+                rows: JSON.stringify([["1st", "+2", "..."]]), 
+                createdAt: Date.now() 
+            };
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookTables'), data);
+        };
+
+        window.addArchetypeEntry = async () => {
+            const data = { name: "NEW ARCHETYPE", parentClass: currentFeatureClass, createdAt: Date.now() };
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookArchetypes'), data);
+        };
+
+        window.addFeatureEntry = async (archId = null) => {
+            const data = { title: "NEW FEATURE", content: "Description of the move...", type: "Feature Move", className: currentFeatureClass, archetypeId: archId, createdAt: Date.now() };
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookFeatures'), data);
+        };
+
+        window.addScriptEntry = async (lvl = null, archId = null) => {
+            const data = { 
+                title: "NEW SCRIPT", content: "...", school: "Dominion", classification: "", 
+                activationTime: "1 Action", range: "30 feet", components: "V, S", duration: "Instant", 
+                higherLevels: "...", scriptLists: currentFeatureClass, className: currentFeatureClass, 
+                level: lvl || 1, archetypeId: archId, createdAt: Date.now() 
+            };
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookScripts'), data);
         };
         
@@ -734,18 +978,7 @@
         };
 
         window.addItemEntry = async () => {
-            const data = { 
-                title: "NEW ITEM", 
-                content: "Description of the gear...", 
-                category: currentItemCategory === "All" ? "Adventuring Gear" : currentItemCategory,
-                type: "Gear", 
-                rarity: "Common", 
-                weight: "1 lb", 
-                cost: "-", 
-                properties: "None", 
-                imageUrl: "", 
-                createdAt: Date.now() 
-            };
+            const data = { title: "NEW ITEM", content: "Description of the gear...", category: currentItemCategory === "All" ? "Adventuring Gear" : currentItemCategory, type: "Gear", rarity: "Common", weight: "1 lb", cost: "-", properties: "None", imageUrl: "", createdAt: Date.now() };
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookItems'), data);
         };
 
@@ -756,6 +989,25 @@
             const role = localStorage.getItem('aeonfall_role');
             if (role) activeRole = role;
             
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookTables'), (snap) => {
+                tables = snap.docs.map(d => {
+                    const data = d.data();
+                    return {
+                        id: d.id,
+                        ...data,
+                        rows: typeof data.rows === 'string' ? JSON.parse(data.rows) : (data.rows || [])
+                    };
+                }).sort((a,b) => a.createdAt - b.createdAt);
+                renderLists();
+            });
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookArchetypes'), (snap) => {
+                archetypes = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => a.createdAt - b.createdAt);
+                renderLists();
+            });
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookFeatures'), (snap) => {
+                features = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => a.createdAt - b.createdAt);
+                renderLists();
+            });
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookScripts'), (snap) => {
                 scripts = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => a.createdAt - b.createdAt);
                 renderLists();
