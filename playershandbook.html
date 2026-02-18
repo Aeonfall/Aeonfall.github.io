@@ -17,13 +17,13 @@
         .user-pill { background: rgba(30, 41, 59, 0.6); border: 1px solid #334155; padding: 6px 16px; border-radius: 99px; display: flex; align-items: center; gap: 10px; }
         .status-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 10px #22c55e; }
         .user-name-text { font-family: 'Cinzel', serif; font-size: 11px; font-weight: 900; color: #e2e8f0; text-transform: uppercase; }
-        .logout-btn { font-family: 'Cinzel', serif; font-size: 10px; font-weight: 700; color: #ef4444; border-left: 1px solid #475569; padding-left: 10px; margin-left: 4px; cursor: pointer; }
+        .logout-btn { font-family: 'Cinzel', serif; font-size: 10px; font-weight: 700; color: #ef4444; border-left: 1px solid #475569; padding-left: 10px; margin-left: 4px; cursor: pointer; border: none; background: transparent; }
         
         .role-selector { background: #0f172a; border-radius: 12px; padding: 4px; display: flex; gap: 4px; border: 1px solid #1e293b; }
-        .role-btn { padding: 8px 24px; font-family: 'Cinzel', serif; font-size: 11px; font-weight: 900; border-radius: 8px; transition: all 0.3s; color: #475569; text-transform: uppercase; }
+        .role-btn { padding: 8px 24px; font-family: 'Cinzel', serif; font-size: 11px; font-weight: 900; border-radius: 8px; transition: all 0.3s; color: #475569; text-transform: uppercase; border: none; cursor: pointer; }
         .role-btn.active { background: #d97706; color: white; box-shadow: 0 4px 12px rgba(217, 119, 6, 0.4); }
 
-        .nav-link { font-family: 'Cinzel', serif; color: #94a3b8; font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.2s; padding-bottom: 6px; border-bottom: 2px solid transparent; }
+        .nav-link { font-family: 'Cinzel', serif; color: #94a3b8; font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.2s; padding-bottom: 6px; border-bottom: 2px solid transparent; text-decoration: none; }
         .nav-link:hover { color: #f59e0b; }
         .nav-link.active { color: #f59e0b; border-bottom-color: #f59e0b; }
 
@@ -93,12 +93,9 @@
         .arch-btn-delete { background: #ef4444; color: white; opacity: 0.4; }
         .arch-btn-delete:hover { opacity: 1; }
 
-        /* Item Linking */
-        .item-reference-link {
-            color: #7a1d1d; text-decoration: underline; text-decoration-style: dotted; cursor: pointer; font-weight: 700;
-        }
+        /* Link Pulsing */
+        .item-reference-link { color: #7a1d1d; text-decoration: underline; text-decoration-style: dotted; cursor: pointer; font-weight: 700; }
         .item-reference-link:hover { color: #f59e0b; }
-        
         @keyframes highlight-pulse {
             0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); transform: scale(1); }
             50% { box-shadow: 0 0 30px 10px rgba(245, 158, 11, 0.4); transform: scale(1.02); }
@@ -110,6 +107,7 @@
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             border: 1px solid #334155; border-radius: 16px; padding: 24px;
             display: flex; align-items: center; gap: 24px; cursor: pointer; transition: transform 0.2s, border-color 0.2s;
+            text-decoration: none;
         }
         .archive-button:hover { transform: translateY(-4px); border-color: #f59e0b; }
         .button-label { font-family: 'Cinzel', serif; font-weight: 900; font-size: 18px; color: #f59e0b; text-transform: uppercase; }
@@ -168,14 +166,13 @@
                         <a href="npcs.html" class="nav-link">NPCs</a>
                         <a href="beasts.html" class="nav-link">Bestiary</a>
                         <a href="partybag.html" class="nav-link">Backpack</a>
-                         <a href="#" class="nav-link active">Handbook</a>
-                        <a href="#" onclick="window.setView('graveyard'); return false;" id="nav-graveyard" class="nav-link !text-red-900">Graveyard</a>
+                        <a href="#" class="nav-link active">Handbook</a>
                     </nav>
                 </div>
             </header>
 
             <div class="flex flex-col gap-5 max-w-2xl mx-auto mt-16">
-                <a href="https://homebrewery.naturalcrit.com/share/he6P3R1e5dgq" target="_blank" class="archive-button no-underline">
+                <a href="https://homebrewery.naturalcrit.com/share/he6P3R1e5dgq" target="_blank" class="archive-button">
                     <span class="text-4xl">📖</span>
                     <div class="flex flex-col">
                         <span class="button-label">Players Handbook</span>
@@ -290,7 +287,7 @@
         </div>
     </div>
 
-    <!-- MODALS -->
+    <!-- Modals -->
     <div id="lightbox-modal" class="fixed inset-0 z-[1000] flex items-center justify-center p-4 hidden">
         <div class="modal-overlay absolute inset-0" onclick="document.getElementById('lightbox-modal').classList.add('hidden')"></div>
         <img id="lightbox-img" src="" alt="Zoomed Asset" class="relative z-10 max-w-[90vw] max-h-[80vh] border-4 border-amber-600 rounded shadow-2xl">
@@ -308,25 +305,28 @@
     </div>
 
     <div id="password-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-[500] hidden">
-        <div class="bg-gray-900/90 p-8 rounded-3xl w-full max-w-sm border border-amber-600/30 text-white text-center shadow-2xl shadow-amber-500/10">
+        <div class="bg-gray-900/90 p-8 rounded-3xl w-full max-w-sm border border-amber-600/30 text-white text-center shadow-2xl">
             <h3 class="text-xl font-serif text-amber-500 font-bold mb-1 uppercase">DM Access</h3>
             <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-6">Credential Verification Required</p>
             <input type="password" id="dm-password" class="w-full bg-gray-950 text-center text-2xl rounded-2xl p-4 mb-6 border border-gray-800 focus:border-amber-500/50 outline-none">
-            <button onclick="window.verifyDmPassword()" class="w-full bg-amber-600 hover:bg-amber-500 text-white py-4 rounded-2xl font-black uppercase text-xs shadow-lg active:scale-95 transition-all">Unlock Archives</button>
+            <button onclick="window.verifyDmPassword()" class="w-full bg-amber-600 hover:bg-amber-500 text-white py-4 rounded-2xl font-black uppercase text-xs">Unlock</button>
             <button onclick="document.getElementById('password-modal').classList.add('hidden')" class="w-full text-gray-500 mt-6 text-[10px] uppercase font-bold hover:text-white transition-colors">Cancel</button>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, doc, updateDoc, setDoc, onSnapshot, addDoc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, updateDoc, onSnapshot, addDoc, deleteDoc, writeBatch, initializeFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        const firebaseConfig = { apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI", authDomain: "aeonfall-523c1.firebaseapp.com", projectId: "aeonfall-523c1", storageBucket: "aeonfall-523c1.firebasestorage.app", messagingSenderId: "716207733913", appId: "1:716207733913:web:7aac43906a70e2b5f50c08" };
-        const appId = 'aeonfall-manager-v2';
+        // Environment variables
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'aeonfall-manager-v2';
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
         const auth = getAuth(app);
+        
+        // Force long polling to fix connection failures in preview environments
+        const db = initializeFirestore(app, { experimentalForceLongPolling: true });
 
         const CLASSES = ["Heartbound", "Nomad", "Wilderness Warden", "Chronicler", "Orator", "Scriptweaver", "War-Touched", "Archivist", "Fabricator"];
         const FEATURE_MARTIAL_CLASSES = ["Vanguard", "Warrior", "Peacekeeper", "Scavenger"];
@@ -337,10 +337,7 @@
             "Range/Area": "The maximum distance the script can reach.",
             "Components": "Triggers: Verbal (V), Somatic (S), or Material (M).",
             "Duration": "How long the script persists.",
-            "At Higher Levels": "Scaling effects using higher slots.",
-            "Concord": "Ritual Protocol: This script can be initialized through ritualistic focus.",
-            "Mechanum": "Technomagic Protocol: This script utilizes specialized hardware and digital distortion.",
-            "Concentration": "Requires continuous focus. Ends if incapacitated or if focus is broken.",
+            "Concentration": "Requires continuous focus.",
             "V": "Verbal command strings.",
             "S": "Somatic hand gestures.",
             "M": "Material component requirement.",
@@ -385,7 +382,6 @@
         let autoSaveTimer = null;
         let itemToDeleteId = null;
         let deleteType = ''; 
-
         let draggedId = null;
         let draggedType = null;
 
@@ -396,22 +392,34 @@
                 if (localStorage.getItem('aeonfall_role') === 'dm') { activeRole = 'dm'; window.updateRoleUI(); return; }
                 document.getElementById('password-modal').classList.remove('hidden'); 
             } else { 
-                activeRole = 'player'; localStorage.setItem('aeonfall_role', 'player'); window.updateRoleUI(); 
+                activeRole = 'player'; 
+                localStorage.setItem('aeonfall_role', 'player'); 
+                window.updateRoleUI(); 
             } 
         };
         
         window.verifyDmPassword = () => { 
             if (document.getElementById('dm-password').value === 'Rew4994') { 
-                activeRole = 'dm'; localStorage.setItem('aeonfall_role', 'dm'); document.getElementById('password-modal').classList.add('hidden'); window.updateRoleUI(); 
+                activeRole = 'dm'; 
+                localStorage.setItem('aeonfall_role', 'dm'); 
+                document.getElementById('password-modal').classList.add('hidden'); 
+                window.updateRoleUI(); 
             } else { window.showToast("Access Denied"); } 
         };
 
-        window.logout = () => { localStorage.removeItem('aeonfall_user'); localStorage.removeItem('aeonfall_role'); window.location.reload(); };
+        window.logout = () => { 
+            localStorage.removeItem('aeonfall_user'); 
+            localStorage.removeItem('aeonfall_role'); 
+            const url = new URL('index.html', window.location.href);
+            window.location.assign(url.pathname);
+        };
 
         window.updateRoleUI = () => {
             const isDM = activeRole === 'dm';
-            document.getElementById('role-player-btn').classList.toggle('active', !isDM);
-            document.getElementById('role-dm-btn').classList.toggle('active', isDM);
+            const playerBtn = document.getElementById('role-player-btn');
+            const dmBtn = document.getElementById('role-dm-btn');
+            if(playerBtn) playerBtn.classList.toggle('active', !isDM);
+            if(dmBtn) dmBtn.classList.toggle('active', isDM);
             document.body.classList.toggle('dm-active-edit', isDM);
             ['add-script-btn', 'add-session-btn', 'add-item-btn', 'add-feature-btn', 'add-archetype-btn', 'add-table-btn'].forEach(id => {
                 const el = document.getElementById(id);
@@ -426,7 +434,8 @@
                 const el = document.getElementById(`${id}-view`);
                 if(el) el.classList.add('hidden-view');
             });
-            document.getElementById(`${v}-view`).classList.remove('hidden-view');
+            const target = document.getElementById(`${v}-view`);
+            if(target) target.classList.remove('hidden-view');
             window.scrollTo(0,0);
         };
 
@@ -461,7 +470,7 @@
                 renderNavs(); renderLists(); scrollAndHighlight(name);
             } else if (sMatch) {
                 window.switchView('scripts');
-                currentClass = sMatch.className || sMatch.scriptLists.split(',')[0].trim();
+                currentClass = sMatch.className || (sMatch.scriptLists ? sMatch.scriptLists.split(',')[0].trim() : 'Chronicler');
                 currentLevel = parseInt(sMatch.level);
                 renderNavs(); renderLists(); scrollAndHighlight(name);
             }
@@ -469,8 +478,9 @@
 
         function scrollAndHighlight(name) {
             setTimeout(() => {
+                const searchStr = name.toLowerCase();
                 const targets = Array.from(document.querySelectorAll('.script-card-title, .archetype-name'));
-                const el = targets.find(t => t.innerText.toLowerCase() === name.toLowerCase());
+                const el = targets.find(t => t.innerText.toLowerCase() === searchStr);
                 if (el) {
                     const card = el.closest('.script-card, .archetype-divider');
                     card.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -582,39 +592,14 @@
         window.removeHeaderAtIndex = async (tableId, index) => {
             const table = tables.find(t => t.id === tableId);
             if (!table || table.headers.length <= 1) return;
-            
-            const newHeaders = [...table.headers];
-            newHeaders.splice(index, 1);
-            
-            const newRows = table.rows.map(row => {
-                const r = [...row];
-                r.splice(index, 1);
-                return r;
-            });
-
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', tableId), {
-                headers: newHeaders,
-                rows: JSON.stringify(newRows)
-            });
-            window.showToast("Header Excised");
+            const newHeaders = [...table.headers]; newHeaders.splice(index, 1);
+            const newRows = table.rows.map(row => { const r = [...row]; r.splice(index, 1); return r; });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', tableId), { headers: newHeaders, rows: JSON.stringify(newRows) });
         };
-
-        window.addRowToTable = async (id) => {
-            const t = tables.find(x => x.id === id); if (!t) return;
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id), { rows: JSON.stringify([...t.rows, new Array(t.headers.length).fill("...")]) });
-        };
-        window.removeRowFromTable = async (id) => {
-            const t = tables.find(x => x.id === id); if (!t || t.rows.length <= 1) return;
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id), { rows: JSON.stringify(t.rows.slice(0, -1)) });
-        };
-        window.addColumnToTable = async (id) => {
-            const t = tables.find(x => x.id === id); if (!t) return;
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id), { headers: [...t.headers, "Header"], rows: JSON.stringify(t.rows.map(r => [...r, "..."])) });
-        };
-        window.removeColumnFromTable = async (id) => {
-            const t = tables.find(x => x.id === id); if (!t || t.headers.length <= 1) return;
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id), { headers: t.headers.slice(0, -1), rows: JSON.stringify(t.rows.map(r => r.slice(0, -1))) });
-        };
+        window.addRowToTable = async (id) => { const t = tables.find(x => x.id === id); if (!t) return; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id), { rows: JSON.stringify([...t.rows, new Array(t.headers.length).fill("...")]) }); };
+        window.removeRowFromTable = async (id) => { const t = tables.find(x => x.id === id); if (!t || t.rows.length <= 1) return; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id), { rows: JSON.stringify(t.rows.slice(0, -1)) }); };
+        window.addColumnToTable = async (id) => { const t = tables.find(x => x.id === id); if (!t) return; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id), { headers: [...t.headers, "Header"], rows: JSON.stringify(t.rows.map(r => [...r, "..."])) }); };
+        window.removeColumnFromTable = async (id) => { const t = tables.find(x => x.id === id); if (!t || t.headers.length <= 1) return; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id), { headers: t.headers.slice(0, -1), rows: JSON.stringify(t.rows.map(r => r.slice(0, -1))) }); };
 
         // --- COMPONENT BUILDERS ---
         function createScriptCard(s, isDM) {
@@ -653,11 +638,7 @@
         }
 
         function createTableHtml(t, isDM) {
-            let hHtml = (t.headers || []).map((h, i) => `
-                <th class="group">
-                    <div contenteditable="${isDM}" oninput="window.debounceUpdateTableCell('${t.id}', 'headers', ${i}, this.innerText)">${h}</div>
-                    ${isDM ? `<div class="header-delete-btn" onclick="window.removeHeaderAtIndex('${t.id}', ${i})">✕</div>` : ''}
-                </th>`).join('');
+            let hHtml = (t.headers || []).map((h, i) => `<th class="group"><div contenteditable="${isDM}" oninput="window.debounceUpdateTableCell('${t.id}', 'headers', ${i}, this.innerText)">${h}</div>${isDM ? `<div class="header-delete-btn" onclick="window.removeHeaderAtIndex('${t.id}', ${i})">✕</div>` : ''}</th>`).join('');
             let rHtml = (t.rows || []).map((row, rowIdx) => {
                 let cellsHtml = row.map((cell, cellIdx) => `<td contenteditable="${isDM}" oninput="window.debounceUpdateTableCell('${t.id}', 'rows', ${rowIdx}, this.innerText, ${cellIdx})">${isDM ? cell : linkifyCellContent(cell, isDM)}</td>`).join('');
                 return `<tr>${cellsHtml}</tr>`;
@@ -689,7 +670,6 @@
                 fList.innerHTML = '';
                 tables.filter(t => t.parentClass === currentFeatureClass && !t.archetypeId).sort(sortByOrder).forEach(t => fList.innerHTML += createTableHtml(t, isDM));
                 features.filter(f => f.className === currentFeatureClass && !f.archetypeId).sort(sortByOrder).forEach(f => fList.innerHTML += createFeatureCard(f, isDM));
-
                 archetypes.filter(a => a.parentClass === currentFeatureClass).sort(sortByOrder).forEach(arch => {
                     const divider = document.createElement('div');
                     divider.className = 'archetype-divider shadow-md'; divider.dataset.id = arch.id; divider.dataset.type = 'archetype'; divider.draggable = isDM;
@@ -733,7 +713,11 @@
         };
 
         // --- FIREBASE OPS ---
+        window.debounceUpdate = (id, f, v) => { if (autoSaveTimer) clearTimeout(autoSaveTimer); autoSaveTimer = setTimeout(() => updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookScripts', id), { [f]: v }), 1000); };
+        window.debounceUpdateFeature = (id, f, v) => { if (autoSaveTimer) clearTimeout(autoSaveTimer); autoSaveTimer = setTimeout(() => updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookFeatures', id), { [f]: v }), 1000); };
         window.debounceUpdateTable = (id, f, v) => { if (autoSaveTimer) clearTimeout(autoSaveTimer); autoSaveTimer = setTimeout(() => updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id), { [f]: v }), 1000); };
+        window.debounceUpdateArchetype = (id, f, v) => { if (autoSaveTimer) clearTimeout(autoSaveTimer); autoSaveTimer = setTimeout(() => updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookArchetypes', id), { [f]: v }), 1000); };
+        window.debounceUpdateItem = (id, f, v) => { if (autoSaveTimer) clearTimeout(autoSaveTimer); autoSaveTimer = setTimeout(() => updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookItems', id), { [f]: v }), 1000); };
         window.debounceUpdateTableCell = (id, f, idx, val, cellIdx = null) => {
             if (autoSaveTimer) clearTimeout(autoSaveTimer);
             autoSaveTimer = setTimeout(async () => {
@@ -744,23 +728,11 @@
             }, 1000);
         };
 
-        window.debounceUpdateArchetype = (id, f, v) => { if (autoSaveTimer) clearTimeout(autoSaveTimer); autoSaveTimer = setTimeout(() => updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookArchetypes', id), { [f]: v }), 1000); };
-        window.debounceUpdateFeature = (id, f, v) => { if (autoSaveTimer) clearTimeout(autoSaveTimer); autoSaveTimer = setTimeout(() => updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookFeatures', id), { [f]: v }), 1000); };
-        window.debounceUpdate = (id, f, v) => { if (autoSaveTimer) clearTimeout(autoSaveTimer); autoSaveTimer = setTimeout(() => updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookScripts', id), { [f]: v }), 1000); };
-        window.debounceUpdateItem = (id, f, v) => { if (autoSaveTimer) clearTimeout(autoSaveTimer); autoSaveTimer = setTimeout(() => updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookItems', id), { [f]: v }), 1000); };
-
+        window.triggerDeleteScript = (id) => { itemToDeleteId = id; deleteType = 'script'; document.getElementById('delete-modal').classList.remove('hidden'); };
+        window.triggerDeleteFeature = (id) => { itemToDeleteId = id; deleteType = 'feature'; document.getElementById('delete-modal').classList.remove('hidden'); };
         window.triggerDeleteTable = (id) => { itemToDeleteId = id; deleteType = 'table'; document.getElementById('delete-modal').classList.remove('hidden'); };
         window.triggerDeleteArchetype = (id) => { itemToDeleteId = id; deleteType = 'archetype'; document.getElementById('delete-modal').classList.remove('hidden'); };
-        window.triggerDeleteFeature = (id) => { itemToDeleteId = id; deleteType = 'feature'; document.getElementById('delete-modal').classList.remove('hidden'); };
-        window.triggerDeleteScript = (id) => { itemToDeleteId = id; deleteType = 'script'; document.getElementById('delete-modal').classList.remove('hidden'); };
         window.triggerDeleteItem = (id) => { itemToDeleteId = id; deleteType = 'item'; document.getElementById('delete-modal').classList.remove('hidden'); };
-
-        document.getElementById('confirm-delete-btn').onclick = async () => {
-            if (!itemToDeleteId) return;
-            const colMap = { 'script': 'handbookScripts', 'feature': 'handbookFeatures', 'archetype': 'handbookArchetypes', 'table': 'handbookTables', 'item': 'handbookItems' };
-            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', colMap[deleteType], itemToDeleteId));
-            document.getElementById('delete-modal').classList.add('hidden');
-        };
 
         window.addTableEntry = async (archId = null) => { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookTables'), { title: "NEW TABLE", parentClass: currentFeatureClass, archetypeId: archId, headers: ["Level", "Features"], rows: JSON.stringify([["1st", "..."]]), order: Date.now() }); };
         window.addArchetypeEntry = async () => { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookArchetypes'), { name: "NEW ARCHETYPE", parentClass: currentFeatureClass, order: Date.now() }); };
@@ -778,15 +750,46 @@
             const ft = document.getElementById('current-feature-class-label'); if (ft) ft.textContent = `${currentFeatureClass} Archives`;
         }
 
+        // --- INITIALIZATION ---
         const init = async () => {
-            await signInAnonymously(auth);
-            const saved = localStorage.getItem('aeonfall_role'); if (saved) activeRole = saved;
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookTables'), s => { tables = s.docs.map(d => { const da = d.data(); return { id: d.id, ...da, rows: JSON.parse(da.rows || '[]') }; }); renderLists(); });
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookArchetypes'), s => { archetypes = s.docs.map(d => ({ id: d.id, ...d.data() })); renderLists(); });
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookFeatures'), s => { features = s.docs.map(d => ({ id: d.id, ...d.data() })); renderLists(); });
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookScripts'), s => { scripts = s.docs.map(d => ({ id: d.id, ...d.data() })); renderLists(); });
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookItems'), s => { items = s.docs.map(d => ({ id: d.id, ...d.data() })); renderLists(); });
-            window.updateRoleUI();
+            // Restore confirm-delete-btn handler inside init to ensure DOM element exists
+            const deleteBtn = document.getElementById('confirm-delete-btn');
+            if(deleteBtn) {
+                deleteBtn.onclick = async () => {
+                    if (!itemToDeleteId) return;
+                    const colMap = { 'script': 'handbookScripts', 'feature': 'handbookFeatures', 'archetype': 'handbookArchetypes', 'table': 'handbookTables', 'item': 'handbookItems' };
+                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', colMap[deleteType], itemToDeleteId));
+                    document.getElementById('delete-modal').classList.add('hidden');
+                };
+            }
+
+            const syncAuth = async () => {
+                const userSaved = localStorage.getItem('aeonfall_user');
+                if (userSaved) { 
+                    const userData = JSON.parse(userSaved);
+                    document.getElementById('user-display-name').textContent = userData.username || 'Guest';
+                }
+                const roleSaved = localStorage.getItem('aeonfall_role');
+                if (roleSaved) activeRole = roleSaved;
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                window.updateRoleUI();
+            };
+
+            window.addEventListener('storage', (e) => { if (e.key === 'aeonfall_user' || e.key === 'aeonfall_role') syncAuth(); });
+            await syncAuth();
+
+            onAuthStateChanged(auth, (user) => {
+                if (!user) return;
+                onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookTables'), s => { tables = s.docs.map(d => { const da = d.data(); return { id: d.id, ...da, rows: JSON.parse(da.rows || '[]') }; }); renderLists(); }, (err) => console.log("Tables offline"));
+                onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookArchetypes'), s => { archetypes = s.docs.map(d => ({ id: d.id, ...d.data() })); renderLists(); }, (err) => console.log("Archetypes offline"));
+                onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookFeatures'), s => { features = s.docs.map(d => ({ id: d.id, ...d.data() })); renderLists(); }, (err) => console.log("Features offline"));
+                onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookScripts'), s => { scripts = s.docs.map(d => ({ id: d.id, ...d.data() })); renderLists(); }, (err) => console.log("Scripts offline"));
+                onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookItems'), s => { items = s.docs.map(d => ({ id: d.id, ...d.data() })); renderLists(); }, (err) => console.log("Items offline"));
+            });
         };
         init();
     </script>
