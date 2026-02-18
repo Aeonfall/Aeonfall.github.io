@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Aeonfall - Lineages & Heritage Archives</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Roboto+Slab:wght@300;400;700&family=Special+Elite&family=MedievalSharp&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Roboto Slab', serif; 
+            background-color: #0c0c0c; 
+            background-image: url('https://www.transparenttextures.com/patterns/dark-wood.png');
+            color: #1a0f0a; 
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* THE MASTER PARCHMENT */
+        .parchment-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #f4edd8;
+            background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+            box-shadow: 0 50px 100px rgba(0,0,0,0.8), inset 0 0 100px rgba(0,0,0,0.1);
+            min-height: 90vh;
+            border-radius: 4px;
+            position: relative;
+            padding: 40px 60px;
+            border: 1px solid #dcd1b2;
+            /* Rough torn edge effect */
+            clip-path: polygon(
+                0% 2%, 2% 0%, 98% 1%, 100% 3%, 
+                99% 50%, 100% 97%, 98% 100%, 2% 99%, 
+                0% 96%, 1% 50%
+            );
+        }
+
+        /* HEADER & BRANDING */
+        .brand-title { font-family: 'Cinzel', serif; font-weight: 900; color: #7a1d1d; font-size: 2.2rem; line-height: 1; }
+        .brand-sub { font-family: 'Cinzel', serif; font-size: 9px; color: #5d4037; letter-spacing: 0.2em; text-transform: uppercase; font-weight: bold; }
+        
+        .role-pill { background: rgba(0,0,0,0.05); border-radius: 99px; padding: 3px; display: flex; gap: 4px; border: 1px solid rgba(0,0,0,0.1); }
+        .role-tab { padding: 4px 14px; font-family: 'Cinzel', serif; font-size: 9px; font-weight: 900; border-radius: 99px; transition: 0.3s; color: #5d4037; text-transform: uppercase; cursor: pointer; }
+        .role-tab.active { background: #7a1d1d; color: white; box-shadow: 0 4px 10px rgba(122, 29, 29, 0.3); }
+
+        /* GRID STYLES - COMPACT FIELD SKETCHES */
+        .grid-container { display: grid; grid-template-cols: repeat(auto-fill, minmax(240px, 1fr)); gap: 24px; padding: 30px 0; }
+        .race-card {
+            background: rgba(255,255,255,0.3);
+            border: 1px solid rgba(0,0,0,0.1);
+            padding: 12px;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 2px 5px 15px rgba(0,0,0,0.05);
+        }
+        /* Tape effect on cards */
+        .race-card::before {
+            content: ""; position: absolute; top: -8px; left: 50%; transform: translateX(-50%) rotate(-2deg);
+            width: 60px; height: 18px; background: rgba(212, 175, 55, 0.15); border: 1px solid rgba(0,0,0,0.05);
+            z-index: 10;
+        }
+        .race-card:hover { transform: translateY(-5px) rotate(1deg); box-shadow: 5px 15px 30px rgba(0,0,0,0.1); }
+        
+        .card-img-wrap { height: 160px; background: #e0d5ba; overflow: hidden; border: 1px solid rgba(0,0,0,0.1); margin-bottom: 12px; }
+        .card-img-wrap img, .card-img-wrap video { width: 100%; height: 100%; object-fit: cover; filter: sepia(0.3) contrast(1.1); mix-blend-mode: multiply; }
+        
+        .card-title { font-family: 'Cinzel', serif; font-size: 18px; font-weight: 900; color: #7a1d1d; margin-bottom: 2px; display: block; border-bottom: 1px solid rgba(122,29,29,0.2); }
+        .card-meta { font-size: 8px; text-transform: uppercase; color: #5d4037; font-weight: 700; margin-bottom: 8px; letter-spacing: 1px; }
+        .card-text { font-size: 12px; color: #3e2723; line-height: 1.4; height: 50px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; margin-bottom: 12px; font-family: 'Special Elite', cursive; }
+        
+        .btn-view { 
+            background: #7a1d1d; color: white; font-family: 'Cinzel', serif; font-weight: 900; font-size: 9px; 
+            text-transform: uppercase; width: 100%; padding: 10px; border-radius: 2px; transition: 0.2s; text-align: center;
+        }
+        .btn-view:hover { background: #2c1810; }
+
+        /* DETAIL VIEW STYLES */
+        .detail-view { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .record-header { display: grid; grid-template-cols: 1fr 1.2fr; gap: 60px; margin-bottom: 60px; align-items: start; }
+        .record-illustration { position: relative; border: 2px solid #1a0f0a; background: rgba(0,0,0,0.02); padding: 10px; box-shadow: 5px 10px 20px rgba(0,0,0,0.1); }
+        .record-illustration img, .record-illustration video { width: 100%; max-height: 550px; object-fit: contain; filter: sepia(0.2); mix-blend-mode: multiply; }
+        
+        .sigil-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; height: 80%; opacity: 0.05; background: url('https://www.transparenttextures.com/patterns/sacred-geometry.png') no-repeat center; background-size: contain; pointer-events: none; }
+
+        .record-title { font-family: 'Pirata One', cursive; font-size: 5rem; color: #1a0f0a; line-height: 0.9; margin-bottom: 5px; text-transform: uppercase; }
+        .record-label { font-family: 'Cinzel', serif; font-size: 11px; font-weight: 900; color: #7a1d1d; text-transform: uppercase; letter-spacing: 3px; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 10px; display: inline-block; margin-bottom: 30px; }
+
+        /* LEDGER BADGES */
+        .ledger-tray { display: grid; grid-template-cols: repeat(3, 1fr); gap: 20px; margin: 20px 0; }
+        .ledger-badge { background: transparent; color: #1a0f0a; padding: 15px; border: 1px solid rgba(0,0,0,0.2); text-align: center; position: relative; }
+        .ledger-badge b { display: block; font-size: 10px; text-transform: uppercase; color: #7a1d1d; margin-bottom: 5px; font-family: 'Cinzel'; }
+        .ledger-badge span { font-family: 'Special Elite', cursive; font-size: 18px; font-weight: bold; }
+
+        /* LORE JOURNAL STYLE */
+        .research-findings {
+            font-family: 'Special Elite', cursive; font-size: 16px; line-height: 1.8; color: #1a0f0a;
+            padding: 30px; border: 1px dashed rgba(0,0,0,0.2); background: rgba(0,0,0,0.02); margin: 40px 0;
+        }
+        .heritage-block { margin-bottom: 40px; padding-left: 20px; border-left: 3px solid #7a1d1d; }
+        .heritage-block h3 { font-family: 'Cinzel', serif; font-size: 22px; font-weight: 900; color: #7a1d1d; margin-bottom: 15px; }
+
+        /* DM MODE */
+        .dm-active-edit .dm-editable { background: rgba(122, 29, 29, 0.05); outline: 1px dashed #7a1d1d; border-radius: 4px; padding: 4px; }
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #1a0f0a; color: #f4edd8; padding: 12px 32px; border-radius: 4px; z-index: 1000; opacity: 0; transition: 0.3s; font-family: 'Cinzel'; font-size: 12px; }
+        
+        .hidden { display: none !important; }
+        .back-nav { display: inline-flex; align-items: center; gap: 10px; color: #7a1d1d; font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 30px; cursor: pointer; border-bottom: 1px solid transparent; }
+        .back-nav:hover { border-bottom-color: #7a1d1d; }
+
+        /* ORNATE CORNERS */
+        .ornate-corner { position: absolute; width: 100px; height: 100px; opacity: 0.2; color: #7a1d1d; pointer-events: none; }
+        .tl { top: 20px; left: 20px; }
+        .br { bottom: 20px; right: 20px; transform: rotate(180deg); }
+
+        .drop-cap { float: left; font-family: 'Pirata One', cursive; font-size: 80px; line-height: 60px; padding-top: 4px; padding-right: 8px; color: #7a1d1d; }
+    </style>
+</head>
+<body>
+
+    <div id="toast" class="toast">DM Message</div>
+
+    <div class="parchment-container">
+        <!-- Decoration -->
+        <div class="ornate-corner tl"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2"><path d="M10,10 Q30,10 30,40 T60,60 T90,90 M10,10 Q10,30 40,30 T60,60"/></svg></div>
+        <div class="ornate-corner br"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2"><path d="M10,10 Q30,10 30,40 T60,60 T90,90 M10,10 Q10,30 40,30 T60,60"/></svg></div>
+
+        <!-- HEADER -->
+        <header class="flex flex-col md:flex-row justify-between items-center gap-6 relative z-50 mb-10 pb-8 border-b border-black/10">
+            <div class="flex flex-col items-center md:items-start text-center md:text-left">
+                <h1 class="brand-title">Aeonfall</h1>
+                <p class="brand-sub">Archival Heritage Biometry</p>
+            </div>
+
+            <div class="flex items-center gap-10">
+                <div class="role-pill">
+                    <div id="role-player" onclick="window.setRole('player')" class="role-tab active">Player</div>
+                    <div id="role-dm" onclick="window.setRole('dm')" class="role-tab">DM</div>
+                </div>
+                <a href="playershandbook.html" class="text-[11px] font-black uppercase tracking-widest text-[#7a1d1d] hover:text-black transition-colors">← Back to Hub</a>
+            </div>
+        </header>
+
+        <!-- GRID VIEW -->
+        <div id="view-grid">
+            <div class="flex flex-col md:flex-row justify-between items-center md:items-end mb-8 gap-6">
+                <div>
+                    <h2 class="font-serif text-3xl font-black uppercase text-[#1a0f0a]">Biological Stacks</h2>
+                    <p class="text-[10px] text-[#5d4037] mt-1 tracking-[0.3em] uppercase font-bold">Research Records of the Fallen World</p>
+                </div>
+                <button id="add-record-btn" onclick="window.addRecord()" class="hidden bg-[#7a1d1d] hover:bg-[#1a0f0a] text-[#f4edd8] px-8 py-3 rounded-sm font-black text-[10px] uppercase shadow-lg transition-all active:scale-95">+ Start Bio-Record</button>
+            </div>
+            
+            <div id="stack-grid" class="grid-container">
+                <!-- Record Cards -->
+            </div>
+        </div>
+
+        <!-- BIO-DETAIL VIEW -->
+        <div id="view-details" class="hidden">
+            <div onclick="window.setView('grid')" class="back-nav">← Return to Bio-Stacks</div>
+            <div id="details-root" class="detail-view">
+                <!-- DM Detail Content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="pass-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[500] hidden p-4">
+        <div class="bg-gray-800 p-10 rounded-2xl w-full max-sm border-2 border-amber-600 text-white text-center shadow-2xl relative">
+            <h3 class="text-xl font-serif text-amber-500 font-bold mb-4 uppercase tracking-[0.2em]">DM Credential</h3>
+            <input type="password" id="dm-pass" class="w-full bg-gray-900 text-center text-2xl rounded-lg p-3 mb-8 border border-gray-700 text-amber-500 focus:outline-none focus:border-amber-500">
+            <div class="flex flex-col gap-4">
+                <button onclick="window.authDm()" class="w-full bg-amber-600 hover:bg-amber-500 text-white py-4 rounded-xl font-bold uppercase text-xs tracking-widest">Authorize Access</button>
+                <button onclick="document.getElementById('pass-modal').classList.add('hidden')" class="text-[10px] text-gray-500 uppercase font-black tracking-widest">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="del-modal" class="fixed inset-0 z-[600] flex items-center justify-center p-4 hidden">
+        <div class="absolute inset-0 bg-black/90" onclick="document.getElementById('del-modal').classList.add('hidden')"></div>
+        <div class="bg-white p-10 rounded-2xl w-full max-w-sm text-center relative z-10 shadow-2xl text-black">
+            <h3 class="text-2xl font-serif font-black text-red-700 uppercase mb-4">Purge Bio-Record</h3>
+            <p class="text-sm text-gray-500 mb-10 italic">Warning: This data will be permanently expunged.</p>
+            <div class="flex flex-col gap-4">
+                <button id="confirm-del-btn" class="w-full bg-red-700 text-white py-4 rounded-xl font-black text-xs uppercase shadow-lg">Confirm Purge</button>
+                <button onclick="document.getElementById('del-modal').classList.add('hidden')" class="w-full bg-gray-100 text-gray-400 py-3 rounded-xl font-bold uppercase text-[10px]">Decline</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, doc, updateDoc, onSnapshot, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI", authDomain: "aeonfall-523c1.firebaseapp.com", projectId: "aeonfall-523c1", storageBucket: "aeonfall-523c1.firebasestorage.app", messagingSenderId: "716207733913", appId: "1:716207733913:web:7aac43906a70e2b5f50c08" };
+        const appId = 'aeonfall-manager-v2';
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        let lineages = [];
+        let activeRole = 'player', currentView = 'grid', activeRaceId = null, saveTimer = null, targetDelId = null;
+
+        window.showToast = (m) => { const t = document.getElementById('toast'); t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 3000); };
+        window.setRole = (r) => { if(r === 'dm') document.getElementById('pass-modal').classList.remove('hidden'); else { activeRole = 'player'; updateRoleUI(); } };
+        window.authDm = () => { if(document.getElementById('dm-pass').value === 'Rew4994'){ activeRole='dm'; document.getElementById('pass-modal').classList.add('hidden'); document.getElementById('dm-pass').value = ''; updateRoleUI(); } else { window.showToast("Failed Verification"); } };
+
+        function updateRoleUI() {
+            const isDM = activeRole === 'dm';
+            document.getElementById('role-player').classList.toggle('active', !isDM);
+            document.getElementById('role-dm').classList.toggle('active', isDM);
+            document.getElementById('add-record-btn').classList.toggle('hidden', !isDM);
+            if(currentView === 'grid') renderGrid(); else renderDetails();
+        }
+
+        window.setView = (v, id = null) => {
+            currentView = v; activeRaceId = id;
+            document.getElementById('view-grid').classList.toggle('hidden', v !== 'grid');
+            document.getElementById('view-details').classList.toggle('hidden', v !== 'details');
+            window.scrollTo(0,0);
+            if(v === 'grid') renderGrid(); else renderDetails();
+        };
+
+        window.renderGrid = () => {
+            const grid = document.getElementById('stack-grid');
+            grid.innerHTML = lineages.map(race => `
+                <div class="race-card">
+                    <div class="card-img-wrap">
+                        ${race.mediaUrl ? (race.mediaUrl.includes('.mp4') ? `<video src="${race.mediaUrl}" autoplay loop muted></video>` : `<img src="${race.mediaUrl}">`) : '<div class="h-full flex items-center justify-center text-gray-500 italic uppercase text-[10px] font-black">Scanning Frequency...</div>'}
+                    </div>
+                    <div class="card-body">
+                        <span class="card-title">${race.name}</span>
+                        <span class="card-meta">DM Ledger • ${race.size || 'M'} Adaptee</span>
+                        <p class="card-text">${race.desc || 'Biological profile data pending field verification.'}</p>
+                        <button onclick="window.setView('details', '${race.id}')" class="btn-view">Consult Archive</button>
+                    </div>
+                </div>
+            `).join('');
+            if(lineages.length === 0) grid.innerHTML = `<p class="col-span-full text-center py-20 text-[#5d4037] italic uppercase text-[11px] font-black tracking-widest">Awaiting bio-frequency uplink...</p>`;
+        };
+
+        window.renderDetails = () => {
+            const isDM = activeRole === 'dm';
+            const root = document.getElementById('details-root');
+            const race = lineages.find(r => r.id === activeRaceId);
+            if (!race) return;
+
+            root.innerHTML = `
+                <div class="${isDM ? 'dm-active-edit' : ''}">
+                    <div class="record-header">
+                        <div class="record-illustration">
+                            <div class="sigil-overlay"></div>
+                            ${race.mediaUrl ? (race.mediaUrl.includes('.mp4') ? `<video src="${race.mediaUrl}" autoplay loop muted></video>` : `<img src="${race.mediaUrl}">`) : '<div class="h-96 flex items-center justify-center italic text-[#5d4037]">Visual uplink lost</div>'}
+                            ${isDM ? `<input type="text" class="w-full p-2 text-[10px] text-[#7a1d1d] border-t border-black/10 font-bold" value="${race.mediaUrl||''}" placeholder="Visual ID (URL)" oninput="window.dbUp('${race.id}', 'mediaUrl', this.value)">` : ''}
+                        </div>
+                        <div class="flex flex-col">
+                            <h2 class="record-title dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}', 'name', this.innerText)">${race.name}</h2>
+                            <p class="record-label">Genetic Signature Verified • DM #994</p>
+                            
+                            <div class="ledger-tray">
+                                <div class="ledger-badge"><b>Movement</b><span class="dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','speed',this.innerText)">${race.speed||'30'}</span></div>
+                                <div class="ledger-badge"><b>Scale</b><span class="dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','size',this.innerText)">${race.size||'M'}</span></div>
+                                <div class="ledger-badge"><b>Lexicon</b><span class="dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','languages',this.innerText)">${race.languages||'Com'}</span></div>
+                            </div>
+
+                            <div class="mt-8 bg-black/5 border-l-4 border-[#7a1d1d] p-8 rounded-sm">
+                                <h4 class="font-black uppercase text-[11px] tracking-[0.2em] text-[#7a1d1d] mb-4 flex items-center gap-2">Innate Parameters</h4>
+                                <div class="dm-editable text-sm italic leading-relaxed text-[#3e2723]" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','traits',this.innerText)">${race.traits || 'Ancestral trait markers lost in transit...'}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="research-findings dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}', 'desc', this.innerText)">
+                        <span class="drop-cap">${(race.desc||"O").charAt(0)}</span>
+                        ${(race.desc||"nce, in a world not yet broken... data missing.").slice(1)}
+                    </div>
+
+                    <div id="additional-logs">
+                        ${(race.intros || []).map((intro, idx) => `
+                            <div class="heritage-block relative">
+                                <h3 class="dm-editable" contenteditable="${isDM}" oninput="window.dbUpIntro('${race.id}', ${idx}, 'leftTitle', this.innerText)">${intro.leftTitle || 'Research Chapter'}</h3>
+                                <div class="dm-editable text-[#3e2723] font-serif leading-loose" contenteditable="${isDM}" oninput="window.dbUpIntro('${race.id}', ${idx}, 'leftText', this.innerText)">${intro.leftText || 'Handwritten details pending...'}</div>
+                                ${isDM ? `<button onclick="window.removeSection('${race.id}', ${idx})" class="absolute top-0 right-0 text-[#7a1d1d] opacity-30 hover:opacity-100 text-[9px] uppercase font-black">Purge Chapter</button>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    ${isDM ? `
+                        <div class="flex gap-4 mt-12 pt-8 border-t border-black/10">
+                            <button onclick="window.addSection()" class="bg-[#1a0f0a] text-[#f4edd8] px-6 py-2 rounded-sm font-black uppercase text-[10px] tracking-widest">Append Research Chapter</button>
+                            <button onclick="window.triggerDel('${race.id}')" class="bg-red-700/10 border border-red-700/30 text-red-700 px-6 py-2 rounded-sm font-black uppercase text-[10px] tracking-widest">Expunge Bio-Record</button>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        };
+
+        // FIREBASE LOGIC
+        window.dbUp = (id, field, val) => {
+            if (saveTimer) clearTimeout(saveTimer);
+            saveTimer = setTimeout(() => updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', id), { [field]: val }), 1000);
+        };
+
+        window.dbUpIntro = (id, idx, field, val) => {
+            if (saveTimer) clearTimeout(saveTimer);
+            saveTimer = setTimeout(() => {
+                const r = lineages.find(x => x.id === id);
+                if (r && r.intros) {
+                    r.intros[idx][field] = val;
+                    updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', id), { intros: r.intros });
+                }
+            }, 1000);
+        };
+
+        window.addRecord = async () => {
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookLineages'), { 
+                name: "NEW SUBJECT", mediaUrl: "", speed: "30", size: "M", languages: "Com", 
+                desc: "Discovery log pending field observation...", traits: "Standard ancestral signatures...", intros: [],
+                createdAt: Date.now(), order: Date.now() 
+            });
+            window.showToast("Bio-Record Initialized");
+        };
+
+        window.addSection = async () => {
+            const r = lineages.find(x => x.id === activeRaceId);
+            if (!r) return;
+            const intros = r.intros || [];
+            intros.push({ leftTitle: "Research Findings", leftText: "Technical and historical observations..." });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', r.id), { intros });
+            window.showToast("Chapter Appended");
+        };
+
+        window.removeSection = async (id, idx) => {
+            if(confirm("Expunge this archival chapter?")) {
+                const r = lineages.find(x => x.id === id);
+                r.intros.splice(idx, 1);
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', id), { intros: r.intros });
+            }
+        };
+
+        window.triggerDel = (id) => { targetDelId = id; document.getElementById('del-modal').classList.remove('hidden'); };
+        document.getElementById('confirm-del-btn').onclick = async () => {
+            if (!targetDelId) return;
+            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', targetDelId));
+            document.getElementById('del-modal').classList.add('hidden');
+            window.setView('grid');
+            window.showToast("Record Purged");
+        };
+
+        const init = async () => {
+            await signInAnonymously(auth);
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookLineages'), (snap) => {
+                lineages = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (a.order ?? a.createdAt) - (b.order ?? b.createdAt));
+                if(currentView === 'grid') renderGrid(); else renderDetails();
+            });
+            updateRoleUI();
+        };
+        init();
+    </script>
+</body>
+</html>
