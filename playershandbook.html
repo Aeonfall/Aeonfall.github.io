@@ -33,7 +33,7 @@
             background-color: #fdfaf3; border: 2px solid #bba683; border-radius: 12px;
             padding: 24px; color: #2c1810; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             position: relative; height: 100%; display: flex; flex-direction: column;
-            transition: all 0.5s;
+            transition: all 0.3s;
         }
         .script-card-header { border-bottom: 2px solid #7a1d1d; margin-bottom: 8px; padding-bottom: 4px; }
         .script-card-title { font-family: 'Cinzel', serif; font-weight: 900; font-size: 24px; color: #7a1d1d; text-transform: uppercase; }
@@ -68,6 +68,7 @@
             border-left: 8px solid #f59e0b; background: rgba(245, 158, 11, 0.05);
             padding: 16px 24px; border-radius: 4px 16px 16px 4px;
             display: flex; align-items: center; justify-content: space-between;
+            transition: all 0.3s;
         }
         .archetype-name { font-family: 'Cinzel', serif; font-weight: 900; font-size: 24px; color: #f59e0b; text-transform: uppercase; letter-spacing: 0.1em; }
         .archetype-controls { display: flex; gap: 8px; }
@@ -76,6 +77,34 @@
         .arch-btn-util { background: #64748b; color: white; }
         .arch-btn-delete { background: #ef4444; color: white; opacity: 0.4; }
         .arch-btn-delete:hover { opacity: 1; }
+
+        /* Drag handles & Visible Reordering Logic */
+        .dm-active-edit { position: relative; }
+        .drag-handle { 
+            width: 32px; height: 32px; border-radius: 6px; 
+            background: rgba(122, 29, 29, 0.1); border: 1px solid rgba(122, 29, 29, 0.2);
+            display: flex; align-items: center; justify-content: center;
+            cursor: grab; color: #7a1d1d; font-size: 18px; line-height: 1;
+            transition: all 0.2s;
+        }
+        .drag-handle:hover { background: #7a1d1d; color: white; }
+        .drag-handle:active { cursor: grabbing; }
+
+        .is-dragging-mode .script-card, 
+        .is-dragging-mode .archetype-divider,
+        .is-dragging-mode .progression-table-container {
+            outline: 2px dashed rgba(245, 158, 11, 0.3);
+            outline-offset: 4px;
+        }
+
+        .dragging { opacity: 0.2 !important; transform: scale(0.95); transition: none; }
+        
+        .drag-over { 
+            background-color: rgba(245, 158, 11, 0.1) !important; 
+            border-color: #f59e0b !important;
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.2) !important;
+            transform: scale(1.02);
+        }
 
         /* Item Linking */
         .item-reference-link {
@@ -489,6 +518,71 @@
             renderLists();
         };
 
+        // DRAG AND DROP LOGIC
+        window.handleDragStart = (e, id, type) => {
+            if (activeRole !== 'dm') return;
+            e.dataTransfer.setData('application/json', JSON.stringify({ id, type }));
+            
+            // Visual feedback for reordering session
+            document.body.classList.add('is-dragging-mode');
+            
+            const target = e.currentTarget;
+            target.classList.add('dragging');
+        };
+
+        window.handleDragEnd = (e) => {
+            document.body.classList.remove('is-dragging-mode');
+            e.currentTarget.classList.remove('dragging');
+            document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+        };
+
+        window.handleDragOver = (e) => {
+            if (activeRole !== 'dm') return;
+            e.preventDefault();
+            const target = e.currentTarget;
+            if (!target.classList.contains('dragging')) {
+                target.classList.add('drag-over');
+            }
+        };
+
+        window.handleDragLeave = (e) => {
+            e.currentTarget.classList.remove('drag-over');
+        };
+
+        window.handleDrop = async (e, targetId, targetType) => {
+            if (activeRole !== 'dm') return;
+            e.preventDefault();
+            document.body.classList.remove('is-dragging-mode');
+            e.currentTarget.classList.remove('drag-over');
+            
+            const data = JSON.parse(e.dataTransfer.getData('application/json'));
+            
+            if (data.id === targetId) return;
+            if (data.type !== targetType) return;
+
+            // Find swap partners
+            let list = [];
+            let collectionName = '';
+            if (data.type === 'script') { collectionName = 'handbookScripts'; list = scripts; }
+            else if (data.type === 'feature') { collectionName = 'handbookFeatures'; list = features; }
+            else if (data.type === 'table') { collectionName = 'handbookTables'; list = tables; }
+            else if (data.type === 'archetype') { collectionName = 'handbookArchetypes'; list = archetypes; }
+
+            const sourceItem = list.find(i => i.id === data.id);
+            const targetItem = list.find(i => i.id === targetId);
+
+            if (!sourceItem || !targetItem) return;
+
+            // Swap order values
+            const sourceOrder = sourceItem.order ?? sourceItem.createdAt;
+            const targetOrder = targetItem.order ?? targetItem.createdAt;
+
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', collectionName, sourceItem.id), { order: targetOrder });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', collectionName, targetItem.id), { order: sourceOrder });
+            
+            window.showToast("Record Snapped into Place");
+        };
+
         function parseAeonfallContent(text, isDM) {
             if (!text) return '';
             if (isDM) return text; 
@@ -653,10 +747,21 @@
             const classif = s.classification || '';
             const classifHtml = isDM ? ` [<span class="classification-pill ${!classif ? 'classification-none' : ''}" onclick="window.cycleClassification('${s.id}', '${classif}')">${wrapWithTooltip(classif || ' + ', classif)}</span>]` : (classif ? ` [${wrapWithTooltip(classif)}]` : '');
             return `
-                <div class="script-card ${isDM ? 'dm-active-edit' : ''}">
-                    <div class="script-card-header">
-                        <div class="script-card-title dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'title', this.innerText)">${s.title}</div>
-                        ${isDM ? `<button onclick="window.triggerDeleteScript('${s.id}')" class="absolute top-4 right-4 text-red-700 opacity-30 hover:opacity-100">✕</button>` : ''}
+                <div class="script-card ${isDM ? 'dm-active-edit' : ''}" 
+                     draggable="${isDM}" 
+                     ondragstart="window.handleDragStart(event, '${s.id}', 'script')" 
+                     ondragend="window.handleDragEnd(event)"
+                     ondragover="window.handleDragOver(event)" 
+                     ondragleave="window.handleDragLeave(event)"
+                     ondrop="window.handleDrop(event, '${s.id}', 'script')">
+                    <div class="script-card-header flex justify-between items-center">
+                        <div class="script-card-title dm-editable flex-grow" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'title', this.innerText)">${s.title}</div>
+                        ${isDM ? `
+                            <div class="flex items-center gap-2">
+                                <div class="drag-handle" title="Move Item">⠿</div>
+                                <button onclick="window.triggerDeleteScript('${s.id}')" class="text-red-700 opacity-30 hover:opacity-100">✕</button>
+                            </div>
+                        ` : ''}
                     </div>
                     <span class="script-card-level">
                         ${s.level === 0 ? 'Trick' : s.level + '-level'} — 
@@ -679,10 +784,21 @@
 
         function createFeatureCard(f, isDM) {
             return `
-                <div class="script-card ${isDM ? 'dm-active-edit' : ''}">
-                    <div class="script-card-header">
-                        <div class="script-card-title dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateFeature('${f.id}', 'title', this.innerText)">${f.title}</div>
-                        ${isDM ? `<button onclick="window.triggerDeleteFeature('${f.id}')" class="absolute top-4 right-4 text-red-700 opacity-30 hover:opacity-100">✕</button>` : ''}
+                <div class="script-card ${isDM ? 'dm-active-edit' : ''}" 
+                     draggable="${isDM}" 
+                     ondragstart="window.handleDragStart(event, '${f.id}', 'feature')" 
+                     ondragend="window.handleDragEnd(event)"
+                     ondragover="window.handleDragOver(event)" 
+                     ondragleave="window.handleDragLeave(event)"
+                     ondrop="window.handleDrop(event, '${f.id}', 'feature')">
+                    <div class="script-card-header flex justify-between items-center">
+                        <div class="script-card-title dm-editable flex-grow" contenteditable="${isDM}" oninput="window.debounceUpdateFeature('${f.id}', 'title', this.innerText)">${f.title}</div>
+                        ${isDM ? `
+                            <div class="flex items-center gap-2">
+                                <div class="drag-handle" title="Move Item">⠿</div>
+                                <button onclick="window.triggerDeleteFeature('${f.id}')" class="text-red-700 opacity-30 hover:opacity-100">✕</button>
+                            </div>
+                        ` : ''}
                     </div>
                     <span class="script-card-level">
                         <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateFeature('${f.id}', 'type', this.innerText)">${f.type || 'Feature Move'}</span>
@@ -701,12 +817,23 @@
             }).join('');
 
             return `
-                <div class="progression-table-container shadow-2xl mb-12 grid-column-span-full" style="grid-column: 1 / -1;">
+                <div class="progression-table-container shadow-2xl mb-12 grid-column-span-full ${isDM ? 'dm-active-edit' : ''}" 
+                     style="grid-column: 1 / -1;"
+                     draggable="${isDM}" 
+                     ondragstart="window.handleDragStart(event, '${t.id}', 'table')" 
+                     ondragend="window.handleDragEnd(event)"
+                     ondragover="window.handleDragOver(event)" 
+                     ondragleave="window.handleDragLeave(event)"
+                     ondrop="window.handleDrop(event, '${t.id}', 'table')">
                     <div class="flex justify-between items-center mb-6">
-                        <h3 class="font-serif font-black uppercase text-xl text-[#7a1d1d] dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateTable('${t.id}', 'title', this.innerText)">${t.title}</h3>
+                        <div class="flex items-center gap-3">
+                            ${isDM ? '<div class="drag-handle" title="Move Table">⠿</div>' : ''}
+                            <h3 class="font-serif font-black uppercase text-xl text-[#7a1d1d] dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateTable('${t.id}', 'title', this.innerText)">${t.title}</h3>
+                        </div>
                         ${isDM ? `
                             <div class="flex gap-2">
                                 <button onclick="window.addRowToTable('${t.id}')" class="arch-btn arch-btn-add">+ Row</button>
+                                <button onclick="window.removeRowFromTable('${t.id}')" class="arch-btn arch-btn-delete">- Row</button>
                                 <button onclick="window.addColumnToTable('${t.id}')" class="arch-btn arch-btn-util">+ Col</button>
                                 <button onclick="window.removeColumnFromTable('${t.id}')" class="arch-btn arch-btn-util">- Col</button>
                                 <button onclick="window.triggerDeleteTable('${t.id}')" class="arch-btn arch-btn-delete">Dispose Table</button>
@@ -746,9 +873,20 @@
                     const archScripts = scripts.filter(s => s.archetypeId === arch.id);
 
                     const divider = document.createElement('div');
-                    divider.className = 'archetype-divider shadow-md';
+                    divider.className = `archetype-divider shadow-md ${isDM ? 'dm-active-edit' : ''}`;
+                    if (isDM) {
+                        divider.draggable = true;
+                        divider.ondragstart = (e) => window.handleDragStart(e, arch.id, 'archetype');
+                        divider.ondragend = (e) => window.handleDragEnd(e);
+                        divider.ondragover = (e) => window.handleDragOver(e);
+                        divider.ondragleave = (e) => window.handleDragLeave(e);
+                        divider.ondrop = (e) => window.handleDrop(e, arch.id, 'archetype');
+                    }
                     divider.innerHTML = `
-                        <div class="archetype-name dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateArchetype('${arch.id}', 'name', this.innerText)">${arch.name}</div>
+                        <div class="flex items-center gap-4">
+                            ${isDM ? '<div class="drag-handle" title="Move Archetype">⠿</div>' : ''}
+                            <div class="archetype-name dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateArchetype('${arch.id}', 'name', this.innerText)">${arch.name}</div>
+                        </div>
                         ${isDM ? `
                             <div class="archetype-controls">
                                 <button onclick="window.addTableEntry('${arch.id}')" class="arch-btn arch-btn-add">+ Table</button>
@@ -904,6 +1042,15 @@
             window.showToast("Row Appended");
         };
 
+        window.removeRowFromTable = async (id) => {
+            const tableRef = doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id);
+            const table = tables.find(t => t.id === id);
+            if (!table || table.rows.length <= 1) return;
+            const updatedRows = table.rows.slice(0, -1);
+            await updateDoc(tableRef, { rows: JSON.stringify(updatedRows) });
+            window.showToast("Row Removed");
+        };
+
         window.addColumnToTable = async (id) => {
             const tableRef = doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id);
             const table = tables.find(t => t.id === id);
@@ -974,18 +1121,19 @@
                 archetypeId: archId,
                 headers: ["Level", "Prof.", "Features"], 
                 rows: JSON.stringify([["1st", "+2", "..."]]), 
-                createdAt: Date.now() 
+                createdAt: Date.now(),
+                order: Date.now()
             };
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookTables'), data);
         };
 
         window.addArchetypeEntry = async () => {
-            const data = { name: "NEW ARCHETYPE", parentClass: currentFeatureClass, createdAt: Date.now() };
+            const data = { name: "NEW ARCHETYPE", parentClass: currentFeatureClass, createdAt: Date.now(), order: Date.now() };
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookArchetypes'), data);
         };
 
         window.addFeatureEntry = async (archId = null) => {
-            const data = { title: "NEW FEATURE", content: "Description of the move...", type: "Feature Move", className: currentFeatureClass, archetypeId: archId, createdAt: Date.now() };
+            const data = { title: "NEW FEATURE", content: "Description of the move...", type: "Feature Move", className: currentFeatureClass, archetypeId: archId, createdAt: Date.now(), order: Date.now() };
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookFeatures'), data);
         };
 
@@ -994,7 +1142,7 @@
                 title: "NEW SCRIPT", content: "...", school: "Dominion", classification: "", 
                 activationTime: "1 Action", range: "30 feet", components: "V, S", duration: "Instant", 
                 higherLevels: "...", scriptLists: currentFeatureClass, className: currentFeatureClass, 
-                level: lvl || 1, archetypeId: archId, createdAt: Date.now() 
+                level: lvl || currentLevel, archetypeId: archId, createdAt: Date.now(), order: Date.now() 
             };
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookScripts'), data);
         };
@@ -1008,6 +1156,8 @@
             const data = { title: "NEW ITEM", content: "Description of the gear...", category: currentItemCategory === "All" ? "Adventuring Gear" : currentItemCategory, type: "Gear", rarity: "Common", weight: "1 lb", cost: "-", properties: "None", imageUrl: "", createdAt: Date.now() };
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookItems'), data);
         };
+
+        const sortFn = (a, b) => (a.order ?? a.createdAt) - (b.order ?? b.createdAt);
 
         const init = async () => {
             await signInAnonymously(auth);
@@ -1024,22 +1174,22 @@
                         ...data,
                         rows: typeof data.rows === 'string' ? JSON.parse(data.rows) : (data.rows || [])
                     };
-                }).sort((a,b) => a.createdAt - b.createdAt);
+                }).sort(sortFn);
                 renderLists();
             }, (err) => console.error("Table fetch failed:", err));
 
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookArchetypes'), (snap) => {
-                archetypes = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => a.createdAt - b.createdAt);
+                archetypes = snap.docs.map(d => ({id: d.id, ...d.data()})).sort(sortFn);
                 renderLists();
             }, (err) => console.error("Archetype fetch failed:", err));
 
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookFeatures'), (snap) => {
-                features = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => a.createdAt - b.createdAt);
+                features = snap.docs.map(d => ({id: d.id, ...d.data()})).sort(sortFn);
                 renderLists();
             }, (err) => console.error("Feature fetch failed:", err));
 
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookScripts'), (snap) => {
-                scripts = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => a.createdAt - b.createdAt);
+                scripts = snap.docs.map(d => ({id: d.id, ...d.data()})).sort(sortFn);
                 renderLists();
             }, (err) => console.error("Script fetch failed:", err));
 
