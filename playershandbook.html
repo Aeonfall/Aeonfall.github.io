@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Aeonfall - Player's Handbook</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Roboto+Slab:wght@300;400;700&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Roboto Slab', serif; background-color: #1a1a1a; color: #e2e8f0; overflow-x: hidden; }
         .dashboard-bg { background-image: url('https://www.transparenttextures.com/patterns/dark-wood.png'); background-color: #0c0c0c; }
         
-        /* HEADER STYLING - MATCHING BRANDING */
+        /* HEADER STYLING */
         .brand-title { font-family: 'Cinzel', serif; font-weight: 900; color: #f59e0b; font-size: 3.5rem; line-height: 1; margin-bottom: 0.2rem; }
         .brand-sub { font-family: 'Cinzel', serif; font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.15em; text-transform: uppercase; }
         
@@ -32,122 +33,59 @@
         .script-card {
             background-color: #fdfaf3; border: 2px solid #bba683; border-radius: 12px;
             padding: 24px; color: #2c1810; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            position: relative; height: 100%; display: flex; flex-direction: column;
-            transition: all 0.5s;
+            position: relative; height: auto; display: flex; flex-direction: column;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            max-width: 100%;
+            flex: 1 1 400px; 
+            min-width: 320px;
+            align-self: stretch;
         }
-        .script-card-header { border-bottom: 2px solid #7a1d1d; margin-bottom: 8px; padding-bottom: 4px; }
-        .script-card-title { font-family: 'Cinzel', serif; font-weight: 900; font-size: 24px; color: #7a1d1d; text-transform: uppercase; }
+        .script-card-header { border-bottom: 2px solid #7a1d1d; margin-bottom: 4px; padding-bottom: 4px; display: flex; align-items: flex-start; justify-content: space-between; }
+        .script-card-title { font-family: 'Cinzel', serif; font-weight: 900; font-size: 24px; color: #7a1d1d; text-transform: uppercase; flex-grow: 1; }
         .script-card-level { font-style: italic; font-size: 14px; margin-bottom: 12px; display: block; }
-        .script-prop-list { list-style: disc; margin-left: 20px; font-size: 14px; margin-bottom: 16px; }
-        .script-prop-list li { margin-bottom: 2px; }
-        .script-prop-list b { font-weight: 900; }
         .script-body { font-size: 14px; line-height: 1.6; white-space: pre-wrap; flex-grow: 1; }
-        .script-higher-levels { font-size: 13px; margin-top: 12px; padding-top: 12px; border-top: 1px dotted #7a1d1d33; }
-        .script-higher-levels b { font-weight: 900; }
-        .script-footer { font-style: italic; font-size: 12px; margin-top: 12px; border-top: 1px solid #7a1d1d33; padding-top: 8px; }
-        .script-footer b { font-weight: 900; font-style: normal; }
+
+        /* Drag Handles */
+        .drag-handle { cursor: grab; color: #bba683; padding: 4px; opacity: 0.4; transition: opacity 0.2s; }
+        .drag-handle:hover { opacity: 1; }
+        .sortable-ghost { opacity: 0.3; transform: scale(0.95); border: 2px dashed #f59e0b !important; }
 
         /* Progression Table Styling */
         .progression-table-container { 
             background-color: #fdfaf3; border: 4px double #bba683; border-radius: 12px; 
-            padding: 20px; color: #2c1810; margin-bottom: 32px; overflow-x: auto;
+            padding: 20px; color: #2c1810; margin-bottom: 32px;
             position: relative;
+            box-sizing: border-box;
+            flex-grow: 0;
+            flex-shrink: 0;
+            max-width: 100%;
+            align-self: stretch;
         }
+        .dm-resizable { resize: both; overflow: auto; min-width: 250px; min-height: 150px; }
+        .resize-handle-icon { position: absolute; bottom: 4px; right: 4px; width: 12px; height: 12px; border-right: 2px solid #bba683; border-bottom: 2px solid #bba683; pointer-events: none; opacity: 0.5; }
+
         .progression-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        .progression-table th { 
-            font-family: 'Cinzel', serif; font-weight: 900; text-transform: uppercase; 
-            color: #7a1d1d; border-bottom: 2px solid #7a1d1d; padding: 12px 8px; text-align: left;
-            background: rgba(122, 29, 29, 0.02);
-        }
+        .progression-table th { font-family: 'Cinzel', serif; font-weight: 900; text-transform: uppercase; color: #7a1d1d; border-bottom: 2px solid #7a1d1d; padding: 12px 8px; text-align: left; }
         .progression-table td { padding: 10px 8px; border-bottom: 1px solid rgba(122, 29, 29, 0.1); }
-        .progression-table tr:hover { background: rgba(122, 29, 29, 0.03); }
 
         /* Archetype Heading Styling */
         .archetype-divider { 
-            grid-column: 1 / -1; margin: 48px 0 24px 0; 
+            width: 100%; margin: 48px 0 24px 0; 
             border-left: 8px solid #f59e0b; background: rgba(245, 158, 11, 0.05);
             padding: 16px 24px; border-radius: 4px 16px 16px 4px;
             display: flex; align-items: center; justify-content: space-between;
         }
-        .archetype-name { font-family: 'Cinzel', serif; font-weight: 900; font-size: 24px; color: #f59e0b; text-transform: uppercase; letter-spacing: 0.1em; }
-        .archetype-controls { display: flex; gap: 8px; }
+        .archetype-name { font-family: 'Cinzel', serif; font-weight: 900; font-size: 24px; color: #f59e0b; text-transform: uppercase; letter-spacing: 0.1em; flex-grow: 1; }
+        .archetype-controls { display: flex; gap: 8px; align-items: center; }
         .arch-btn { font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 6px 12px; border-radius: 4px; transition: all 0.2s; cursor: pointer; }
         .arch-btn-add { background: #22c55e; color: white; }
-        .arch-btn-util { background: #64748b; color: white; }
         .arch-btn-delete { background: #ef4444; color: white; opacity: 0.4; }
         .arch-btn-delete:hover { opacity: 1; }
-
-        /* Item Linking */
-        .item-reference-link {
-            color: #7a1d1d; text-decoration: underline; text-decoration-style: dotted; cursor: pointer; font-weight: 700;
-        }
-        .item-reference-link:hover { color: #f59e0b; }
-        
-        @keyframes highlight-pulse {
-            0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); transform: scale(1); }
-            50% { box-shadow: 0 0 30px 10px rgba(245, 158, 11, 0.4); transform: scale(1.02); }
-            100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); transform: scale(1); }
-        }
-        .highlight-glow { animation: highlight-pulse 2s ease-in-out 2; z-index: 50; }
-
-        /* Item Image Styling */
-        .item-preview-img {
-            width: 100%; height: 160px; object-fit: cover; border-radius: 8px; border: 2px solid #bba683;
-            margin-bottom: 16px; cursor: zoom-in; transition: transform 0.2s, filter 0.2s; background: #e5e7eb;
-        }
-        .item-preview-img:hover { filter: brightness(1.1); transform: scale(1.02); }
-        .item-url-input { font-size: 10px; color: #7a1d1d; opacity: 0.6; margin-bottom: 12px; display: block; background: rgba(0,0,0,0.03); padding: 4px 8px; border-radius: 4px; }
-
-        /* Rarity Color Coding */
-        .rarity-common { color: #64748b !important; }
-        .rarity-uncommon { color: #16a34a !important; font-weight: 900; }
-        .rarity-rare { color: #2563eb !important; font-weight: 900; }
-        .rarity-very-rare { color: #9333ea !important; font-weight: 900; }
-        .rarity-legendary { color: #d97706 !important; font-weight: 900; text-shadow: 0 0 1px rgba(217, 119, 6, 0.2); }
-
-        /* Lightbox Styling */
-        .lightbox-modal { background: rgba(0,0,0,0.95); backdrop-filter: blur(12px); }
-        .lightbox-img { max-width: 90vw; max-height: 80vh; object-fit: contain; border: 4px solid #f59e0b; border-radius: 8px; box-shadow: 0 0 60px rgba(0,0,0,1); }
-
-        /* Classification Styling */
-        .classification-pill { font-weight: 900; color: #7a1d1d; cursor: pointer; border-bottom: 1px dashed rgba(122, 29, 29, 0.4); transition: color 0.2s; }
-        .classification-pill:hover { color: #f59e0b; }
-        .classification-none { opacity: 0.4; font-style: normal; font-weight: 400; }
-
-        /* Tooltip */
-        .term-hover { position: relative; border-bottom: 1px dotted #7a1d1d; cursor: help; display: inline; }
-        .tooltip-content {
-            visibility: hidden; width: 220px; background-color: #fdfaf3; color: #2c1810;
-            text-align: left; border: 2px solid #7a1d1d; border-radius: 6px; padding: 10px;
-            position: absolute; z-index: 100; bottom: 125%; left: 50%; margin-left: -110px;
-            opacity: 0; transition: opacity 0.3s; font-size: 11px; line-height: 1.4;
-            font-family: 'Roboto Slab', serif; box-shadow: 0 5px 15px rgba(0,0,0,0.3); pointer-events: none; font-style: normal;
-        }
-        .tooltip-content::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px; border-width: 5px; border-style: solid; border-color: #7a1d1d transparent transparent transparent; }
-        .term-hover:hover .tooltip-content { visibility: visible; opacity: 1; }
-
-        .class-link { color: #7a1d1d; text-decoration: underline; text-decoration-style: dotted; cursor: pointer; font-weight: 700; transition: color 0.2s; }
-        .class-link:hover { color: #f59e0b; }
-
-        /* Formatting Scraps */
-        .def-term { color: #7a1d1d; font-weight: 900; border-bottom: 1px dashed #7a1d1d; }
-
-        /* Hub Buttons */
-        .archive-button {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            border: 1px solid #334155; border-radius: 16px; padding: 24px;
-            display: flex; align-items: center; gap: 20px; transition: all 0.3s;
-            cursor: pointer; width: 100%;
-        }
-        .archive-button:hover { transform: translateY(-4px); border-color: #f59e0b; }
-        .button-label { font-family: 'Cinzel', serif; font-weight: 900; font-size: 18px; color: #f59e0b; text-transform: uppercase; }
-        .button-desc { font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; margin-top: 2px; }
 
         .hidden-view { display: none !important; }
         .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(50%); background: #1e293b; color: #fff; padding: 12px 24px; border-radius: 30px; z-index: 2000; opacity: 0; transition: opacity 0.3s; pointer-events: none; border: 1px solid #3b82f6; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         
-        /* DM Edit Overlays */
-        .dm-editable { transition: background 0.2s; border-radius: 4px; }
         .dm-active-edit .dm-editable { background: rgba(122, 29, 29, 0.05); outline: 1px dashed #7a1d1d; padding: 2px; }
         
         .class-tab { padding: 8px 16px; font-size: 10px; font-weight: 900; text-transform: uppercase; cursor: pointer; border: 1px solid #333; border-radius: 4px; color: #94a3b8; }
@@ -156,21 +94,13 @@
         .level-bubble.active { background: #7a1d1d; color: #fff; border-color: #7a1d1d; }
 
         .section-label { font-size: 10px; text-transform: uppercase; font-weight: 900; color: #f59e0b; opacity: 0.5; margin-bottom: 8px; letter-spacing: 0.2em; display: block; border-bottom: 1px solid rgba(245, 158, 11, 0.1); padding-bottom: 4px; }
-
-        input, textarea { background: transparent; border: none; width: 100%; color: inherit; }
         .modal-overlay { background: rgba(0,0,0,0.95); backdrop-filter: blur(8px); }
 
-        /* Session Log Styling */
-        .session-field-group { margin-bottom: 8px; font-size: 14px; }
-        .session-field-group b { font-weight: 900; text-transform: uppercase; color: #7a1d1d; margin-right: 4px; }
-        .dm-intel-box { 
-            background: rgba(122, 29, 29, 0.05); border: 2px solid #7a1d1d; border-radius: 8px; 
-            padding: 20px; margin-top: 32px; position: relative;
-        }
-        .dm-intel-label { 
-            position: absolute; top: -12px; left: 20px; background: #7a1d1d; color: #fff; 
-            font-size: 10px; font-weight: 900; padding: 2px 8px; border-radius: 4px; text-transform: uppercase;
-        }
+        /* Hub Buttons */
+        .archive-button { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1px solid #334155; border-radius: 16px; padding: 24px; display: flex; align-items: center; gap: 20px; transition: all 0.3s; cursor: pointer; width: 100%; }
+        .archive-button:hover { transform: translateY(-4px); border-color: #f59e0b; }
+        .button-label { font-family: 'Cinzel', serif; font-weight: 900; font-size: 18px; color: #f59e0b; text-transform: uppercase; }
+        .button-desc { font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; }
     </style>
 </head>
 <body class="min-h-screen dashboard-bg">
@@ -180,7 +110,6 @@
     <!-- MAIN HUB -->
     <div id="hub-view" class="p-4 md:p-8">
         <div class="max-w-7xl mx-auto">
-            
             <header class="flex flex-col md:flex-row justify-between items-end mb-12 border-b border-gray-800/50 pb-8 gap-6">
                 <div class="flex flex-col items-start">
                     <h1 class="brand-title">Aeonfall</h1>
@@ -219,40 +148,24 @@
                     </div>
                     <span class="ml-auto text-amber-900 font-black">→</span>
                 </a>
-
                 <div onclick="window.switchView('features')" class="archive-button">
                     <span class="text-4xl">💥</span>
-                    <div class="flex flex-col">
-                        <span class="button-label">Feature Moves & Archetypes</span>
-                        <span class="button-desc">Unique Class Skills & Combat Arts</span>
-                    </div>
+                    <div class="flex flex-col"><span class="button-label">Feature Moves & Archetypes</span><span class="button-desc">Unique Class Skills & Combat Arts</span></div>
                     <span class="ml-auto text-amber-900 font-black">→</span>
                 </div>
-
                 <div onclick="window.switchView('scripts')" class="archive-button">
                     <span class="text-4xl">📜</span>
-                    <div class="flex flex-col">
-                        <span class="button-label">Script Codex</span>
-                        <span class="button-desc">Class Abilities & Tech Schools</span>
-                    </div>
+                    <div class="flex flex-col"><span class="button-label">Script Codex</span><span class="button-desc">Class Abilities & Tech Schools</span></div>
                     <span class="ml-auto text-amber-900 font-black">→</span>
                 </div>
-
                 <div onclick="window.switchView('sessions')" class="archive-button">
                     <span class="text-4xl">🖋️</span>
-                    <div class="flex flex-col">
-                        <span class="button-label">Session Logs</span>
-                        <span class="button-desc">Chronicles of the Party Deeds</span>
-                    </div>
+                    <div class="flex flex-col"><span class="button-label">Session Logs</span><span class="button-desc">Chronicles of the Party Deeds</span></div>
                     <span class="ml-auto text-amber-900 font-black">→</span>
                 </div>
-
                 <div onclick="window.switchView('items')" class="archive-button">
                     <span class="text-4xl">⚔️</span>
-                    <div class="flex flex-col">
-                        <span class="button-label">Gear & Artifacts</span>
-                        <span class="button-desc">Equipment, Loot, and Scavenged Tech</span>
-                    </div>
+                    <div class="flex flex-col"><span class="button-label">Gear & Artifacts</span><span class="button-desc">Equipment, Loot, and Scavenged Tech</span></div>
                     <span class="ml-auto text-amber-900 font-black">→</span>
                 </div>
             </div>
@@ -263,29 +176,25 @@
     <div id="features-view" class="hidden-view p-4 md:p-8">
         <div class="max-w-6xl mx-auto">
             <button onclick="window.switchView('hub')" class="text-amber-500 font-black text-xs uppercase mb-8 hover:text-amber-400">← Back to Archives</button>
-            
             <div class="mb-8">
                 <span class="section-label">Martial Classes</span>
                 <div class="flex flex-wrap gap-2 mb-6" id="feature-martial-tabs"></div>
-                
                 <span class="section-label">Script Users</span>
                 <div class="flex flex-wrap gap-2" id="feature-script-tabs"></div>
             </div>
-            
             <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
                 <div class="text-center md:text-left">
                     <h2 class="font-serif font-black text-3xl uppercase text-amber-500" id="current-feature-title">Feature Moves</h2>
                     <p class="text-xs text-amber-900/60 font-black uppercase tracking-widest mt-2" id="current-feature-class-label">Vanguard Features</p>
                 </div>
                 <div class="flex gap-2 flex-wrap">
-                    <button id="add-table-btn" onclick="window.addTableEntry()" class="hidden bg-amber-900/80 text-white px-6 py-3 rounded-full font-black text-xs uppercase shadow-xl hover:bg-amber-800 active:scale-95 transition-all">Add Table</button>
-                    <button id="add-archetype-btn" onclick="window.addArchetypeEntry()" class="hidden bg-amber-800 text-white px-6 py-3 rounded-full font-black text-xs uppercase shadow-xl hover:bg-amber-700 active:scale-95 transition-all">Add Archetype</button>
-                    <button id="add-feature-btn" onclick="window.addFeatureEntry()" class="hidden bg-amber-600 text-white px-8 py-3 rounded-full font-black text-xs uppercase shadow-xl hover:bg-amber-500 active:scale-95 transition-all">+ Document Move</button>
+                    <button id="add-table-btn" onclick="window.addTableEntry()" class="hidden bg-amber-900/80 text-white px-6 py-3 rounded-full font-black text-xs uppercase shadow-xl hover:bg-amber-800 transition-all">+ Table</button>
+                    <button id="add-archetype-btn" onclick="window.addArchetypeEntry()" class="hidden bg-amber-800 text-white px-6 py-3 rounded-full font-black text-xs uppercase shadow-xl hover:bg-amber-700 transition-all">+ Archetype</button>
+                    <button id="add-script-feature-btn" onclick="window.addScriptEntry()" class="hidden bg-amber-700 text-white px-6 py-3 rounded-full font-black text-xs uppercase shadow-xl hover:bg-amber-600 transition-all">+ Script</button>
+                    <button id="add-feature-btn" onclick="window.addFeatureEntry()" class="hidden bg-amber-600 text-white px-8 py-3 rounded-full font-black text-xs uppercase shadow-xl hover:bg-amber-500 transition-all">+ Move</button>
                 </div>
             </div>
-
-            <!-- FEATURES LIST (Includes Tables & Archetypes) -->
-            <div id="features-list" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div>
+            <div id="features-list" class="flex flex-col gap-8"></div>
         </div>
     </div>
 
@@ -294,85 +203,29 @@
         <div class="max-w-6xl mx-auto">
             <button onclick="window.switchView('hub')" class="text-amber-500 font-black text-xs uppercase mb-8 hover:text-amber-400">← Back to Archives</button>
             <div class="flex flex-wrap gap-2 mb-8" id="class-tabs"></div>
-            
             <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
                 <div class="text-center md:text-left">
                     <h2 class="font-serif font-black text-3xl uppercase text-amber-500" id="current-class-title">Scripts</h2>
                     <div class="flex items-center gap-3 mt-4" id="level-nav"></div>
                 </div>
-                <button id="add-script-btn" onclick="window.addScriptEntry()" class="hidden bg-amber-600 text-white px-8 py-3 rounded-full font-black text-xs uppercase shadow-xl hover:bg-amber-500 active:scale-95 transition-all">+ Inscribe New Script</button>
+                <button id="add-script-btn" onclick="window.addScriptEntry()" class="hidden bg-amber-600 text-white px-8 py-3 rounded-full font-black text-xs uppercase shadow-xl hover:bg-amber-500 transition-all">+ Inscribe New Script</button>
             </div>
-            <div id="scripts-list" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div>
+            <div id="scripts-list" class="flex flex-wrap gap-8 items-stretch justify-start"></div>
         </div>
     </div>
 
-    <!-- SESSIONS VIEW -->
-    <div id="sessions-view" class="hidden-view p-4 md:p-8">
-        <div class="max-w-6xl mx-auto">
-            <button onclick="window.switchView('hub')" class="text-amber-500 font-black text-xs uppercase mb-8 hover:text-amber-400">← Back to Archives</button>
-            <div class="bg-[#fdfaf3] border-8 border-[#bba683] p-10 text-gray-900 min-h-[600px] shadow-2xl relative">
-                <div class="absolute inset-0 border-2 border-[#2c1810] pointer-events-none" style="margin: 4px;"></div>
-                <div class="flex justify-between items-end mb-8 border-b-2 border-gray-900 pb-4">
-                    <h2 class="font-serif font-black text-3xl uppercase tracking-widest text-[#7a1d1d]">Campaign Chronicles</h2>
-                    <button id="add-session-btn" onclick="window.addSessionEntry()" class="hidden bg-amber-800 text-white px-6 py-2 rounded-full font-black text-[10px] uppercase shadow-lg">+ New Session</button>
-                </div>
-                <div id="sessions-list" class="space-y-20"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ITEMS VIEW -->
-    <div id="items-view" class="hidden-view p-4 md:p-8">
-        <div class="max-w-6xl mx-auto">
-            <button onclick="window.switchView('hub')" class="text-amber-500 font-black text-xs uppercase mb-8 hover:text-amber-400">← Back to Archives</button>
-            <div class="flex flex-wrap gap-2 mb-8" id="item-category-tabs"></div>
-            
-            <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-                <div class="text-center md:text-left">
-                    <h2 class="font-serif font-black text-3xl uppercase text-amber-500">Gear & Artifacts</h2>
-                    <p class="text-xs text-amber-900/60 font-black uppercase tracking-widest mt-2" id="current-item-category-title">All Equipment</p>
-                </div>
-                <button id="add-item-btn" onclick="window.addItemEntry()" class="hidden bg-amber-600 text-white px-8 py-3 rounded-full font-black text-xs uppercase shadow-xl hover:bg-amber-500 active:scale-95 transition-all">+ Log New Item</button>
-            </div>
-            <div id="items-list" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div>
-        </div>
-    </div>
-
-    <!-- LIGHTBOX MODAL -->
-    <div id="lightbox-modal" class="fixed inset-0 z-[1000] flex items-center justify-center p-4 hidden">
-        <div class="modal-overlay lightbox-modal absolute inset-0" onclick="document.getElementById('lightbox-modal').classList.add('hidden')"></div>
-        <div class="relative z-10 flex flex-col items-center gap-4">
-            <img id="lightbox-img" src="" alt="Zoomed Asset" class="lightbox-img">
-            <button onclick="document.getElementById('lightbox-modal').classList.add('hidden')" class="bg-amber-600 text-white px-8 py-3 rounded-full font-black text-[11px] uppercase tracking-widest shadow-2xl border-2 border-white/20 active:scale-95 transition-transform">Close Optical Feed</button>
-        </div>
-    </div>
-
-    <!-- DELETE CONFIRMATION MODAL -->
-    <div id="delete-modal" class="fixed inset-0 z-[600] flex items-center justify-center p-4 hidden">
-        <div class="modal-overlay absolute inset-0" onclick="document.getElementById('delete-modal').classList.add('hidden')"></div>
-        <div class="bg-white p-8 rounded-2xl w-full max-sm border-4 border-red-600 text-center text-gray-900 relative z-10 shadow-2xl">
-            <h3 class="text-2xl font-serif font-black text-red-700 uppercase mb-4">Archive Disposal</h3>
-            <p class="text-sm text-gray-500 mb-8 italic leading-relaxed">This record will be permanently erased. This action is irreversible.</p>
-            <div class="flex flex-col gap-3">
-                <button id="confirm-delete-btn" class="w-full bg-red-700 hover:bg-red-800 text-white py-4 rounded-xl font-black text-xs uppercase shadow-lg transition-all active:scale-95">Yes, Erase Permanently</button>
-                <button onclick="document.getElementById('delete-modal').classList.add('hidden')" class="w-full bg-gray-100 text-gray-500 py-3 rounded-xl font-black text-[10px] uppercase">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- DM PASSWORD MODAL -->
+    <!-- PASSWORD MODAL -->
     <div id="password-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[500] hidden">
-        <div class="bg-gray-800 p-8 rounded-2xl w-full max-sm border-2 border-amber-600 text-white text-center shadow-2xl">
-            <h3 class="text-xl font-serif text-amber-500 font-bold mb-2 uppercase">Dungeon Master Access</h3>
+        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border-2 border-amber-600 text-white text-center shadow-2xl">
+            <h3 class="text-xl font-serif text-amber-500 font-bold mb-2 uppercase">DM Access Required</h3>
             <input type="password" id="dm-password" class="w-full bg-gray-900 text-center text-2xl rounded-lg p-3 mb-6 border border-gray-700">
             <button onclick="window.verifyDmPassword()" class="w-full bg-amber-600 text-white py-3 rounded-xl font-bold uppercase text-xs">Unlock Archives</button>
-            <button onclick="document.getElementById('password-modal').classList.add('hidden')" class="w-full text-gray-500 mt-4 text-[10px] uppercase font-bold">Cancel</button>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, doc, updateDoc, setDoc, onSnapshot, addDoc, deleteDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, doc, updateDoc, onSnapshot, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
         const firebaseConfig = { apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI", authDomain: "aeonfall-523c1.firebaseapp.com", projectId: "aeonfall-523c1", storageBucket: "aeonfall-523c1.firebasestorage.app", messagingSenderId: "716207733913", appId: "1:716207733913:web:7aac43906a70e2b5f50c08" };
@@ -383,680 +236,256 @@
 
         const CLASSES = ["Heartbound", "Nomad", "Wilderness Warden", "Chronicler", "Orator", "Scriptweaver", "War-Touched", "Archivist", "Fabricator"];
         const FEATURE_MARTIAL_CLASSES = ["Vanguard", "Warrior", "Peacekeeper", "Scavenger"];
-        const ITEM_CATEGORIES = ["All", "Weapons", "Armor", "Material Component", "Adventuring Gear", "Artifacts", "Recipes & Consumables"];
         
-        const TOOLTIPS = {
-            "Activation Time": "The amount of time required to initialize this script and push it to reality.",
-            "Range/Area": "The maximum distance the script can reach, or the spatial dimensions of its effect.",
-            "Components": "Triggers: Verbal (Commands), Somatic (Gestures), or Material (Items).",
-            "Duration": "How long the reality-distortion persists before the script expires.",
-            "At Higher Levels": "Scaling effects when using higher level script slots.",
-            "Concord": "Ritual Protocol: This script can be initialized through ritualistic focus, conserving internal energy reserves.",
-            "Mechanum": "Technomagic Protocol: This script utilizes specialized hardware and digital distortion to warp reality through code.",
-            "Attack Roll": "A d20 roll + modifiers used to determine if an offensive script strike lands.",
-            "Saving Throw": "A roll made by the target to resist or mitigate the incoming script's effects.",
-            "Concentration": "Requires continuous focus. Ends if incapacitated or if you fail a check when taking damage.",
-            "Damage": "Physical, energy, or digital integrity loss caused by the script output.",
-            "V": "Verbal: Requires spoken command strings.",
-            "S": "Somatic: Requires precise hand gestures.",
-            "M": "Material: Requires a specific component consumed by the distortion.",
-            "Script Lists": "Authorized user-groups for this specific code block.",
-            "d4": "A four-sided die commonly used for minor adjustments or predictive boosts.",
-            "d6": "A six-sided die, the standard unit for energy-output measurement.",
-            "d8": "An eight-sided die, typically used for significant physical or kinetic impact.",
-            "d10": "A ten-sided die for heavy-duty calculations and high-output scripts.",
-            "d12": "A twelve-sided die for massive atmospheric or biological shifts.",
-            "d20": "A twenty-sided die used to determine the success of an action.",
-            "Aegis": "Aegis governs protection, prevention, and resistance, creating wards that block, absorb, or negate harm.",
-            "Calling": "Calling governs summoning and creation, drawing creatures, objects, or forces into existence or from elsewhere.",
-            "Sight": "Sight governs information and foresight, revealing truths, patterns, and possibilities beyond normal perception.",
-            "Dominion": "Dominion governs will and influence, shaping thoughts, emotions, and behavior through directed intent.",
-            "Ruin": "Ruin governs raw energy and destruction, unleashing elemental and forceful power to damage or overwhelm.",
-            "Veil": "Veil governs sensory manipulation, altering what creatures see, hear, or believe to create deception.",
-            "Mortis": "Mortis governs biological failure and recovery, managing decay, stabilization, and vitality at the edge of life.",
-            "Forge": "Forge governs transformation, reshaping matter, bodies, and materials into new forms."
-        };
-
         let currentClass = "Heartbound";
         let currentFeatureClass = "Vanguard";
         let currentLevel = 1; 
-        let currentItemCategory = "All";
         let activeRole = 'player';
-        let scripts = [], sessions = [], items = [], features = [], archetypes = [], tables = [];
+        let scripts = [], archetypes = [], tables = [], features = [];
         let autoSaveTimer = null;
-        let itemToDeleteId = null;
-        let deleteType = ''; 
+        let isUserResizing = false;
+
+        window.onmouseup = () => { isUserResizing = false; };
+
+        const resizeObserver = new ResizeObserver(entries => {
+            if (activeRole !== 'dm' || !isUserResizing) return;
+            for (let entry of entries) {
+                const id = entry.target.dataset.id;
+                if (!id) continue;
+                const table = tables.find(t => t.id === id);
+                if (!table) continue;
+                const rect = entry.target.getBoundingClientRect();
+                const newWidth = `${Math.round(rect.width)}px`;
+                const newHeight = `${Math.round(rect.height)}px`;
+                if (table.width !== newWidth || table.height !== newHeight) {
+                    if (autoSaveTimer) clearTimeout(autoSaveTimer);
+                    autoSaveTimer = setTimeout(() => {
+                        updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id), {
+                            width: newWidth, height: newHeight
+                        });
+                    }, 1000);
+                }
+            }
+        });
 
         window.showToast = (m) => { const t = document.getElementById('toast'); t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 4000); };
-
-        window.setRole = (r) => { 
-            if (r === 'dm') {
-                if (localStorage.getItem('aeonfall_role') === 'dm') return;
-                document.getElementById('password-modal').classList.remove('hidden'); 
-            } else { 
-                activeRole = 'player'; localStorage.setItem('aeonfall_role', 'player'); window.updateRoleUI(); 
-            } 
-        };
+        window.setRole = (r) => { if (r === 'dm') { if (localStorage.getItem('aeonfall_role') === 'dm') return; document.getElementById('password-modal').classList.remove('hidden'); } else { activeRole = 'player'; localStorage.setItem('aeonfall_role', 'player'); window.updateRoleUI(); } };
+        window.verifyDmPassword = () => { if (document.getElementById('dm-password').value === 'Rew4994') { activeRole = 'dm'; localStorage.setItem('aeonfall_role', 'dm'); document.getElementById('password-modal').classList.add('hidden'); window.updateRoleUI(); } else { window.showToast("Access Denied"); } };
         
-        window.verifyDmPassword = () => { 
-            if (document.getElementById('dm-password').value === 'Rew4994') { 
-                activeRole = 'dm'; localStorage.setItem('aeonfall_role', 'dm'); document.getElementById('password-modal').classList.add('hidden'); window.updateRoleUI(); 
-            } else { window.showToast("Access Denied"); } 
+        window.logout = () => { 
+            localStorage.removeItem('aeonfall_user'); 
+            localStorage.removeItem('aeonfall_role'); 
+            window.location.reload(); 
         };
-
-        window.logout = () => { localStorage.removeItem('aeonfall_user'); localStorage.removeItem('aeonfall_role'); window.location.reload(); };
 
         window.updateRoleUI = () => {
             const isDM = activeRole === 'dm';
-            document.getElementById('role-player-btn').classList.toggle('active', !isDM);
-            document.getElementById('role-dm-btn').classList.toggle('active', isDM);
-            document.getElementById('add-script-btn').classList.toggle('hidden', !isDM);
-            document.getElementById('add-session-btn').classList.toggle('hidden', !isDM);
-            document.getElementById('add-item-btn').classList.toggle('hidden', !isDM);
-            document.getElementById('add-feature-btn').classList.toggle('hidden', !isDM);
-            document.getElementById('add-archetype-btn').classList.toggle('hidden', !isDM);
-            document.getElementById('add-table-btn').classList.toggle('hidden', !isDM);
-            renderLists();
-            renderNavs();
-        };
-
-        window.switchView = (v) => {
-            ['hub', 'scripts', 'sessions', 'items', 'features'].forEach(id => {
-                const el = document.getElementById(`${id}-view`);
-                if(el) el.classList.add('hidden-view');
+            document.querySelectorAll('.role-btn').forEach(btn => btn.classList.toggle('active', (btn.id === 'role-dm-btn') === isDM));
+            ['add-script-btn', 'add-feature-btn', 'add-archetype-btn', 'add-table-btn', 'add-script-feature-btn'].forEach(id => {
+                const el = document.getElementById(id); if (el) el.classList.toggle('hidden', !isDM);
             });
-            document.getElementById(`${v}-view`).classList.remove('hidden-view');
-            window.scrollTo(0,0);
+            renderLists(); renderNavs();
         };
 
-        window.selectClass = (c) => { 
-            currentClass = c; 
-            const shortClasses = ["Heartbound", "Nomad", "Fabricator"];
-            if (shortClasses.includes(c)) { if (currentLevel < 1) currentLevel = 1; if (currentLevel > 5) currentLevel = 5; }
-            renderNavs(); renderLists(); 
-        };
-
-        window.selectFeatureClass = (c) => {
-            currentFeatureClass = c;
-            renderNavs(); renderLists();
-        };
-        
+        window.switchView = (v) => { ['hub', 'scripts', 'features'].forEach(id => document.getElementById(`${id}-view`)?.classList.add('hidden-view')); document.getElementById(`${v}-view`).classList.remove('hidden-view'); window.scrollTo(0,0); };
+        window.selectClass = (c) => { currentClass = c; renderNavs(); renderLists(); };
+        window.selectFeatureClass = (c) => { currentFeatureClass = c; renderNavs(); renderLists(); };
         window.selectLevel = (l) => { currentLevel = l; renderNavs(); renderLists(); };
 
-        window.selectItemCategory = (cat) => {
-            currentItemCategory = cat;
-            renderNavs();
-            renderLists();
-        };
-
-        function parseAeonfallContent(text, isDM) {
-            if (!text) return '';
-            if (isDM) return text; 
-            let html = text.replace(/&&([^&]+)&&/g, (match, content) => {
-                const parts = content.split('|');
-                const term = parts[0].trim();
-                const definition = parts.length > 1 ? parts[1].trim() : (TOOLTIPS[term] || "No technical record found in archives.");
-                return `<span class="term-hover def-term">${term}<span class="tooltip-content">${definition}</span></span>`;
-            });
-            html = html.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-            html = html.replace(/\*(.*?)\*/g, '<i>$1</i>');
-            html = html.replace(/__(.*?)__/g, '<u>$1</u>');
-            return html;
-        }
-
-        function wrapWithTooltip(label, termKey) {
-            const key = termKey || label;
-            if (TOOLTIPS[key]) return `<span class="term-hover">${label}<span class="tooltip-content">${TOOLTIPS[key]}</span></span>`;
-            return label;
-        }
-
-        function linkifyClasses(text) {
-            if (!text) return '';
-            let linkedText = text;
-            CLASSES.concat(FEATURE_MARTIAL_CLASSES).forEach(cls => {
-                const regex = new RegExp(`\\b${cls}\\b`, 'g');
-                linkedText = linkedText.replace(regex, `<span class="class-link" onclick="event.stopPropagation(); window.selectClass('${cls}')">${cls}</span>`);
-            });
-            return linkedText;
-        }
-
-        function linkifyComponents(text, isDM) {
-            if (!text) return '';
-            if (isDM) return text;
-            let linked = text.replace(/\bV\b/g, wrapWithTooltip('V', 'V'))
-                             .replace(/\bS\b/g, wrapWithTooltip('S', 'S'))
-                             .replace(/\bM\b/g, wrapWithTooltip('M', 'M'));
-            linked = linked.replace(/\(([^)]+)\)/g, (match, itemName) => {
-                return `(<span class="item-reference-link" onclick="window.jumpToItem('${itemName.replace(/'/g, "\\'")}')">${itemName}</span>)`;
-            });
-            return linked;
-        }
-
-        window.jumpToItem = (itemName) => {
-            const matchItem = items.find(i => i.title.toLowerCase() === itemName.toLowerCase());
-            if (matchItem) {
-                currentItemCategory = matchItem.category || "All";
-                window.switchView('items');
-                renderNavs();
-                setTimeout(() => {
-                    const itemEntryTitles = Array.from(document.querySelectorAll('#items-list .script-card-title'));
-                    const targetEl = itemEntryTitles.find(el => el.innerText.toLowerCase() === itemName.toLowerCase());
-                    if (targetEl) {
-                        const card = targetEl.closest('.script-card');
-                        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        card.classList.add('highlight-glow');
-                        setTimeout(() => card.classList.remove('highlight-glow'), 4000);
-                    }
-                }, 200);
-            } else {
-                window.showToast(`Resource "${itemName}" is not registered. Remind your DM to add it to Gear & Artifacts!`);
-            }
-        };
-
-        function renderNavs() {
-            const tabs = document.getElementById('class-tabs');
-            if (tabs) tabs.innerHTML = CLASSES.map(c => `<div class="class-tab ${currentClass === c ? 'active' : ''}" onclick="window.selectClass('${c}')">${c}</div>`).join('');
-
-            const martialTabs = document.getElementById('feature-martial-tabs');
-            if (martialTabs) martialTabs.innerHTML = FEATURE_MARTIAL_CLASSES.map(c => `<div class="class-tab ${currentFeatureClass === c ? 'active' : ''}" onclick="window.selectFeatureClass('${c}')">${c}</div>`).join('');
-
-            const scriptTabs = document.getElementById('feature-script-tabs');
-            if (scriptTabs) scriptTabs.innerHTML = CLASSES.map(c => `<div class="class-tab ${currentFeatureClass === c ? 'active' : ''}" onclick="window.selectFeatureClass('${c}')">${c}</div>`).join('');
-
-            const lNav = document.getElementById('level-nav');
-            if (lNav) {
-                const shortClasses = ["Heartbound", "Nomad", "Fabricator"];
-                let levels = shortClasses.includes(currentClass) ? [1, 2, 3, 4, 5] : [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-                lNav.innerHTML = levels.map(l => `<div class="level-bubble ${currentLevel === l ? 'active' : ''}" onclick="window.selectLevel(${l})">${l === 0 ? 'T' : l}</div>`).join('');
-            }
-            const title = document.getElementById('current-class-title');
-            if (title) title.textContent = `${currentClass} ${currentLevel === 0 ? 'Tricks' : 'Lv. ' + currentLevel}`;
-
-            const fLabel = document.getElementById('current-feature-class-label');
-            if (fLabel) fLabel.textContent = `${currentFeatureClass} Features`;
-
-            const iTabs = document.getElementById('item-category-tabs');
-            if (iTabs) {
-                iTabs.innerHTML = ITEM_CATEGORIES.map(cat => 
-                    `<div class="class-tab ${currentItemCategory === cat ? 'active' : ''}" onclick="window.selectItemCategory('${cat}')">${cat}</div>`
-                ).join('');
-            }
-            const iTitle = document.getElementById('current-item-category-title');
-            if (iTitle) iTitle.textContent = currentItemCategory === "All" ? "All Equipment" : currentItemCategory;
-        }
-
-        window.zoomImage = (url) => {
-            const modal = document.getElementById('lightbox-modal');
-            const img = document.getElementById('lightbox-img');
-            img.src = url;
-            modal.classList.remove('hidden');
-        };
-
-        window.cycleClassification = async (id, currentVal) => {
-            if (activeRole !== 'dm') return;
-            const states = ['Mechanum', 'Concord', ''];
-            let currentIndex = states.indexOf(currentVal || '');
-            let nextIndex = (currentIndex + 1) % states.length;
-            const newVal = states[nextIndex];
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookScripts', id), { classification: newVal });
-            window.showToast(newVal ? `Script Type: ${newVal}` : "Classification Removed");
-        };
-
-        window.copyScript = (id) => {
-            const s = scripts.find(script => script.id === id);
-            if (!s) return;
-            const cleanContent = (s.content || "").replace(/&&([^|&]+)(?:\|[^&]+)?&&/g, '$1').replace(/\*\*|\*|__/g, '');
-            const text = `--- AEONFALL SCRIPT DATA ---\nNAME: ${s.title.toUpperCase()}\nLEVEL: ${s.level === 0 ? 'Trick' : s.level}\nSCHOOL: ${s.school || 'Dominion'}\nTYPE: ${s.classification || 'Standard'}\nACTIVATION: ${s.activationTime || '1 Action'}\nRANGE: ${s.range || '30 feet'}\nCOMPONENTS: ${s.components || 'V, S'}\nDURATION: ${s.duration || 'Instant'}\n\nEFFECT:\n${cleanContent}\n\nSCALING:\n${s.higherLevels || 'None'}\n\nAUTHORIZED USERS: ${s.scriptLists || s.className || 'General'}`;
-            copyToClipboard(text);
-        };
-
-        window.copyFeature = (id) => {
-            const f = features.find(feat => feat.id === id);
-            if (!f) return;
-            const cleanContent = (f.content || "").replace(/&&([^|&]+)(?:\|[^&]+)?&&/g, '$1').replace(/\*\*|\*|__/g, '');
-            const text = `--- AEONFALL FEATURE DATA ---\nNAME: ${f.title.toUpperCase()}\nCLASS: ${f.className}\nTYPE: ${f.type || 'Feature'}\n\nEFFECT:\n${cleanContent}`;
-            copyToClipboard(text);
-        };
-
-        window.copyItem = (id) => {
-            const i = items.find(item => item.id === id);
-            if (!i) return;
-            const cleanContent = (i.content || "").replace(/&&([^|&]+)(?:\|[^&]+)?&&/g, '$1').replace(/\*\*|\*|__/g, '');
-            const text = `--- AEONFALL ITEM DATA ---\nNAME: ${i.title.toUpperCase()}\nCATEGORY: ${i.category || 'General'}\nTYPE: ${i.type || 'Gear'}\nRARITY: ${i.rarity || 'Common'}\nWEIGHT: ${i.weight || '1 lb'}\nCOST: ${i.cost || '-'}\n\nDESCRIPTION:\n${cleanContent}\n\nPROPERTIES:\n${i.properties || 'None'}`;
-            copyToClipboard(text);
-        };
-
-        function copyToClipboard(text) {
-            const textArea = document.createElement("textarea");
-            textArea.value = text;
-            document.body.appendChild(textArea);
-            textArea.select();
-            try {
-                document.execCommand('copy');
-                window.showToast("Data Compiled & Copied to Clipboard");
-            } catch (err) {
-                window.showToast("Failed to access system clipboard");
-            }
-            document.body.removeChild(textArea);
-        }
-
-        const getRarityClass = (rarity) => {
-            const r = (rarity || '').toLowerCase();
-            if (r.includes('legendary')) return 'rarity-legendary';
-            if (r.includes('very rare')) return 'rarity-very-rare';
-            if (r.includes('rare')) return 'rarity-rare';
-            if (r.includes('uncommon')) return 'rarity-uncommon';
-            return 'rarity-common';
-        };
+        function parseContent(text) { return text ? text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*(.*?)\*/g, '<i>$1</i>') : ''; }
 
         function createScriptCard(s, isDM) {
-            const classif = s.classification || '';
-            const classifHtml = isDM ? ` [<span class="classification-pill ${!classif ? 'classification-none' : ''}" onclick="window.cycleClassification('${s.id}', '${classif}')">${wrapWithTooltip(classif || ' + ', classif)}</span>]` : (classif ? ` [${wrapWithTooltip(classif)}]` : '');
             return `
-                <div class="script-card ${isDM ? 'dm-active-edit' : ''}">
+                <div class="script-card ${isDM ? 'dm-active-edit' : ''}" data-id="${s.id}" data-type="script">
                     <div class="script-card-header">
-                        <div class="script-card-title dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'title', this.innerText)">${s.title}</div>
-                        ${isDM ? `<button onclick="window.triggerDeleteScript('${s.id}')" class="absolute top-4 right-4 text-red-700 opacity-30 hover:opacity-100">✕</button>` : ''}
+                        <div class="flex items-center">
+                            ${isDM ? `<div class="drag-handle mr-2">⠿</div>` : ''}
+                            <div class="script-card-title dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'title', this.innerText)">${s.title}</div>
+                        </div>
+                        ${isDM ? `<button onclick="window.deleteItem('${s.id}', 'handbookScripts')" class="text-red-700 opacity-30 hover:opacity-100 ml-4">✕</button>` : ''}
                     </div>
-                    <span class="script-card-level">
-                        ${s.level === 0 ? 'Trick' : s.level + '-level'} — 
-                        <span class="${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'school', this.innerText)">${isDM ? (s.school || 'Dominion') : wrapWithTooltip(s.school || 'Dominion')}</span> 
-                        ${classifHtml}
-                    </span>
-                    <ul class="script-prop-list">
-                        <li><b>${wrapWithTooltip('Activation Time')}:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'activationTime', this.innerText)">${s.activationTime || '1 Action'}</span></li>
-                        <li><b>${wrapWithTooltip('Range/Area')}:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'range', this.innerText)">${s.range || '30 feet'}</span></li>
-                        <li><b>${wrapWithTooltip('Components')}:</b> <span class="${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'components', this.innerText)">${linkifyComponents(s.components || 'V, S', isDM)}</span></li>
-                        <li><b>${wrapWithTooltip('Duration')}:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'duration', this.innerText)">${s.duration || 'Instantaneous'}</span></li>
-                    </ul>
-                    <div class="script-body ${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'content', this.innerText)">${parseAeonfallContent(s.content, isDM)}</div>
-                    <div class="script-higher-levels"><b>${wrapWithTooltip('At Higher Levels')}.</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'higherLevels', this.innerText)">${s.higherLevels || 'No scaling details.'}</span></div>
-                    <div class="script-footer"><b>Script Lists:</b> <span class="${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'scriptLists', this.innerText)">${isDM ? (s.scriptLists || currentClass) : linkifyClasses(s.scriptLists || currentClass)}</span></div>
-                    <button onclick="window.copyScript('${s.id}')" class="mt-6 w-full bg-[#2c1810]/5 hover:bg-[#7a1d1d]/10 border border-[#7a1d1d33] py-2 rounded-lg text-[#7a1d1d] font-black text-[10px] uppercase transition-all flex items-center justify-center gap-2"><span>📋</span> Copy Script Data</button>
+                    <span class="script-card-level italic text-sm mb-2 opacity-70">${s.level === 0 ? 'Trick' : 'Lv. ' + s.level} ${s.school || 'Dominion'}</span>
+                    <div class="script-body ${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'content', this.innerText)">${parseContent(s.content)}</div>
                 </div>
             `;
         }
 
         function createFeatureCard(f, isDM) {
             return `
-                <div class="script-card ${isDM ? 'dm-active-edit' : ''}">
+                <div class="script-card ${isDM ? 'dm-active-edit' : ''}" data-id="${f.id}" data-type="feature">
                     <div class="script-card-header">
-                        <div class="script-card-title dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateFeature('${f.id}', 'title', this.innerText)">${f.title}</div>
-                        ${isDM ? `<button onclick="window.triggerDeleteFeature('${f.id}')" class="absolute top-4 right-4 text-red-700 opacity-30 hover:opacity-100">✕</button>` : ''}
+                        <div class="flex flex-col grow">
+                            <div class="flex items-center">
+                                ${isDM ? `<div class="drag-handle mr-2">⠿</div>` : ''}
+                                <div class="script-card-title dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateFeature('${f.id}', 'title', this.innerText)">${f.title}</div>
+                            </div>
+                            <div class="text-[11px] font-black uppercase opacity-40 mt-1 tracking-widest dm-editable italic" contenteditable="${isDM}" oninput="window.debounceUpdateFeature('${f.id}', 'type', this.innerText)">${f.type || 'New Feature Move'}</div>
+                        </div>
+                        ${isDM ? `<button onclick="window.deleteItem('${f.id}', 'handbookFeatures')" class="text-red-700 opacity-30 hover:opacity-100 ml-4">✕</button>` : ''}
                     </div>
-                    <span class="script-card-level">
-                        <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateFeature('${f.id}', 'type', this.innerText)">${f.type || 'Feature Move'}</span>
-                    </span>
-                    <div class="script-body mt-4 ${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdateFeature('${f.id}', 'content', this.innerText)">${parseAeonfallContent(f.content, isDM)}</div>
-                    <button onclick="window.copyFeature('${f.id}')" class="mt-6 w-full bg-[#2c1810]/5 hover:bg-[#7a1d1d]/10 border border-[#7a1d1d33] py-2 rounded-lg text-[#7a1d1d] font-black text-[10px] uppercase transition-all flex items-center justify-center gap-2"><span>📋</span> Copy Feature Data</button>
+                    <div class="script-body mt-4 ${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdateFeature('${f.id}', 'content', this.innerText)">${parseContent(f.content)}</div>
                 </div>
             `;
         }
 
         function createTableHtml(t, isDM) {
-            let headersHtml = t.headers.map((h, i) => `<th contenteditable="${isDM}" oninput="window.debounceUpdateTableCell('${t.id}', 'headers', ${i}, this.innerText)">${h}</th>`).join('');
-            let rowsHtml = t.rows.map((row, rowIdx) => {
-                let cellsHtml = row.map((cell, cellIdx) => `<td contenteditable="${isDM}" oninput="window.debounceUpdateTableCell('${t.id}', 'rows', ${rowIdx}, this.innerText, ${cellIdx})">${cell}</td>`).join('');
-                return `<tr>${cellsHtml}</tr>`;
-            }).join('');
-
+            const hCells = t.headers.map((h, i) => `<th contenteditable="${isDM}" oninput="window.updateTableCells('${t.id}', 'headers', ${i}, this.innerText)">${h}</th>`).join('');
+            const rCells = t.rows.map((row, rIdx) => `<tr>${row.map((c, cIdx) => `<td contenteditable="${isDM}" oninput="window.updateTableCells('${t.id}', 'rows', ${rIdx}, this.innerText, ${cIdx})">${c}</td>`).join('')}</tr>`).join('');
+            const style = `width: ${t.width || '100%'}; height: ${t.height || 'auto'};`;
             return `
-                <div class="progression-table-container shadow-2xl mb-12 grid-column-span-full" style="grid-column: 1 / -1;">
+                <div class="progression-table-container shadow-2xl ${isDM ? 'dm-resizable' : ''}" 
+                     style="${style}" 
+                     data-id="${t.id}" data-type="table"
+                     onmousedown="if (event.offsetX > this.offsetWidth - 30 && event.offsetY > this.offsetHeight - 30) isUserResizing = true;">
                     <div class="flex justify-between items-center mb-6">
-                        <h3 class="font-serif font-black uppercase text-xl text-[#7a1d1d] dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateTable('${t.id}', 'title', this.innerText)">${t.title}</h3>
+                        <div class="flex items-center">
+                            ${isDM ? `<div class="drag-handle mr-4">⠿</div>` : ''}
+                            <h3 class="font-serif font-black uppercase text-xl text-[#7a1d1d] dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateTable('${t.id}', 'title', this.innerText)">${t.title}</h3>
+                        </div>
                         ${isDM ? `
                             <div class="flex gap-2">
-                                <button onclick="window.addRowToTable('${t.id}')" class="arch-btn arch-btn-add">+ Row</button>
-                                <button onclick="window.addColumnToTable('${t.id}')" class="arch-btn arch-btn-util">+ Col</button>
-                                <button onclick="window.removeColumnFromTable('${t.id}')" class="arch-btn arch-btn-util">- Col</button>
-                                <button onclick="window.triggerDeleteTable('${t.id}')" class="arch-btn arch-btn-delete">Dispose Table</button>
+                                <button onclick="window.modifyTable('${t.id}', 'addRow')" class="arch-btn arch-btn-add">+ Row</button>
+                                <button onclick="window.modifyTable('${t.id}', 'remRow')" class="arch-btn bg-red-700 text-white">- Row</button>
+                                <button onclick="window.modifyTable('${t.id}', 'addCol')" class="arch-btn arch-btn-add">+ Col</button>
+                                <button onclick="window.modifyTable('${t.id}', 'remCol')" class="arch-btn bg-red-700 text-white">- Col</button>
+                                <button onclick="window.deleteItem('${t.id}', 'handbookTables')" class="arch-btn bg-black text-white">✕</button>
                             </div>
                         ` : ''}
                     </div>
-                    <table class="progression-table">
-                        <thead><tr>${headersHtml}</tr></thead>
-                        <tbody>${rowsHtml}</tbody>
-                    </table>
+                    <table class="progression-table"><thead><tr>${hCells}</tr></thead><tbody>${rCells}</tbody></table>
+                    ${isDM ? `<div class="resize-handle-icon"></div>` : ''}
                 </div>
             `;
         }
 
         const renderLists = () => {
             const isDM = activeRole === 'dm';
-            
-            // Render Features View (Includes Tables, Archetypes & linked scripts)
             const fList = document.getElementById('features-list');
             if (fList) {
                 fList.innerHTML = '';
-                
-                // Get general resources (no archetype)
-                const classTables = tables.filter(t => t.parentClass === currentFeatureClass && !t.archetypeId);
-                const generalFeatures = features.filter(f => f.className === currentFeatureClass && !f.archetypeId);
-                const classArchetypes = archetypes.filter(a => a.parentClass === currentFeatureClass);
+                const topContainer = document.createElement('div');
+                topContainer.className = 'w-full flex flex-wrap gap-8 items-stretch justify-start';
+                fList.appendChild(topContainer);
 
-                // Render Top Level Tables
-                classTables.forEach(t => fList.innerHTML += createTableHtml(t, isDM));
-                // Render Top Level Features
-                generalFeatures.forEach(f => fList.innerHTML += createFeatureCard(f, isDM));
+                tables.filter(t => t.parentClass === currentFeatureClass && !t.archetypeId).forEach(t => topContainer.innerHTML += createTableHtml(t, isDM));
+                features.filter(f => f.className === currentFeatureClass && !f.archetypeId).forEach(f => topContainer.innerHTML += createFeatureCard(f, isDM));
+                scripts.filter(s => s.scriptLists?.includes(currentFeatureClass) && !s.archetypeId).forEach(s => topContainer.innerHTML += createScriptCard(s, isDM));
 
-                // Render Archetype Sections
-                classArchetypes.forEach(arch => {
-                    const archTables = tables.filter(t => t.archetypeId === arch.id);
-                    const archFeatures = features.filter(f => f.archetypeId === arch.id);
-                    const archScripts = scripts.filter(s => s.archetypeId === arch.id);
+                archetypes.filter(a => a.parentClass === currentFeatureClass).forEach(arch => {
+                    const archWrapper = document.createElement('div');
+                    archWrapper.className = 'w-full flex flex-wrap gap-8 items-stretch justify-start';
+                    archWrapper.dataset.id = arch.id;
+                    archWrapper.dataset.type = 'archetype';
 
                     const divider = document.createElement('div');
                     divider.className = 'archetype-divider shadow-md';
                     divider.innerHTML = `
-                        <div class="archetype-name dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateArchetype('${arch.id}', 'name', this.innerText)">${arch.name}</div>
-                        ${isDM ? `
-                            <div class="archetype-controls">
-                                <button onclick="window.addTableEntry('${arch.id}')" class="arch-btn arch-btn-add">+ Table</button>
-                                <button onclick="window.addFeatureEntry('${arch.id}')" class="arch-btn arch-btn-add">+ Feature</button>
-                                <button onclick="window.addScriptEntry(null, '${arch.id}')" class="arch-btn arch-btn-add">+ Script</button>
-                                <button onclick="window.triggerDeleteArchetype('${arch.id}')" class="arch-btn arch-btn-delete">Dispose Archetype</button>
-                            </div>
-                        ` : ''}
+                        <div class="flex items-center flex-grow">
+                             ${isDM ? `<div class="drag-handle mr-4 !color-amber-500">⠿</div>` : ''}
+                             <div class="archetype-name dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateArchetype('${arch.id}', 'name', this.innerText)">${arch.name}</div>
+                        </div>
+                        ${isDM ? `<div class="archetype-controls">
+                            <button onclick="window.addTableEntry('${arch.id}')" class="arch-btn arch-btn-add">+ Tbl</button>
+                            <button onclick="window.addFeatureEntry('${arch.id}')" class="arch-btn arch-btn-add">+ Ftr</button>
+                            <button onclick="window.addScriptEntry(null, '${arch.id}')" class="arch-btn arch-btn-add">+ Scp</button>
+                            <button onclick="window.deleteItem('${arch.id}', 'handbookArchetypes')" class="arch-btn arch-btn-delete">✕</button>
+                        </div>` : ''}
                     `;
-                    fList.appendChild(divider);
+                    archWrapper.appendChild(divider);
 
-                    archTables.forEach(t => fList.innerHTML += createTableHtml(t, isDM));
-                    archFeatures.forEach(f => fList.innerHTML += createFeatureCard(f, isDM));
-                    archScripts.forEach(s => fList.innerHTML += createScriptCard(s, isDM));
+                    const contentContainer = document.createElement('div');
+                    contentContainer.className = 'w-full flex flex-wrap gap-8 items-stretch justify-start';
+                    tables.filter(t => t.archetypeId === arch.id).forEach(t => contentContainer.innerHTML += createTableHtml(t, isDM));
+                    features.filter(f => f.archetypeId === arch.id).forEach(f => contentContainer.innerHTML += createFeatureCard(f, isDM));
+                    scripts.filter(s => s.archetypeId === arch.id).forEach(s => contentContainer.innerHTML += createScriptCard(s, isDM));
 
-                    if (archTables.length === 0 && archFeatures.length === 0 && archScripts.length === 0) {
-                        const empty = document.createElement('p');
-                        empty.className = 'col-span-full text-center italic opacity-30 py-8 text-xs uppercase font-black';
-                        empty.textContent = 'Archetype Data Buffer Empty';
-                        fList.appendChild(empty);
-                    }
+                    archWrapper.appendChild(contentContainer);
+                    fList.appendChild(archWrapper);
+                    if (isDM) new Sortable(contentContainer, { handle: '.drag-handle', animation: 150, onEnd: (evt) => window.syncOrder(contentContainer) });
                 });
 
-                if (generalFeatures.length === 0 && classArchetypes.length === 0 && classTables.length === 0) {
-                    fList.innerHTML = `<p class="col-span-full text-center italic opacity-40 py-24 uppercase font-black text-amber-900 tracking-widest">No Class Records Available</p>`;
+                if (isDM) {
+                    new Sortable(fList, { handle: '.drag-handle', animation: 150, onEnd: (evt) => window.syncOrder(fList, true) });
+                    new Sortable(topContainer, { handle: '.drag-handle', animation: 150, onEnd: (evt) => window.syncOrder(topContainer) });
+                    document.querySelectorAll('.dm-resizable').forEach(el => resizeObserver.observe(el));
                 }
             }
 
-            // Render Script Codex View
             const sList = document.getElementById('scripts-list');
             if (sList) {
                 sList.innerHTML = '';
-                const filteredScripts = scripts.filter(s => {
-                    if (parseInt(s.level) !== currentLevel) return false;
-                    const listText = (s.scriptLists || s.className || '').toLowerCase();
-                    return listText.includes(currentClass.toLowerCase());
-                });
-                filteredScripts.forEach(s => sList.innerHTML += createScriptCard(s, isDM));
-                if (filteredScripts.length === 0) sList.innerHTML = `<p class="col-span-full text-center italic opacity-40 py-24 uppercase font-black text-amber-900 tracking-widest">Entry Restricted or Unavailable</p>`;
-            }
-
-            // Render Items
-            const iList = document.getElementById('items-list');
-            if (iList) {
-                iList.innerHTML = '';
-                const filteredItems = items.filter(i => {
-                    if (currentItemCategory === "All") return true;
-                    return (i.category || 'General').toLowerCase() === currentItemCategory.toLowerCase();
-                });
-                filteredItems.forEach(i => {
-                    const card = document.createElement('div');
-                    card.className = `script-card ${isDM ? 'dm-active-edit' : ''}`;
-                    const imgUrl = (i.imageUrl || '').trim();
-                    let imgHtml = imgUrl ? `<img src="${imgUrl}" class="item-preview-img" onclick="window.zoomImage('${imgUrl}')" onerror="this.src='https://placehold.co/400x400/000000/f59e0b?text=ASSET+LOST'">` : (isDM ? `<div class="w-full h-12 bg-black/5 border-dashed border-2 border-amber-900/20 rounded-lg flex items-center justify-center text-[10px] uppercase font-black opacity-40 mb-4 tracking-widest">No Signal: Input Asset Link Below</div>` : '');
-                    card.innerHTML = `
-                        <div class="script-card-header">
-                            <div class="script-card-title dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'title', this.innerText)">${i.title}</div>
-                            ${isDM ? `<button onclick="window.triggerDeleteItem('${i.id}')" class="absolute top-4 right-4 text-red-700 opacity-30 hover:opacity-100">✕</button>` : ''}
-                        </div>
-                        <span class="script-card-level">
-                            <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'category', this.innerText)">${i.category || 'General'}</span> — 
-                            <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'type', this.innerText)">${i.type || 'Gear'}</span> — 
-                            <span class="dm-editable ${getRarityClass(i.rarity)}" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'rarity', this.innerText)">${i.rarity || 'Common'}</span>
-                        </span>
-                        ${imgHtml}
-                        ${isDM ? `<span class="item-url-input">Optical Asset Link: <span class="dm-editable inline-block min-w-[50px] border-b border-amber-900/20" contenteditable="true" oninput="window.debounceUpdateItem('${i.id}', 'imageUrl', this.innerText)">${imgUrl}</span></span>` : ''}
-                        <ul class="script-prop-list">
-                            <li><b>Weight:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'weight', this.innerText)">${i.weight || '1 lb'}</span></li>
-                            <li><b>Value:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'cost', this.innerText)">${i.cost || '-'}</span></li>
-                        </ul>
-                        <div class="script-body ${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'content', this.innerText)">${parseAeonfallContent(i.content, isDM)}</div>
-                        <div class="script-higher-levels"><b>Properties.</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'properties', this.innerText)">${i.properties || 'None.'}</span></div>
-                        <button onclick="window.copyItem('${i.id}')" class="mt-6 w-full bg-[#2c1810]/5 hover:bg-[#7a1d1d]/10 border border-[#7a1d1d33] py-2 rounded-lg text-[#7a1d1d] font-black text-[10px] uppercase transition-all flex items-center justify-center gap-2"><span>📋</span> Copy Item Data</button>
-                    `;
-                    iList.appendChild(card);
-                });
-                if (filteredItems.length === 0) iList.innerHTML = `<p class="col-span-full text-center italic opacity-40 py-24 uppercase font-black text-amber-900 tracking-widest">No Items Registered in this category</p>`;
-            }
-
-            // Render Sessions
-            const sessList = document.getElementById('sessions-list');
-            if (sessList) {
-                sessList.innerHTML = '';
-                sessions.forEach(s => {
-                    const div = document.createElement('div');
-                    div.className = `relative ${isDM ? 'dm-active-edit' : ''}`;
-                    let html = `
-                        <div class="flex justify-between items-start mb-6 border-b border-gray-900/10 pb-2">
-                            <div class="font-serif font-black text-4xl uppercase text-[#7a1d1d] dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'title', this.innerText)">${s.title}</div>
-                            ${isDM ? `<button onclick="window.triggerDeleteSession('${s.id}')" class="text-red-700 font-black text-[10px] uppercase border border-red-200 px-2 py-1 rounded">Erase Log</button>` : ''}
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12">
-                            <div>
-                                <div class="session-field-group"><b>Date:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'date', this.innerText)">${s.date}</span></div>
-                                <div class="session-field-group"><b>Starting Point:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'startingPoint', this.innerText)">${s.startingPoint || '...'}</span></div>
-                                <div class="session-field-group"><b>Summary:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'lastSessionSummary', this.innerText)">${s.lastSessionSummary || '...'}</span></div>
-                            </div>
-                        </div>
-                        <div class="mt-8">
-                            <h4 class="font-serif font-black text-xl uppercase text-[#7a1d1d] mb-4">Scenes / Beats</h4>
-                            <div class="space-y-4">
-                                <div class="session-field-group"><b>1. Hook / Opening:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene1', this.innerText)">${s.scene1 || '...'}</div></div>
-                                <div class="session-field-group"><b>2. Key NPCs & Goals:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene2', this.innerText)">${s.scene2 || '...'}</div></div>
-                                <div class="session-field-group"><b>3. Challenges / Encounters:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene3', this.innerText)">${s.scene3 || '...'}</div></div>
-                                <div class="session-field-group"><b>4. Secrets or Clues:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene4', this.innerText)">${s.scene4 || '...'}</div></div>
-                                <div class="session-field-group"><b>5. Closing Scene:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene5', this.innerText)">${s.scene5 || '...'}</div></div>
-                            </div>
-                        </div>
-                    `;
-                    if (isDM) html += `
-                        <div class="dm-intel-box"><span class="dm-intel-label">DM Intel — Private</span>
-                            <div class="mb-6"><div class="font-black text-[11px] uppercase text-[#7a1d1d] mb-2">Session Goals</div><div class="dm-editable min-h-[60px] bg-white/50 p-2 rounded" contenteditable="true" oninput="window.debounceUpdateSession('${s.id}', 'dmGoals', this.innerText)">${s.dmGoals || '...'}</div></div>
-                            <div class="mb-6"><div class="font-black text-[11px] uppercase text-[#7a1d1d] mb-2">Running Notes</div><div class="dm-editable min-h-[100px] bg-white/50 p-2 rounded" contenteditable="true" oninput="window.debounceUpdateSession('${s.id}', 'dmRunningNotes', this.innerText)">${s.dmRunningNotes || '...'}</div></div>
-                            <div><div class="font-black text-[11px] uppercase text-[#7a1d1d] mb-2">Aftermath</div><div class="dm-editable min-h-[80px] bg-white/50 p-2 rounded" contenteditable="true" oninput="window.debounceUpdateSession('${s.id}', 'dmAftermath', this.innerText)">${s.dmAftermath || '...'}</div></div>
-                        </div>`;
-                    div.innerHTML = html;
-                    sessList.appendChild(div);
-                });
+                scripts.filter(s => parseInt(s.level) === currentLevel && (s.scriptLists || '').toLowerCase().includes(currentClass.toLowerCase()))
+                       .forEach(s => sList.innerHTML += createScriptCard(s, isDM));
+                if (isDM) new Sortable(sList, { handle: '.drag-handle', animation: 150, onEnd: (evt) => window.syncOrder(sList) });
             }
         };
 
-        window.debounceUpdateTable = (id, field, val) => {
-            if (autoSaveTimer) clearTimeout(autoSaveTimer);
-            autoSaveTimer = setTimeout(() => { updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id), { [field]: val }); }, 1000);
+        window.syncOrder = async (container, isArch = false) => {
+            Array.from(container.children).forEach((el, index) => {
+                if (!el.dataset.id) return;
+                const col = isArch ? 'handbookArchetypes' : (el.dataset.type === 'script' ? 'handbookScripts' : el.dataset.type === 'feature' ? 'handbookFeatures' : 'handbookTables');
+                updateDoc(doc(db, 'artifacts', appId, 'public', 'data', col, el.dataset.id), { order: index });
+            });
         };
-        
-        window.debounceUpdateTableCell = (id, field, idx, val, cellIdx = null) => {
+
+        window.updateTableCells = (id, field, idx, val, cellIdx = null) => {
+            const t = tables.find(t => t.id === id); if (!t) return;
             if (autoSaveTimer) clearTimeout(autoSaveTimer);
-            autoSaveTimer = setTimeout(async () => {
-                const tableRef = doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id);
-                const table = tables.find(t => t.id === id);
-                if (!table) return;
-                
-                if (field === 'headers') {
-                    const newHeaders = [...table.headers];
-                    newHeaders[idx] = val;
-                    await updateDoc(tableRef, { headers: newHeaders });
-                } else if (field === 'rows') {
-                    const newRows = [...table.rows];
-                    newRows[idx][cellIdx] = val;
-                    await updateDoc(tableRef, { rows: JSON.stringify(newRows) });
-                }
+            autoSaveTimer = setTimeout(() => {
+                if (field === 'headers') { let h = [...t.headers]; h[idx] = val; updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id), { headers: h }); }
+                else { let r = [...t.rows]; r[idx][cellIdx] = val; updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id), { rows: JSON.stringify(r) }); }
             }, 1000);
         };
 
-        window.addRowToTable = async (id) => {
-            const tableRef = doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id);
-            const table = tables.find(t => t.id === id);
-            if (!table) return;
-            const newRow = new Array(table.headers.length).fill("...");
-            const updatedRows = [...table.rows, newRow];
-            await updateDoc(tableRef, { rows: JSON.stringify(updatedRows) });
-            window.showToast("Row Appended");
+        window.modifyTable = async (id, action) => {
+            const t = tables.find(t => t.id === id); if (!t) return;
+            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id);
+            if (action === 'addRow') { await updateDoc(docRef, { rows: JSON.stringify([...t.rows, new Array(t.headers.length).fill("...")]) }); }
+            else if (action === 'remRow' && t.rows.length > 1) { await updateDoc(docRef, { rows: JSON.stringify(t.rows.slice(0, -1)) }); }
+            else if (action === 'addCol') { const h = [...t.headers, "New Header"]; const r = t.rows.map(row => [...row, "..."]); await updateDoc(docRef, { headers: h, rows: JSON.stringify(r) }); }
+            else if (action === 'remCol' && t.headers.length > 1) { const h = t.headers.slice(0, -1); const r = t.rows.map(row => row.slice(0, -1)); await updateDoc(docRef, { headers: h, rows: JSON.stringify(r) }); }
         };
 
-        window.addColumnToTable = async (id) => {
-            const tableRef = doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id);
-            const table = tables.find(t => t.id === id);
-            if (!table) return;
-            const updatedHeaders = [...table.headers, "New Section"];
-            const updatedRows = table.rows.map(row => [...row, "..."]);
-            await updateDoc(tableRef, { 
-                headers: updatedHeaders,
-                rows: JSON.stringify(updatedRows)
-            });
-            window.showToast("Column Added");
-        };
+        window.debounceUpdate = (id, f, v) => { if (autoSaveTimer) clearTimeout(autoSaveTimer); autoSaveTimer = setTimeout(() => updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookScripts', id), { [f]: v }), 1000); };
+        window.debounceUpdateFeature = (id, f, v) => { if (autoSaveTimer) clearTimeout(autoSaveTimer); autoSaveTimer = setTimeout(() => updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookFeatures', id), { [f]: v }), 1000); };
+        window.debounceUpdateTable = (id, f, v) => { if (autoSaveTimer) clearTimeout(autoSaveTimer); autoSaveTimer = setTimeout(() => updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id), { [f]: v }), 1000); };
+        window.debounceUpdateArchetype = (id, f, v) => { if (autoSaveTimer) clearTimeout(autoSaveTimer); autoSaveTimer = setTimeout(() => updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookArchetypes', id), { [f]: v }), 1000); };
 
-        window.removeColumnFromTable = async (id) => {
-            const tableRef = doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id);
-            const table = tables.find(t => t.id === id);
-            if (!table || table.headers.length <= 1) return;
-            const updatedHeaders = table.headers.slice(0, -1);
-            const updatedRows = table.rows.map(row => row.slice(0, -1));
-            await updateDoc(tableRef, { 
-                headers: updatedHeaders,
-                rows: JSON.stringify(updatedRows)
-            });
-            window.showToast("Column Removed");
-        };
+        window.deleteItem = async (id, col) => { if(confirm("Permanently erase record?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id)); };
 
-        window.debounceUpdateArchetype = (id, field, val) => {
-            if (autoSaveTimer) clearTimeout(autoSaveTimer);
-            autoSaveTimer = setTimeout(() => { updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookArchetypes', id), { [field]: val }); }, 1000);
-        };
-        window.debounceUpdateFeature = (id, field, val) => {
-            if (autoSaveTimer) clearTimeout(autoSaveTimer);
-            autoSaveTimer = setTimeout(() => { updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookFeatures', id), { [field]: val }); }, 1000);
-        };
-        window.debounceUpdate = (id, field, val) => {
-            if (autoSaveTimer) clearTimeout(autoSaveTimer);
-            autoSaveTimer = setTimeout(() => { updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookScripts', id), { [field]: val }); }, 1000);
-        };
-        window.debounceUpdateSession = (id, field, val) => {
-            if (autoSaveTimer) clearTimeout(autoSaveTimer);
-            autoSaveTimer = setTimeout(() => { updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookSessions', id), { [field]: val }); }, 1000);
-        };
-        window.debounceUpdateItem = (id, field, val) => {
-            if (autoSaveTimer) clearTimeout(autoSaveTimer);
-            autoSaveTimer = setTimeout(() => { updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookItems', id), { [field]: val }); }, 1000);
-        };
-
-        window.triggerDeleteTable = (id) => { itemToDeleteId = id; deleteType = 'table'; document.getElementById('delete-modal').classList.remove('hidden'); };
-        window.triggerDeleteArchetype = (id) => { itemToDeleteId = id; deleteType = 'archetype'; document.getElementById('delete-modal').classList.remove('hidden'); };
-        window.triggerDeleteFeature = (id) => { itemToDeleteId = id; deleteType = 'feature'; document.getElementById('delete-modal').classList.remove('hidden'); };
-        window.triggerDeleteScript = (id) => { itemToDeleteId = id; deleteType = 'script'; document.getElementById('delete-modal').classList.remove('hidden'); };
-        window.triggerDeleteSession = (id) => { itemToDeleteId = id; deleteType = 'session'; document.getElementById('delete-modal').classList.remove('hidden'); };
-        window.triggerDeleteItem = (id) => { itemToDeleteId = id; deleteType = 'item'; document.getElementById('delete-modal').classList.remove('hidden'); };
-
-        document.getElementById('confirm-delete-btn').onclick = async () => {
-            if (!itemToDeleteId) return;
-            const collectionName = deleteType === 'script' ? 'handbookScripts' : deleteType === 'session' ? 'handbookSessions' : deleteType === 'feature' ? 'handbookFeatures' : deleteType === 'archetype' ? 'handbookArchetypes' : deleteType === 'table' ? 'handbookTables' : 'handbookItems';
-            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', collectionName, itemToDeleteId));
-            document.getElementById('delete-modal').classList.add('hidden');
-            window.showToast("Erased");
-            itemToDeleteId = null;
-        };
-
-        window.addTableEntry = async (archId = null) => {
-            const data = { 
-                title: "NEW PROGRESSION", 
-                parentClass: currentFeatureClass, 
-                archetypeId: archId,
-                headers: ["Level", "Prof.", "Features"], 
-                rows: JSON.stringify([["1st", "+2", "..."]]), 
-                createdAt: Date.now() 
-            };
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookTables'), data);
-        };
-
-        window.addArchetypeEntry = async () => {
-            const data = { name: "NEW ARCHETYPE", parentClass: currentFeatureClass, createdAt: Date.now() };
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookArchetypes'), data);
-        };
-
-        window.addFeatureEntry = async (archId = null) => {
-            const data = { title: "NEW FEATURE", content: "Description of the move...", type: "Feature Move", className: currentFeatureClass, archetypeId: archId, createdAt: Date.now() };
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookFeatures'), data);
-        };
-
-        window.addScriptEntry = async (lvl = null, archId = null) => {
-            const data = { 
-                title: "NEW SCRIPT", content: "...", school: "Dominion", classification: "", 
-                activationTime: "1 Action", range: "30 feet", components: "V, S", duration: "Instant", 
-                higherLevels: "...", scriptLists: currentFeatureClass, className: currentFeatureClass, 
-                level: lvl || 1, archetypeId: archId, createdAt: Date.now() 
-            };
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookScripts'), data);
-        };
-        
-        window.addSessionEntry = async () => {
-            const data = { title: "SESSION #", date: new Date().toLocaleDateString(), startingPoint: "...", lastSessionSummary: "...", scene1: "...", scene2: "...", scene3: "...", scene4: "...", scene5: "...", dmGoals: "...", dmRunningNotes: "...", dmAftermath: "...", createdAt: Date.now() };
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookSessions'), data);
-        };
-
-        window.addItemEntry = async () => {
-            const data = { title: "NEW ITEM", content: "Description of the gear...", category: currentItemCategory === "All" ? "Adventuring Gear" : currentItemCategory, type: "Gear", rarity: "Common", weight: "1 lb", cost: "-", properties: "None", imageUrl: "", createdAt: Date.now() };
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookItems'), data);
-        };
+        window.addTableEntry = async (archId = null) => { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookTables'), { title: "NEW TABLE", parentClass: currentFeatureClass, archetypeId: archId, headers: ["Lv", "Bonus"], rows: JSON.stringify([["1", "+2"]]), order: 999, createdAt: Date.now() }); };
+        window.addArchetypeEntry = async () => { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookArchetypes'), { name: "NEW ARCHETYPE", parentClass: currentFeatureClass, order: 999, createdAt: Date.now() }); };
+        window.addFeatureEntry = async (archId = null) => { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookFeatures'), { title: "NEW MOVE", content: "...", type: "Feature Move", className: currentFeatureClass, archetypeId: archId, order: 999, createdAt: Date.now() }); };
+        window.addScriptEntry = async (lvl = null, archId = null) => { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookScripts'), { title: "NEW SCRIPT", content: "...", level: lvl || currentLevel, school: 'Dominion', scriptLists: [currentFeatureClass, currentClass], archetypeId: archId, order: 999, createdAt: Date.now() }); };
 
         const init = async () => {
             await signInAnonymously(auth);
-            const saved = localStorage.getItem('aeonfall_user');
-            if (saved) document.getElementById('user-display-name').textContent = JSON.parse(saved).username;
-            const role = localStorage.getItem('aeonfall_role');
-            if (role) activeRole = role;
-            
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookTables'), (snap) => {
-                tables = snap.docs.map(d => {
-                    const data = d.data();
-                    return {
-                        id: d.id,
-                        ...data,
-                        rows: typeof data.rows === 'string' ? JSON.parse(data.rows) : (data.rows || [])
-                    };
-                }).sort((a,b) => a.createdAt - b.createdAt);
-                renderLists();
-            }, (err) => console.error("Table fetch failed:", err));
-
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookArchetypes'), (snap) => {
-                archetypes = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => a.createdAt - b.createdAt);
-                renderLists();
-            }, (err) => console.error("Archetype fetch failed:", err));
-
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookFeatures'), (snap) => {
-                features = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => a.createdAt - b.createdAt);
-                renderLists();
-            }, (err) => console.error("Feature fetch failed:", err));
-
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookScripts'), (snap) => {
-                scripts = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => a.createdAt - b.createdAt);
-                renderLists();
-            }, (err) => console.error("Script fetch failed:", err));
-
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookSessions'), (snap) => {
-                sessions = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => b.createdAt - a.createdAt);
-                renderLists();
-            }, (err) => console.error("Session fetch failed:", err));
-
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookItems'), (snap) => {
-                items = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => a.createdAt - b.createdAt);
-                renderLists();
-                renderNavs();
-            }, (err) => console.error("Item fetch failed:", err));
-
+            const savedRole = localStorage.getItem('aeonfall_role'); if (savedRole) activeRole = savedRole;
+            const savedUser = localStorage.getItem('aeonfall_user');
+            if (savedUser) {
+                try {
+                    const user = JSON.parse(savedUser);
+                    document.getElementById('user-display-name').textContent = user.username || 'Guest';
+                } catch(e) { console.error("User parse fail"); }
+            }
+            const sortFn = (a, b) => (a.order ?? 999) - (b.order ?? 999) || a.createdAt - b.createdAt;
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookTables'), s => { tables = s.docs.map(d => ({ id: d.id, ...d.data(), rows: JSON.parse(d.data().rows || "[]") })).sort(sortFn); renderLists(); });
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookArchetypes'), s => { archetypes = s.docs.map(d => ({ id: d.id, ...d.data() })).sort(sortFn); renderLists(); });
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookFeatures'), s => { features = s.docs.map(d => ({ id: d.id, ...d.data() })).sort(sortFn); renderLists(); });
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookScripts'), s => { scripts = s.docs.map(d => ({ id: d.id, ...d.data() })).sort(sortFn); renderLists(); });
             window.updateRoleUI();
         };
         init();
+        function renderNavs() {
+            const tabs = document.getElementById('class-tabs');
+            if (tabs) tabs.innerHTML = CLASSES.map(c => `<div class="class-tab ${currentClass === c ? 'active' : ''}" onclick="window.selectClass('${c}')">${c}</div>`).join('');
+            const martialTabs = document.getElementById('feature-martial-tabs');
+            if (martialTabs) martialTabs.innerHTML = FEATURE_MARTIAL_CLASSES.map(c => `<div class="class-tab ${currentFeatureClass === c ? 'active' : ''}" onclick="window.selectFeatureClass('${c}')">${c}</div>`).join('');
+            const scriptTabs = document.getElementById('feature-script-tabs');
+            if (scriptTabs) scriptTabs.innerHTML = CLASSES.map(c => `<div class="class-tab ${currentFeatureClass === c ? 'active' : ''}" onclick="window.selectFeatureClass('${c}')">${c}</div>`).join('');
+            const lNav = document.getElementById('level-nav');
+            if (lNav) lNav.innerHTML = [0,1,2,3,4,5,6,7,8,9].map(l => `<div class="level-bubble ${currentLevel === l ? 'active' : ''}" onclick="window.selectLevel(${l})">${l}</div>`).join('');
+        }
     </script>
 </body>
 </html>
