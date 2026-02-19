@@ -37,7 +37,7 @@
         .brand-sub { font-family: 'Cinzel', serif; font-size: 8px; color: #5d4037; letter-spacing: 0.2em; text-transform: uppercase; font-weight: bold; }
         
         .role-pill { background: rgba(0,0,0,0.05); border-radius: 99px; padding: 3px; display: flex; gap: 4px; border: 1px solid rgba(0,0,0,0.1); }
-        .role-tab { padding: 4px 12px; font-family: 'Cinzel', serif; font-size: 8px; font-weight: 900; border-radius: 99px; transition: 0.3s; color: #5d4037; text-transform: uppercase; cursor: pointer; }
+        .role-tab { padding: 4px 14px; font-family: 'Cinzel', serif; font-size: 9px; font-weight: 900; border-radius: 99px; transition: 0.3s; color: #5d4037; text-transform: uppercase; cursor: pointer; }
         .role-tab.active { background: #7a1d1d; color: white; box-shadow: 0 4px 10px rgba(122, 29, 29, 0.3); }
 
         /* DASHBOARD GRID */
@@ -165,7 +165,7 @@
         .ledger-list span { font-family: 'Special Elite', cursive; font-size: 15px; color: #3e2723; }
 
         .record-header { display: grid; grid-template-cols: 1fr 1.2fr; gap: 60px; margin-bottom: 40px; align-items: start; }
-        .record-illustration { position: relative; border: 2px solid #1a0f0a; background: rgba(0,0,0,0.02); padding: 10px; box-shadow: 5px 10px 20px rgba(0,0,0,0.1); }
+        .record-illustration { position: relative; border: 2px solid #1a0f0a; background: rgba(0,0,0,0.02); padding: 10px; box-shadow: 5px 10px 20px rgba(0,0,0,0.1); cursor: zoom-in; }
         .record-illustration img, .record-illustration video { width: 100%; max-height: 550px; object-fit: contain; filter: sepia(0.2); mix-blend-mode: multiply; }
         
         .sigil-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40%; height: 40%; opacity: 0.04; background: url('https://www.transparenttextures.com/patterns/sacred-geometry.png') no-repeat center; background-size: contain; pointer-events: none; }
@@ -195,6 +195,10 @@
         .arch-btn-del { background: rgba(122,29,29,0.1); color: #7a1d1d; }
 
         .placement-active { cursor: crosshair !important; }
+
+        /* LIGHTBOX STYLING */
+        .lightbox-overlay { background: rgba(0,0,0,0.95); backdrop-filter: blur(10px); }
+        .lightbox-img { max-width: 90vw; max-height: 80vh; object-fit: contain; border: 4px solid #f4edd8; border-radius: 4px; box-shadow: 0 0 50px rgba(0,0,0,1); }
     </style>
 </head>
 <body class="overflow-x-hidden">
@@ -233,7 +237,7 @@
             </div>
             
             <div id="stack-grid" class="grid-container">
-                <!-- Grid Cards -->
+                <!-- Record Cards -->
             </div>
         </div>
 
@@ -259,6 +263,15 @@
                 <button onclick="window.triggerDel()" class="bg-red-700/10 border border-red-700/30 text-red-700 px-6 py-2 rounded-sm font-black uppercase text-[10px] tracking-widest hover:bg-red-700/20 transition-all">Expunge Bio-Record</button>
             </div>
         </div>
+    </div>
+
+    <!-- LIGHTBOX MODAL -->
+    <div id="lightbox-modal" class="fixed inset-0 z-[10000] flex flex-col items-center justify-center p-4 hidden">
+        <div class="absolute inset-0 lightbox-overlay" onclick="window.closeLightbox()"></div>
+        <div id="lightbox-content" class="relative z-10">
+            <!-- Content Injected Here -->
+        </div>
+        <button onclick="window.closeLightbox()" class="relative z-10 mt-8 bg-[#7a1d1d] text-white px-8 py-3 rounded-full font-black text-[11px] uppercase tracking-widest shadow-2xl border-2 border-white/20 active:scale-95 transition-transform">Close Optical Feed</button>
     </div>
 
     <!-- Modals -->
@@ -350,6 +363,21 @@
             return html;
         }
 
+        window.zoomMedia = (url) => {
+            if (!url) return;
+            const modal = document.getElementById('lightbox-modal');
+            const content = document.getElementById('lightbox-content');
+            content.innerHTML = url.includes('.mp4') ? 
+                `<video src="${url}" autoplay loop muted class="lightbox-img"></video>` : 
+                `<img src="${url}" class="lightbox-img">`;
+            modal.classList.remove('hidden');
+        };
+
+        window.closeLightbox = () => {
+            document.getElementById('lightbox-modal').classList.add('hidden');
+            document.getElementById('lightbox-content').innerHTML = '';
+        };
+
         window.flipPage = () => {
             isFlipped = !isFlipped;
             document.getElementById('flip-container').classList.toggle('flipped', isFlipped);
@@ -413,7 +441,7 @@
                                 <div class="dm-editable text-sm italic leading-relaxed text-[#3e2723]" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','traits',this.innerText)">${isDM ? (race.traits || 'Ancestral trait markers...') : parseAeonfallContent(race.traits, false)}</div>
                             </div>
                         </div>
-                        <div class="record-illustration">
+                        <div class="record-illustration" onclick="window.zoomMedia('${race.detailUrl}')">
                             <div class="sigil-overlay"></div>
                             ${race.detailUrl ? (race.detailUrl.includes('.mp4') ? `<video src="${race.detailUrl}" autoplay loop muted></video>` : `<img src="${race.detailUrl}">`) : '<div class="h-96 flex items-center justify-center italic text-[#5d4037]">Visual uplink lost</div>'}
                         </div>
@@ -442,7 +470,7 @@
                             }).join('')}
                         </ul>
                         <div class="flex flex-col gap-4">
-                            <div class="record-illustration" style="height: 250px;">
+                            <div class="record-illustration" style="height: 250px;" onclick="window.zoomMedia('${race.backMediaUrl}')">
                                 ${race.backMediaUrl ? (race.backMediaUrl.includes('.mp4') ? `<video src="${race.backMediaUrl}" autoplay loop muted class="w-full h-full object-cover"></video>` : `<img src="${race.backMediaUrl}" class="w-full h-full object-cover">`) : '<div class="h-full flex items-center justify-center italic opacity-30">Cultural Visual missing</div>'}
                             </div>
                             ${isDM ? `<input type="text" class="w-full p-2 text-[10px] bg-white/50 border border-black/10" value="${race.backMediaUrl||''}" placeholder="Culture Media Link" oninput="window.dbUp('${race.id}', 'backMediaUrl', this.value)">` : ''}
