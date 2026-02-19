@@ -13,12 +13,12 @@
             background-image: url('https://www.transparenttextures.com/patterns/dark-wood.png');
             color: #1a0f0a; 
             min-height: 100vh;
-            padding: 10px;
+            padding: 15px;
         }
 
         /* THE MASTER PARCHMENT */
         .parchment-container {
-            max-width: 1200px;
+            max-width: 1300px;
             margin: 0 auto;
             background: #f4edd8;
             background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
@@ -32,6 +32,87 @@
             perspective: 2000px;
         }
 
+        /* HEADER & BRANDING */
+        .brand-title { font-family: 'Cinzel', serif; font-weight: 900; color: #7a1d1d; font-size: 2rem; line-height: 1; }
+        .brand-sub { font-family: 'Cinzel', serif; font-size: 8px; color: #5d4037; letter-spacing: 0.2em; text-transform: uppercase; font-weight: bold; }
+        
+        .role-pill { background: rgba(0,0,0,0.05); border-radius: 99px; padding: 3px; display: flex; gap: 4px; border: 1px solid rgba(0,0,0,0.1); }
+        .role-tab { padding: 4px 12px; font-family: 'Cinzel', serif; font-size: 8px; font-weight: 900; border-radius: 99px; transition: 0.3s; color: #5d4037; text-transform: uppercase; cursor: pointer; }
+        .role-tab.active { background: #7a1d1d; color: white; box-shadow: 0 4px 10px rgba(122, 29, 29, 0.3); }
+
+        /* DASHBOARD GRID - AS REQUESTED IN SCREENSHOT */
+        .grid-container { 
+            display: grid; 
+            grid-template-cols: repeat(auto-fill, minmax(380px, 1fr)); 
+            gap: 25px; 
+            padding: 25px 0; 
+        }
+
+        .race-card {
+            background: #fff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            height: 340px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .race-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
+        
+        .card-bg-image {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 55%;
+            height: 100%;
+            z-index: 1;
+        }
+        .card-bg-image img, .card-bg-image video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: sepia(0.1) contrast(1.1);
+        }
+
+        .card-text-panel {
+            position: relative;
+            z-index: 2;
+            width: 65%;
+            height: 100%;
+            background: linear-gradient(to right, white 85%, rgba(255,255,255,0));
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-name { font-family: 'Cinzel', serif; font-size: 24px; font-weight: 900; color: #1a1a1a; margin-bottom: 2px; }
+        .card-subtitle { font-family: 'Cinzel', serif; font-size: 10px; font-style: italic; color: #888; margin-bottom: 15px; }
+        .card-desc { font-size: 13px; color: #444; line-height: 1.5; margin-bottom: 15px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .card-traits-label { font-family: 'Cinzel', serif; font-size: 11px; font-weight: 900; color: #1a1a1a; margin-bottom: 4px; }
+        .card-traits-list { font-size: 12px; color: #555; line-height: 1.4; flex-grow: 1; }
+
+        .view-btn {
+            background: #f59e0b;
+            color: white;
+            font-family: 'Cinzel', serif;
+            font-weight: 900;
+            font-size: 11px;
+            text-transform: uppercase;
+            padding: 12px;
+            border-radius: 4px;
+            text-align: center;
+            width: 220px;
+            margin: 0 auto 15px 0;
+            box-shadow: 0 4px 0 #d97706;
+            transition: 0.1s;
+            position: relative;
+            z-index: 5;
+        }
+        .view-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #d97706; }
+
         /* 3D FLIP CONTAINER */
         .flip-wrapper {
             position: relative;
@@ -39,22 +120,9 @@
             transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
             transform-style: preserve-3d;
         }
-        .flip-wrapper.flipped {
-            transform: rotateY(180deg);
-        }
-
-        .side-front, .side-back {
-            width: 100%;
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-        }
-
-        .side-back {
-            position: absolute;
-            top: 0;
-            left: 0;
-            transform: rotateY(180deg);
-        }
+        .flip-wrapper.flipped { transform: rotateY(180deg); }
+        .side-front, .side-back { width: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+        .side-back { position: absolute; top: 0; left: 0; transform: rotateY(180deg); }
 
         /* TOOLTIP STYLES */
         .term-hover { position: relative; border-bottom: 1px dotted #7a1d1d; cursor: help; display: inline; }
@@ -65,82 +133,20 @@
             opacity: 0; transition: opacity 0.3s; font-size: 11px; line-height: 1.4;
             font-family: 'Roboto Slab', serif; box-shadow: 0 5px 15px rgba(0,0,0,0.3); pointer-events: none; font-style: normal;
         }
-        .tooltip-content::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px; border-width: 5px; border-style: solid; border-color: #7a1d1d transparent transparent transparent; }
         .term-hover:hover .tooltip-content { visibility: visible; opacity: 1; }
         .def-term { color: #7a1d1d; font-weight: 900; border-bottom: 1px dashed #7a1d1d; }
 
-        /* HEADER & BRANDING */
-        .brand-title { font-family: 'Cinzel', serif; font-weight: 900; color: #7a1d1d; font-size: 2rem; line-height: 1; }
-        .brand-sub { font-family: 'Cinzel', serif; font-size: 8px; color: #5d4037; letter-spacing: 0.2em; text-transform: uppercase; font-weight: bold; }
-        
-        .role-pill { background: rgba(0,0,0,0.05); border-radius: 99px; padding: 3px; display: flex; gap: 4px; border: 1px solid rgba(0,0,0,0.1); }
-        .role-tab { padding: 4px 14px; font-family: 'Cinzel', serif; font-size: 9px; font-weight: 900; border-radius: 99px; transition: 0.3s; color: #5d4037; text-transform: uppercase; cursor: pointer; }
-        .role-tab.active { background: #7a1d1d; color: white; box-shadow: 0 4px 10px rgba(122, 29, 29, 0.3); }
-
-        /* GRID STYLES - 250PX SQUARE GRID */
-        .grid-container { display: grid; grid-template-cols: repeat(auto-fill, minmax(250px, 1fr)); gap: 24px; padding: 20px 0; }
-        .race-card {
-            width: 250px;
-            height: 320px; 
-            background: rgba(255,255,255,0.4);
-            border: 1px solid rgba(0,0,0,0.1);
-            padding: 12px;
-            transition: all 0.2s ease;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            box-shadow: 1px 2px 4px rgba(0,0,0,0.05);
-            cursor: pointer;
-        }
-        .race-card::before {
-            content: ""; position: absolute; top: -10px; left: 50%; transform: translateX(-50%) rotate(-1.5deg);
-            width: 100px; height: 22px; background: rgba(212, 175, 55, 0.2); border: 1px solid rgba(0,0,0,0.05);
-            z-index: 10;
-        }
-        .race-card:hover { transform: scale(1.02); z-index: 10; box-shadow: 0 12px 30px rgba(0,0,0,0.15); border-color: #7a1d1d; }
-        
-        .card-img-wrap { height: 230px; width: 230px; background: #e0d5ba; overflow: hidden; border: 1px solid rgba(0,0,0,0.05); flex-shrink: 0; align-self: center; }
-        .card-img-wrap img, .card-img-wrap video { width: 100%; height: 100%; object-fit: cover; filter: sepia(0.2) contrast(1.1); mix-blend-mode: multiply; }
-        
-        .card-title-mini { font-family: 'Cinzel', serif; font-size: 16px; font-weight: 900; color: #7a1d1d; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-top: 12px; text-transform: uppercase; border-top: 1px solid rgba(0,0,0,0.05); margin-top: 8px; }
-        
         /* DM STICKY NOTE */
         .dm-sticky-note {
-            position: absolute;
-            width: 210px;
-            min-height: 140px;
-            background: #fff;
-            background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
-            padding: 25px 20px;
-            box-shadow: 5px 10px 30px rgba(0,0,0,0.25);
-            z-index: 500;
-            font-family: 'Homemade Apple', cursive;
-            font-size: 13px;
-            line-height: 1.6;
-            color: #2c1810;
-            border: 1px solid rgba(0,0,0,0.05);
-            clip-path: polygon(1% 0%, 99% 1%, 100% 94%, 94% 100%, 6% 98%, 0% 92%);
-            transform: rotate(2deg);
-            cursor: grab;
-            user-select: none;
-            overflow-wrap: break-word;
-            box-sizing: border-box;
+            position: absolute; width: 210px; min-height: 140px; background: #fff; background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+            padding: 25px 20px; box-shadow: 5px 10px 30px rgba(0,0,0,0.25); z-index: 500; font-family: 'Homemade Apple', cursive; font-size: 13px; line-height: 1.6;
+            color: #2c1810; border: 1px solid rgba(0,0,0,0.05); clip-path: polygon(1% 0%, 99% 1%, 100% 94%, 94% 100%, 6% 98%, 0% 92%); transform: rotate(2deg); cursor: grab; user-select: none; box-sizing: border-box;
         }
         .dm-sticky-note:active { cursor: grabbing; }
-        .dm-sticky-note::before {
-            content: "DM Observations";
-            display: block;
-            font-family: 'Cinzel', serif; font-size: 8px; font-weight: 900; text-transform: uppercase; color: #7a1d1d; margin-bottom: 10px; border-bottom: 1px solid rgba(122, 29, 29, 0.1); padding-bottom: 4px;
-        }
-        .btn-trash-note {
-            position: absolute; top: 8px; right: 12px; color: #ef4444; opacity: 0.5; font-size: 18px; cursor: pointer; font-weight: bold;
-        }
+        .dm-sticky-note::before { content: "DM Observations"; display: block; font-family: 'Cinzel', serif; font-size: 8px; font-weight: 900; text-transform: uppercase; color: #7a1d1d; margin-bottom: 10px; border-bottom: 1px solid rgba(122, 29, 29, 0.1); padding-bottom: 4px; }
+        .btn-trash-note { position: absolute; top: 8px; right: 12px; color: #ef4444; opacity: 0.5; font-size: 18px; cursor: pointer; font-weight: bold; }
 
-        .dm-sticky-note-tape {
-            position: absolute; top: -12px; left: 50%; transform: translateX(-50%); width: 60px; height: 20px; background: rgba(212, 175, 55, 0.3); z-index: 501;
-        }
-
-        /* MECHANICAL BOX & TABLES */
+        /* LEDGERS & TABLES */
         .mech-box { background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.1); padding: 25px; margin-top: 25px; border-radius: 4px; }
         .mech-box h4 { font-family: 'Cinzel', serif; font-weight: 900; font-size: 14px; text-transform: uppercase; color: #7a1d1d; border-bottom: 2px solid #7a1d1d; margin-bottom: 15px; padding-bottom: 5px; }
 
@@ -167,10 +173,7 @@
         .ledger-badge b { display: block; font-size: 9px; text-transform: uppercase; color: #7a1d1d; margin-bottom: 5px; font-family: 'Cinzel'; }
         .ledger-badge span { font-family: 'Special Elite', cursive; font-size: 14px; font-weight: bold; }
 
-        .research-findings {
-            font-family: 'Special Elite', cursive; font-size: 16px; line-height: 1.8; color: #1a0f0a;
-            padding: 30px; border: 1px dashed rgba(0,0,0,0.2); background: rgba(0,0,0,0.02); margin: 40px 0;
-        }
+        .research-findings { font-family: 'Special Elite', cursive; font-size: 16px; line-height: 1.8; color: #1a0f0a; padding: 30px; border: 1px dashed rgba(0,0,0,0.2); background: rgba(0,0,0,0.02); margin: 40px 0; }
         .heritage-block { margin-bottom: 40px; padding-left: 20px; border-left: 3px solid #7a1d1d; }
         .heritage-block h3 { font-family: 'Cinzel', serif; font-size: 20px; font-weight: 900; color: #7a1d1d; margin-bottom: 12px; }
 
@@ -181,19 +184,15 @@
         .back-nav { display: inline-flex; align-items: center; gap: 10px; color: #7a1d1d; font-weight: 900; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 30px; cursor: pointer; border-bottom: 1px solid transparent; }
         .back-nav:hover { border-bottom-color: #7a1d1d; }
 
+        /* DECORATIONS */
         .ornate-corner { position: absolute; width: 35px; height: 35px; opacity: 0.12; color: #7a1d1d; pointer-events: none; }
         .tl { top: 10px; left: 10px; }
         .br { bottom: 10px; right: 10px; transform: rotate(180deg); }
 
         .drop-cap { float: left; font-family: 'Pirata One', cursive; font-size: 80px; line-height: 60px; padding-top: 4px; padding-right: 8px; color: #7a1d1d; }
-        .placement-active { cursor: crosshair !important; }
-
-        /* BUTTONS */
         .arch-btn { font-size: 9px; font-weight: 900; text-transform: uppercase; padding: 4px 10px; border-radius: 2px; cursor: pointer; border: 1px solid rgba(0,0,0,0.1); transition: 0.2s; }
         .arch-btn-add { background: #7a1d1d; color: white; border-color: #7a1d1d; }
-        .arch-btn-add:hover { background: #1a0f0a; }
         .arch-btn-del { background: rgba(122,29,29,0.1); color: #7a1d1d; }
-        .arch-btn-del:hover { background: #ef4444; color: white; }
     </style>
 </head>
 <body class="overflow-x-hidden">
@@ -221,7 +220,7 @@
             </div>
         </header>
 
-        <!-- GRID VIEW -->
+        <!-- DASHBOARD VIEW -->
         <div id="view-grid">
             <div class="flex flex-col md:flex-row justify-between items-center md:items-end mb-4 gap-4">
                 <div>
@@ -232,11 +231,11 @@
             </div>
             
             <div id="stack-grid" class="grid-container">
-                <!-- Record Cards -->
+                <!-- Grid Cards Injected Here -->
             </div>
         </div>
 
-        <!-- BIO-DETAIL VIEW (Flip Wrapped) -->
+        <!-- DETAIL VIEW -->
         <div id="view-details" class="hidden">
             <div class="flex justify-between items-start mb-4">
                 <div onclick="window.setView('grid')" class="back-nav">← Return to Bio-Stacks</div>
@@ -249,16 +248,13 @@
             </div>
 
             <div id="flip-container" class="flip-wrapper">
-                <!-- SIDE A: BIOLOGY & RESEARCH -->
                 <div class="side-front" id="details-front"></div>
-                <!-- SIDE B: CULTURE & MECHANICS -->
                 <div class="side-back" id="details-back"></div>
             </div>
 
-            <!-- SHARED BOTTOM CONTROLS (DM ONLY) -->
             <div id="dm-bottom-controls" class="hidden flex gap-4 mt-12 pt-8 border-t border-black/10">
                 <button onclick="window.addSection()" class="bg-[#1a0f0a] text-[#f4edd8] px-6 py-2 rounded-sm font-black uppercase text-[10px] tracking-widest hover:bg-black transition-colors">Append Research Chapter</button>
-                <button onclick="window.triggerDel(activeRaceId)" class="bg-red-700/10 border border-red-700/30 text-red-700 px-6 py-2 rounded-sm font-black uppercase text-[10px] tracking-widest hover:bg-red-700/20 transition-all">Expunge Bio-Record</button>
+                <button onclick="window.triggerDel()" class="bg-red-700/10 border border-red-700/30 text-red-700 px-6 py-2 rounded-sm font-black uppercase text-[10px] tracking-widest hover:bg-red-700/20 transition-all">Expunge Bio-Record</button>
             </div>
         </div>
     </div>
@@ -313,15 +309,13 @@
         const TOOLTIPS = {
             "Activation Time": "The amount of time required to initialize this script and push it to reality.",
             "Mechanum": "Technomagic Protocol: This script utilizes specialized hardware and digital distortion to warp reality through code.",
-            "Concord": "Ritual Protocol: This script can be initialized through ritualistic focus, conserving internal energy reserves.",
-            "Dominion": "Governs will and influence, shaping thoughts, emotions, and behavior through directed intent.",
-            "Ruin": "Governs raw energy and destruction, unleashing force to damage or overwhelm.",
-            "Aegis": "Governs protection, prevention, and resistance, creating wards that block or negate harm."
+            "Concord": "Ritual Protocol: This script can be initialized through ritualistic focus, conserving internal energy reserves."
         };
 
         let lineages = [];
-        let activeRole = 'player', currentView = 'grid', activeRaceId = null, saveTimer = null, targetDelId = null;
+        let activeRole = 'player', currentView = 'grid', saveTimer = null, targetDelId = null;
         let pinMode = false, isFlipped = false;
+        window.activeRaceId = null; 
 
         window.showToast = (m) => { const t = document.getElementById('toast'); t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 3000); };
         window.setRole = (r) => { if(r === 'dm') document.getElementById('pass-modal').classList.remove('hidden'); else { activeRole = 'player'; updateRoleUI(); } };
@@ -345,7 +339,7 @@
             let html = text.replace(/&&([^&]+)&&/g, (match, content) => {
                 const parts = content.split('|');
                 const term = parts[0].trim();
-                const definition = parts.length > 1 ? parts[1].trim() : (TOOLTIPS[term] || "No technical record found in archives.");
+                const definition = parts.length > 1 ? parts[1].trim() : (TOOLTIPS[term] || "No technical record found.");
                 return `<span class="term-hover def-term">${term}<span class="tooltip-content">${definition}</span></span>`;
             });
             html = html.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
@@ -361,27 +355,32 @@
         };
 
         window.setView = (v, id = null) => {
-            currentView = v; activeRaceId = id;
+            currentView = v; window.activeRaceId = id;
             document.getElementById('view-grid').classList.toggle('hidden', v !== 'grid');
             document.getElementById('view-details').classList.toggle('hidden', v !== 'details');
             pinMode = false; isFlipped = false;
             document.getElementById('parchment').classList.remove('placement-active');
             document.getElementById('flip-container').classList.remove('flipped');
-            const flipBtn = document.getElementById('btn-flip');
-            if(flipBtn) flipBtn.innerText = "📜 Flip to Culture";
-            window.scrollTo(0,0);
             if(v === 'grid') renderGrid(); else renderDetails();
         };
 
         window.renderGrid = () => {
+            const isDM = activeRole === 'dm';
             const grid = document.getElementById('stack-grid');
             grid.innerHTML = lineages.map(race => `
                 <div class="race-card" onclick="window.setView('details', '${race.id}')">
-                    <div class="card-img-wrap">
-                        ${race.gridUrl ? (race.gridUrl.includes('.mp4') ? `<video src="${race.gridUrl}" autoplay loop muted></video>` : `<img src="${race.gridUrl}">`) : '<div class="h-full flex items-center justify-center text-gray-400 italic text-[10px] font-black uppercase">SCAN</div>'}
+                    <div class="card-bg-image">
+                        ${race.gridUrl ? 
+                            (race.gridUrl.includes('.mp4') ? `<video src="${race.gridUrl}" autoplay loop muted></video>` : `<img src="${race.gridUrl}">`) 
+                            : '<div class="w-full h-full bg-[#e0d5ba] flex items-center justify-center text-[10px] text-gray-500 italic">SCANNING...</div>'}
                     </div>
-                    <div class="flex-grow flex flex-col justify-center">
-                        <span class="card-title-mini">${race.name}</span>
+                    <div class="card-text-panel">
+                        <h3 class="card-name">${race.name}</h3>
+                        <p class="card-subtitle">Archival Biometry</p>
+                        <p class="card-desc">${isDM ? (race.desc || 'No description.') : parseAeonfallContent(race.desc, false)}</p>
+                        <div class="card-traits-label">${race.name} Traits</div>
+                        <div class="card-traits-list">${isDM ? (race.traits || 'None.') : parseAeonfallContent(race.traits, false)}</div>
+                        <button class="view-btn">Consult Bio-Record</button>
                     </div>
                 </div>
             `).join('');
@@ -390,7 +389,7 @@
 
         window.renderDetails = () => {
             const isDM = activeRole === 'dm';
-            const race = lineages.find(r => r.id === activeRaceId);
+            const race = lineages.find(r => r.id === window.activeRaceId);
             if (!race) return;
 
             // SIDE A: FRONT
@@ -515,8 +514,7 @@
 
         window.placeNote = async (x, y) => {
             pinMode = false; document.getElementById('parchment').classList.remove('placement-active');
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', activeRaceId), { showNote: true, noteX: x, noteY: y });
-            window.showToast("Note Pinned");
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { showNote: true, noteX: x, noteY: y });
         };
 
         let noteDrag = null;
@@ -537,15 +535,14 @@
 
         window.stopNoteDrag = async () => {
             if (!noteDrag) return;
-            const x = parseInt(noteDrag.el.style.left); const y = parseInt(noteDrag.el.style.top);
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', activeRaceId), { noteX: x, noteY: y });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { noteX: parseInt(noteDrag.el.style.left), noteY: parseInt(noteDrag.el.style.top) });
             noteDrag = null; document.removeEventListener('mousemove', window.handleNoteDrag); document.removeEventListener('mouseup', window.stopNoteDrag);
         };
 
         window.removeNote = (e) => { e.stopPropagation(); document.getElementById('note-del-modal').classList.remove('hidden'); };
         window.confirmRemoveNote = async () => {
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', activeRaceId), { showNote: false, dmNotes: "" });
-            document.getElementById('note-del-modal').classList.add('hidden'); window.showToast("Note Shredded");
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { showNote: false, dmNotes: "" });
+            document.getElementById('note-del-modal').classList.add('hidden');
         };
 
         window.dbUp = (id, field, val) => {
@@ -561,71 +558,70 @@
             }, 1000);
         };
 
-        // MECHANICAL TABLE LOGIC
         window.addMechTable = async () => {
-            const r = lineages.find(x => x.id === activeRaceId);
+            const r = lineages.find(x => x.id === window.activeRaceId);
             const tables = r.mechTables ? JSON.parse(r.mechTables) : [];
             tables.push({ title: "NEW TABLE", headers: ["Header 1", "Header 2"], rows: [["...", "..."]] });
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', activeRaceId), { mechTables: JSON.stringify(tables) });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(tables) });
         };
 
         window.updateMechTableField = (tIdx, field, val, rowOrCol = null, colIdx = null) => {
             if (saveTimer) clearTimeout(saveTimer);
             saveTimer = setTimeout(async () => {
-                const r = lineages.find(x => x.id === activeRaceId);
+                const r = lineages.find(x => x.id === window.activeRaceId);
                 const tables = JSON.parse(r.mechTables);
                 if (field === 'title') tables[tIdx].title = val;
                 else if (field === 'headers') tables[tIdx].headers[rowOrCol] = val;
                 else if (field === 'rows') tables[tIdx].rows[rowOrCol][colIdx] = val;
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', activeRaceId), { mechTables: JSON.stringify(tables) });
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(tables) });
             }, 1000);
         };
 
         window.addTableRow = async (tIdx) => {
-            const r = lineages.find(x => x.id === activeRaceId);
+            const r = lineages.find(x => x.id === window.activeRaceId);
             const tables = JSON.parse(r.mechTables);
             tables[tIdx].rows.push(new Array(tables[tIdx].headers.length).fill("..."));
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', activeRaceId), { mechTables: JSON.stringify(tables) });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(tables) });
         };
 
         window.remTableRow = async (tIdx) => {
-            const r = lineages.find(x => x.id === activeRaceId);
+            const r = lineages.find(x => x.id === window.activeRaceId);
             const tables = JSON.parse(r.mechTables);
             if (tables[tIdx].rows.length > 1) {
                 tables[tIdx].rows.pop();
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', activeRaceId), { mechTables: JSON.stringify(tables) });
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(tables) });
             }
         };
 
         window.addTableCol = async (tIdx) => {
-            const r = lineages.find(x => x.id === activeRaceId);
+            const r = lineages.find(x => x.id === window.activeRaceId);
             const tables = JSON.parse(r.mechTables);
             tables[tIdx].headers.push("Header");
             tables[tIdx].rows = tables[tIdx].rows.map(row => [...row, "..."]);
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', activeRaceId), { mechTables: JSON.stringify(tables) });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(tables) });
         };
 
         window.remTableCol = async (tIdx) => {
-            const r = lineages.find(x => x.id === activeRaceId);
+            const r = lineages.find(x => x.id === window.activeRaceId);
             const tables = JSON.parse(r.mechTables);
             if (tables[tIdx].headers.length > 1) {
                 tables[tIdx].headers.pop();
                 tables[tIdx].rows = tables[tIdx].rows.map(row => row.slice(0, -1));
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', activeRaceId), { mechTables: JSON.stringify(tables) });
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(tables) });
             }
         };
 
         window.delMechTable = async (tIdx) => {
-            const r = lineages.find(x => x.id === activeRaceId);
+            const r = lineages.find(x => x.id === window.activeRaceId);
             const tables = JSON.parse(r.mechTables);
             tables.splice(tIdx, 1);
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', activeRaceId), { mechTables: JSON.stringify(tables) });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(tables) });
         };
 
         window.addRecord = async () => {
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookLineages'), { 
                 name: "NEW SUBJECT", gridUrl: "", detailUrl: "", backMediaUrl: "", speed: "30", size: "M", languages: "Com", 
-                desc: "Discovery log pending field observation...", traits: "Standard ancestral signatures...", dmNotes: "", noteX: 0, noteY: 0, showNote: false, intros: [],
+                desc: "Biological profile data pending...", traits: "Standard ancestral signatures...", dmNotes: "", noteX: 0, noteY: 0, showNote: false, intros: [],
                 cultureName: "", majorityPop: "", coreValues: "", government: "", belief: "", culturalPractices: "", attitudes: "",
                 mechTraits: "", mechDescription: "", mechBackgrounds: "", mechLanguages: "", mechFeats: "", mechEquipment: "", mechTables: "[]",
                 createdAt: Date.now(), order: Date.now() 
@@ -634,10 +630,10 @@
         };
 
         window.addSection = async () => {
-            const r = lineages.find(x => x.id === activeRaceId);
+            const r = lineages.find(x => x.id === window.activeRaceId);
             if (!r) return;
             const intros = r.intros || [];
-            intros.push({ leftTitle: "Research Findings", leftText: "New technical observations..." });
+            intros.push({ leftTitle: "Research Findings", leftText: "Technical observations..." });
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', r.id), { intros: intros });
         };
 
@@ -645,14 +641,17 @@
             const r = lineages.find(x => x.id === id);
             r.intros.splice(idx, 1);
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', id), { intros: r.intros });
-            window.showToast("Section Expunged");
         };
 
-        window.triggerDel = (id) => { targetDelId = id; document.getElementById('del-modal').classList.remove('hidden'); };
+        window.triggerDel = (id = null) => { 
+            targetDelId = id || window.activeRaceId; 
+            document.getElementById('del-modal').classList.remove('hidden'); 
+        };
         document.getElementById('confirm-del-btn').onclick = async () => {
             if (!targetDelId) return;
             await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', targetDelId));
-            document.getElementById('del-modal').classList.add('hidden'); window.setView('grid');
+            document.getElementById('del-modal').classList.add('hidden'); 
+            window.setView('grid');
             window.showToast("Record Purged");
         };
 
