@@ -40,7 +40,7 @@
         .role-tab { padding: 4px 12px; font-family: 'Cinzel', serif; font-size: 8px; font-weight: 900; border-radius: 99px; transition: 0.3s; color: #5d4037; text-transform: uppercase; cursor: pointer; }
         .role-tab.active { background: #7a1d1d; color: white; box-shadow: 0 4px 10px rgba(122, 29, 29, 0.3); }
 
-        /* DASHBOARD GRID - AS REQUESTED IN SCREENSHOT */
+        /* DASHBOARD GRID */
         .grid-container { 
             display: grid; 
             grid-template-cols: repeat(auto-fill, minmax(380px, 1fr)); 
@@ -146,6 +146,10 @@
         .dm-sticky-note::before { content: "DM Observations"; display: block; font-family: 'Cinzel', serif; font-size: 8px; font-weight: 900; text-transform: uppercase; color: #7a1d1d; margin-bottom: 10px; border-bottom: 1px solid rgba(122, 29, 29, 0.1); padding-bottom: 4px; }
         .btn-trash-note { position: absolute; top: 8px; right: 12px; color: #ef4444; opacity: 0.5; font-size: 18px; cursor: pointer; font-weight: bold; }
 
+        .dm-sticky-note-tape {
+            position: absolute; top: -12px; left: 50%; transform: translateX(-50%); width: 60px; height: 20px; background: rgba(212, 175, 55, 0.3); z-index: 501;
+        }
+
         /* LEDGERS & TABLES */
         .mech-box { background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.1); padding: 25px; margin-top: 25px; border-radius: 4px; }
         .mech-box h4 { font-family: 'Cinzel', serif; font-weight: 900; font-size: 14px; text-transform: uppercase; color: #7a1d1d; border-bottom: 2px solid #7a1d1d; margin-bottom: 15px; padding-bottom: 5px; }
@@ -169,10 +173,6 @@
         .record-title { font-family: 'Pirata One', cursive; font-size: 4.5rem; color: #1a0f0a; line-height: 0.9; margin-bottom: 5px; text-transform: uppercase; }
         .record-label { font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; color: #7a1d1d; text-transform: uppercase; letter-spacing: 3px; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 10px; display: inline-block; margin-bottom: 30px; }
 
-        .ledger-badge { background: transparent; color: #1a0f0a; padding: 10px; border: 1px solid rgba(0,0,0,0.2); text-align: center; position: relative; }
-        .ledger-badge b { display: block; font-size: 9px; text-transform: uppercase; color: #7a1d1d; margin-bottom: 5px; font-family: 'Cinzel'; }
-        .ledger-badge span { font-family: 'Special Elite', cursive; font-size: 14px; font-weight: bold; }
-
         .research-findings { font-family: 'Special Elite', cursive; font-size: 16px; line-height: 1.8; color: #1a0f0a; padding: 30px; border: 1px dashed rgba(0,0,0,0.2); background: rgba(0,0,0,0.02); margin: 40px 0; }
         .heritage-block { margin-bottom: 40px; padding-left: 20px; border-left: 3px solid #7a1d1d; }
         .heritage-block h3 { font-family: 'Cinzel', serif; font-size: 20px; font-weight: 900; color: #7a1d1d; margin-bottom: 12px; }
@@ -193,6 +193,8 @@
         .arch-btn { font-size: 9px; font-weight: 900; text-transform: uppercase; padding: 4px 10px; border-radius: 2px; cursor: pointer; border: 1px solid rgba(0,0,0,0.1); transition: 0.2s; }
         .arch-btn-add { background: #7a1d1d; color: white; border-color: #7a1d1d; }
         .arch-btn-del { background: rgba(122,29,29,0.1); color: #7a1d1d; }
+
+        .placement-active { cursor: crosshair !important; }
     </style>
 </head>
 <body class="overflow-x-hidden">
@@ -231,7 +233,7 @@
             </div>
             
             <div id="stack-grid" class="grid-container">
-                <!-- Grid Cards Injected Here -->
+                <!-- Grid Cards -->
             </div>
         </div>
 
@@ -406,11 +408,6 @@
                         <div class="flex flex-col">
                             <h2 class="record-title dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}', 'name', this.innerText)">${race.name}</h2>
                             <p class="record-label">Genetic Signature Verified • Custodian #994</p>
-                            <div class="ledger-tray grid grid-cols-3 gap-3 mb-6">
-                                <div class="ledger-badge"><b>Velocity</b><span class="dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','speed',this.innerText)">${race.speed||'30'}</span></div>
-                                <div class="ledger-badge"><b>Scale</b><span class="dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','size',this.innerText)">${race.size||'M'}</span></div>
-                                <div class="ledger-badge"><b>Lexicon</b><span class="dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','languages',this.innerText)">${race.languages||'Com'}</span></div>
-                            </div>
                             <div class="bg-black/5 border-l-4 border-[#7a1d1d] p-6 rounded-sm">
                                 <h4 class="font-black uppercase text-[11px] tracking-[0.2em] text-[#7a1d1d] mb-4">Innate Parameters</h4>
                                 <div class="dm-editable text-sm italic leading-relaxed text-[#3e2723]" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','traits',this.innerText)">${isDM ? (race.traits || 'Ancestral trait markers...') : parseAeonfallContent(race.traits, false)}</div>
@@ -515,6 +512,7 @@
         window.placeNote = async (x, y) => {
             pinMode = false; document.getElementById('parchment').classList.remove('placement-active');
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { showNote: true, noteX: x, noteY: y });
+            window.showToast("Note Pinned");
         };
 
         let noteDrag = null;
@@ -535,14 +533,15 @@
 
         window.stopNoteDrag = async () => {
             if (!noteDrag) return;
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { noteX: parseInt(noteDrag.el.style.left), noteY: parseInt(noteDrag.el.style.top) });
+            const x = parseInt(noteDrag.el.style.left); const y = parseInt(noteDrag.el.style.top);
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { noteX: x, noteY: y });
             noteDrag = null; document.removeEventListener('mousemove', window.handleNoteDrag); document.removeEventListener('mouseup', window.stopNoteDrag);
         };
 
         window.removeNote = (e) => { e.stopPropagation(); document.getElementById('note-del-modal').classList.remove('hidden'); };
         window.confirmRemoveNote = async () => {
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { showNote: false, dmNotes: "" });
-            document.getElementById('note-del-modal').classList.add('hidden');
+            document.getElementById('note-del-modal').classList.add('hidden'); window.showToast("Note Shredded");
         };
 
         window.dbUp = (id, field, val) => {
@@ -621,7 +620,7 @@
         window.addRecord = async () => {
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookLineages'), { 
                 name: "NEW SUBJECT", gridUrl: "", detailUrl: "", backMediaUrl: "", speed: "30", size: "M", languages: "Com", 
-                desc: "Biological profile data pending...", traits: "Standard ancestral signatures...", dmNotes: "", noteX: 0, noteY: 0, showNote: false, intros: [],
+                desc: "Discovery log pending field observation...", traits: "Standard ancestral signatures...", dmNotes: "", noteX: 0, noteY: 0, showNote: false, intros: [],
                 cultureName: "", majorityPop: "", coreValues: "", government: "", belief: "", culturalPractices: "", attitudes: "",
                 mechTraits: "", mechDescription: "", mechBackgrounds: "", mechLanguages: "", mechFeats: "", mechEquipment: "", mechTables: "[]",
                 createdAt: Date.now(), order: Date.now() 
