@@ -203,15 +203,16 @@
             padding: 40px;
         }
 
-        #leaf-0 { z-index: 300; }
-        #leaf-1 { z-index: 200; }
-        #leaf-2 { z-index: 100; }
+        #leaf-0 { z-index: 400; }
+        #leaf-1 { z-index: 300; }
+        #leaf-2 { z-index: 200; }
+        #leaf-3 { z-index: 100; }
 
-        .dossier-leaf.flipped { transform: rotateY(-180deg); z-index: 400 !important; }
+        .dossier-leaf.flipped { transform: rotateY(-180deg); z-index: 500 !important; }
 
         /* RICH TEXT & HANDBOOK STYLING */
-        .research-body h3, .archetype-box h3, .feature-module h3 { font-family: 'Cinzel', serif; font-weight: 900; color: #7a1d1d; font-size: 1.5rem; margin: 1.5rem 0 0.5rem; border-bottom: 2px solid rgba(122, 29, 29, 0.2); }
-        .research-body h4, .archetype-box h4, .feature-module h4 { font-family: 'Cinzel', serif; font-weight: 900; color: #5d4037; font-size: 1.1rem; margin: 1.2rem 0 0.4rem; text-transform: uppercase; letter-spacing: 1px; }
+        .research-body h3, .archetype-box h3, .feature-module h3, .script-module h3, .script-tier-heading { font-family: 'Cinzel', serif; font-weight: 900; color: #7a1d1d; font-size: 1.5rem; margin: 1.5rem 0 0.5rem; border-bottom: 2px solid rgba(122, 29, 29, 0.2); }
+        .research-body h4, .archetype-box h4, .feature-module h4, .script-module h4 { font-family: 'Cinzel', serif; font-weight: 900; color: #5d4037; font-size: 1.1rem; margin: 1.2rem 0 0.4rem; text-transform: uppercase; letter-spacing: 1px; }
         .research-body b, .archetype-box b { font-weight: 900; color: #000; }
         .research-body ul, .archetype-box ul { list-style-type: square; margin-left: 1.5rem; margin-bottom: 1rem; }
         .research-body li, .archetype-box li { margin-bottom: 0.3rem; }
@@ -230,6 +231,11 @@
         .archetype-header { border-bottom: 2px solid #7a1d1d; margin-bottom: 20px; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: flex-start; }
         .archetype-title { font-family: 'Pirata One', cursive; font-size: 4rem; color: #7a1d1d; line-height: 0.8; }
         .archetype-tagline { font-family: 'Cinzel', serif; font-size: 12px; font-weight: 900; color: #5d4037; text-transform: uppercase; margin-top: 5px; letter-spacing: 1px; }
+
+        /* SCRIPT LIST STYLING */
+        .script-list-grid { display: grid; grid-template-cols: repeat(auto-fill, minmax(180px, 1fr)); gap: 4px 15px; }
+        .script-link-item { font-size: 13px; color: #7a1d1d; text-decoration: underline; text-decoration-style: dotted; cursor: pointer; transition: 0.2s; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .script-link-item:hover { color: #e67e22; }
 
         /* TRAITS STYLING */
         .trait-group { margin-bottom: 20px; }
@@ -285,7 +291,6 @@
                     <div id="role-player" onclick="window.setRole('player')" class="role-tab active">Player</div>
                     <div id="role-dm" onclick="window.setRole('dm')" class="role-tab">DM</div>
                 </div>
-                <!-- UPDATED HUB LINK -->
                 <a href="playershandbook.html" class="text-[10px] font-black uppercase tracking-widest text-[#7a1d1d] hover:text-black transition-colors relative z-[210]">← Back to Hub</a>
             </div>
         </header>
@@ -324,14 +329,19 @@
                 </div>
                 <div id="leaf-2" class="dossier-leaf">
                     <div class="leaf-side leaf-front" id="content-archetypes"></div>
+                    <div class="leaf-side leaf-back"><div class="font-serif italic opacity-30 text-center w-full">Evolution & Progression</div></div>
+                </div>
+                <div id="leaf-3" class="dossier-leaf">
+                    <div class="leaf-side leaf-front" id="content-scripts"></div>
                     <div class="leaf-side leaf-back"><div class="font-serif italic opacity-30 text-center w-full">End of Bio-Record</div></div>
                 </div>
             </div>
 
-            <div class="page-indicator" id="page-num">SEGMENT 01 / 03</div>
+            <div class="page-indicator" id="page-num">SEGMENT 01 / 04</div>
 
             <div id="dm-bottom-controls" class="hidden flex flex-wrap gap-4 mt-16 pt-8 border-t border-black/10">
                 <button onclick="window.addLoreBlock()" class="arch-btn arch-btn-add"><span>📑</span> Append Research chapter</button>
+                <button onclick="window.addScriptTier()" class="arch-btn arch-btn-add"><span>🧪</span> Append Script Tier</button>
                 <button onclick="window.triggerDel()" class="arch-btn arch-btn-del"><span>💀</span> Expunge Bio-Record</button>
             </div>
         </div>
@@ -381,14 +391,15 @@
         let vocations = [];
         let activeRole = 'player', currentView = 'grid', currentPage = 0, activeVocId = null;
         let userAuth = null, saveTimer = null, internalDrag = null, deleteCallback = null;
-
-        // --- FOCUS PROTECTION ---
         let activeEditId = null;
 
-        // --- TECHNICAL ARCHIVAL PARSER ---
-        window.parseAeonfallContent = (text, isDM) => {
+        // --- HOISTED GLOBAL FUNCTIONS (window. assignment happens immediately) ---
+
+        window.setEditing = function(id) { activeEditId = id; };
+        window.clearEditing = function() { activeEditId = null; };
+
+        window.parseAeonfallContent = function(text, isDM) {
             if (!text) return '';
-            // If actively focused, return text with markers so DM can edit them
             if (isDM && activeEditId !== null) return text; 
 
             let html = text;
@@ -405,22 +416,32 @@
             return html;
         };
 
-        // --- ASSIGN GLOBALS ---
-        window.setEditing = (id) => { activeEditId = id; };
-        window.clearEditing = () => { activeEditId = null; };
+        window.goToCodex = function(scriptName) {
+            window.location.href = `playershandbook.html?script=${encodeURIComponent(scriptName)}`;
+        };
 
-        window.setRole = (r) => { 
-            if(r === 'dm') document.getElementById('pass-modal').classList.remove('hidden'); 
+        window.parseScriptList = function(text, isDM) {
+            if (!text) return isDM ? 'Input script names...' : '';
+            if (isDM && activeEditId !== null) return text;
+            
+            const lines = text.split('\n').filter(l => l.trim() !== '');
+            return `<div class="script-list-grid">
+                ${lines.map(name => `<span class="script-link-item" onclick="window.goToCodex('${name.trim().replace(/'/g, "\\'")}')">${name.trim()}</span>`).join('')}
+            </div>`;
+        };
+
+        window.setRole = function(r) { 
+            if(r === 'dm') document.getElementById('pass-modal')?.classList.remove('hidden'); 
             else { activeRole = 'player'; localStorage.setItem('aeonfall_role', 'player'); window.updateRoleUI(); } 
         };
 
-        window.authDm = () => { 
+        window.authDm = function() { 
             if(document.getElementById('dm-pass').value === 'Rew4994') { 
-                activeRole='dm'; localStorage.setItem('aeonfall_role', 'dm'); document.getElementById('pass-modal').classList.add('hidden'); document.getElementById('dm-pass').value=''; window.updateRoleUI(); 
+                activeRole='dm'; localStorage.setItem('aeonfall_role', 'dm'); document.getElementById('pass-modal')?.classList.add('hidden'); document.getElementById('dm-pass').value=''; window.updateRoleUI(); 
             } else { window.showToast("Key Mismatch"); } 
         };
 
-        window.updateRoleUI = () => {
+        window.updateRoleUI = function() {
             const isDM = activeRole === 'dm';
             document.getElementById('role-player')?.classList.toggle('active', !isDM);
             document.getElementById('role-dm')?.classList.toggle('active', isDM);
@@ -430,30 +451,30 @@
             if(currentView === 'grid') window.renderGrid(); else window.renderDetails();
         };
 
-        window.setView = (v, id = null) => {
+        window.setView = function(v, id = null) {
             currentView = v; activeVocId = id; currentPage = 0;
             document.getElementById('view-grid')?.classList.toggle('hidden', v !== 'grid');
             document.getElementById('view-details')?.classList.toggle('hidden', v !== 'details');
-            [0, 1, 2].forEach(i => document.getElementById(`leaf-${i}`)?.classList.remove('flipped'));
+            [0, 1, 2, 3].forEach(i => document.getElementById(`leaf-${i}`)?.classList.remove('flipped'));
             if(v === 'grid') window.renderGrid(); else window.renderDetails();
             window.scrollTo(0,0);
         };
 
-        window.flipPage = () => {
-            currentPage = (currentPage + 1) % 3;
-            for(let i=0; i<3; i++) {
+        window.flipPage = function() {
+            currentPage = (currentPage + 1) % 4;
+            for(let i=0; i<4; i++) {
                 const leaf = document.getElementById(`leaf-${i}`);
                 if(leaf) leaf.classList.toggle('flipped', i < currentPage);
             }
             const indicator = document.getElementById('page-num');
-            if (indicator) indicator.innerText = `SEGMENT 0${currentPage + 1} / 03`;
-            const flipLabels = ["📜 Flip to Features", "📜 Flip to Archetypes", "📜 Flip to Vocation"];
+            if (indicator) indicator.innerText = `SEGMENT 0${currentPage + 1} / 04`;
+            const flipLabels = ["📜 Flip to Features", "📜 Flip to Archetypes", "📜 Flip to Scripts", "📜 Flip to Vocation"];
             const btn = document.getElementById('btn-flip');
             if(btn) btn.innerText = flipLabels[currentPage];
             window.scrollTo(0,0);
         };
 
-        window.dbUp = (field, val) => {
+        window.dbUp = function(field, val) {
             if(!activeVocId || !userAuth) return;
             if(saveTimer) clearTimeout(saveTimer);
             saveTimer = setTimeout(async () => {
@@ -464,7 +485,7 @@
             }, 800);
         };
 
-        window.updateLoreField = (idx, field, val) => {
+        window.updateLoreField = function(idx, field, val) {
             if(saveTimer) clearTimeout(saveTimer);
             saveTimer = setTimeout(async () => {
                 if(!activeVocId || !userAuth) return;
@@ -475,7 +496,7 @@
             }, 800);
         };
 
-        window.updateFeatureField = (idx, field, val) => {
+        window.updateFeatureField = function(idx, field, val) {
             if(saveTimer) clearTimeout(saveTimer);
             saveTimer = setTimeout(async () => {
                 if(!activeVocId || !userAuth) return;
@@ -486,7 +507,7 @@
             }, 800);
         };
 
-        window.updateArchetypeField = (idx, field, val) => {
+        window.updateArchetypeField = function(idx, field, val) {
             if(saveTimer) clearTimeout(saveTimer);
             saveTimer = setTimeout(async () => {
                 if(!activeVocId || !userAuth) return;
@@ -497,7 +518,18 @@
             }, 800);
         };
 
-        window.updateTableField = (tIdx, field, val, aIdx = null, idx1 = null, idx2 = null) => {
+        window.updateScriptTierField = function(idx, field, val) {
+            if(saveTimer) clearTimeout(saveTimer);
+            saveTimer = setTimeout(async () => {
+                if(!activeVocId || !userAuth) return;
+                const v = vocations.find(x => x.id === activeVocId);
+                const blocks = JSON.parse(v.scriptTiers || '[]');
+                blocks[idx][field] = val;
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { scriptTiers: JSON.stringify(blocks) });
+            }, 800);
+        };
+
+        window.updateTableField = function(tIdx, field, val, aIdx = null, idx1 = null, idx2 = null) {
             if(saveTimer) clearTimeout(saveTimer);
             saveTimer = setTimeout(async () => {
                 if(!activeVocId || !userAuth) return;
@@ -518,20 +550,86 @@
             }, 800);
         };
 
-        // --- CREATION METHODS ---
-        window.addVocation = async () => {
+        window.openDelModal = function(text, callback) {
+            const txt = document.getElementById('del-modal-text');
+            if (txt) txt.innerText = text;
+            deleteCallback = callback;
+            document.getElementById('del-modal')?.classList.remove('hidden');
+        };
+
+        window.removeLoreBlock = function(idx) {
+            window.openDelModal("Expunge research segment permanently?", async () => {
+                const v = vocations.find(x => x.id === activeVocId);
+                const blocks = JSON.parse(v.loreBlocks || '[]');
+                blocks.splice(idx, 1);
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { loreBlocks: JSON.stringify(blocks) });
+            });
+        };
+
+        window.removeFeatureBlock = function(idx) {
+            window.openDelModal("Expunge class feature permanently?", async () => {
+                const v = vocations.find(x => x.id === activeVocId);
+                const blocks = JSON.parse(v.featureBlocks || '[]');
+                blocks.splice(idx, 1);
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { featureBlocks: JSON.stringify(blocks) });
+            });
+        };
+
+        window.removeScriptTier = function(idx) {
+            window.openDelModal("Expunge script tier permanently?", async () => {
+                const v = vocations.find(x => x.id === activeVocId);
+                const blocks = JSON.parse(v.scriptTiers || '[]');
+                blocks.splice(idx, 1);
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { scriptTiers: JSON.stringify(blocks) });
+            });
+        };
+
+        window.removeArchetype = function(idx) {
+            window.openDelModal("Expunge archetype permanently?", async () => {
+                const v = vocations.find(x => x.id === activeVocId);
+                const archs = JSON.parse(v.archetypes || '[]');
+                archs.splice(idx, 1);
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { archetypes: JSON.stringify(archs) });
+            });
+        };
+
+        window.delTable = function(tIdx, aIdx = null) {
+            window.openDelModal("Delete data table permanently?", async () => {
+                const v = vocations.find(x => x.id === activeVocId);
+                if(aIdx !== null) {
+                    const archs = JSON.parse(v.archetypes || '[]');
+                    archs[aIdx].tables.splice(tIdx, 1);
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { archetypes: JSON.stringify(archs) });
+                } else {
+                    const tbs = JSON.parse(v.tables || '[]');
+                    tbs.splice(tIdx, 1);
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { tables: JSON.stringify(tbs) });
+                }
+            });
+        };
+
+        window.triggerDel = function() {
+            window.openDelModal("Expunge bio-record permanently?", async () => {
+                if (activeVocId) {
+                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId));
+                    window.setView('grid');
+                }
+            });
+        };
+
+        window.addVocation = async function() {
             if(!userAuth) return;
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookVocations'), {
                 name: "NEW SUBJECT", tagline: "Tagline...", desc: "Description...",
                 intro: "Intro...", quickBuild: "Build...", classFeatures: "Features...",
                 artUrl: "", detailArtUrl: "", primaryAbility: "Str", hitDie: "d8", saves: "Str",
-                icon: "🛡️", showNote: false, dmNotes: "", noteX: 0, noteY: 0, custodianId: "994",
+                icon: "🛡️", custodianId: "994",
                 skills: "...", weapons: "...", armor: "...", equipment: "...",
-                tables: "[]", archetypes: "[]", loreBlocks: "[]", featureBlocks: "[]", createdAt: Date.now()
+                tables: "[]", archetypes: "[]", loreBlocks: "[]", featureBlocks: "[]", scriptTiers: "[]", createdAt: Date.now()
             });
         };
 
-        window.addLoreBlock = async () => {
+        window.addLoreBlock = async function() {
             if(!activeVocId) return;
             const v = vocations.find(x => x.id === activeVocId);
             const blocks = JSON.parse(v.loreBlocks || '[]');
@@ -539,7 +637,15 @@
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { loreBlocks: JSON.stringify(blocks) });
         };
 
-        window.addFeatureBlock = async () => {
+        window.addScriptTier = async function() {
+            if(!activeVocId) return;
+            const v = vocations.find(x => x.id === activeVocId);
+            const blocks = JSON.parse(v.scriptTiers || '[]');
+            blocks.push({ title: "1st Tier Scripts", list: "Absorb Elements\nAlarm", id: Date.now() });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { scriptTiers: JSON.stringify(blocks) });
+        };
+
+        window.addFeatureBlock = async function() {
             if(!activeVocId) return;
             const v = vocations.find(x => x.id === activeVocId);
             const blocks = JSON.parse(v.featureBlocks || '[]');
@@ -547,7 +653,7 @@
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { featureBlocks: JSON.stringify(blocks) });
         };
 
-        window.addArchetype = async () => {
+        window.addArchetype = async function() {
             if(!activeVocId) return;
             const v = vocations.find(x => x.id === activeVocId);
             const archs = JSON.parse(v.archetypes || '[]');
@@ -555,15 +661,15 @@
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { archetypes: JSON.stringify(archs) });
         };
 
-        window.addTable = async () => {
+        window.addTable = async function() {
             if(!activeVocId) return;
             const v = vocations.find(x => x.id === activeVocId);
             const tbs = JSON.parse(v.tables || '[]');
-            tbs.push({ title: "NEW TABLE", headers: ["Level", "Features"], rows: [["1st", "..."]] });
+            tbs.push({ title: "NEW TABLE", headers: ["Level", "Features"], rows: [["1st", "+2", "..."]] });
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { tables: JSON.stringify(tbs) });
         };
 
-        window.addArchetypeTable = async (aIdx) => {
+        window.addArchetypeTable = async function(aIdx) {
             if(!activeVocId) return;
             const v = vocations.find(x => x.id === activeVocId);
             const archs = JSON.parse(v.archetypes || '[]');
@@ -572,7 +678,7 @@
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { archetypes: JSON.stringify(archs) });
         };
 
-        window.addTableRow = async (tIdx, aIdx = null) => {
+        window.addTableRow = async function(tIdx, aIdx = null) {
             if(!activeVocId) return;
             const v = vocations.find(x => x.id === activeVocId);
             if(aIdx !== null) {
@@ -586,7 +692,23 @@
             }
         };
 
-        window.remTableRow = async (tIdx, aIdx = null) => {
+        window.addTableCol = async function(tIdx, aIdx = null) {
+            if(!activeVocId) return;
+            const v = vocations.find(x => x.id === activeVocId);
+            if(aIdx !== null) {
+                const archs = JSON.parse(v.archetypes || '[]');
+                archs[aIdx].tables[tIdx].headers.push("NEW COL");
+                archs[aIdx].tables[tIdx].rows = archs[aIdx].tables[tIdx].rows.map(r => [...r, "..."]);
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { archetypes: JSON.stringify(archs) });
+            } else {
+                const tbs = JSON.parse(v.tables || '[]');
+                tbs[tIdx].headers.push("NEW COL");
+                tbs[tIdx].rows = tbs[tIdx].rows.map(r => [...r, "..."]);
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { tables: JSON.stringify(tbs) });
+            }
+        };
+
+        window.remTableRow = async function(tIdx, aIdx = null) {
             if(!activeVocId) return;
             const v = vocations.find(x => x.id === activeVocId);
             if(aIdx !== null) {
@@ -604,23 +726,7 @@
             }
         };
 
-        window.addTableCol = async (tIdx, aIdx = null) => {
-            if(!activeVocId) return;
-            const v = vocations.find(x => x.id === activeVocId);
-            if(aIdx !== null) {
-                const archs = JSON.parse(v.archetypes || '[]');
-                archs[aIdx].tables[tIdx].headers.push("NEW COL");
-                archs[aIdx].tables[tIdx].rows = archs[aIdx].tables[tIdx].rows.map(r => [...r, "..."]);
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { archetypes: JSON.stringify(archs) });
-            } else {
-                const tbs = JSON.parse(v.tables || '[]');
-                tbs[tIdx].headers.push("NEW COL");
-                tbs[tIdx].rows = tbs[tIdx].rows.map(r => [...r, "..."]);
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { tables: JSON.stringify(tbs) });
-            }
-        };
-
-        window.remTableCol = async (tIdx, aIdx = null) => {
+        window.remTableCol = async function(tIdx, aIdx = null) {
             if(!activeVocId) return;
             const v = vocations.find(x => x.id === activeVocId);
             if(aIdx !== null) {
@@ -640,63 +746,9 @@
             }
         };
 
-        // --- EXPUNGE (DELETE) SYSTEM ---
-        window.openDelModal = (text, callback) => {
-            const txt = document.getElementById('del-modal-text');
-            if (txt) txt.innerText = text;
-            deleteCallback = callback;
-            document.getElementById('del-modal')?.classList.remove('hidden');
-        };
-
-        window.removeLoreBlock = (idx) => {
-            window.openDelModal("Expunge research segment permanently?", async () => {
-                const v = vocations.find(x => x.id === activeVocId);
-                const blocks = JSON.parse(v.loreBlocks || '[]');
-                blocks.splice(idx, 1);
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { loreBlocks: JSON.stringify(blocks) });
-            });
-        };
-
-        window.removeFeatureBlock = (idx) => {
-            window.openDelModal("Expunge class feature permanently?", async () => {
-                const v = vocations.find(x => x.id === activeVocId);
-                const blocks = JSON.parse(v.featureBlocks || '[]');
-                blocks.splice(idx, 1);
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { featureBlocks: JSON.stringify(blocks) });
-            });
-        };
-
-        window.removeArchetype = (idx) => {
-            window.openDelModal("Expunge archetype permanently?", async () => {
-                const v = vocations.find(x => x.id === activeVocId);
-                const archs = JSON.parse(v.archetypes || '[]');
-                archs.splice(idx, 1);
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { archetypes: JSON.stringify(archs) });
-            });
-        };
-
-        window.delTable = (tIdx, aIdx = null) => {
-            window.openDelModal("Delete data table permanently?", async () => {
-                const v = vocations.find(x => x.id === activeVocId);
-                if(aIdx !== null) {
-                    const archs = JSON.parse(v.archetypes || '[]');
-                    archs[aIdx].tables.splice(tIdx, 1);
-                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { archetypes: JSON.stringify(archs) });
-                } else {
-                    const tbs = JSON.parse(v.tables || '[]');
-                    tbs.splice(tIdx, 1);
-                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { tables: JSON.stringify(tbs) });
-                }
-            });
-        };
-
-        window.triggerDel = () => {
-            window.openDelModal("Expunge bio-record permanently?", async () => {
-                if (activeVocId) {
-                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId));
-                    window.setView('grid');
-                }
-            });
+        window.showToast = function(m) {
+            const t = document.getElementById('toast');
+            if(t) { t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 2000); }
         };
 
         window.renderTableHtml = function(table, tIdx, isDM, aIdx = null) {
@@ -764,7 +816,7 @@
             if(!v) return;
             const isDM = activeRole === 'dm';
 
-            // INTRO PAGE
+            // PAGE 1: INTRO
             const lore = v.loreBlocks ? JSON.parse(v.loreBlocks) : [];
             const introContent = document.getElementById('content-intro');
             if (introContent) {
@@ -804,7 +856,7 @@
                 `;
             }
 
-            // FEATURES PAGE
+            // PAGE 2: FEATURES
             const features = v.featureBlocks ? JSON.parse(v.featureBlocks) : [];
             const tbs = v.tables ? JSON.parse(v.tables) : [];
             const featContent = document.getElementById('content-features');
@@ -861,7 +913,7 @@
                 `;
             }
 
-            // ARCHEOTYPES PAGE
+            // PAGE 3: ARCHEOTYPES
             const archs = v.archetypes ? JSON.parse(v.archetypes) : [];
             const archContent = document.getElementById('content-archetypes');
             if (archContent) {
@@ -907,9 +959,36 @@
                     </div>
                 `;
             }
+
+            // PAGE 4: SCRIPTS
+            const scriptTiers = v.scriptTiers ? JSON.parse(v.scriptTiers) : [];
+            const scriptContent = document.getElementById('content-scripts');
+            if (scriptContent) {
+                scriptContent.innerHTML = `
+                    <div class="flex justify-between items-center mb-10">
+                        <div class="dossier-section-header mb-0">Authorized Script Tiers</div>
+                        ${isDM ? `<button onclick="window.addScriptTier()" class="arch-btn arch-btn-add">+ Add Script Tier</button>` : ''}
+                    </div>
+                    ${scriptTiers.map((tier, sIdx) => {
+                        const tId = `tier-title-${sIdx}`;
+                        const cId = `tier-content-${sIdx}`;
+                        return `
+                        <div class="research-segment">
+                            <div class="research-box research-header-box">
+                                <span id="${tId}" class="script-tier-heading dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('${tId}')" onblur="window.clearEditing(); renderDetails()" oninput="window.updateScriptTierField(${sIdx}, 'title', this.innerText)">
+                                    ${activeEditId === tId ? tier.title : window.parseAeonfallContent(tier.title, false)}
+                                </span>
+                                ${isDM ? `<span class="research-expunge-btn" onclick="window.removeScriptTier(${sIdx})">EXPUNGE TIER</span>` : ''}
+                            </div>
+                            <div id="${cId}" class="research-box research-content dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); renderDetails()" oninput="window.updateScriptTierField(${sIdx}, 'list', this.innerText)">
+                                ${activeEditId === cId ? tier.list : window.parseScriptList(tier.list, false)}
+                            </div>
+                        </div>`;
+                    }).join('')}
+                `;
+            }
         };
 
-        // --- SNAPSHOT LISTENER ---
         function setupListeners() {
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookVocations'), (snap) => {
                 vocations = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => a.createdAt - b.createdAt);
@@ -917,7 +996,6 @@
             }, (err) => console.error("Archive Listener Interrupted:", err));
         }
 
-        // --- INITIALIZATION ---
         const start = async () => {
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
