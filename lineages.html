@@ -324,7 +324,10 @@
         const TOOLTIPS = {
             "Activation Time": "The amount of time required to initialize this script and push it to reality.",
             "Mechanum": "Technomagic Protocol: This script utilizes specialized hardware and digital distortion to warp reality through code.",
-            "Concord": "Ritual Protocol: This script can be initialized through ritualistic focus, conserving internal energy reserves."
+            "Concord": "Ritual Protocol: This script can be initialized through ritualistic focus, conserving internal energy reserves.",
+            "Dominion": "Governs will and influence, shaping thoughts, emotions, and behavior through directed intent.",
+            "Ruin": "Governs raw energy and destruction, unleashing force to damage or overwhelm.",
+            "Aegis": "Governs protection, prevention, and resistance, creating wards that block or negate harm."
         };
 
         let lineages = [];
@@ -435,7 +438,7 @@
                     <div class="record-header">
                         <div class="flex flex-col">
                             <h2 class="record-title dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}', 'name', this.innerText)">${race.name}</h2>
-                            <p class="record-label">Genetic Signature Verified • Custodian #994</p>
+                            <p class="record-label">Genetic Signature Verified • Custodian #<span class="dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}', 'custodianId', this.innerText)">${race.custodianId || '994'}</span></p>
                             <div class="bg-black/5 border-l-4 border-[#7a1d1d] p-6 rounded-sm">
                                 <h4 class="font-black uppercase text-[11px] tracking-[0.2em] text-[#7a1d1d] mb-4">Innate Parameters</h4>
                                 <div class="dm-editable text-sm italic leading-relaxed text-[#3e2723]" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','traits',this.innerText)">${isDM ? (race.traits || 'Ancestral trait markers...') : parseAeonfallContent(race.traits, false)}</div>
@@ -647,7 +650,7 @@
 
         window.addRecord = async () => {
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookLineages'), { 
-                name: "NEW SUBJECT", gridUrl: "", detailUrl: "", backMediaUrl: "", speed: "30", size: "M", languages: "Com", 
+                name: "NEW SUBJECT", gridUrl: "", detailUrl: "", backMediaUrl: "", custodianId: "994", speed: "30", size: "M", languages: "Com", 
                 desc: "Discovery log pending field observation...", traits: "Standard ancestral signatures...", dmNotes: "", noteX: 0, noteY: 0, showNote: false, intros: [],
                 cultureName: "", majorityPop: "", coreValues: "", government: "", belief: "", culturalPractices: "", attitudes: "",
                 mechTraits: "", mechDescription: "", mechBackgrounds: "", mechLanguages: "", mechFeats: "", mechEquipment: "", mechTables: "[]",
@@ -662,12 +665,14 @@
             const intros = r.intros || [];
             intros.push({ leftTitle: "Research Findings", leftText: "Technical observations..." });
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', r.id), { intros: intros });
+            window.showToast("Chapter Appended");
         };
 
         window.removeSection = async (id, idx) => {
             const r = lineages.find(x => x.id === id);
             r.intros.splice(idx, 1);
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', id), { intros: r.intros });
+            window.showToast("Section Expunged");
         };
 
         window.triggerDel = (id = null) => { 
