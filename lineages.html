@@ -14,29 +14,32 @@
             color: #1a0f0a; 
             min-height: 100vh;
             padding: 15px;
+            overflow-x: hidden;
         }
 
-        /* THE MASTER PARCHMENT */
+        /* THE MASTER PARCHMENT - FLATTENED TOP TO PREVENT CUTOFF */
         .parchment-container {
             max-width: 1300px;
-            margin: 0 auto;
+            margin: 20px auto;
             background: #f4edd8;
             background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
             box-shadow: 0 50px 100px rgba(0,0,0,0.8), inset 0 0 100px rgba(0,0,0,0.1);
-            min-height: 95vh;
             border-radius: 4px;
             position: relative;
-            padding: 30px 50px;
+            /* Increased top padding to 60px to clear the clip-path */
+            padding: 60px 50px 100px 50px; 
             border: 1px solid #dcd1b2;
-            clip-path: polygon(0% 1%, 2% 0%, 98% 1%, 100% 2%, 99% 50%, 100% 98%, 98% 100%, 2% 99%, 0% 97%, 1% 50%);
+            /* Flattened the top of the polygon (0% 0%) to ensure navigation isn't cut */
+            clip-path: polygon(0% 0%, 100% 0%, 100% 2%, 99% 50%, 100% 98%, 98% 100%, 2% 99%, 0% 97%, 1% 50%, 0% 2%);
             perspective: 2000px;
+            /* Removed overflow:hidden to let nav elements breathe */
         }
 
         /* HEADER & BRANDING */
         .brand-title { font-family: 'Cinzel', serif; font-weight: 900; color: #7a1d1d; font-size: 2rem; line-height: 1; }
         .brand-sub { font-family: 'Cinzel', serif; font-size: 8px; color: #5d4037; letter-spacing: 0.2em; text-transform: uppercase; font-weight: bold; }
         
-        .role-pill { background: rgba(0,0,0,0.05); border-radius: 99px; padding: 3px; display: flex; gap: 4px; border: 1px solid rgba(0,0,0,0.1); }
+        .role-pill { background: rgba(0,0,0,0.05); border-radius: 99px; padding: 3px; display: flex; gap: 4px; border: 1px solid rgba(0,0,0,0.1); position: relative; z-index: 100; }
         .role-tab { padding: 4px 14px; font-family: 'Cinzel', serif; font-size: 9px; font-weight: 900; border-radius: 99px; transition: 0.3s; color: #5d4037; text-transform: uppercase; cursor: pointer; }
         .role-tab.active { background: #7a1d1d; color: white; box-shadow: 0 4px 10px rgba(122, 29, 29, 0.3); }
 
@@ -119,10 +122,12 @@
             width: 100%;
             transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
             transform-style: preserve-3d;
+            min-height: 600px;
         }
         .flip-wrapper.flipped { transform: rotateY(180deg); }
         .side-front, .side-back { width: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
         .side-back { position: absolute; top: 0; left: 0; transform: rotateY(180deg); }
+        .flipped .side-front { visibility: hidden; } 
 
         /* TOOLTIP STYLES */
         .term-hover { position: relative; border-bottom: 1px dotted #7a1d1d; cursor: help; display: inline; }
@@ -178,10 +183,10 @@
         .heritage-block h3 { font-family: 'Cinzel', serif; font-size: 20px; font-weight: 900; color: #7a1d1d; margin-bottom: 12px; }
 
         .dm-active-edit .dm-editable { background: rgba(122, 29, 29, 0.05); outline: 1px dashed #7a1d1d; border-radius: 4px; padding: 4px; }
-        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #1a0f0a; color: #f4edd8; padding: 12px 32px; border-radius: 4px; z-index: 5000; opacity: 0; transition: 0.3s; font-family: 'Cinzel'; font-size: 12px; }
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #1a0f0a; color: #f4edd8; padding: 12px 32px; border-radius: 4px; z-index: 10000; opacity: 0; transition: 0.3s; font-family: 'Cinzel'; font-size: 12px; }
         
         .hidden { display: none !important; }
-        .back-nav { display: inline-flex; align-items: center; gap: 10px; color: #7a1d1d; font-weight: 900; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 30px; cursor: pointer; border-bottom: 1px solid transparent; }
+        .back-nav { display: inline-flex; align-items: center; gap: 10px; color: #7a1d1d; font-weight: 900; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 30px; cursor: pointer; border-bottom: 1px solid transparent; position: relative; z-index: 100; }
         .back-nav:hover { border-bottom-color: #7a1d1d; }
 
         /* DECORATIONS */
@@ -201,7 +206,7 @@
         .lightbox-img { max-width: 90vw; max-height: 80vh; object-fit: contain; border: 4px solid #f4edd8; border-radius: 4px; box-shadow: 0 0 50px rgba(0,0,0,1); }
     </style>
 </head>
-<body class="overflow-x-hidden">
+<body>
 
     <div id="toast" class="toast">DM Message</div>
 
@@ -211,7 +216,7 @@
         <div class="ornate-corner br"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2"><path d="M10,10 Q30,10 30,40 T60,60 T90,90 M10,10 Q10,30 40,30 T60,60"/></svg></div>
 
         <!-- HEADER -->
-        <header class="flex flex-col md:flex-row justify-between items-center gap-6 relative z-50 mb-6 pb-6 border-b border-black/10">
+        <header class="flex flex-col md:flex-row justify-between items-center gap-6 relative z-[200] mb-6 pb-6 border-b border-black/10">
             <div class="flex flex-col items-center md:items-start text-center md:text-left">
                 <h1 class="brand-title">Aeonfall</h1>
                 <p class="brand-sub">Archival Heritage Biometry</p>
@@ -222,7 +227,7 @@
                     <div id="role-player" onclick="window.setRole('player')" class="role-tab active">Player</div>
                     <div id="role-dm" onclick="window.setRole('dm')" class="role-tab">DM</div>
                 </div>
-                <a href="playershandbook.html" class="text-[10px] font-black uppercase tracking-widest text-[#7a1d1d] hover:text-black transition-colors">← Back to Hub</a>
+                <a href="playershandbook.html" class="text-[10px] font-black uppercase tracking-widest text-[#7a1d1d] hover:text-black transition-colors relative z-[201]">← Back to Hub</a>
             </div>
         </header>
 
@@ -392,7 +397,6 @@
             document.getElementById('view-grid').classList.toggle('hidden', v !== 'grid');
             document.getElementById('view-details').classList.toggle('hidden', v !== 'details');
             pinMode = false; isFlipped = false;
-            document.getElementById('parchment').classList.remove('placement-active');
             document.getElementById('flip-container').classList.remove('flipped');
             if(v === 'grid') renderGrid(); else renderDetails();
         };
