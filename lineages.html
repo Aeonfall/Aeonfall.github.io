@@ -56,6 +56,19 @@
             transform: rotateY(180deg);
         }
 
+        /* TOOLTIP STYLES */
+        .term-hover { position: relative; border-bottom: 1px dotted #7a1d1d; cursor: help; display: inline; }
+        .tooltip-content {
+            visibility: hidden; width: 220px; background-color: #fdfaf3; color: #2c1810;
+            text-align: left; border: 2px solid #7a1d1d; border-radius: 6px; padding: 10px;
+            position: absolute; z-index: 1000; bottom: 125%; left: 50%; margin-left: -110px;
+            opacity: 0; transition: opacity 0.3s; font-size: 11px; line-height: 1.4;
+            font-family: 'Roboto Slab', serif; box-shadow: 0 5px 15px rgba(0,0,0,0.3); pointer-events: none; font-style: normal;
+        }
+        .tooltip-content::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px; border-width: 5px; border-style: solid; border-color: #7a1d1d transparent transparent transparent; }
+        .term-hover:hover .tooltip-content { visibility: visible; opacity: 1; }
+        .def-term { color: #7a1d1d; font-weight: 900; border-bottom: 1px dashed #7a1d1d; }
+
         /* HEADER & BRANDING */
         .brand-title { font-family: 'Cinzel', serif; font-weight: 900; color: #7a1d1d; font-size: 2rem; line-height: 1; }
         .brand-sub { font-family: 'Cinzel', serif; font-size: 8px; color: #5d4037; letter-spacing: 0.2em; text-transform: uppercase; font-weight: bold; }
@@ -64,7 +77,7 @@
         .role-tab { padding: 4px 14px; font-family: 'Cinzel', serif; font-size: 9px; font-weight: 900; border-radius: 99px; transition: 0.3s; color: #5d4037; text-transform: uppercase; cursor: pointer; }
         .role-tab.active { background: #7a1d1d; color: white; box-shadow: 0 4px 10px rgba(122, 29, 29, 0.3); }
 
-        /* GRID STYLES - 250PX SQUARE GRID (As requested previously) */
+        /* GRID STYLES */
         .grid-container { display: grid; grid-template-cols: repeat(auto-fill, minmax(250px, 1fr)); gap: 24px; padding: 20px 0; }
         .race-card {
             width: 250px;
@@ -114,7 +127,6 @@
             box-sizing: border-box;
         }
         .dm-sticky-note:active { cursor: grabbing; }
-
         .dm-sticky-note::before {
             content: "DM Observations";
             display: block;
@@ -220,7 +232,7 @@
             </div>
             
             <div id="stack-grid" class="grid-container">
-                <!-- Record Cards -->
+                <!-- Record Cards Injected Here -->
             </div>
         </div>
 
@@ -298,6 +310,15 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
+        const TOOLTIPS = {
+            "Activation Time": "The amount of time required to initialize this script and push it to reality.",
+            "Mechanum": "Technomagic Protocol: This script utilizes specialized hardware and digital distortion to warp reality through code.",
+            "Concord": "Ritual Protocol: This script can be initialized through ritualistic focus, conserving internal energy reserves.",
+            "Dominion": "Governs will and influence, shaping thoughts, emotions, and behavior through directed intent.",
+            "Ruin": "Governs raw energy and destruction, unleashing force to damage or overwhelm.",
+            "Aegis": "Governs protection, prevention, and resistance, creating wards that block or negate harm."
+        };
+
         let lineages = [];
         let activeRole = 'player', currentView = 'grid', activeRaceId = null, saveTimer = null, targetDelId = null;
         let pinMode = false, isFlipped = false;
@@ -316,6 +337,21 @@
             const bCtrl = document.getElementById('dm-bottom-controls');
             if (bCtrl) bCtrl.classList.toggle('hidden', !isDM);
             if(currentView === 'grid') renderGrid(); else renderDetails();
+        }
+
+        function parseAeonfallContent(text, isDM) {
+            if (!text) return '';
+            if (isDM) return text; 
+            let html = text.replace(/&&([^&]+)&&/g, (match, content) => {
+                const parts = content.split('|');
+                const term = parts[0].trim();
+                const definition = parts.length > 1 ? parts[1].trim() : (TOOLTIPS[term] || "No technical record found in archives.");
+                return `<span class="term-hover def-term">${term}<span class="tooltip-content">${definition}</span></span>`;
+            });
+            html = html.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+            html = html.replace(/\*(.*?)\*/g, '<i>$1</i>');
+            html = html.replace(/__(.*?)__/g, '<u>$1</u>');
+            return html;
         }
 
         window.flipPage = () => {
@@ -378,7 +414,7 @@
                             </div>
                             <div class="bg-black/5 border-l-4 border-[#7a1d1d] p-6 rounded-sm">
                                 <h4 class="font-black uppercase text-[11px] tracking-[0.2em] text-[#7a1d1d] mb-4">Innate Parameters</h4>
-                                <div class="dm-editable text-sm italic leading-relaxed text-[#3e2723]" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','traits',this.innerText)">${race.traits || 'Ancestral trait markers...'}</div>
+                                <div class="dm-editable text-sm italic leading-relaxed text-[#3e2723]" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','traits',this.innerText)">${isDM ? (race.traits || 'Ancestral trait markers...') : parseAeonfallContent(race.traits, false)}</div>
                             </div>
                         </div>
                         <div class="record-illustration">
@@ -388,9 +424,9 @@
                     </div>
                     ${isDM ? `<div class="bg-black/5 p-4 rounded mb-8 grid grid-cols-2 gap-4"><div><label class="text-[9px] font-black text-amber-900">Grid Visual</label><input type="text" class="w-full p-2 text-[10px]" value="${race.gridUrl||''}" oninput="window.dbUp('${race.id}', 'gridUrl', this.value)"></div><div><label class="text-[9px] font-black text-amber-900">Detail Visual</label><input type="text" class="w-full p-2 text-[10px]" value="${race.detailUrl||''}" oninput="window.dbUp('${race.id}', 'detailUrl', this.value)"></div></div>` : ''}
                     <div class="research-findings dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}', 'desc', this.innerText)">
-                        <span class="drop-cap">${(race.desc||"O").charAt(0)}</span>${(race.desc||"nce, in a world not yet broken...").slice(1)}
+                        <span class="drop-cap">${(race.desc||"O").charAt(0)}</span>${isDM ? ((race.desc||"nce, in a world not yet broken...").slice(1)) : parseAeonfallContent((race.desc||"nce, in a world not yet broken...").slice(1), false)}
                     </div>
-                    <div id="additional-logs">${(race.intros || []).map((intro, idx) => `<div class="heritage-block relative"><h3 class="dm-editable" contenteditable="${isDM}" oninput="window.dbUpIntro('${race.id}', ${idx}, 'leftTitle', this.innerText)">${intro.leftTitle || 'Research Chapter'}</h3><div class="dm-editable text-[#3e2723] font-serif leading-loose" contenteditable="${isDM}" oninput="window.dbUpIntro('${race.id}', ${idx}, 'leftText', this.innerText)">${intro.leftText || 'Handwritten details...'}</div>${isDM ? `<button onclick="window.removeSection('${race.id}', ${idx})" class="absolute top-0 right-0 text-[#7a1d1d] opacity-30 hover:opacity-100 text-[9px] uppercase font-black">Expunge Section</button>` : ''}</div>`).join('')}</div>
+                    <div id="additional-logs">${(race.intros || []).map((intro, idx) => `<div class="heritage-block relative"><h3 class="dm-editable" contenteditable="${isDM}" oninput="window.dbUpIntro('${race.id}', ${idx}, 'leftTitle', this.innerText)">${intro.leftTitle || 'Research Chapter'}</h3><div class="dm-editable text-[#3e2723] font-serif leading-loose" contenteditable="${isDM}" oninput="window.dbUpIntro('${race.id}', ${idx}, 'leftText', this.innerText)">${isDM ? (intro.leftText || 'Handwritten details...') : parseAeonfallContent(intro.leftText, false)}</div>${isDM ? `<button onclick="window.removeSection('${race.id}', ${idx})" class="absolute top-0 right-0 text-[#7a1d1d] opacity-30 hover:opacity-100 text-[9px] uppercase font-black">Expunge Section</button>` : ''}</div>`).join('')}</div>
                 </div>
             `;
 
@@ -401,14 +437,10 @@
                     <h2 class="record-title mb-6">Cultural Heritage</h2>
                     <div class="culture-ledger">
                         <ul class="ledger-list">
-                            <li><b>Culture Name:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','cultureName',this.innerText)">${race.cultureName || '...'}</span></li>
-                            <li><b>Founding Race:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','foundingRace',this.innerText)">${race.foundingRace || '...'}</span></li>
-                            <li><b>Majority Population:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','majorityPop',this.innerText)">${race.majorityPop || '...'}</span></li>
-                            <li><b>Core Values:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','coreValues',this.innerText)">${race.coreValues || '...'}</span></li>
-                            <li><b>Government:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','government',this.innerText)">${race.government || '...'}</span></li>
-                            <li><b>Belief:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','belief',this.innerText)">${race.belief || '...'}</span></li>
-                            <li><b>Cultural Practices:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','culturalPractices',this.innerText)">${race.culturalPractices || '...'}</span></li>
-                            <li><b>Attitudes Toward Outsiders:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','attitudes',this.innerText)">${race.attitudes || '...'}</span></li>
+                            ${['cultureName', 'foundingRace', 'majorityPop', 'coreValues', 'government', 'belief', 'culturalPractices', 'attitudes'].map(f => `
+                                <li><b>${f.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:</b> 
+                                <span class="dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','${f}',this.innerText)">${isDM ? (race[f] || '...') : parseAeonfallContent(race[f], false)}</span></li>
+                            `).join('')}
                         </ul>
                         <div class="flex flex-col gap-4">
                             <div class="record-illustration" style="height: 250px;">
@@ -426,17 +458,16 @@
                         <div class="grid grid-cols-1 gap-8">
                             <div>
                                 <b class="text-[10px] uppercase text-[#7a1d1d] block mb-2 tracking-widest">Mechanical Traits</b>
-                                <div class="dm-editable min-h-[60px] p-4 bg-black/5 rounded italic text-sm" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','mechTraits',this.innerText)">${race.mechTraits || 'Trait data pending...'}</div>
+                                <div class="dm-editable min-h-[60px] p-4 bg-black/5 rounded italic text-sm" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','mechTraits',this.innerText)">${isDM ? (race.mechTraits || 'Trait data pending...') : parseAeonfallContent(race.mechTraits, false)}</div>
                             </div>
                             <div>
                                 <b class="text-[10px] uppercase text-[#7a1d1d] block mb-2 tracking-widest">Mechanical Description</b>
-                                <div class="dm-editable min-h-[100px] p-4 bg-black/5 rounded italic text-sm leading-relaxed" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','mechDescription',this.innerText)">${race.mechDescription || 'Mechanical overview...'}</div>
+                                <div class="dm-editable min-h-[100px] p-4 bg-black/5 rounded italic text-sm leading-relaxed" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','mechDescription',this.innerText)">${isDM ? (race.mechDescription || 'Mechanical overview...') : parseAeonfallContent(race.mechDescription, false)}</div>
                             </div>
                             <div class="space-y-4">
-                                <p><b>• Backgrounds:</b> <span class="dm-editable italic text-sm" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','mechBackgrounds',this.innerText)">${race.mechBackgrounds || '...'}</span></p>
-                                <p><b>• Languages:</b> <span class="dm-editable italic text-sm" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','mechLanguages',this.innerText)">${race.mechLanguages || '...'}</span></p>
-                                <p><b>• Feats (optional):</b> <span class="dm-editable italic text-sm" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','mechFeats',this.innerText)">${race.mechFeats || '...'}</span></p>
-                                <p><b>• Equipment Access:</b> <span class="dm-editable italic text-sm" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','mechEquipment',this.innerText)">${race.mechEquipment || '...'}</span></p>
+                                ${['mechBackgrounds', 'mechLanguages', 'mechFeats', 'mechEquipment'].map(f => `
+                                    <p><b>• ${f.replace('mech', '').replace(/([A-Z])/g, ' $1').trim()}:</b> <span class="dm-editable italic text-sm" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','${f}',this.innerText)">${isDM ? (race[f] || '...') : parseAeonfallContent(race[f], false)}</span></p>
+                                `).join('')}
                             </div>
                         </div>
 
@@ -451,13 +482,13 @@
                                                 <button onclick="window.remTableRow(${tIdx})" class="arch-btn arch-btn-del">- Row</button>
                                                 <button onclick="window.addTableCol(${tIdx})" class="arch-btn arch-btn-add">+ Col</button>
                                                 <button onclick="window.remTableCol(${tIdx})" class="arch-btn arch-btn-del">- Col</button>
-                                                <button onclick="window.delMechTable(${tIdx})" class="arch-btn arch-btn-del">Dispose Table</button>
+                                                <button onclick="window.delMechTable(${tIdx})" class="arch-btn arch-btn-del">Delete</button>
                                             </div>
                                         ` : ''}
                                     </div>
                                     <table class="prog-table">
                                         <thead><tr>${table.headers.map((h, hIdx) => `<th contenteditable="${isDM}" oninput="window.updateMechTableField(${tIdx}, 'headers', this.innerText, ${hIdx})">${h}</th>`).join('')}</tr></thead>
-                                        <tbody>${table.rows.map((row, rIdx) => `<tr>${row.map((cell, cIdx) => `<td contenteditable="${isDM}" oninput="window.updateMechTableField(${tIdx}, 'rows', this.innerText, ${rIdx}, ${cIdx})">${cell}</td>`).join('')}</tr>`).join('')}</tbody>
+                                        <tbody>${table.rows.map((row, rIdx) => `<tr>${row.map((cell, cIdx) => `<td contenteditable="${isDM}" oninput="window.updateMechTableField(${tIdx}, 'rows', this.innerText, ${rIdx}, ${cIdx})">${isDM ? cell : parseAeonfallContent(cell, false)}</td>`).join('')}</tr>`).join('')}</tbody>
                                     </table>
                                 </div>
                             `).join('')}
@@ -503,15 +534,14 @@
 
         window.stopNoteDrag = async () => {
             if (!noteDrag) return;
-            const x = parseInt(noteDrag.el.style.left); const y = parseInt(noteDrag.el.style.top);
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', activeRaceId), { noteX: x, noteY: y });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', activeRaceId), { noteX: parseInt(noteDrag.el.style.left), noteY: parseInt(noteDrag.el.style.top) });
             noteDrag = null; document.removeEventListener('mousemove', window.handleNoteDrag); document.removeEventListener('mouseup', window.stopNoteDrag);
         };
 
         window.removeNote = (e) => { e.stopPropagation(); document.getElementById('note-del-modal').classList.remove('hidden'); };
         window.confirmRemoveNote = async () => {
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', activeRaceId), { showNote: false, dmNotes: "" });
-            document.getElementById('note-del-modal').classList.add('hidden'); window.showToast("Note Shredded");
+            document.getElementById('note-del-modal').classList.add('hidden');
         };
 
         window.dbUp = (id, field, val) => {
@@ -527,7 +557,6 @@
             }, 1000);
         };
 
-        // MECHANICAL TABLE LOGIC
         window.addMechTable = async () => {
             const r = lineages.find(x => x.id === activeRaceId);
             const tables = r.mechTables ? JSON.parse(r.mechTables) : [];
