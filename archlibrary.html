@@ -92,8 +92,8 @@
         .shelf-item.newspaper { background: #fff; color: #1a0f0a; border-left-color: #000; border-top: 1px solid #ddd; }
         .shelf-item.parchment { background: #e0d1af; color: #5d4037; border-left-color: #8d7a5d; border-radius: 0 20px 20px 0; }
         
-        /* Updated Textbook Tab Style: Specific Gold Border and Green Background */
-        .shelf-item.textbook { background: #43a04b; border-left-color: #D2AC47; color: #f4edd8; }
+        /* Textbook Tab Style: Emerald Green Background & Gold Border */
+        .shelf-item.textbook { background: #48A860; border-left-color: #E5C366; color: #f4edd8; }
         
         .shelf-item:hover { transform: translateX(10px); filter: brightness(1.2); }
         .shelf-item.active { transform: translateX(15px); box-shadow: -8px 8px 25px rgba(122, 29, 29, 0.5); z-index: 10; }
@@ -105,8 +105,16 @@
         .manual-body { flex-grow: 1; padding: 60px 50px; height: 100%; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; box-sizing: border-box; }
         #manual-sections-container { display: flex; flex-wrap: wrap; align-items: flex-start; width: 100%; gap: 0; }
 
-        .manual-h2 { font-family: 'Cinzel', serif; font-weight: 900; font-size: 2.2rem; color: #7a1d1d; border-bottom: 4px double #7a1d1d; padding-bottom: 8px; text-transform: uppercase; margin-bottom: 25px; width: 100%; letter-spacing: 2px; }
-        .manual-h3 { font-family: 'Cinzel', serif; font-weight: 700; font-size: 1.4rem; color: #5d4037; border-bottom: 1px solid rgba(93, 64, 55, 0.4); padding-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; width: 100%; }
+        .manual-h1, .manual-h2, .manual-h3, .manual-p {
+            color: #262626 !important; /* Pencil Charcoal Grey/Black */
+        }
+        .dm-editable:focus {
+            outline: none;
+            color: #262626 !important;
+        }
+
+        .manual-h2 { font-family: 'Cinzel', serif; font-weight: 900; font-size: 2.2rem; border-bottom: 4px double #7a1d1d; padding-bottom: 8px; text-transform: uppercase; margin-bottom: 25px; width: 100%; letter-spacing: 2px; }
+        .manual-h3 { font-family: 'Cinzel', serif; font-weight: 700; font-size: 1.4rem; border-bottom: 1px solid rgba(93, 64, 55, 0.4); padding-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; width: 100%; }
         .manual-divider { width: 100%; height: 1px; background: linear-gradient(to right, transparent, rgba(122, 29, 29, 0.4), transparent); margin: 30px 0; flex-shrink: 0; }
 
         .arch-btn { font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 10px 20px; border-radius: 4px; cursor: pointer; border: 1px solid #7a1d1d; transition: 0.2s; display: inline-flex; align-items: center; gap: 10px; background: #7a1d1d; color: white; }
@@ -305,7 +313,6 @@
                     </div>
                 </div>
 
-                <!-- NEW TEXT BOOK CATEGORY -->
                 <div class="arch-dropdown" id="dd-textbook">
                     <button class="arch-btn" onclick="window.toggleDropdown(event, 'dd-textbook')">📓 Text Book</button>
                     <div class="arch-dropdown-content">
@@ -392,6 +399,15 @@
         let activeRole = 'player', activeEditId = null, userAuth = null, saveTimer = null, deleteCallback = null;
         let activeAnchorUID = null; 
         let draggedId = null, dropSide = null;
+
+        // Force plain text paste to strip formatting and maintain charcoal color
+        window.addEventListener('paste', function(e) {
+            if (e.target.hasAttribute('contenteditable')) {
+                e.preventDefault();
+                const text = e.clipboardData.getData('text/plain');
+                document.execCommand('insertText', false, text);
+            }
+        });
 
         // --- TOAST ---
         window.showToast = (m) => { 
@@ -583,14 +599,35 @@
             }).join('');
             container.innerHTML = visibleSections.map(s => {
                 const hId = `head-${s.id}`, cId = `content-${s.id}`, customStyle = `width: calc(${s.width ?? 100}% - 10px); font-size: ${s.fontSize ?? 14}px; margin-top: ${s.ySpacing ?? 0}px; flex-shrink: 0; box-sizing: border-box; padding: 5px;`;
+                const sharedUser = allUsers.find(u => u.uid === s.sharedWith?.[0]);
+                
                 let html = `<section id="section-${s.id}" class="group relative transition-all doc-${s.docType || 'book'}" draggable="${isDM}" ondragstart="window.handleDragStart(event, '${s.id}')" ondragover="window.handleDragOver(event)" ondragleave="window.handleDragLeave(event)" ondrop="window.handleDrop(event, '${s.id}')" style="${customStyle}">
-                    ${isDM ? `<div class="tuner-panel"><div class="drag-handle text-lg">⠿</div><div class="tuner-group"><span class="tuner-label">Width</span><input type="range" class="tuner-slider" min="10" max="100" value="${s.width ?? 100}" oninput="window.dbUpdateSection('${s.id}', 'width', parseInt(this.value))"></div><div class="tuner-group"><span class="tuner-label">Access</span><select class="tuner-select text-[8px] bg-slate-50 border border-slate-300 rounded" onchange="window.dbUpdateSection('${s.id}', 'visibility', this.value)"><option value="public" ${s.visibility==='public'?'selected':''}>Public</option><option value="secret" ${s.visibility==='secret'?'selected':''}>Secret</option><option value="personal" ${s.visibility==='personal'?'selected':''}>Personal Tie</option></select></div>${s.visibility === 'personal' ? `<div class="tuner-group"><span class="tuner-label">Binding</span><button class="link-user-btn !text-[7px] !px-3" onclick="window.openUserModal('${s.id}')">${allUsers.find(u => u.uid === s.sharedWith?.[0])?.username || 'Bind'}</button></div>` : ''}<button onclick="window.triggerDelete('${s.id}')" class="arch-btn arch-btn-del !rounded-md ml-auto">✕</button></div>` : ''}
+                    ${isDM ? `<div class="tuner-panel">
+                        <div class="drag-handle text-lg">⠿</div>
+                        <div class="tuner-group"><span class="tuner-label">Width</span><input type="range" class="tuner-slider" min="10" max="100" value="${s.width ?? 100}" oninput="window.dbUpdateSection('${s.id}', 'width', parseInt(this.value))"></div>
+                        <div class="tuner-group">
+                            <span class="tuner-label">Access</span>
+                            <select class="tuner-select text-[8px] bg-slate-50 border border-slate-300 rounded" onchange="window.dbUpdateSection('${s.id}', 'visibility', this.value)">
+                                <option value="public" ${s.visibility==='public'?'selected':''}>Public</option>
+                                <option value="secret" ${s.visibility==='secret'?'selected':''}>Secret</option>
+                                <option value="personal" ${s.visibility==='personal'?'selected':''}>Personal Tie</option>
+                            </select>
+                        </div>
+                        <div class="tuner-group">
+                            <span class="tuner-label">Binding</span>
+                            <div class="flex gap-1">
+                                <button class="link-user-btn !text-[7px] !px-3" onclick="window.openUserModal('${s.id}')">${sharedUser?.username || 'Bind'}</button>
+                                ${sharedUser ? `<button class="unbind-user-btn" onclick="window.unbindUIDFromSection('${s.id}')" title="Unbind and make private">✕</button>` : ''}
+                            </div>
+                        </div>
+                        <button onclick="window.triggerDelete('${s.id}')" class="arch-btn arch-btn-del !rounded-md ml-auto">✕</button>
+                    </div>` : ''}
                     <div class="flex justify-between items-end gap-4 mb-2">
                         ${s.type === 'subheading' ? `<h2 id="${hId}" class="manual-h2 dm-editable flex-grow !m-0" contenteditable="${isDM}" onfocus="window.setEditing('${hId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">${activeEditId === hId ? s.title : window.parseAeonfallContent(s.title, false)}</h2>` : (s.type === 'inner-subheading' ? `<h3 id="${hId}" class="manual-h3 dm-editable flex-grow !m-0" contenteditable="${isDM}" onfocus="window.setEditing('${hId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">${activeEditId === hId ? s.title : window.parseAeonfallContent(s.title, false)}</h3>` : '')}
                         ${isDM ? `<span class="visibility-tag tag-${s.visibility || 'public'}">${s.visibility || 'public'}</span>` : ''}
                     </div>`;
                 if(s.type === 'text') html += `<div id="${cId}" class="manual-p dm-editable leading-relaxed" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div>`;
-                else if(s.type === 'textbook') html += `<div class="manual-textbook-box bg-white p-8 border-t-8 border-[#7a1d1d] rounded shadow-lg relative my-6"><div class="absolute -top-3 left-6 bg-[#7a1d1d] text-white px-3 py-1 text-[8px] font-black uppercase tracking-widest">Scholar's Teaching</div><div id="${cId}" class="manual-p dm-editable leading-relaxed text-[#2c1810]" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
+                else if(s.type === 'textbook') html += `<div class="manual-textbook-box bg-[#f0f9ff] p-8 border-t-8 border-[#5d4037] rounded shadow-lg relative my-6"><div class="absolute -top-3 left-6 bg-[#5d4037] text-[#f4edd8] px-3 py-1 text-[8px] font-black uppercase tracking-widest">Scholar's Teaching</div><div id="${cId}" class="manual-p dm-editable leading-relaxed" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
                 else if(s.type === 'note') html += `<div class="manual-note-box bg-slate-50 p-5 border-l-4 border-amber-800 rounded shadow-inner"><div id="${cId}" class="manual-p dm-editable italic" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
                 else if(s.type === 'divider') html += `<div class="manual-divider"></div>`;
                 html += `</section>`; return html;
