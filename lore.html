@@ -183,7 +183,7 @@
 
     <!-- TRANSITION OVERLAY -->
     <div id="cinematic-overlay">
-        <div class="loading-text">Accessing Public Archive...</div>
+        <div class="loading-text">Accessing Archival Node...</div>
     </div>
 
     <div id="toast" class="toast">Lore Data Synchronized</div>
@@ -208,7 +208,12 @@
             <div id="nav-list" class="flex-grow"></div>
 
             <div class="mt-20 pt-10 border-t border-black/5">
-                <div onclick="window.openBookArchiveSequence()" class="block text-center font-serif uppercase font-black text-[11px] no-underline !text-[#7a1d1d] hover:underline mb-4 cursor-pointer">Custodian's Public Archive</div>
+                <!-- CUSTODIAN LINK -->
+                <div onclick="window.openArchiveSequence('library.html')" class="block text-center font-serif uppercase font-black text-[11px] no-underline !text-[#7a1d1d] hover:underline mb-4 cursor-pointer">Custodian's Public Archive</div>
+                
+                <!-- ARCHIVIST LINK -->
+                <div onclick="window.openArchiveSequence('archlibrary.html')" class="block text-center font-serif uppercase font-black text-[11px] no-underline !text-[#7a1d1d] hover:underline mb-4 cursor-pointer">Archivist Public Archive</div>
+                
                 <a href="playershandbook.html" class="block text-center font-serif uppercase font-black text-[11px] no-underline !text-[#7a1d1d] hover:underline">← Return to Hub</a>
             </div>
         </div>
@@ -227,7 +232,7 @@
                 <button onclick="window.addManualSection('info')" class="arch-btn arch-btn-add">📊 Info Box</button>
                 <button onclick="window.addManualSection('media')" class="arch-btn arch-btn-add">🖼️ Media Block</button>
             </div>
-            <div class="page-indicator mt-20 opacity-30 text-center">END OF LORE RECORD • ARCHIVE VER. 1.3.0</div>
+            <div class="page-indicator mt-20 opacity-30 text-center">END OF LORE RECORD • ARCHIVE VER. 1.3.1</div>
         </div>
     </div>
 
@@ -279,27 +284,19 @@
         window.openZoom = function(e, url) { e.stopPropagation(); if(!url) return; const modal = document.getElementById('lightbox-modal'); const content = document.getElementById('lightbox-content'); content.innerHTML = url.toLowerCase().endsWith('.mp4') ? `<video src="${url}" class="lightbox-asset" autoplay loop muted playsinline></video>` : `<img src="${url}" class="lightbox-asset">`; modal.classList.remove('hidden'); };
         
         // --- ARCHIVE REDIRECT SEQUENCE ---
-        window.openBookArchiveSequence = function() {
+        window.openArchiveSequence = function(destination) {
             const overlay = document.getElementById('cinematic-overlay');
             const audio = document.getElementById('audio-archive-sequence');
-            
             overlay.classList.add('active');
-            
-            // Try to play audio - proceed to redirect even if audio is blocked
             const playAudio = async () => {
                 try {
                     audio.currentTime = 0;
                     await audio.play();
-                } catch (e) {
-                    console.warn("Audio block encountered. Redirecting silently.");
-                }
+                } catch (e) {}
             };
-
             playAudio();
-
-            // Blackout transition duration (2.5s matches a standard paper rustle)
             setTimeout(() => {
-                window.location.href = 'library.html';
+                window.location.href = destination;
             }, 2500);
         };
 
