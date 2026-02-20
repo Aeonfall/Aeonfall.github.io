@@ -16,77 +16,62 @@
             overflow: hidden; 
         }
 
-        /* TRANSITION OVERLAY */
-        #cinematic-overlay {
-            position: fixed;
-            inset: 0;
-            background: #000;
-            z-index: 30000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.8s ease;
+        /* GUESTBOOK RECEPTION TERMINAL */
+        #access-terminal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 100000;
+            display: flex; align-items: center; justify-content: center; padding: 20px;
+            transition: opacity 1s ease, transform 1s ease;
         }
-        #cinematic-overlay.active { opacity: 1; pointer-events: auto; }
+        #access-terminal.unlocked { opacity: 0; pointer-events: none; transform: scale(1.05); }
         
-        .loading-text {
-            font-family: 'Cinzel', serif;
-            color: #7a1d1d;
-            font-size: 12px;
-            letter-spacing: 6px;
-            text-transform: uppercase;
-            font-weight: 900;
-            animation: pulse 2s infinite;
-            margin-top: 20px;
+        .guestbook-container {
+            width: 100%; max-width: 960px; height: 680px;
+            background: #f4edd8; background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+            box-shadow: 0 50px 150px rgba(0,0,0,1), inset 0 0 100px rgba(0,0,0,0.1);
+            border: 1px solid #dcd1b2; border-radius: 4px; display: flex; position: relative;
+            transform-style: preserve-3d;
         }
-        @keyframes pulse { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
+        .guestbook-spine { width: 50px; background: #3a2220; border-left: 4px solid #251615; box-shadow: inset 8px 0 20px rgba(0,0,0,0.7); }
+        .guestbook-page { flex: 1; padding: 70px 60px; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+        .page-left { border-right: 1px solid rgba(0,0,0,0.15); }
 
-        /* THE MASTER PARCHMENT */
+        .book-title { font-family: 'Cinzel', serif; font-weight: 900; color: #7a1d1d; font-size: 26px; text-transform: uppercase; margin-bottom: 5px; text-align: center; letter-spacing: 2px; }
+        .book-sub { font-family: 'Special Elite', cursive; color: #5d4037; font-size: 10px; text-align: center; margin-bottom: 40px; text-transform: uppercase; letter-spacing: 3px; opacity: 0.8; }
+        
+        .ledger-line { width: 100%; border-bottom: 1px solid rgba(0,0,0,0.15); padding: 18px 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .ledger-line:hover { background: rgba(122, 29, 29, 0.08); border-bottom-color: #7a1d1d; padding-left: 20px; }
+        .ledger-name { font-family: 'Homemade Apple', cursive; color: #1a0f0a; font-size: 20px; }
+        .ledger-status { font-family: 'Special Elite'; font-size: 8px; opacity: 0.5; text-transform: uppercase; font-weight: bold; color: #7a1d1d; }
+
+        .sign-here-input { width: 100%; background: transparent; border: none; border-bottom: 2px solid #7a1d1d; font-family: 'Homemade Apple', cursive; font-size: 32px; padding: 20px 0; color: #1a0f0a; outline: none; text-align: center; transition: 0.3s; }
+
+        /* TOAST SYSTEM */
+        .toast { 
+            position: fixed; top: 40px; left: 50%; transform: translateX(-50%); 
+            background: #1a0f0a; color: #f4edd8; padding: 20px 50px; border-radius: 4px; 
+            z-index: 2000000; opacity: 0; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            font-family: 'Cinzel'; font-size: 14px; font-weight: 900; pointer-events: none;
+            border: 3px double #7a1d1d; box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+            letter-spacing: 3px; text-transform: uppercase;
+        }
+
+        /* MASTER LAYOUT */
         .parchment-container {
-            max-width: 1400px;
-            margin: 20px auto;
-            background: #f4edd8;
+            max-width: 1400px; margin: 20px auto; background: #f4edd8;
             background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
             box-shadow: 0 50px 100px rgba(0,0,0,0.8), inset 0 0 100px rgba(0,0,0,0.1);
-            border-radius: 4px;
-            position: relative;
-            display: flex;
-            height: calc(100vh - 40px);
-            border: 1px solid #dcd1b2;
-            box-sizing: border-box;
-            overflow: hidden;
+            border-radius: 4px; position: relative; display: flex; height: calc(100vh - 40px);
+            border: 1px solid #dcd1b2; box-sizing: border-box; overflow: hidden;
         }
 
-        /* SIDEBAR / THE SHELF */
         .manual-nav {
-            width: 320px;
-            background: rgba(0,0,0,0.06);
-            border-right: 1px solid rgba(122, 29, 29, 0.15);
-            padding: 40px 15px;
-            flex-shrink: 0;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            overflow-y: auto;
+            width: 320px; background: rgba(0,0,0,0.06); border-right: 1px solid rgba(122, 29, 29, 0.15);
+            padding: 40px 15px; flex-shrink: 0; display: flex; flex-direction: column; height: 100%; overflow-y: auto;
         }
-
         .shelf-item {
-            font-family: 'Cinzel', serif;
-            font-size: 10px;
-            font-weight: 900;
-            text-transform: uppercase;
-            color: #f4edd8;
-            padding: 14px 18px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            letter-spacing: 1px;
-            border-left: 6px solid transparent;
-            position: relative;
-            box-shadow: 4px 4px 12px rgba(0,0,0,0.3);
+            font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; text-transform: uppercase; color: #f4edd8;
+            padding: 14px 18px; margin-bottom: 10px; cursor: pointer; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            letter-spacing: 1px; border-left: 6px solid transparent; position: relative; box-shadow: 4px 4px 12px rgba(0,0,0,0.3);
         }
         .shelf-item.book { background: #4a2c2a; border-left-color: #7a1d1d; }
         .shelf-item.journal { background: #5d4037; border-left-color: #bba683; }
@@ -96,110 +81,162 @@
         .shelf-item:hover { transform: translateX(10px); filter: brightness(1.2); }
         .shelf-item.active { transform: translateX(15px); box-shadow: -8px 8px 25px rgba(122, 29, 29, 0.5); z-index: 10; }
 
-        .new-badge {
-            position: absolute; top: -5px; right: -5px; background: #7a1d1d; color: white;
-            font-size: 7px; padding: 2px 6px; border-radius: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-            animation: badgePulse 1.5s infinite; border: 1px solid rgba(255,255,255,0.2);
-            pointer-events: none;
-        }
+        .new-badge { position: absolute; top: -5px; right: -5px; background: #7a1d1d; color: white; font-size: 7px; padding: 2px 6px; border-radius: 2px; box-shadow: 0 2px 5px rgba(0,0,0,0.4); animation: badgePulse 1.5s infinite; border: 1px solid rgba(255,255,255,0.2); pointer-events: none; }
+        .personal-badge { position: absolute; bottom: -5px; right: -5px; background: #1565c0; color: white; font-size: 7px; padding: 2px 6px; border-radius: 2px; box-shadow: 0 2px 5px rgba(122, 29, 29, 0.4); border: 1px solid rgba(255,255,255,0.2); pointer-events: none; text-transform: uppercase; font-weight: 900; }
         @keyframes badgePulse { 0% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(1); opacity: 0.8; } }
 
-        /* CONTENT AREA */
-        .manual-body {
-            flex-grow: 1;
-            padding: 60px 50px;
-            height: 100%;
-            overflow-y: auto;
-            overflow-x: hidden; 
-            scroll-behavior: smooth;
-            box-sizing: border-box;
-        }
+        .manual-body { flex-grow: 1; padding: 60px 50px; height: 100%; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; box-sizing: border-box; }
+        #manual-sections-container { display: flex; flex-wrap: wrap; align-items: flex-start; width: 100%; gap: 0; }
 
-        #manual-sections-container {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: flex-start;
-            width: 100%;
-            gap: 0; 
-        }
+        /* HEADINGS */
+        .manual-h2 { font-family: 'Cinzel', serif; font-weight: 900; font-size: 2.2rem; color: #7a1d1d; border-bottom: 4px double #7a1d1d; padding-bottom: 8px; text-transform: uppercase; margin-bottom: 25px; width: 100%; letter-spacing: 2px; }
+        .manual-h3 { font-family: 'Cinzel', serif; font-weight: 700; font-size: 1.4rem; color: #5d4037; border-bottom: 1px solid rgba(93, 64, 55, 0.4); padding-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; width: 100%; }
 
-        /* TUNER PANEL */
-        .tuner-panel { 
-            background: #fff; border: 1px solid #7a1d1d; padding: 10px 15px; border-radius: 4px; 
-            margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 15px; align-items: center; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; box-sizing: border-box;
-            position: relative; z-index: 100;
-        }
-        .tuner-group { display: flex; flex-direction: column; gap: 1px; }
-        .tuner-label { font-size: 7px; font-weight: 900; text-transform: uppercase; color: #7a1d1d; letter-spacing: 1px; }
-        .tuner-slider { width: 80px; accent-color: #7a1d1d; height: 12px; }
-        .tuner-select { font-size: 8px; text-transform: uppercase; font-weight: 900; border: 1px solid #ddd; padding: 2px; border-radius: 2px; background: #f9f9f9; }
-
-        /* CATEGORIZED DROPDOWNS */
-        .arch-dropdown { position: relative; display: inline-block; }
-        .arch-dropdown-content {
-            display: none; position: absolute; bottom: 100%; left: 0; background: #fff;
-            min-width: 200px; box-shadow: 0 -15px 30px rgba(0,0,0,0.3); z-index: 5000;
-            border: 2px solid #7a1d1d; border-radius: 4px; margin-bottom: 10px;
-            overflow: hidden;
-        }
-        .arch-dropdown.active .arch-dropdown-content { display: block; }
-        
-        .dropdown-link {
-            padding: 12px 18px; text-decoration: none; display: block;
-            font-size: 10px; font-weight: 900; text-transform: uppercase; color: #1a0f0a;
-            border-bottom: 1px solid rgba(0,0,0,0.05); transition: 0.2s; cursor: pointer;
-        }
-        .dropdown-link:hover { background: #7a1d1d; color: #f4edd8; padding-left: 22px; }
-
-        /* VISIBILITY BADGE */
-        .visibility-tag { font-size: 8px; font-weight: 900; text-transform: uppercase; padding: 2px 6px; border-radius: 2px; margin-left: 10px; vertical-align: middle; }
-        .tag-public { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
-        .tag-secret { background: #fff3e0; color: #ef6c00; border: 1px solid #ffe0b2; }
-        .tag-personal { background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; }
-
-        /* UI BUTTONS */
         .arch-btn { font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 10px 20px; border-radius: 4px; cursor: pointer; border: 1px solid #7a1d1d; transition: 0.2s; display: inline-flex; align-items: center; gap: 10px; background: #7a1d1d; color: white; }
         .arch-btn:hover { background: #000; border-color: #000; transform: translateY(-2px); }
 
-        .hidden { display: none !important; }
-        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX( -50%); background: #1a0f0a; color: white; padding: 12px 32px; border-radius: 4px; z-index: 10000; opacity: 0; transition: 0.3s; font-family: 'Cinzel'; font-size: 11px; pointer-events: none; }
-        
-        /* TABLE STYLING */
-        .manual-table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: inherit; table-layout: auto; }
-        .manual-table th { font-family: 'Cinzel', serif; font-weight: 900; text-align: left; padding: 12px; border-bottom: 2px solid #7a1d1d; color: #7a1d1d; background: rgba(0,0,0,0.02); }
-        .manual-table td { padding: 12px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .arch-dropdown { position: relative; display: inline-block; }
+        .arch-dropdown-content { display: none; position: absolute; bottom: 100%; left: 0; background: #fff; min-width: 210px; box-shadow: 0 -15px 30px rgba(0,0,0,0.3); z-index: 5000; border: 2px solid #7a1d1d; border-radius: 4px; margin-bottom: 10px; overflow: hidden; }
+        .arch-dropdown.active .arch-dropdown-content { display: block; }
+        .dropdown-link { padding: 12px 18px; display: block; font-size: 10px; font-weight: 900; text-transform: uppercase; color: #1a0f0a; border-bottom: 1px solid rgba(0,0,0,0.05); transition: 0.2s; cursor: pointer; }
+        .dropdown-link:hover { background: #7a1d1d; color: #f4edd8; padding-left: 22px; }
+
+        /* CINEMATIC BLACKOUT */
+        #cinematic-overlay {
+            position: fixed; inset: 0; background: #000; z-index: 90000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.8s ease;
+        }
+        #cinematic-overlay.active { opacity: 1; pointer-events: auto; }
+        .loading-text { font-family: 'Cinzel', serif; color: #7a1d1d; font-size: 12px; letter-spacing: 6px; text-transform: uppercase; font-weight: 900; animation: pulse 2s infinite; margin-top: 20px; }
+
+        #uid-link-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 95000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .modal-box-dossier { background: #fff; width: 100%; max-width: 500px; border: 4px double #7a1d1d; border-radius: 4px; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.7); }
+        .modal-banner { background: #1a1a1a; color: #f4edd8; padding: 15px 25px; font-family: 'Cinzel'; font-weight: 900; text-transform: uppercase; font-size: 12px; letter-spacing: 2px; border-bottom: 2px solid #7a1d1d; }
 
         .role-pill { background: rgba(0,0,0,0.05); border-radius: 99px; padding: 3px; display: inline-flex; gap: 4px; border: 1px solid rgba(0,0,0,0.1); align-self: center; }
         .role-tab { padding: 4px 14px; font-family: 'Cinzel', serif; font-size: 9px; font-weight: 900; border-radius: 99px; transition: 0.3s; color: #5d4037; text-transform: uppercase; cursor: pointer; }
         .role-tab.active { background: #7a1d1d; color: white; }
+
+        .link-user-btn { background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; font-size: 8px; font-weight: 900; padding: 4px 10px; border-radius: 2px; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
+        .bind-tag-btn { background: #f4f4f4; color: #1a1a1a; padding: 4px 10px; border-radius: 2px; font-size: 8px; font-weight: 900; text-transform: uppercase; cursor: pointer; border: 1px solid #ddd; transition: 0.2s; }
+        .bind-tag-btn:hover { background: #1565c0; color: white; border-color: #1565c0; }
+
+        .tuner-panel { background: #fff; border: 1px solid #7a1d1d; padding: 10px 15px; border-radius: 4px; margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 15px; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; box-sizing: border-box; position: relative; z-index: 100; }
+        .tuner-group { display: flex; flex-direction: column; gap: 1px; }
+        .tuner-label { font-size: 7px; font-weight: 900; text-transform: uppercase; color: #7a1d1d; letter-spacing: 1px; }
+        .tuner-slider { width: 80px; accent-color: #7a1d1d; height: 12px; }
+
+        .visibility-tag { font-size: 8px; font-weight: 900; text-transform: uppercase; padding: 2px 6px; border-radius: 2px; margin-left: 10px; vertical-align: middle; }
+        .tag-public { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+        .tag-secret { background: #fff3e0; color: #ef6c00; border: 1px solid #ffe0b2; }
+        .tag-personal { background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body onclick="window.closeAllDropdowns()">
 
-    <!-- AUDIO PLAYER -->
-    <audio id="audio-archive-trigger" preload="auto">
-        <source src="makigai_maimai-paper-245786.mp3" type="audio/mpeg">
-    </audio>
+    <!-- HIGH-PRIORITY NOTIFICATION SYSTEM -->
+    <div id="toast" class="toast">Signature Processed</div>
+
+    <!-- GUESTBOOK ACCESS TERMINAL -->
+    <div id="access-terminal">
+        <div class="guestbook-container">
+            <div class="guestbook-spine"></div>
+            
+            <div class="guestbook-page page-left" id="terminal-login-view">
+                <div class="book-title">Archival Registry</div>
+                <div class="book-sub">Citizen Guestbook • Sign Ledger to Enter</div>
+                
+                <input type="text" id="terminal-search" class="terminal-input !bg-transparent !border-b !border-t-0 !border-x-0 !border-black/10 !mb-4 !text-black !p-3 !outline-none !font-serif" placeholder="Find character signature..." oninput="window.filterTerminal(this.value)">
+                
+                <div id="terminal-results" class="flex-grow overflow-y-auto pr-4">
+                    <!-- Citizens populated via JS -->
+                </div>
+
+                <div class="mt-4 pt-4 border-t border-black/5 flex flex-wrap justify-center gap-x-6 gap-y-2">
+                    <button onclick="window.bypassTerminal()" class="text-[9px] font-black uppercase opacity-40 hover:opacity-100 transition-opacity">Proceed as Guest</button>
+                    <button onclick="window.proceedAsRegistered()" class="text-[9px] font-black uppercase opacity-40 hover:opacity-100 transition-opacity">Proceed as Registered</button>
+                    <button onclick="window.location.href='lore.html'" class="text-[9px] font-black uppercase opacity-40 hover:opacity-100 transition-opacity text-red-800">I Don't want to sign</button>
+                </div>
+            </div>
+
+            <div class="guestbook-page" id="terminal-register-view">
+                <div class="book-title">Register Identity</div>
+                <div class="book-sub">Permanent Archival Anchoring</div>
+                
+                <div class="flex-grow flex flex-col justify-center gap-8">
+                    <p class="font-serif italic text-[12px] text-[#5d4037] text-center px-4 leading-relaxed">
+                        "I hereby verify my character's presence and bind my soul to the Aeonfall Archives. Synchronization starts now."
+                    </p>
+                    
+                    <div class="px-6">
+                        <label class="text-[8px] uppercase font-black opacity-40 block mb-1">Character Name (Signature)</label>
+                        <input type="text" id="reg-name-input" class="sign-here-input" placeholder="Inscribe name...">
+                    </div>
+
+                    <div class="flex flex-col gap-4 items-center">
+                        <button id="reg-bind-btn" onclick="window.registerCitizen()" class="arch-btn !bg-black !border-black !px-12 !py-4 shadow-xl hover:!bg-[#7a1d1d] active:scale-95 transition-all">Sign the Registry</button>
+                        <button onclick="window.toggleTerminalView('login')" class="text-[8px] font-black uppercase opacity-40 hover:opacity-100">Back to Ledger</button>
+                    </div>
+                </div>
+
+                <div class="text-center opacity-20 font-serif text-[8px] mt-4 uppercase font-black tracking-[3px]">Ver. 6.0 • Cognitive Sync Active</div>
+            </div>
+        </div>
+    </div>
 
     <!-- TRANSITION OVERLAY -->
     <div id="cinematic-overlay">
-        <div class="loading-text">Accessing Historical Ledgers...</div>
+        <div class="loading-text">Synchronizing Cognitive Archival Stack...</div>
     </div>
 
-    <div id="toast" class="toast">Archive Data Synchronized</div>
+    <!-- DOSSIER MODAL (DM ONLY) -->
+    <div id="uid-link-modal" class="hidden" onclick="this.classList.add('hidden')">
+        <div class="modal-box-dossier" onclick="event.stopPropagation()">
+            <div class="modal-banner flex justify-between items-center">
+                <span>Citizen Access Ledger</span>
+                <button onclick="document.getElementById('uid-link-modal').classList.add('hidden')" class="opacity-50 hover:opacity-100">✕</button>
+            </div>
+            <div class="p-8">
+                <p class="text-[9px] uppercase font-black opacity-30 mb-4 tracking-widest text-[#7a1d1d]">Associate Citizen Signature to Record</p>
+                <input type="text" id="user-search" class="w-full bg-gray-50 border border-gray-200 p-3 mb-4 rounded font-serif text-sm italic" placeholder="Search Character Name or paste UID..." oninput="window.filterDMUsers(this.value)">
+                
+                <div id="user-results" class="max-h-48 overflow-y-auto border border-gray-100 rounded mb-8 bg-white">
+                    <!-- Results populated via JS -->
+                </div>
+
+                <div class="pt-6 border-t border-dashed border-gray-300">
+                    <p class="text-[8px] uppercase font-black opacity-40 mb-3">Manual Archival Fingerprint Bind</p>
+                    <div class="flex gap-2">
+                        <input type="text" id="manual-uid-input" class="flex-grow p-2 bg-gray-100 border border-gray-200 rounded font-mono text-[10px]" placeholder="Enter Raw Firebase UID...">
+                        <button onclick="window.assignManualUID()" class="bg-[#1a1a1a] text-[#f4edd8] px-4 py-2 text-[8px] font-black uppercase rounded hover:bg-[#7a1d1d] transition-colors shadow-sm">Bind RAW</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div id="lightbox-modal" class="lightbox hidden" onclick="this.classList.add('hidden')">
         <div id="lightbox-content"></div>
     </div>
 
     <div class="parchment-container">
-        <!-- SIDEBAR / THE SHELF -->
+        <!-- SIDEBAR -->
         <div class="manual-nav" onclick="event.stopPropagation()">
             <div class="mb-8 text-center">
                 <h1 class="font-serif font-black text-2xl text-[#7a1d1d] uppercase leading-none">Aeonfall</h1>
                 <p class="text-[8px] uppercase font-black tracking-widest opacity-50 mt-1">Custodian's Public Archive</p>
-                <div id="user-display" class="font-mono text-[7px] opacity-40 mt-2 hidden">UID: Loading...</div>
+                
+                <div id="user-display-container" class="mt-6 border-y border-black/5 py-4">
+                    <div id="user-identity" class="font-serif text-[10px] font-black uppercase text-[#5d4037]">Securing signature...</div>
+                    <div id="user-signout-container" class="mt-2 hidden">
+                        <button onclick="window.resetIdentity()" class="text-[9px] font-black uppercase text-[#7a1d1d] hover:underline">Sign Out / Leave Ledger</button>
+                    </div>
+                    <div id="guest-login-action" class="mt-2 hidden">
+                        <button onclick="window.showGuestbook()" class="text-[9px] font-black uppercase text-[#7a1d1d] hover:underline">Sign the Guest Book</button>
+                    </div>
+                </div>
             </div>
 
             <div class="role-pill mx-auto mb-6">
@@ -207,8 +244,7 @@
                 <div id="role-dm" onclick="window.setRole('dm')" class="role-tab">DM</div>
             </div>
             
-            <!-- SHELF NAVIGATION -->
-            <div id="nav-list" class="flex-grow mt-6"></div>
+            <div id="nav-list" class="flex-grow"></div>
 
             <div class="mt-10 pt-10 border-t border-black/5">
                 <div onclick="window.openReturnToLoreSequence()" class="block text-center font-serif uppercase font-black text-[11px] no-underline !text-[#7a1d1d] hover:underline mb-4 cursor-pointer">Return to Lore</div>
@@ -219,7 +255,7 @@
         <!-- CONTENT AREA -->
         <div class="manual-body" id="content-pane" onclick="window.closeAllDropdowns()">
             <div id="manual-header"></div>
-            <div id="manual-sections-container"></div>
+            <div id="manual-sections-container" class="flex flex-wrap items-start w-full"></div>
 
             <!-- DM CATEGORIZED CREATION TOOLBAR -->
             <div id="dm-global-controls" class="hidden mt-16 pt-8 border-t border-black/10 flex flex-wrap gap-4" onclick="event.stopPropagation()">
@@ -227,12 +263,11 @@
                 <div class="arch-dropdown" id="dd-book">
                     <button class="arch-btn" onclick="window.toggleDropdown(event, 'dd-book')">📕 Book</button>
                     <div class="arch-dropdown-content">
-                        <div class="dropdown-link" onclick="window.addManualSection('subheading', 'book')">Create Volume (Heading)</div>
+                        <div class="dropdown-link" onclick="window.addManualSection('subheading', 'book')">Volume Heading</div>
                         <div class="dropdown-link" onclick="window.addManualSection('text', 'book')">Text Block</div>
                         <div class="dropdown-link" onclick="window.addManualSection('media', 'book')">Media Block</div>
                         <div class="dropdown-link" onclick="window.addManualSection('table', 'book')">Data Table</div>
                         <div class="dropdown-link" onclick="window.addManualSection('note', 'book')">Sage Note</div>
-                        <div class="dropdown-link" onclick="window.addManualSection('research', 'book')">Research</div>
                     </div>
                 </div>
 
@@ -274,26 +309,23 @@
                     </div>
                 </div>
             </div>
-            <div class="page-indicator mt-20 opacity-30 text-center uppercase tracking-widest text-[9px] font-black">End of Archive Record • Ver. 2.1.2</div>
+            <div class="page-indicator mt-20 opacity-30 text-center uppercase tracking-widest text-[9px] font-black">End of Archive Record • Ver. 6.0.0</div>
         </div>
     </div>
 
-    <!-- AUTH MODALS -->
-    <div id="del-modal" class="fixed inset-0 z-[11000] flex items-center justify-center p-4 hidden">
+    <!-- DM AUTH MODALS -->
+    <div id="del-modal" class="fixed inset-0 z-[110000] flex items-center justify-center p-4 hidden">
         <div class="absolute inset-0 bg-black/90" onclick="document.getElementById('del-modal').classList.add('hidden')"></div>
         <div class="bg-white p-10 rounded-2xl w-full max-w-sm text-center relative z-10 shadow-2xl text-black">
             <h3 class="text-2xl font-serif font-black text-red-700 uppercase mb-4">Purge Record</h3>
             <p id="del-modal-text" class="text-sm text-gray-500 mb-10 italic">This entry will be permanently expunged.</p>
-            <div class="flex flex-col gap-4">
-                <button id="confirm-del-btn" class="w-full bg-red-700 text-white py-4 rounded-xl font-black text-xs uppercase shadow-lg">Confirm Purge</button>
-                <button onclick="document.getElementById('del-modal').classList.add('hidden')" class="w-full bg-gray-100 text-gray-400 py-3 rounded-xl font-bold uppercase text-[10px]">Decline</button>
-            </div>
+            <div class="flex flex-col gap-4"><button id="confirm-del-btn" class="w-full bg-red-700 text-white py-4 rounded-xl font-black text-xs uppercase shadow-lg">Confirm Purge</button><button onclick="document.getElementById('del-modal').classList.add('hidden')" class="w-full bg-gray-100 text-gray-400 py-3 rounded-xl font-bold uppercase text-[10px]">Decline</button></div>
         </div>
     </div>
 
-    <div id="pass-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[10000] hidden p-4">
+    <div id="pass-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[110000] hidden p-4">
         <div class="bg-gray-800 p-10 rounded-2xl w-full max-sm border-2 border-amber-600 text-white text-center shadow-2xl">
-            <h3 class="text-xl font-serif text-amber-500 font-bold mb-4 uppercase">DM Authorization</h3>
+            <h3 class="text-xl font-serif text-amber-500 font-bold mb-4 uppercase">Custodian Authorization</h3>
             <input type="password" id="dm-pass" class="w-full bg-gray-900 text-center text-2xl rounded-lg p-3 mb-8 border border-gray-700 text-amber-500 focus:outline-none">
             <button onclick="window.authDm()" class="w-full bg-amber-600 hover:bg-amber-500 text-white py-4 rounded-xl font-bold uppercase text-xs tracking-widest">Unlock Archives</button>
             <button onclick="document.getElementById('pass-modal').classList.add('hidden')" class="text-[10px] text-gray-500 uppercase font-black mt-6 block w-full text-center">Cancel</button>
@@ -311,135 +343,277 @@
         const auth = getAuth(app);
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'aeonfall-manager-v2';
 
-        let manualSections = [];
-        let seenDocs = []; // Local cache of seen document IDs
-        let manualHeader = { title: "Archival History", subtitle: "Records of civilizations past and the emergence of the current Aeon." };
-        let activeRole = 'player', activeEditId = null, userAuth = null, saveTimer = null, deleteCallback = null, draggedId = null;
+        let manualSections = [], seenDocs = [], allUsers = [], targetSectionForUID = null;
+        let manualHeader = { title: "Archival History", subtitle: "Verifying civilizations past." };
+        let activeRole = 'player', activeEditId = null, userAuth = null, saveTimer = null, deleteCallback = null;
+
+        // --- TOAST NOTIFICATION ---
+        window.showToast = (m) => { 
+            const t = document.getElementById('toast'); 
+            if(t) { 
+                t.textContent = m; t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(20px)';
+                setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(0)'; }, 3000); 
+            } 
+        };
+
+        // --- GUESTBOOK LOGIC ---
+        window.showGuestbook = () => {
+            const terminal = document.getElementById('access-terminal');
+            if(terminal) {
+                terminal.classList.remove('unlocked');
+                window.filterTerminal(''); 
+            }
+        };
+
+        window.filterTerminal = (val) => {
+            const container = document.getElementById('terminal-results'); if(!container) return;
+            const search = val.toLowerCase();
+            const filtered = allUsers.filter(u => (u.username || '').toLowerCase().includes(search));
+            container.innerHTML = filtered.map(u => `
+                <div class="ledger-line" onclick="window.claimIdentity('${u.uid}')">
+                    <span class="ledger-name text-black">${u.username || 'Unidentified'}</span>
+                    <span class="ledger-status">Signed Registry</span>
+                </div>
+            `).join('') || (val ? '<div class="p-8 text-center text-[#7a1d1d] font-bold uppercase text-[10px] opacity-40">Identity Not Found</div>' : '<div class="p-8 text-center opacity-30 text-[9px] uppercase font-black">Archive Registry Synchronization Active</div>');
+        };
+
+        window.claimIdentity = (uid) => {
+            localStorage.setItem('aeonfall_claimed_uid', uid);
+            window.showToast("COGNITIVE SIGNATURE ANCHORED");
+            setTimeout(() => window.location.reload(), 800);
+        };
+
+        window.registerCitizen = async () => {
+            const characterName = document.getElementById('reg-name-input')?.value.trim();
+            if (!characterName) { window.showToast("Signature Required"); return; }
+            const currentUser = auth.currentUser || userAuth;
+            if (!currentUser) { window.showToast("Archival Channel Offline..."); return; }
+
+            try {
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', currentUser.uid), {
+                    username: characterName,
+                    registeredAt: Date.now(),
+                    role: 'citizen'
+                });
+                localStorage.setItem('aeonfall_claimed_uid', currentUser.uid);
+                window.showToast("IDENTITY RECORD CREATED");
+                setTimeout(() => window.location.reload(), 1500);
+            } catch (e) { window.showToast("Registration Refused."); }
+        };
+
+        window.toggleTerminalView = (view) => {
+            const login = document.getElementById('terminal-login-view');
+            const reg = document.getElementById('terminal-register-view');
+            if (view === 'register') { login?.classList.add('hidden'); reg?.classList.remove('hidden'); }
+            else { login?.classList.remove('hidden'); reg?.classList.add('hidden'); }
+        };
+
+        window.bypassTerminal = () => { 
+            document.getElementById('access-terminal')?.classList.add('unlocked'); 
+            window.showToast("PROCEEDING AS GUEST");
+        };
+
+        window.proceedAsRegistered = () => {
+            const claimedUID = localStorage.getItem('aeonfall_claimed_uid');
+            if (claimedUID) {
+                document.getElementById('access-terminal')?.classList.add('unlocked');
+                window.showToast("RETRIEVING ANCHORED SESSION");
+            } else {
+                window.showToast("NO SIGNATURE FOUND ON LEDGER");
+            }
+        };
+
+        window.resetIdentity = () => { 
+            localStorage.removeItem('aeonfall_claimed_uid'); 
+            window.showToast("LOGGING OUT...");
+            setTimeout(() => window.location.reload(), 800);
+        };
 
         // --- GLOBAL HOISTING ---
-        window.showToast = (m) => { const t = document.getElementById('toast'); if(t) { t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 2000); } };
-        window.openDelModal = (text, callback) => { const txt = document.getElementById('del-modal-text'); if (txt) txt.innerText = text; deleteCallback = callback; document.getElementById('del-modal')?.classList.remove('hidden'); };
+        window.openDelModal = (text, callback) => { const txt = document.getElementById('del-modal-text'); if (txt) txt.innerText = text; deleteCallback = callback; const m = document.getElementById('del-modal'); if(m) m.classList.remove('hidden'); };
         window.setEditing = (id) => { activeEditId = id; };
         window.clearEditing = () => { activeEditId = null; };
         window.setRole = (r) => { if(r === 'dm') document.getElementById('pass-modal')?.classList.remove('hidden'); else { activeRole = 'player'; localStorage.setItem('aeonfall_role', 'player'); window.updateRoleUI(); } };
-        window.authDm = () => { if(document.getElementById('dm-pass').value === 'Rew4994') { activeRole='dm'; localStorage.setItem('aeonfall_role', 'dm'); document.getElementById('pass-modal')?.classList.add('hidden'); window.updateRoleUI(); } else { window.showToast("Key Mismatch"); } };
-        window.updateRoleUI = () => { const isDM = activeRole === 'dm'; document.getElementById('role-player')?.classList.toggle('active', !isDM); document.getElementById('role-dm')?.classList.toggle('active', isDM); document.getElementById('dm-global-controls')?.classList.toggle('hidden', !isDM); document.getElementById('user-display')?.classList.toggle('hidden', !isDM); document.body.classList.toggle('dm-active-edit', isDM); window.renderManual(); };
-        window.openZoom = (e, url) => { e.stopPropagation(); if(!url) return; const modal = document.getElementById('lightbox-modal'); const content = document.getElementById('lightbox-content'); content.innerHTML = url.toLowerCase().endsWith('.mp4') ? `<video src="${url}" class="lightbox-asset" autoplay loop muted playsinline></video>` : `<img src="${url}" class="lightbox-asset">`; modal.classList.remove('hidden'); };
+        window.authDm = () => { if(document.getElementById('dm-pass')?.value === 'Rew4994') { activeRole='dm'; localStorage.setItem('aeonfall_role', 'dm'); document.getElementById('pass-modal')?.classList.add('hidden'); window.updateRoleUI(); } else { window.showToast("Key Mismatch"); } };
         
-        window.toggleDropdown = (e, id) => { e.stopPropagation(); const el = document.getElementById(id); const isActive = el.classList.contains('active'); window.closeAllDropdowns(); if (!isActive) el.classList.add('active'); };
+        window.updateRoleUI = () => { 
+            const isDM = activeRole === 'dm'; 
+            const controls = document.getElementById('dm-global-controls');
+            if(controls) controls.classList.toggle('hidden', !isDM);
+            const rPlayer = document.getElementById('role-player'); if(rPlayer) rPlayer.classList.toggle('active', !isDM);
+            const rDm = document.getElementById('role-dm'); if(rDm) rDm.classList.toggle('active', isDM);
+            document.body.classList.toggle('dm-active-edit', isDM); window.renderManual(); 
+        };
+
+        window.toggleDropdown = (e, id) => { e.stopPropagation(); const el = document.getElementById(id); if(!el) return; const isActive = el.classList.contains('active'); window.closeAllDropdowns(); if (!isActive) el.classList.add('active'); };
         window.closeAllDropdowns = () => { document.querySelectorAll('.arch-dropdown').forEach(d => d.classList.remove('active')); };
 
-        // --- READ/UNREAD TRACKING ---
+        window.openUserModal = (sectionId) => {
+            targetSectionForUID = sectionId;
+            document.getElementById('uid-link-modal')?.classList.remove('hidden');
+            const searchInput = document.getElementById('user-search'); if(searchInput) searchInput.value = '';
+            window.filterDMUsers('');
+        };
+
+        window.filterDMUsers = (val) => {
+            const container = document.getElementById('user-results'); if(!container) return;
+            const search = val.toLowerCase();
+            const filtered = allUsers.filter(u => (u.username || '').toLowerCase().includes(search) || (u.uid || '').toLowerCase().includes(search));
+            container.innerHTML = filtered.map(u => `
+                <div class="user-result flex justify-between items-center p-4 hover:bg-gray-100 cursor-pointer border-b border-gray-100" onclick="window.assignUIDToSection('${u.uid}')">
+                    <div>
+                        <div class="font-bold text-xs text-[#1a1a1a]">${u.username || 'Unidentified'}</div>
+                        <div class="font-mono text-[7px] opacity-30">${u.uid}</div>
+                    </div>
+                    <button class="bind-tag-btn">Sync Citizen</button>
+                </div>
+            `).join('') || '<div class="p-8 text-center opacity-40 text-[10px]">Registry Empty.</div>';
+        };
+
+        window.assignUIDToSection = async (uid) => {
+            if(!targetSectionForUID) return;
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', targetSectionForUID), { sharedWith: [uid] });
+            document.getElementById('uid-link-modal')?.classList.add('hidden');
+            window.showToast("Personal Link Established.");
+        };
+
+        window.assignManualUID = async () => {
+            const uidInput = document.getElementById('manual-uid-input');
+            const uid = uidInput ? uidInput.value.trim() : '';
+            if(!uid || !targetSectionForUID) return;
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', targetSectionForUID), { sharedWith: [uid] });
+            document.getElementById('uid-link-modal')?.classList.add('hidden');
+            window.showToast("Override Complete");
+        };
+
         window.markAsSeen = async (id) => {
             if(!userAuth) return;
-            // Record this document as seen by this specific user
-            await setDoc(doc(db, 'artifacts', appId, 'users', userAuth.uid, 'seenDocuments', id), { seenAt: Date.now() });
+            const claimedUID = localStorage.getItem('aeonfall_claimed_uid') || userAuth.uid;
+            await setDoc(doc(db, 'artifacts', appId, 'users', claimedUID, 'seenDocuments', id), { seenAt: Date.now() });
             window.scrollToSection(id);
         };
 
         window.scrollToSection = (id) => { const el = document.getElementById(`section-${id}`); if (el) el.scrollIntoView({ behavior: 'smooth' }); };
-
+        
         window.openReturnToLoreSequence = function() {
             const overlay = document.getElementById('cinematic-overlay');
             const audio = document.getElementById('audio-archive-trigger');
-            overlay.classList.add('active');
-            const playAudio = async () => { try { audio.currentTime = 0; await audio.play(); } catch (e) {} };
+            overlay?.classList.add('active');
+            const playAudio = async () => { try { if(audio) { audio.currentTime = 0; await audio.play(); } } catch (e) {} };
             playAudio();
             setTimeout(() => { window.location.href = 'lore.html'; }, 2500);
         };
 
-        // --- DATABASE OPS ---
-        window.dbUpdateSection = (id, field, val) => { if(saveTimer) clearTimeout(saveTimer); saveTimer = setTimeout(async () => { try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', id), { [field]: val }); window.showToast("Dossier Synced"); } catch(e) {} }, 800); };
-        window.dbUpdateHeader = (field, val) => { if(saveTimer) clearTimeout(saveTimer); saveTimer = setTimeout(async () => { try { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'libraryHeader'), { [field]: val }, { merge: true }); window.showToast("Signature Sync"); } catch(e) {} }, 800); };
+        window.openZoom = (e, url) => { e.stopPropagation(); if(!url) return; const modal = document.getElementById('lightbox-modal'); const content = document.getElementById('lightbox-content'); if(content) content.innerHTML = url.toLowerCase().endsWith('.mp4') ? `<video src="${url}" class="lightbox-asset" autoplay loop muted playsinline></video>` : `<img src="${url}" class="lightbox-asset">`; modal?.classList.remove('hidden'); };
+
+        window.dbUpdateSection = (id, field, val) => { if(saveTimer) clearTimeout(saveTimer); saveTimer = setTimeout(async () => { try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', id), { [field]: val }); window.showToast("Archive Synchronized"); } catch(e) {} }, 800); };
+        window.dbUpdateHeader = (field, val) => { if(saveTimer) clearTimeout(saveTimer); saveTimer = setTimeout(async () => { try { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'libraryHeader'), { [field]: val }, { merge: true }); window.showToast("Signature Sync Complete"); } catch(e) {} }, 800); };
 
         window.addManualSection = async (type, docType = 'book') => {
             if(!userAuth) return;
-            const data = { 
-                title: type === 'subheading' ? `NEW VOLUME` : "NEW SEGMENT", 
-                content: type === 'table' || type === 'media' ? "" : "Document details...", 
-                type: type, docType: docType, order: manualSections.length, 
-                createdAt: Date.now(), width: 100, fontSize: 14, ySpacing: 0,
-                visibility: 'public', sharedWith: [] 
-            };
-            if(type === 'table') { data.tableHeaders = ["Metric", "Value"]; data.tableRows = JSON.stringify([["Sync Status", "Verified"]]); }
-            if(type === 'media') { data.mediaUrl = ""; data.mediaDescription = "Enter asset description..."; data.width = 50; }
+            const data = { title: type === 'subheading' ? `NEW VOLUME` : "NEW SEGMENT", content: "Details...", type, docType, order: manualSections.length, createdAt: Date.now(), width: 100, fontSize: 14, ySpacing: 0, visibility: 'public', sharedWith: [] };
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'librarySections'), data);
             window.closeAllDropdowns();
-            window.showToast(`Identified as ${docType.toUpperCase()}`);
         };
 
-        window.triggerDelete = (id) => { window.openDelModal("Expunge segment permanently?", async () => { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', id)); }); };
+        window.triggerDelete = (id) => { window.openDelModal("Expunge record?", async () => { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', id)); }); };
 
         window.parseAeonfallContent = function(text, isDM) {
             if (!text) return ''; if (isDM && activeEditId !== null) return text;
-            return text.replace(/&&([^&]+)&&/g, (m, c) => { const parts = c.split('|'); return `<span class="term-hover def-term">${parts[0].trim()}<span class="tooltip-content">${parts[1] || 'No record.'}</span></span>`; })
-                       .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*(?!\*)([^\*]+?)\*(?!\*)/g, '<i>$1</i>').replace(/__(.*?)__/g, '<u>$1</u>');
+            return text.replace(/&&([^&]+)&&/g, (m, c) => { const parts = c.split('|'); return `<span class="term-hover def-term">${parts[0].trim()}<span class="tooltip-content">${parts[1] || 'No technical record.'}</span></span>`; })
+                .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+                .replace(/\*(?!\*)([^\*]+?)\*(?!\*)/g, '<i>$1</i>')
+                .replace(/-(?![ -])(.*?)-(?![ -])/g, '<u>$1</u>');
         };
 
         window.renderManual = () => {
-            const isDM = activeRole === 'dm'; const navList = document.getElementById('nav-list'); const container = document.getElementById('manual-sections-container'); const header = document.getElementById('manual-header');
-            const uid = userAuth ? userAuth.uid : 'anonymous';
-            
-            const visibleSections = manualSections.filter(s => {
-                if(isDM) return true;
-                if(s.visibility === 'public') return true;
-                if(s.visibility === 'personal' && s.sharedWith && s.sharedWith.includes(uid)) return true;
-                return false;
-            });
+            const isDM = activeRole === 'dm', claimedUID = localStorage.getItem('aeonfall_claimed_uid'), effectiveUID = claimedUID || userAuth?.uid || 'anonymous';
+            const navList = document.getElementById('nav-list'), container = document.getElementById('manual-sections-container');
+            if(!container) return;
 
-            if (header) { header.innerHTML = `<h1 id="manual-main-title" class="manual-h1 dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('manual-main-title')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateHeader('title', this.innerText)">${activeEditId === 'manual-main-title' ? manualHeader.title : window.parseAeonfallContent(manualHeader.title, false)}</h1><p id="manual-main-subtitle" class="font-serif italic text-sm text-[#5d4037] mb-10 dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('manual-main-subtitle')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateHeader('subtitle', this.innerText)">${activeEditId === 'manual-main-subtitle' ? manualHeader.subtitle : window.parseAeonfallContent(manualHeader.subtitle, false)}</p>`; }
+            const visibleSections = manualSections.filter(s => isDM || s.visibility === 'public' || (s.visibility === 'personal' && s.sharedWith?.includes(effectiveUID)));
+
+            const headerEl = document.getElementById('manual-header');
+            if (headerEl) headerEl.innerHTML = `<h1 id="manual-main-title" class="manual-h1 dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('manual-main-title')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateHeader('title', this.innerText)">${activeEditId === 'manual-main-title' ? manualHeader.title : window.parseAeonfallContent(manualHeader.title, false)}</h1><p id="manual-main-subtitle" class="font-serif italic text-sm text-[#5d4037] mb-10 dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('manual-main-subtitle')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateHeader('subtitle', this.innerText)">${activeEditId === 'manual-main-subtitle' ? manualHeader.subtitle : window.parseAeonfallContent(manualHeader.subtitle, false)}</p>`;
             
-            if (navList) navList.innerHTML = visibleSections
-                .filter(s => s.type === 'subheading')
-                .map(s => {
-                    const isWithin24Hours = (Date.now() - (s.createdAt || 0)) < 86400000;
-                    const isNew = isWithin24Hours && !seenDocs.includes(s.id);
-                    return `<div class="shelf-item ${s.docType || 'book'}" onclick="window.markAsSeen('${s.id}')">
-                        ${isNew ? '<span class="new-badge">NEW ACQUISITION</span>' : ''}
-                        <span class="item-label">${s.docType || 'archival item'}</span>
-                        ${s.title}
+            if (navList) navList.innerHTML = visibleSections.filter(s => s.type === 'subheading').map(s => {
+                const isWithin24Hours = (Date.now() - (s.createdAt || 0)) < 86400000;
+                const isNew = isWithin24Hours && !seenDocs.includes(s.id);
+                const isPersonal = s.visibility === 'personal';
+                return `<div class="shelf-item ${s.docType || 'book'}" onclick="window.markAsSeen('${s.id}')">
+                    ${isNew ? '<span class="new-badge">NEW</span>' : ''}
+                    ${isPersonal ? '<span class="personal-badge">Personal Archive</span>' : ''}
+                    <span class="item-label">${s.docType || 'item'}</span>
+                    ${s.title}
+                </div>`;
+            }).join('');
+
+            container.innerHTML = visibleSections.map(s => {
+                const hId = `head-${s.id}`, cId = `content-${s.id}`;
+                const customStyle = `width: calc(${s.width ?? 100}% - 10px); font-size: ${s.fontSize ?? 14}px; margin-top: ${s.ySpacing ?? 0}px; flex-shrink: 0; box-sizing: border-box; padding: 5px;`;
+                const linkedUser = s.visibility === 'personal' && s.sharedWith?.length ? allUsers.find(u => u.uid === s.sharedWith[0]) : null;
+
+                let html = `<section id="section-${s.id}" class="group relative transition-all doc-${s.docType || 'book'}" style="${customStyle}">
+                    ${isDM ? `<div class="tuner-panel">
+                        <div class="tuner-group"><span class="tuner-label">Width</span><input type="range" class="tuner-slider" min="10" max="100" value="${s.width ?? 100}" oninput="window.dbUpdateSection('${s.id}', 'width', parseInt(this.value))"></div>
+                        <div class="tuner-group"><span class="tuner-label">Access</span><select class="tuner-select" onchange="window.dbUpdateSection('${s.id}', 'visibility', this.value)"><option value="public" ${s.visibility==='public'?'selected':''}>Public</option><option value="secret" ${s.visibility==='secret'?'selected':''}>Secret</option><option value="personal" ${s.visibility==='personal'?'selected':''}>Personal Tie</option></select></div>
+                        ${s.visibility === 'personal' ? `<div class="tuner-group"><span class="tuner-label">Binding</span><button class="link-user-btn !text-[7px] !px-3" onclick="window.openUserModal('${s.id}')">${linkedUser ? linkedUser.username : 'Sign User'}</button></div>` : ''}
+                        <button onclick="window.triggerDelete('${s.id}')" class="arch-btn arch-btn-del !rounded-md ml-auto">✕</button>
+                    </div>` : ''}
+                    <div class="flex justify-between items-end gap-4 mb-2">
+                        ${s.type === 'subheading' ? `<h2 id="${hId}" class="manual-h2 dm-editable flex-grow !m-0" contenteditable="${isDM}" onfocus="window.setEditing('${hId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">${activeEditId === hId ? s.title : window.parseAeonfallContent(s.title, false)}</h2>` : `<h3 id="${hId}" class="manual-h3 dm-editable flex-grow !m-0" contenteditable="${isDM}" onfocus="window.setEditing('${hId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">${activeEditId === hId ? s.title : window.parseAeonfallContent(s.title, false)}</h3>`}
+                        ${isDM ? `<span class="visibility-tag tag-${s.visibility || 'public'}">${s.visibility || 'public'}</span>` : ''}
                     </div>`;
-                }).join('');
-
-            if (container) {
-                container.innerHTML = visibleSections.map(s => {
-                    const hId = `head-${s.id}`, cId = `content-${s.id}`, mdId = `media-desc-${s.id}`;
-                    const customStyle = `width: calc(${s.width ?? 100}% - 10px); font-size: ${s.fontSize ?? 14}px; margin-top: ${s.ySpacing ?? 0}px; flex-shrink: 0; box-sizing: border-box; padding: 5px; transition: width 0.3s, margin 0.3s;`;
-                    let html = `<section id="section-${s.id}" class="group relative transition-all doc-${s.docType || 'book'}" style="${customStyle}">
-                        ${isDM ? `
-                        <div class="tuner-panel">
-                            <div class="drag-handle text-lg">⠿</div>
-                            <div class="tuner-group"><span class="tuner-label">Width</span><input type="range" class="tuner-slider" min="10" max="100" value="${s.width ?? 100}" oninput="window.dbUpdateSection('${s.id}', 'width', parseInt(this.value))"></div>
-                            <div class="tuner-group"><span class="tuner-label">Access</span><select class="tuner-select" onchange="window.dbUpdateSection('${s.id}', 'visibility', this.value)"><option value="public" ${s.visibility==='public'?'selected':''}>Public</option><option value="secret" ${s.visibility==='secret'?'selected':''}>Secret</option><option value="personal" ${s.visibility==='personal'?'selected':''}>Personal Tie</option></select></div>
-                            ${s.visibility === 'personal' ? `<div class="tuner-group"><span class="tuner-label">Shared UID</span><input type="text" class="tuner-select" value="${s.sharedWith ? s.sharedWith[0] || '' : ''}" placeholder="User ID" onblur="window.dbUpdateSection('${s.id}', 'sharedWith', [this.value])"></div>` : ''}
-                            <button onclick="window.triggerDelete('${s.id}')" class="arch-btn arch-btn-del !rounded-md ml-auto">✕</button>
-                        </div>` : ''}
-                        <div class="flex justify-between items-end gap-4 mb-2">
-                            ${s.type === 'text' ? `<h2 id="${hId}" class="manual-h2 dm-editable flex-grow !m-0" contenteditable="${isDM}" onfocus="window.setEditing('${hId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">${activeEditId === hId ? s.title : window.parseAeonfallContent(s.title, false)}</h2>` : ''}
-                            ${s.type === 'table' || s.type === 'subheading' ? `<h3 id="${hId}" class="manual-h3 dm-editable flex-grow !m-0" contenteditable="${isDM}" onfocus="window.setEditing('${hId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">${activeEditId === hId ? s.title : window.parseAeonfallContent(s.title, false)}</h3>` : ''}
-                            ${isDM ? `<span class="visibility-tag tag-${s.visibility || 'public'}">${s.visibility || 'public'}</span>` : ''}
-                        </div>`;
-                    if(s.type === 'text') html += `<div id="${cId}" class="manual-p dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div>`;
-                    else if(s.type === 'note') html += `<div class="manual-note-box"><div id="${hId}" class="note-header dm-editable font-bold text-[#7a1d1d]" contenteditable="${isDM}" onfocus="window.setEditing('${hId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">📑 ${activeEditId === hId ? s.title : window.parseAeonfallContent(s.title, false)}</div><div id="${cId}" class="manual-p dm-editable italic" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
-                    else if(s.type === 'research') html += `<div class="manual-research-box"><div id="${hId}" class="research-header dm-editable font-black uppercase text-[#7a1d1d]" contenteditable="${isDM}" onfocus="window.setEditing('${hId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">${activeEditId === hId ? s.title : window.parseAeonfallContent(s.title, false)}</div><div id="${cId}" class="manual-p dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
-                    else if(s.type === 'info') html += `<div class="manual-info-box"><div id="${hId}" class="info-header dm-editable font-black uppercase text-[#7a1d1d]" contenteditable="${isDM}" onfocus="window.setEditing('${hId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">${activeEditId === hId ? s.title : window.parseAeonfallContent(s.title, false)}</div><div id="${cId}" class="manual-p dm-editable leading-relaxed" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
-                    else if(s.type === 'table') { const rows = JSON.parse(s.tableRows || '[]'); html += `<div class="table-wrap">${isDM ? `<div class="flex gap-2 mb-4"><button onclick="window.addRow('${s.id}')" class="arch-btn arch-btn-add">+R</button><button onclick="window.remRow('${s.id}')" class="arch-btn arch-btn-del">-R</button></div>` : ''}<table class="manual-table"><thead><tr>${s.tableHeaders.map((h, i) => `<th>${window.parseAeonfallContent(h, false)}</th>`).join('')}</tr></thead><tbody>${rows.map((row) => `<tr>${row.map((cell) => `<td>${window.parseAeonfallContent(cell, false)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`; }
-                    else if(s.type === 'media') { const url = s.mediaUrl || ""; html += `<div class="media-container" onclick="window.openZoom(event, '${url}')">${url ? `<img src="${url}" class="media-asset">` : `<div class="w-full h-32 bg-black/5 rounded flex items-center justify-center font-bold opacity-30">No Media Signal</div>`}</div><div id="${mdId}" class="media-footnote dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('${mdId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'mediaDescription', this.innerText)">${activeEditId === mdId ? s.mediaDescription : window.parseAeonfallContent(s.mediaDescription, false)}</div>${isDM ? `<div class="mt-2"><input type="text" class="w-full text-[10px] p-2 bg-white/50 border rounded" value="${url}" placeholder="Asset URL..." oninput="window.dbUpdateSection('${s.id}', 'mediaUrl', this.value)"></div>` : ''}`; }
-                    html += `</section>`; return html;
-                }).join('');
-            }
+                if(s.type === 'text') html += `<div id="${cId}" class="manual-p dm-editable leading-relaxed" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div>`;
+                else if(s.type === 'note') html += `<div class="manual-note-box"><div id="${cId}" class="manual-p dm-editable italic" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
+                html += `</section>`; return html;
+            }).join('');
         };
 
-        const start = async () => { try { if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token); else await signInAnonymously(auth); } catch(e) { await signInAnonymously(auth); } };
-        onAuthStateChanged(auth, (u) => { userAuth = u; if (u) {
-            document.getElementById('user-display').innerText = `UID: ${u.uid}`;
-            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'libraryHeader'), (d) => { if (d.exists()) { manualHeader = d.data(); window.renderManual(); } });
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'librarySections'), (snap) => { manualSections = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (a.order ?? 0) - (b.order ?? 0)); window.renderManual(); });
-            onSnapshot(collection(db, 'artifacts', appId, 'users', u.uid, 'seenDocuments'), (snap) => { seenDocs = snap.docs.map(d => d.id); window.renderManual(); });
-            window.updateRoleUI();
-        }});
-        const confirmBtn = document.getElementById('confirm-del-btn'); if(confirmBtn) confirmBtn.onclick = async () => { if (deleteCallback) await deleteCallback(); document.getElementById('del-modal')?.classList.add('hidden'); deleteCallback = null; };
-        start();
+        const initAuth = async () => { 
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) { await signInWithCustomToken(auth, __initial_auth_token); } 
+                else { await signInAnonymously(auth); }
+            } catch (e) { await signInAnonymously(auth); }
+        };
+
+        onAuthStateChanged(auth, async (u) => { 
+            userAuth = u; 
+            if (u) {
+                const claimedUID = localStorage.getItem('aeonfall_claimed_uid');
+                const effectiveUID = claimedUID || u.uid;
+                if(claimedUID) document.getElementById('access-terminal')?.classList.add('unlocked');
+
+                onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'libraryHeader'), d => { if (d.exists()) { manualHeader = d.data(); window.renderManual(); } });
+                onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'librarySections'), snap => { manualSections = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (a.order ?? 0) - (b.order ?? 0)); window.renderManual(); });
+                onSnapshot(collection(db, 'artifacts', appId, 'users', effectiveUID, 'seenDocuments'), snap => { seenDocs = snap.docs.map(d => d.id); window.renderManual(); });
+                onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'users'), snap => { 
+                    allUsers = snap.docs.map(d => ({uid: d.id, ...d.data()})); 
+                    const idChar = allUsers.find(au => au.uid === effectiveUID);
+                    const identText = document.getElementById('user-identity');
+                    const guestAction = document.getElementById('guest-login-action');
+                    const signoutContainer = document.getElementById('user-signout-container');
+
+                    if(identText) {
+                        if(idChar) {
+                            identText.innerText = `CITIZEN SIGNED: ${idChar.username}`;
+                            guestAction?.classList.add('hidden');
+                            signoutContainer?.classList.remove('hidden');
+                        } else {
+                            identText.innerText = 'UNIDENTIFIED GUEST';
+                            guestAction?.classList.remove('hidden');
+                            signoutContainer?.classList.add('hidden');
+                        }
+                    }
+                    window.filterTerminal('');
+                    window.renderManual(); 
+                });
+                window.updateRoleUI();
+            }
+        });
+
+        const confirmBtn = document.getElementById('confirm-del-btn'); if(confirmBtn) confirmBtn.onclick = async () => { if (deleteCallback) await deleteCallback(); const elModal = document.getElementById('del-modal'); if(elModal) elModal.classList.add('hidden'); };
+        initAuth();
     </script>
 </body>
 </html>
