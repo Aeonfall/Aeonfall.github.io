@@ -92,8 +92,8 @@
         .shelf-item.newspaper { background: #fff; color: #1a0f0a; border-left-color: #000; border-top: 1px solid #ddd; }
         .shelf-item.parchment { background: #e0d1af; color: #5d4037; border-left-color: #8d7a5d; border-radius: 0 20px 20px 0; }
         
-        /* Textbook Tab Style: Emerald Green Background & Gold Border */
-        .shelf-item.textbook { background: #48A860; border-left-color: #E5C366; color: #f4edd8; }
+        /* Updated Textbook Tab Style: Sea Green Background & Gold Border */
+        .shelf-item.textbook { background: #2E8B57; border-left-color: #E5C366; color: #f4edd8; }
         
         .shelf-item:hover { transform: translateX(10px); filter: brightness(1.2); }
         .shelf-item.active { transform: translateX(15px); box-shadow: -8px 8px 25px rgba(122, 29, 29, 0.5); z-index: 10; }
@@ -105,8 +105,9 @@
         .manual-body { flex-grow: 1; padding: 60px 50px; height: 100%; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; box-sizing: border-box; }
         #manual-sections-container { display: flex; flex-wrap: wrap; align-items: flex-start; width: 100%; gap: 0; }
 
-        .manual-h1, .manual-h2, .manual-h3, .manual-p {
-            color: #262626 !important; /* Pencil Charcoal Grey/Black */
+        /* Pencil Charcoal Formatting */
+        .manual-h1, .manual-h2, .manual-h3, .manual-p, .manual-note-box {
+            color: #262626 !important;
         }
         .dm-editable:focus {
             outline: none;
@@ -313,6 +314,7 @@
                     </div>
                 </div>
 
+                <!-- NEW TEXT BOOK CATEGORY -->
                 <div class="arch-dropdown" id="dd-textbook">
                     <button class="arch-btn" onclick="window.toggleDropdown(event, 'dd-textbook')">📓 Text Book</button>
                     <div class="arch-dropdown-content">
@@ -371,15 +373,6 @@
                 <button id="confirm-del-btn" class="w-full bg-red-700 text-white py-4 rounded-xl font-black text-xs uppercase shadow-lg">Confirm Purge</button>
                 <button onclick="document.getElementById('del-modal').classList.add('hidden')" class="w-full bg-gray-100 text-gray-400 py-3 rounded-xl font-bold uppercase text-[10px]">Decline</button>
             </div>
-        </div>
-    </div>
-
-    <div id="pass-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[110000] hidden p-4">
-        <div class="bg-gray-800 p-10 rounded-2xl w-full max-sm border-2 border-amber-600 text-white text-center shadow-2xl">
-            <h3 class="text-xl font-serif text-amber-500 font-bold mb-4 uppercase">Archivist Authorization</h3>
-            <input type="password" id="dm-pass" class="w-full bg-gray-900 text-center text-2xl rounded-lg p-3 mb-8 border border-gray-700 text-amber-500 focus:outline-none">
-            <button onclick="window.authDm()" class="w-full bg-amber-600 hover:bg-amber-500 text-white py-4 rounded-xl font-bold uppercase text-xs tracking-widest">Unlock Archives</button>
-            <button onclick="document.getElementById('pass-modal').classList.add('hidden')" class="text-[10px] text-gray-500 uppercase font-black mt-6 block w-full text-center">Cancel</button>
         </div>
     </div>
 
@@ -468,6 +461,12 @@
             document.getElementById('access-terminal')?.classList.add('unlocked');
             window.updateIdentityUI();
             window.renderManual();
+            
+            // Set up listener for seen documents
+            onSnapshot(collection(db, 'artifacts', appId, 'users', uid, 'seenDocuments'), snap => {
+                seenDocs = snap.docs.map(d => d.id);
+                window.renderManual();
+            }, err => {});
         };
         window.claimIdentity = (uid) => window.anchorIdentity(uid);
 
@@ -563,7 +562,21 @@
 
         window.assignUIDToSection = async (uid) => { if(!targetSectionForUID) return; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'journalSections', targetSectionForUID), { sharedWith: [uid] }); document.getElementById('uid-link-modal')?.classList.add('hidden'); window.showToast("Personal Link Established."); };
         window.assignManualUID = async () => { const uidInput = document.getElementById('manual-uid-input'); const uid = uidInput ? uidInput.value.trim() : ''; if(!uid || !targetSectionForUID) return; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'journalSections', targetSectionForUID), { sharedWith: [uid] }); document.getElementById('uid-link-modal')?.classList.add('hidden'); window.showToast("Override Complete"); };
-        window.markAsSeen = async (id) => { const anchored = sessionStorage.getItem('aeonfall_session_anchored') === 'true'; if(!anchored || !activeAnchorUID) return; await setDoc(doc(db, 'artifacts', appId, 'users', activeAnchorUID, 'seenDocuments', id), { seenAt: Date.now() }); window.scrollToSection(id); };
+        
+        window.markAsSeen = async (id) => { 
+            // Update local state first for instant removal of notification
+            if (!seenDocs.includes(id)) {
+                seenDocs.push(id);
+                window.renderManual();
+            }
+            
+            const anchored = sessionStorage.getItem('aeonfall_session_anchored') === 'true'; 
+            if(anchored && activeAnchorUID) { 
+                await setDoc(doc(db, 'artifacts', appId, 'users', activeAnchorUID, 'seenDocuments', id), { seenAt: Date.now() }); 
+            }
+            window.scrollToSection(id); 
+        };
+        
         window.scrollToSection = (id) => { const el = document.getElementById(`section-${id}`); if (el) el.scrollIntoView({ behavior: 'smooth' }); };
         window.openReturnToLoreSequence = function() { const overlay = document.getElementById('cinematic-overlay'); overlay?.classList.add('active'); setTimeout(() => { window.location.href = 'lore.html'; }, 2000); };
 
@@ -627,7 +640,7 @@
                         ${isDM ? `<span class="visibility-tag tag-${s.visibility || 'public'}">${s.visibility || 'public'}</span>` : ''}
                     </div>`;
                 if(s.type === 'text') html += `<div id="${cId}" class="manual-p dm-editable leading-relaxed" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div>`;
-                else if(s.type === 'textbook') html += `<div class="manual-textbook-box bg-[#f0f9ff] p-8 border-t-8 border-[#5d4037] rounded shadow-lg relative my-6"><div class="absolute -top-3 left-6 bg-[#5d4037] text-[#f4edd8] px-3 py-1 text-[8px] font-black uppercase tracking-widest">Scholar's Teaching</div><div id="${cId}" class="manual-p dm-editable leading-relaxed" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
+                else if(s.type === 'textbook') html += `<div class="manual-textbook-box bg-white p-8 border-t-8 border-[#7a1d1d] rounded shadow-lg relative my-6"><div class="absolute -top-3 left-6 bg-[#7a1d1d] text-white px-3 py-1 text-[8px] font-black uppercase tracking-widest">Scholar's Teaching</div><div id="${cId}" class="manual-p dm-editable leading-relaxed text-[#2c1810]" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
                 else if(s.type === 'note') html += `<div class="manual-note-box bg-slate-50 p-5 border-l-4 border-amber-800 rounded shadow-inner"><div id="${cId}" class="manual-p dm-editable italic" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
                 else if(s.type === 'divider') html += `<div class="manual-divider"></div>`;
                 html += `</section>`; return html;
