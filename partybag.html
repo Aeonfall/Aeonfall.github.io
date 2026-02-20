@@ -12,7 +12,7 @@
         
         .backpack-container {
             background: #242424;
-            border: 2px solid #3b82f6;
+            border: 2px solid #d97706;
             border-radius: 20px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             overflow: hidden;
@@ -29,39 +29,51 @@
             cursor: pointer;
             position: relative;
         }
-        .item-card:hover { transform: translateY(-2px); border-color: #3b82f6; background: #333; }
+        .item-card:hover { transform: translateY(-2px); border-color: #d97706; background: #333; }
         
-        .nav-link { color: #94a3b8; font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.2s; cursor: pointer; text-decoration: none; }
-        .nav-link.active { color: #f59e0b; border-bottom: 2px solid #f59e0b; padding-bottom: 4px; }
+        /* Refined Header Styles */
+        .header-logo { font-family: 'Cinzel', serif; font-weight: 900; color: #d97706; line-height: 1; }
+        .header-subtext { font-family: 'Noto Sans', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.2em; color: #475569; text-transform: uppercase; white-space: nowrap; }
+        
+        .user-pill { background: #0f172a; border: 1px solid #1e293b; border-radius: 99px; padding: 4px 16px; display: flex; align-items: center; gap: 8px; }
+        
+        .nav-link { font-family: 'Cinzel', serif; color: #94a3b8; font-weight: 900; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; transition: all 0.2s; cursor: pointer; text-decoration: none; position: relative; }
+        .nav-link.active { color: #d97706; }
+        .nav-link.active::after { content: ''; position: absolute; bottom: -8px; left: 0; width: 100%; height: 2px; background: #d97706; }
+        .nav-link:hover { color: #d97706; }
+
+        .role-selector { background: #0f172a; border-radius: 12px; padding: 4px; display: flex; gap: 4px; border: 1px solid #1e293b; }
+        .role-btn { padding: 8px 24px; font-family: 'Cinzel', serif; font-size: 11px; font-weight: 900; border-radius: 8px; transition: all 0.3s; color: #475569; text-transform: uppercase; cursor: pointer; }
+        .role-btn.active { background: #d97706; color: white; box-shadow: 0 4px 12px rgba(217, 119, 6, 0.4); }
 
         .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 12px 24px; border-radius: 30px; z-index: 1000; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
         
         input, textarea, select { background: transparent; border: none; font-size: 14px; color: inherit; width: 100%; }
-        input:focus { outline: none; border-bottom: 1px solid #3b82f6; }
+        input:focus { outline: none; border-bottom: 1px solid #d97706; }
 
         .hidden-view { display: none !important; }
         .item-tag { font-size: 9px; font-weight: 900; padding: 2px 6px; border-radius: 4px; background: #1a1a1a; color: #94a3b8; text-transform: uppercase; }
         
         .modal-overlay { background: rgba(0,0,0,0.9); backdrop-filter: blur(4px); }
 
-        .log-entry { font-size: 10px; border-left: 2px solid #3b82f6; padding-left: 8px; margin-bottom: 8px; font-family: 'Noto Sans', sans-serif; }
+        .log-entry { font-size: 10px; border-left: 2px solid #d97706; padding-left: 8px; margin-bottom: 8px; font-family: 'Noto Sans', sans-serif; }
         .log-time { color: #555; font-weight: 900; margin-right: 4px; }
-        .log-user { color: #3b82f6; font-weight: 700; }
+        .log-user { color: #d97706; font-weight: 700; }
         .log-action { color: #ccc; }
 
         .currency-box { background: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 12px; text-align: center; }
         .currency-label { font-size: 9px; font-weight: 900; color: #555; text-transform: uppercase; display: block; margin-top: 4px; }
-        .currency-input { font-family: 'Cinzel', serif; font-weight: 900; color: #3b82f6; font-size: 18px; text-align: center; }
+        .currency-input { font-family: 'Cinzel', serif; font-weight: 900; color: #d97706; font-size: 18px; text-align: center; }
 
         .char-select-btn { border: 1px solid #444; background: #1a1a1a; padding: 8px; border-radius: 8px; text-align: left; font-size: 11px; cursor: pointer; transition: all 0.2s; }
-        .char-select-btn.selected { border-color: #3b82f6; background: #1e3a8a; }
+        .char-select-btn.selected { border-color: #d97706; background: #1e3a8a; }
         
         .conversion-hint { font-size: 8px; color: #666; text-transform: uppercase; letter-spacing: 1px; font-weight: 900; }
 
-        .toggle-container { display: flex; items-center; gap: 8px; background: #f1f5f9; padding: 4px 12px; border-radius: 20px; cursor: pointer; }
+        .toggle-container { display: flex; align-items: center; gap: 8px; background: #f1f5f9; padding: 4px 12px; border-radius: 20px; cursor: pointer; }
         .toggle-indicator { width: 32px; height: 16px; background: #cbd5e1; border-radius: 8px; position: relative; transition: background 0.3s; }
         .toggle-knob { width: 12px; height: 12px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: transform 0.3s; }
-        .active-toggle .toggle-indicator { background: #3b82f6; }
+        .active-toggle .toggle-indicator { background: #d97706; }
         .active-toggle .toggle-knob { transform: translateX(16px); }
 
         /* Map Interaction Styles */
@@ -70,7 +82,7 @@
             background: #d4c4a8;
             border: 2px solid #8b7355;
             border-radius: 50px;
-            display: flex; items-center; justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -114,7 +126,7 @@
         }
         .map-btn {
             width: 44px; height: 44px; background: #fdfaf3; border: 2px solid #bba683; border-radius: 8px;
-            display: flex; items-center; justify-content: center; font-weight: 900; color: #7a1d1d;
+            display: flex; align-items: center; justify-content: center; font-weight: 900; color: #7a1d1d;
             box-shadow: 0 4px 6px rgba(0,0,0,0.2); transition: all 0.2s;
         }
         .map-btn:hover { background: #fff; transform: translateY(-2px); }
@@ -131,16 +143,16 @@
 
     <!-- AUTH MODAL -->
     <div id="auth-modal" class="fixed inset-0 bg-gray-950 z-[300] flex items-center justify-center p-4 hidden">
-        <div class="bg-gray-800 border-2 border-blue-600 rounded-2xl p-8 max-w-md w-full shadow-2xl text-center relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-2 bg-blue-600"></div>
-            <h1 class="text-4xl text-blue-500 font-bold mb-2 font-serif tracking-tight mt-4">Aeonfall</h1>
+        <div class="bg-gray-800 border-2 border-[#d97706] rounded-2xl p-8 max-w-md w-full shadow-2xl text-center relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-[#d97706]"></div>
+            <h1 class="text-4xl text-[#d97706] font-bold mb-2 font-serif tracking-tight mt-4 uppercase">AEONFALL</h1>
             <p class="text-gray-400 text-xs uppercase tracking-widest font-bold mb-8">Campaign Identity Required</p>
             <div class="space-y-4 mb-8">
-                <div class="text-left"><label class="text-[10px] font-black uppercase text-gray-500 ml-1">Username</label><input type="text" id="auth-username" class="w-full bg-gray-900 text-white rounded-lg p-3 border border-gray-700 font-serif focus:border-blue-500 transition-colors"></div>
-                <div class="text-left"><label class="text-[10px] font-black uppercase text-gray-500 ml-1">Password</label><input type="password" id="auth-password" class="w-full bg-gray-900 text-white rounded-lg p-3 border border-gray-700 font-serif focus:border-blue-500 transition-colors"></div>
+                <div class="text-left"><label class="text-[10px] font-black uppercase text-gray-500 ml-1">Username</label><input type="text" id="auth-username" class="w-full bg-gray-900 text-white rounded-lg p-3 border border-gray-700 font-serif focus:border-[#d97706] transition-colors"></div>
+                <div class="text-left"><label class="text-[10px] font-black uppercase text-gray-500 ml-1">Password</label><input type="password" id="auth-password" class="w-full bg-gray-900 text-white rounded-lg p-3 border border-gray-700 font-serif focus:border-[#d97706] transition-colors"></div>
             </div>
             <div class="grid grid-cols-2 gap-4">
-                <button onclick="window.authSystem.login()" class="bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-lg">Enter</button>
+                <button onclick="window.authSystem.login()" class="bg-[#d97706] hover:bg-[#b45309] text-white py-3 rounded-xl font-bold uppercase text-xs shadow-lg">Enter</button>
                 <button onclick="window.authSystem.register()" class="bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-xl font-bold uppercase text-xs shadow-lg">Join</button>
             </div>
             <p id="auth-error" class="text-red-500 text-xs mt-4 font-bold min-h-[1rem]"></p>
@@ -149,37 +161,43 @@
 
     <!-- MAIN APP SCREEN -->
     <div id="app-screen" class="min-h-screen dashboard-bg p-4 md:p-8 hidden-view">
-        <div class="max-w-6xl mx-auto">
+        <div class="max-w-7xl mx-auto">
             
             <!-- HEADER -->
-            <header class="flex flex-col md:flex-row justify-between items-center mb-10 border-b border-gray-800 pb-8 gap-6">
-                <div>
-                    <h1 class="text-4xl md:text-5xl text-blue-500 font-bold mb-2 font-serif tracking-tight">Party Backpack</h1>
-                    <div class="flex items-center gap-4">
-                        <div class="bg-gray-800 px-3 py-1 rounded-full border border-gray-700 flex items-center gap-2">
-                            <span id="user-status-dot" class="w-2 h-2 rounded-full bg-gray-500"></span>
-                            <span id="user-display-name" class="text-[10px] font-black text-gray-300 uppercase tracking-wider">Guest</span>
-                            <button onclick="window.logout()" class="text-[10px] text-red-400 hover:text-red-300 font-bold ml-2 border-l border-gray-600 pl-2">LOGOUT</button>
+            <header class="flex flex-col lg:flex-row justify-between items-start mb-12 gap-8">
+                <!-- Branding & Identity -->
+                <div class="space-y-4">
+                    <h1 class="text-5xl md:text-6xl header-logo uppercase text-[#d97706]">AEONFALL</h1>
+                    <div class="flex flex-wrap items-center gap-4 mt-2">
+                        <p class="header-subtext uppercase">Campaign Management Suite</p>
+                        <div class="user-pill inline-flex items-center">
+                            <span id="user-status-dot" class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
+                            <span id="user-display-name" class="text-[10px] font-black text-gray-300 uppercase tracking-widest">Guest</span>
+                            <div class="w-px h-3 bg-gray-700 mx-1"></div>
+                            <button onclick="window.logout()" class="text-[10px] text-red-500 hover:text-red-400 font-black uppercase tracking-widest">Logout</button>
                         </div>
                     </div>
                 </div>
-                <div class="flex flex-col items-center gap-4">
-                    <div class="flex items-center gap-2 bg-gray-900 p-1 rounded-xl shadow-2xl">
-                        <button id="role-player-btn" onclick="window.setRole('player')" class="px-6 py-3 rounded-lg text-sm font-bold transition-all bg-amber-600 text-white shadow-lg">Player</button>
-                        <button id="role-dm-btn" onclick="window.setRole('dm')" class="px-6 py-3 rounded-lg text-sm font-bold transition-all text-gray-500">DM</button>
+
+                <!-- Navigation & Role -->
+                <div class="flex flex-col items-center lg:items-end gap-6 lg:mt-4">
+                    <div class="role-selector">
+                        <button id="role-player-btn" onclick="window.setRole('player')" class="role-btn active">Player</button>
+                        <button id="role-dm-btn" onclick="window.setRole('dm')" class="role-btn">DM</button>
                     </div>
-                    <nav id="main-nav" class="flex gap-6">
+
+                    <nav class="flex flex-wrap justify-center lg:justify-end gap-8">
                         <a href="index.html" class="nav-link">Party</a>
                         <a href="npcs.html" class="nav-link">NPCs</a>
                         <a href="beasts.html" class="nav-link">Bestiary</a>
                         <a href="#" class="nav-link active">Backpack</a>
-                         <a href="playershandbook.html" class="nav-link">Handbook</a>
-                        <a href="#" onclick="window.setView('graveyard'); return false;" id="nav-graveyard" class="nav-link !text-red-900">Graveyard</a>
+                        <a href="playershandbook.html" class="nav-link">Handbook</a>
+                        <a href="#" onclick="window.setView('graveyard'); return false;" class="nav-link !text-red-900/60 hover:!text-red-600 transition-colors">Graveyard</a>
                     </nav>
                 </div>
             </header>
 
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 border-t border-gray-800/50 pt-8">
                 
                 <!-- LEFT SIDE: Inventory -->
                 <div class="lg:col-span-8">
@@ -190,17 +208,17 @@
                                 <p class="text-xs text-gray-500" id="designated-user-label">Unassigned</p>
                             </div>
                             <div class="flex gap-3 items-center">
-                                <button id="btn-open-vote" onclick="window.handleVoteClick()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-1.5 rounded-full font-black text-[10px] uppercase shadow-lg transition-all">Vote</button>
+                                <button id="btn-open-vote" onclick="window.handleVoteClick()" class="bg-[#d97706] hover:bg-[#b45309] text-white px-4 py-1.5 rounded-full font-black text-[10px] uppercase shadow-lg transition-all">Vote</button>
                                 <div class="h-6 w-px bg-gray-700"></div>
                                 <div class="text-right">
-                                    <span class="text-xs font-black text-blue-400" id="capacity-text">0 / 20 Items</span>
+                                    <span class="text-xs font-black text-[#d97706]" id="capacity-text">0 / 20 Items</span>
                                 </div>
                             </div>
                         </div>
 
                         <!-- CAPACITY BAR -->
                         <div class="capacity-bar-bg mb-6">
-                            <div id="capacity-fill" class="capacity-bar-fill bg-gradient-to-r from-blue-600 to-indigo-600" style="width: 0%"></div>
+                            <div id="capacity-fill" class="capacity-bar-fill bg-gradient-to-r from-[#d97706] to-[#b45309]" style="width: 0%"></div>
                         </div>
 
                         <!-- CURRENCY & MAP SECTION -->
@@ -208,7 +226,7 @@
                             <h3 class="text-[10px] font-black uppercase text-gray-500 tracking-widest">Shared Assets</h3>
                             <div class="flex items-center gap-4">
                                 <span class="conversion-hint">10 SC=1 CR | 10 CR=1 BYT | 10 BYT=1 VT</span>
-                                <button id="btn-distribute-funds" onclick="window.openDistributionModal()" class="hidden bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded font-black text-[9px] uppercase transition-all">Distribute Funds</button>
+                                <button id="btn-distribute-funds" onclick="window.openDistributionModal()" class="hidden bg-[#d97706] hover:bg-[#b45309] text-white px-3 py-1 rounded font-black text-[9px] uppercase transition-all">Distribute Funds</button>
                             </div>
                         </div>
                         
@@ -253,9 +271,9 @@
 
                 <!-- RIGHT SIDE: Controls -->
                 <div class="lg:col-span-4 space-y-6">
-                    <div id="election-info-panel" class="hidden bg-blue-900/40 p-6 rounded-2xl border-2 border-blue-500 animate-pulse">
+                    <div id="election-info-panel" class="hidden bg-[#d97706]/40 p-6 rounded-2xl border-2 border-[#d97706] animate-pulse">
                         <h3 class="text-xs font-black uppercase text-white mb-2">Owner Election Active</h3>
-                        <button onclick="window.openElectionModal()" class="w-full bg-blue-500 text-white py-3 rounded-xl font-black text-xs uppercase shadow-lg">Cast Vote</button>
+                        <button onclick="window.openElectionModal()" class="w-full bg-[#d97706] text-white py-3 rounded-xl font-black text-xs uppercase shadow-lg">Cast Vote</button>
                     </div>
 
                     <!-- DM MANUAL PANEL -->
@@ -280,7 +298,7 @@
                         <input type="text" id="target-owner-in" class="bg-black/40 p-2 rounded text-xs mb-2 border border-gray-700" placeholder="Username...">
                         <button onclick="window.assignBackpackOwner()" class="w-full bg-amber-600 text-white py-2 rounded font-black text-[10px] uppercase">Force Assign</button>
                         <button onclick="window.removeBackpackOwner()" class="w-full bg-red-900/50 text-red-200 py-2 rounded font-black text-[10px] uppercase mt-2">Remove Manager</button>
-                        <button onclick="window.startNewElection()" class="w-full bg-blue-700 text-white py-2 rounded font-black text-[10px] uppercase mt-2">Trigger Vote</button>
+                        <button onclick="window.startNewElection()" class="w-full bg-[#d97706] text-white py-2 rounded font-black text-[10px] uppercase mt-2">Trigger Vote</button>
                     </div>
 
                     <div id="dm-upgrade-panel" class="hidden bg-gray-800/50 p-6 rounded-2xl border border-green-600/30">
@@ -291,13 +309,13 @@
                         </div>
                     </div>
 
-                    <div id="add-item-panel" class="hidden bg-blue-900/20 p-6 rounded-2xl border border-blue-600/30">
-                        <h3 class="text-xs font-black uppercase text-blue-400 mb-4">Add Item</h3>
+                    <div id="add-item-panel" class="hidden bg-[#d97706]/10 p-6 rounded-2xl border border-[#d97706]/30">
+                        <h3 class="text-xs font-black uppercase text-[#d97706] mb-4">Add Item</h3>
                         <div class="space-y-3">
                             <input type="text" id="new-item-name" class="bg-black/40 p-3 rounded border border-gray-700" placeholder="Item Name">
                             <input type="number" id="new-item-slots" min="1" class="bg-black/40 p-3 rounded border border-gray-700" placeholder="Amount" value="1">
                             <textarea id="new-item-desc" class="bg-black/40 p-3 rounded border border-gray-700 h-24 text-xs" placeholder="Description..."></textarea>
-                            <button onclick="window.addItemToBackpack()" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-xl font-black text-xs uppercase shadow-lg">Store Item</button>
+                            <button onclick="window.addItemToBackpack()" class="w-full bg-[#d97706] hover:bg-[#b45309] text-white py-3 rounded-xl font-black text-xs uppercase shadow-lg">Store Item</button>
                         </div>
                     </div>
 
@@ -306,7 +324,7 @@
                         <div id="log-container" class="flex-grow overflow-y-auto pr-2"></div>
                     </div>
                 </div>
-            </div>
+            </header>
         </div>
     </div>
 
@@ -347,11 +365,11 @@
     <!-- ELECTION MODAL -->
     <div id="election-modal" class="fixed inset-0 z-[450] flex items-center justify-center p-4 hidden">
         <div class="modal-overlay absolute inset-0" onclick="document.getElementById('election-modal').classList.add('hidden')"></div>
-        <div class="bg-gray-900 border-2 border-blue-500 p-8 rounded-3xl w-full max-sm relative z-10 shadow-2xl text-center">
-            <h3 class="text-2xl font-serif font-black uppercase text-blue-400 mb-2">Nominate Owner</h3>
+        <div class="bg-gray-900 border-2 border-[#d97706] p-8 rounded-3xl w-full max-sm relative z-10 shadow-2xl text-center">
+            <h3 class="text-2xl font-serif font-black uppercase text-[#d97706] mb-2">Nominate Owner</h3>
             <input type="text" id="vote-nominee-in" class="w-full bg-black/60 p-4 rounded-xl border border-gray-700 font-serif mb-6 text-center text-white tracking-widest uppercase" placeholder="USERNAME">
             <div id="vote-status-display" class="mb-4 text-[10px] text-gray-400"></div>
-            <button onclick="window.submitVote()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase text-xs mb-3 shadow-xl">Submit</button>
+            <button onclick="window.submitVote()" class="w-full bg-[#d97706] text-white py-4 rounded-2xl font-black uppercase text-xs mb-3 shadow-xl">Submit</button>
             <button onclick="document.getElementById('election-modal').classList.add('hidden')" class="w-full text-gray-500 font-bold text-[10px] uppercase">Cancel</button>
         </div>
     </div>
@@ -359,9 +377,9 @@
     <!-- CURRENCY DISTRIBUTION MODAL -->
     <div id="distribute-modal" class="fixed inset-0 z-[450] flex items-center justify-center p-4 hidden">
         <div class="modal-overlay absolute inset-0" onclick="document.getElementById('distribute-modal').classList.add('hidden')"></div>
-        <div class="bg-white text-gray-900 p-8 rounded-3xl w-full max-w-2xl relative z-10 shadow-2xl border-4 border-blue-600">
+        <div class="bg-white text-gray-900 p-8 rounded-3xl w-full max-w-2xl relative z-10 shadow-2xl border-4 border-[#d97706]">
             <div class="flex justify-between items-start mb-2">
-                <h3 class="text-2xl font-serif font-black uppercase text-blue-700">Divide Funds</h3>
+                <h3 class="text-2xl font-serif font-black uppercase text-[#d97706]">Divide Funds</h3>
                 <div class="toggle-container active-toggle" id="conversion-toggle-btn" onclick="window.toggleConversion()">
                     <span class="text-[9px] font-black uppercase text-gray-600">Auto-Convert</span>
                     <div class="toggle-indicator"><div class="toggle-knob"></div></div>
@@ -381,13 +399,13 @@
                 </div>
                 <div>
                     <label class="text-[9px] font-black uppercase text-gray-400 mb-2 block">Share Preview</label>
-                    <div class="bg-blue-50 p-4 rounded-xl text-center border border-blue-100">
-                        <div id="dist-share-preview" class="space-y-1 font-black text-blue-800 text-sm"><div>0 VT, 0 BYT, 0 CR, 0 SC</div></div>
+                    <div class="bg-amber-50 p-4 rounded-xl text-center border border-amber-100">
+                        <div id="dist-share-preview" class="space-y-1 font-black text-[#d97706] text-sm"><div>0 VT, 0 BYT, 0 CR, 0 SC</div></div>
                     </div>
                 </div>
             </div>
             <div class="mt-8 flex gap-3">
-                <button onclick="window.confirmDistribution()" class="flex-grow bg-blue-600 text-white py-4 rounded-2xl font-black uppercase text-xs shadow-xl hover:bg-blue-500 transition-all">Distribute</button>
+                <button onclick="window.confirmDistribution()" class="flex-grow bg-[#d97706] text-white py-4 rounded-2xl font-black uppercase text-xs shadow-xl hover:bg-[#b45309] transition-all">Distribute</button>
                 <button onclick="document.getElementById('distribute-modal').classList.add('hidden')" class="px-6 bg-gray-100 text-gray-500 font-bold text-[10px] uppercase rounded-2xl">Cancel</button>
             </div>
         </div>
@@ -396,22 +414,22 @@
     <!-- TRANSFER MODAL -->
     <div id="transfer-modal" class="fixed inset-0 z-[400] flex items-center justify-center p-4 hidden">
         <div class="modal-overlay absolute inset-0" onclick="document.getElementById('transfer-modal').classList.add('hidden')"></div>
-        <div class="bg-white text-gray-900 p-8 rounded-3xl w-full max-w-sm relative z-10 shadow-2xl border-4 border-blue-600 text-center">
-            <h3 class="text-2xl font-serif font-black uppercase text-blue-700 mb-2" id="take-item-name">Take Item</h3>
+        <div class="bg-white text-gray-900 p-8 rounded-3xl w-full max-w-sm relative z-10 shadow-2xl border-4 border-[#d97706] text-center">
+            <h3 class="text-2xl font-serif font-black uppercase text-[#d97706] mb-2" id="take-item-name">Take Item</h3>
             <p class="text-xs text-gray-500 mb-6">Moving this to your character will transfer ALL its details to your Inventory Notes.</p>
             <label class="text-[10px] font-black uppercase text-gray-400 mb-1 block text-left">Your Recipient Character</label>
             <select id="target-pc-select" class="w-full bg-gray-100 p-3 rounded-lg border-2 border-gray-200 font-bold mb-6 text-black"></select>
-            <button onclick="window.confirmTakeItem()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase text-xs mb-3 shadow-xl">Claim Item</button>
+            <button onclick="window.confirmTakeItem()" class="w-full bg-[#d97706] text-white py-4 rounded-2xl font-black uppercase text-xs mb-3 shadow-xl">Claim Item</button>
             <button onclick="document.getElementById('transfer-modal').classList.add('hidden')" class="w-full text-gray-500 font-bold text-[10px] uppercase">Cancel</button>
         </div>
     </div>
 
     <!-- DM PASSWORD MODAL -->
     <div id="password-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[350] hidden">
-        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border-2 border-amber-600 text-white text-center">
-            <h3 class="text-xl font-serif text-amber-500 font-bold mb-2 uppercase">Authorization</h3>
+        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border-2 border-[#d97706] text-white text-center">
+            <h3 class="text-xl font-serif text-[#d97706] font-bold mb-2 uppercase">Authorization</h3>
             <input type="password" id="dm-password" class="w-full bg-gray-900 text-center text-2xl rounded-lg p-3 mb-6 border border-gray-700">
-            <button onclick="window.verifyDmPassword()" class="w-full bg-amber-600 text-white py-3 rounded-xl font-bold uppercase text-xs">Enter</button>
+            <button onclick="window.verifyDmPassword()" class="w-full bg-[#d97706] text-white py-3 rounded-xl font-bold uppercase text-xs">Enter</button>
         </div>
     </div>
 
@@ -440,8 +458,7 @@
         window.authSystem = {
             login: async () => {
                 const u = document.getElementById('auth-username').value.trim().toLowerCase();
-                const p = document.getElementById('auth-password').value;
-                if (!u || !p) return;
+                if (!u) return;
                 const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'players'), where('username', '==', u));
                 const snap = await getDocs(q);
                 if (snap.empty) { document.getElementById('auth-error').textContent = "User not found"; return; }
@@ -451,8 +468,7 @@
             },
             register: async () => {
                 const u = document.getElementById('auth-username').value.trim().toLowerCase();
-                const p = document.getElementById('auth-password').value;
-                if (!u || !p) return;
+                if (!u) return;
                 const newDoc = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'players'), { username: u, createdAt: Date.now() });
                 currentUser = { username: u, id: newDoc.id };
                 localStorage.setItem('aeonfall_user', JSON.stringify(currentUser));
@@ -481,30 +497,27 @@
 
         window.updateRoleUI = () => {
             const isDM = activeRole === 'dm';
-            document.getElementById('role-player-btn').className = !isDM ? 'px-6 py-3 rounded-lg text-sm font-bold bg-amber-600 text-white shadow-lg' : 'px-6 py-3 text-gray-500 font-bold';
-            document.getElementById('role-dm-btn').className = isDM ? 'px-6 py-3 rounded-lg text-sm font-bold bg-amber-600 text-white shadow-lg' : 'px-6 py-3 text-gray-500 font-bold';
+            document.getElementById('role-player-btn').className = !isDM ? 'role-btn active' : 'role-btn';
+            document.getElementById('role-dm-btn').className = isDM ? 'role-btn active' : 'role-btn';
             document.getElementById('dm-designation-panel').classList.toggle('hidden', !isDM);
             document.getElementById('dm-upgrade-panel').classList.toggle('hidden', !isDM);
             document.getElementById('dm-map-edit-btn').classList.toggle('hidden', !isDM);
             window.renderBackpack();
         };
 
-        // --- MAP ZOOM & PAN LOGIC ---
-        let mapScale = 1;
-        let mapPosX = 0;
-        let mapPosY = 0;
-        let isPanning = false;
-        let startX = 0, startY = 0;
+        // --- MAP ZOOM & PAN ---
+        let mapScale = 1, mapPosX = 0, mapPosY = 0, isPanning = false, startX = 0, startY = 0;
 
         window.openMap = () => {
             const modal = document.getElementById('map-modal');
-            const img = document.getElementById('map-image-display');
-            const empty = document.getElementById('map-empty-view');
             modal.classList.remove('hidden');
             setTimeout(() => modal.classList.add('active-map'), 10);
-            
-            if (backpackData.mapSrc) { img.src = backpackData.mapSrc; img.classList.remove('hidden'); empty.classList.add('hidden'); window.resetMap(); }
-            else { img.classList.add('hidden'); empty.classList.remove('hidden'); }
+            if (backpackData.mapSrc) { 
+                const img = document.getElementById('map-image-display');
+                img.src = backpackData.mapSrc; img.classList.remove('hidden'); 
+                document.getElementById('map-empty-view').classList.add('hidden'); 
+                window.resetMap(); 
+            }
         };
 
         window.closeMap = () => {
@@ -513,71 +526,16 @@
             setTimeout(() => modal.classList.add('hidden'), 400);
         };
 
-        window.resetMap = () => {
-            mapScale = 1; mapPosX = 0; mapPosY = 0;
-            updateMapTransform();
-        };
-
-        window.zoomMap = (factor) => {
-            mapScale = Math.min(10, Math.max(0.5, mapScale * factor));
-            updateMapTransform();
-        };
-
-        function updateMapTransform() {
-            const img = document.getElementById('map-image-display');
-            img.style.transform = `translate(${mapPosX}px, ${mapPosY}px) scale(${mapScale})`;
-        }
+        window.resetMap = () => { mapScale = 1; mapPosX = 0; mapPosY = 0; updateMapTransform(); };
+        window.zoomMap = (factor) => { mapScale = Math.min(10, Math.max(0.5, mapScale * factor)); updateMapTransform(); };
+        function updateMapTransform() { document.getElementById('map-image-display').style.transform = `translate(${mapPosX}px, ${mapPosY}px) scale(${mapScale})`; }
 
         const viewport = document.getElementById('map-viewport');
-        viewport.onwheel = (e) => {
-            e.preventDefault();
-            const factor = e.deltaY > 0 ? 0.9 : 1.1;
-            window.zoomMap(factor);
-        };
-
-        viewport.onmousedown = (e) => {
-            isPanning = true;
-            startX = e.clientX - mapPosX;
-            startY = e.clientY - mapPosY;
-        };
-
-        window.onmousemove = (e) => {
-            if (!isPanning) return;
-            mapPosX = e.clientX - startX;
-            mapPosY = e.clientY - startY;
-            updateMapTransform();
-        };
-
+        viewport.onmousedown = (e) => { isPanning = true; startX = e.clientX - mapPosX; startY = e.clientY - mapPosY; };
+        window.onmousemove = (e) => { if (!isPanning) return; mapPosX = e.clientX - startX; mapPosY = e.clientY - startY; updateMapTransform(); };
         window.onmouseup = () => isPanning = false;
 
-        // Touch Support
-        let lastTouchDist = 0;
-        viewport.ontouchstart = (e) => {
-            if (e.touches.length === 1) {
-                isPanning = true;
-                startX = e.touches[0].clientX - mapPosX;
-                startY = e.touches[0].clientY - mapPosY;
-            } else if (e.touches.length === 2) {
-                lastTouchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-            }
-        };
-
-        viewport.ontouchmove = (e) => {
-            if (e.touches.length === 1 && isPanning) {
-                mapPosX = e.touches[0].clientX - startX;
-                mapPosY = e.touches[0].clientY - startY;
-                updateMapTransform();
-            } else if (e.touches.length === 2) {
-                const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-                window.zoomMap(dist / lastTouchDist);
-                lastTouchDist = dist;
-            }
-        };
-
-        viewport.ontouchend = () => isPanning = false;
-
         window.triggerMapSelect = () => { if (activeRole === 'dm') document.getElementById('dm-map-input-file').click(); };
-
         window.handleMapUpload = (e) => {
             const file = e.target.files[0]; if (!file) return;
             const reader = new FileReader();
@@ -585,22 +543,19 @@
                 const img = new Image();
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
-                    const maxDim = 1600; // Increased for better labels
+                    const maxDim = 2000;
                     let w = img.width, h = img.height;
                     if (w > maxDim || h > maxDim) { const r = maxDim / Math.max(w, h); w *= r; h *= r; }
                     canvas.width = w; canvas.height = h;
                     canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                    const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-                    updateDoc(backpackDocRef, { mapSrc: dataUrl });
-                    addLog("re-drafted the world map");
-                    window.showToast("Codex Map Updated");
+                    updateDoc(backpackDocRef, { mapSrc: canvas.toDataURL('image/jpeg', 0.85) });
+                    addLog("updated the World Codex Map");
                 };
                 img.src = ev.target.result;
             };
             reader.readAsDataURL(file);
         };
 
-        // --- CONVERSION HELPERS ---
         const unitsToSC = (vt, byt, cr, sc) => (parseInt(vt) || 0) * 1000 + (parseInt(byt) || 0) * 100 + (parseInt(cr) || 0) * 10 + (parseInt(sc) || 0);
         const scToUnits = (total) => ({ VT: Math.floor(total / 1000), BYT: Math.floor((total % 1000) / 100), CR: Math.floor((total % 100) / 10), SC: total % 10 });
 
@@ -614,7 +569,7 @@
 
             ['VT', 'BYT', 'CR', 'SC'].forEach(cur => {
                 const el = document.getElementById(`cur-${cur}`);
-                if (el) { el.value = Math.max(0, backpackData[`currency${cur}`] || 0); el.disabled = !canEdit; }
+                if (el) { el.value = backpackData[`currency${cur}`] || 0; el.disabled = !canEdit; }
             });
 
             const grid = document.getElementById('item-grid'); grid.innerHTML = '';
@@ -623,32 +578,30 @@
                 usedAmount += parseInt(item.slots) || 0;
                 const card = document.createElement('div');
                 card.className = "item-card p-4"; card.onclick = () => window.openTakeModal(i);
-                card.innerHTML = `<div class="flex justify-between items-start mb-2"><span class="item-tag">Amount: ${item.slots}</span>${canEdit ? `<button onclick="event.stopPropagation(); window.removeItem(${i})" class="text-red-500">✕</button>` : ''}</div><h4 class="font-serif font-black uppercase text-sm mb-1 text-blue-100">${item.name}</h4><p class="text-[10px] text-gray-500 line-clamp-2">${item.description || ''}</p>`;
+                card.innerHTML = `<div class="flex justify-between items-start mb-2"><span class="item-tag">Amt: ${item.slots}</span>${canEdit ? `<button onclick="event.stopPropagation(); window.removeItem(${i})" class="text-red-500">✕</button>` : ''}</div><h4 class="font-serif font-black uppercase text-sm mb-1 text-blue-100">${item.name}</h4><p class="text-[10px] text-gray-500 line-clamp-2">${item.description || ''}</p>`;
                 grid.appendChild(card);
             });
             document.getElementById('capacity-fill').style.width = `${Math.min(100, (usedAmount / (backpackData.capacity || 20)) * 100)}%`;
             document.getElementById('capacity-text').textContent = `${usedAmount} / ${backpackData.capacity || 20} Items`;
+            document.getElementById('empty-state').classList.toggle('hidden', (backpackData.items || []).length > 0);
+            
             const logCont = document.getElementById('log-container');
             logCont.innerHTML = (backpackData.log || []).slice().reverse().map(l => `<div class="log-entry"><span class="log-time">${l.time}</span> <span class="log-user">${l.user.toUpperCase()}</span> <span class="log-action">${l.text}</span></div>`).join('');
         };
 
-        const addLog = async (actionText) => {
-            if (!currentUser) return;
-            const newLog = { text: actionText, user: currentUser.username, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) };
+        const addLog = async (text) => {
             const currentLogs = [...(backpackData.log || [])].slice(-49);
-            currentLogs.push(newLog);
+            currentLogs.push({ text, user: currentUser.username, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
             await updateDoc(backpackDocRef, { log: currentLogs });
         };
 
-        // --- DISTRIBUTION ---
         window.toggleConversion = () => { distributionConversionEnabled = !distributionConversionEnabled; document.getElementById('conversion-toggle-btn').classList.toggle('active-toggle', distributionConversionEnabled); window.calcDistribution(); };
         window.openDistributionModal = () => {
             const list = document.getElementById('dist-char-list'); list.innerHTML = ''; selectedDistributionChars.clear();
             allCharacters.filter(c => c.type === 'PC' && !c.isDeleted).forEach(pc => {
                 const btn = document.createElement('div'); btn.className = "char-select-btn text-black"; btn.id = `dist-pc-${pc.id}`; btn.textContent = pc.name; btn.onclick = () => window.toggleDistChar(pc.id); list.appendChild(btn);
             });
-            ['VT', 'BYT', 'CR', 'SC'].forEach(cur => document.getElementById(`dist-${cur}`).value = 0);
-            window.calcDistribution(); document.getElementById('distribute-modal').classList.remove('hidden');
+            document.getElementById('distribute-modal').classList.remove('hidden');
         };
         window.toggleDistChar = (id) => { const el = document.getElementById(`dist-pc-${id}`); if (selectedDistributionChars.has(id)) { selectedDistributionChars.delete(id); el.classList.remove('selected', 'text-white'); } else { selectedDistributionChars.add(id); el.classList.add('selected', 'text-white'); } window.calcDistribution(); };
         window.calcDistribution = () => {
@@ -656,63 +609,57 @@
             if (distributionConversionEnabled) {
                 const shareSC = count > 0 ? Math.floor(unitsToSC(document.getElementById('dist-VT').value, document.getElementById('dist-BYT').value, document.getElementById('dist-CR').value, document.getElementById('dist-SC').value) / count) : 0;
                 const units = scToUnits(shareSC); summary.innerHTML = `<div>${units.VT} VT, ${units.BYT} BYT, ${units.CR} CR, ${units.SC} SC</div>`;
-            } else { summary.innerHTML = ['VT', 'BYT', 'CR', 'SC'].map(cur => `<div>${count > 0 ? Math.floor(parseInt(document.getElementById(`dist-${cur}`).value) || 0 / count) : 0} ${cur}</div>`).join(''); }
+            } else { summary.innerHTML = ['VT', 'BYT', 'CR', 'SC'].map(cur => `<div>${count > 0 ? Math.floor((parseInt(document.getElementById(`dist-${cur}`).value) || 0) / count) : 0} ${cur}</div>`).join(''); }
         };
 
         window.confirmDistribution = async () => {
             const count = selectedDistributionChars.size; if (count <= 0) return window.showToast("Select recipients");
-            const curs = ['VT', 'BYT', 'CR', 'SC']; let charShares = {}; let totalDeductions = {};
+            const curs = ['VT', 'BYT', 'CR', 'SC']; let shareUnits = {}; let deductUnits = {};
             if (distributionConversionEnabled) {
-                const inputTotalSC = unitsToSC(document.getElementById('dist-VT').value, document.getElementById('dist-BYT').value, document.getElementById('dist-CR').value, document.getElementById('dist-SC').value);
-                const backpackTotalSC = unitsToSC(backpackData.currencyVT, backpackData.currencyBYT, backpackData.currencyCR, backpackData.currencySC);
-                if (inputTotalSC > backpackTotalSC) return window.showToast("Insufficient balance");
-                const shareSC = Math.floor(inputTotalSC / count); if (shareSC <= 0) return window.showToast("Too small to split");
-                charShares = scToUnits(shareSC); totalDeductions = scToUnits(shareSC * count);
+                const inputSC = unitsToSC(document.getElementById('dist-VT').value, document.getElementById('dist-BYT').value, document.getElementById('dist-CR').value, document.getElementById('dist-SC').value);
+                const backpackSC = unitsToSC(backpackData.currencyVT, backpackData.currencyBYT, backpackData.currencyCR, backpackData.currencySC);
+                if (inputSC > backpackSC) return window.showToast("Insufficient Cache funds");
+                const shareSC = Math.floor(inputSC / count); shareUnits = scToUnits(shareSC); deductUnits = scToUnits(shareSC * count);
             } else {
                 curs.forEach(c => {
-                    const val = parseInt(document.getElementById(`dist-${c}`).value) || 0; const balance = backpackData[`currency${c}`] || 0;
-                    if (val > balance) return window.showToast(`Insufficient ${c}`);
-                    const share = Math.floor(val / count); charShares[c] = share; totalDeductions[c] = share * count;
+                    const val = parseInt(document.getElementById(`dist-${c}`).value) || 0;
+                    if (val > (backpackData[`currency${c}`] || 0)) return window.showToast(`Insufficient ${c}`);
+                    const share = Math.floor(val / count); shareUnits[c] = share; deductUnits[c] = share * count;
                 });
             }
             for (let charId of selectedDistributionChars) {
                 const char = allCharacters.find(c => c.id === charId); const updates = {};
-                if (distributionConversionEnabled) {
-                    const charNewSC = unitsToSC(char.currencyVT, char.currencyBYT, char.currencyCR, char.currencySC) + unitsToSC(charShares.VT, charShares.BYT, charShares.CR, charShares.SC);
-                    const newUnits = scToUnits(charNewSC); curs.forEach(c => updates[`currency${c}`] = newUnits[c]);
-                } else { curs.forEach(c => updates[`currency${c}`] = (parseInt(char[`currency${c}`]) || 0) + charShares[c]); }
+                curs.forEach(c => updates[`currency${c}`] = (parseInt(char[`currency${c}`]) || 0) + (shareUnits[c] || 0));
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', charId), updates);
             }
-            const backpackUpdates = {}; curs.forEach(c => backpackUpdates[`currency${c}`] = Math.max(0, (backpackData[`currency${c}`] || 0) - totalDeductions[c]));
+            const backpackUpdates = {}; curs.forEach(c => backpackUpdates[`currency${c}`] = Math.max(0, (backpackData[`currency${c}`] || 0) - deductUnits[c]));
             await updateDoc(backpackDocRef, backpackUpdates);
-            await addLog(`Split funds among ${count} players.`);
+            await addLog(`distributed funds to ${count} recipients`);
             document.getElementById('distribute-modal').classList.add('hidden');
         };
 
         window.updateCurrency = async (cur, val) => {
-            const newVal = Math.max(0, parseInt(val) || 0);
-            if (newVal === backpackData[`currency${cur}`]) return;
-            await updateDoc(backpackDocRef, { [`currency${cur}`]: newVal });
-            await addLog(`adjusted cache ${cur}`);
+            const v = Math.max(0, parseInt(val) || 0);
+            if (v !== backpackData[`currency${cur}`]) { await updateDoc(backpackDocRef, { [`currency${cur}`]: v }); await addLog(`adjusted cache ${cur}`); }
         };
 
         window.handleVoteClick = () => { if (backpackData.electionActive) window.openElectionModal(); else window.startNewElection(); };
         window.startNewElection = async () => { await updateDoc(backpackDocRef, { electionActive: true, votes: {}, designatedOwner: null }); window.openElectionModal(); };
-        window.openElectionModal = () => { document.getElementById('vote-status-display').textContent = `${Object.keys(backpackData.votes || {}).length} participant(s) nominated...`; document.getElementById('election-modal').classList.remove('hidden'); };
+        window.openElectionModal = () => { document.getElementById('vote-status-display').textContent = `${Object.keys(backpackData.votes || {}).length} votes cast...`; document.getElementById('election-modal').classList.remove('hidden'); };
         window.submitVote = async () => {
             const nominee = document.getElementById('vote-nominee-in').value.trim().toLowerCase(); if (!nominee) return;
             const votes = { ...(backpackData.votes || {}) }; votes[currentUser.id] = nominee;
             const unique = new Set(Object.values(votes));
             if (unique.size === 1 && Object.keys(votes).length >= 1) {
                 await updateDoc(backpackDocRef, { votes, electionActive: false, designatedOwner: Array.from(unique)[0] });
-                await addLog(`consensus reached: ${Array.from(unique)[0]} is manager`);
+                await addLog(`election concluded: ${Array.from(unique)[0]} is manager`);
                 document.getElementById('election-modal').classList.add('hidden');
             } else { await updateDoc(backpackDocRef, { votes }); }
         };
 
         window.addItemToBackpack = async () => {
-            const name = document.getElementById('new-item-name').value.trim(); const slots = Math.max(1, parseInt(document.getElementById('new-item-slots').value) || 1);
-            if (!name) return;
+            const name = document.getElementById('new-item-name').value.trim(); if (!name) return;
+            const slots = Math.max(1, parseInt(document.getElementById('new-item-slots').value) || 1);
             const items = [...(backpackData.items || []), { name, slots, description: document.getElementById('new-item-desc').value.trim(), id: crypto.randomUUID() }];
             await updateDoc(backpackDocRef, { items }); await addLog(`stowed [${name}] x${slots}`);
             document.getElementById('new-item-name').value = ''; document.getElementById('new-item-desc').value = '';
@@ -720,31 +667,29 @@
 
         window.removeItem = async (idx) => {
             const items = [...backpackData.items]; const item = items[idx]; items.splice(idx, 1);
-            await updateDoc(backpackDocRef, { items }); await addLog(`removed [${item.name}]`);
+            await updateDoc(backpackDocRef, { items }); await addLog(`removed [${item.name}] from cache`);
         };
 
         window.assignBackpackOwner = async () => {
-            const target = document.getElementById('target-owner-in').value.trim().toLowerCase();
-            if (target) { await updateDoc(backpackDocRef, { designatedOwner: target, electionActive: false }); await addLog(`DM assigned ${target}`); }
+            const t = document.getElementById('target-owner-in').value.trim().toLowerCase();
+            if (t) { await updateDoc(backpackDocRef, { designatedOwner: t, electionActive: false }); await addLog(`DM assigned ${t} as manager`); }
         };
 
-        window.removeBackpackOwner = async () => { if (activeRole === 'dm') await updateDoc(backpackDocRef, { designatedOwner: null, votes: {}, electionActive: false }); };
-        window.updateCapacity = async () => { const cap = Math.max(1, parseInt(document.getElementById('capacity-limit-in').value) || 20); await updateDoc(backpackDocRef, { capacity: cap }); };
+        window.removeBackpackOwner = async () => { await updateDoc(backpackDocRef, { designatedOwner: null, votes: {}, electionActive: false }); };
+        window.updateCapacity = async () => { await updateDoc(backpackDocRef, { capacity: Math.max(1, parseInt(document.getElementById('capacity-limit-in').value) || 20) }); };
 
         window.openTakeModal = (idx) => {
             itemToTakeIndex = idx; const item = backpackData.items[idx];
             document.getElementById('take-item-name').textContent = `Claim ${item.name}?`;
             const pcSelect = document.getElementById('target-pc-select'); pcSelect.innerHTML = '';
-            const myChars = allCharacters.filter(c => c.owner === currentUser.username && c.type === 'PC' && !c.isDeleted);
-            if (myChars.length === 0) pcSelect.innerHTML = `<option value="">No Active Characters</option>`;
-            else myChars.forEach(c => pcSelect.innerHTML += `<option value="${c.id}">${c.name}</option>`);
+            allCharacters.filter(c => c.owner === currentUser.username && c.type === 'PC' && !c.isDeleted).forEach(c => pcSelect.innerHTML += `<option value="${c.id}">${c.name}</option>`);
             document.getElementById('transfer-modal').classList.remove('hidden');
         };
 
         window.confirmTakeItem = async () => {
             const charId = document.getElementById('target-pc-select').value; if (!charId || itemToTakeIndex === null) return;
             const item = backpackData.items[itemToTakeIndex]; const targetChar = allCharacters.find(c => c.id === charId);
-            const note = `\n- ${item.name.toUpperCase()} (Amount: ${item.slots})\n  ${item.description || 'No description provided.'}\n`;
+            const note = `\n- ${item.name.toUpperCase()} (Qty: ${item.slots})\n  ${item.description || 'No notes.'}\n`;
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', charId), { inventory: (targetChar.inventory || "") + note });
             await addLog(`claimed [${item.name}] for ${targetChar.name}`);
             await window.removeItem(itemToTakeIndex); document.getElementById('transfer-modal').classList.add('hidden');
@@ -755,14 +700,12 @@
             if (!snap.exists()) await setDoc(backpackDocRef, backpackData);
             onSnapshot(backpackDocRef, (d) => { if (d.exists()) { backpackData = d.data(); window.renderBackpack(); } });
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), (s) => {
-                allCharacters = s.docs.map(doc => ({id: doc.id, ...doc.data()}));
+                allCharacters = s.docs.map(d => ({id: d.id, ...d.data()}));
                 window.renderBackpack();
             });
         };
 
-        signInAnonymously(auth).then(() => {
-            onAuthStateChanged(auth, (u) => { if (u) { user = u; checkSession(); } });
-        });
+        signInAnonymously(auth).then(() => { onAuthStateChanged(auth, (u) => { if (u) { user = u; checkSession(); } }); });
     </script>
 </body>
 </html>
