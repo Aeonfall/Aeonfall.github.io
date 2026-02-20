@@ -52,8 +52,8 @@
         .section-dragging { opacity: 0.2; transform: scale(0.98); border: 2px dashed #7a1d1d !important; }
         
         /* Drag Indicators */
-        .section-drag-over-top { border-top: 4px solid #7a1d1d !important; }
-        .section-drag-over-bottom { border-bottom: 4px solid #7a1d1d !important; }
+        .section-drag-over-top { border-top: 5px solid #7a1d1d !important; }
+        .section-drag-over-bottom { border-bottom: 5px solid #7a1d1d !important; }
         .section-drag-over-left { border-left: 8px solid #7a1d1d !important; padding-left: 12px !important; }
         .section-drag-over-right { border-right: 8px solid #7a1d1d !important; padding-right: 12px !important; }
         .section-drag-over-center { background: rgba(122, 29, 29, 0.05); border-radius: 4px; }
@@ -105,8 +105,9 @@
         .manual-body { flex-grow: 1; padding: 60px 50px; height: 100%; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; box-sizing: border-box; }
         #manual-sections-container { display: flex; flex-wrap: wrap; align-items: flex-start; width: 100%; gap: 0; }
 
-        .manual-h1, .manual-h2, .manual-h3, .manual-p {
-            color: #262626 !important; /* Pencil Charcoal Grey/Black */
+        /* Pencil Charcoal Formatting */
+        .manual-h1, .manual-h2, .manual-h3, .manual-p, .manual-note-box {
+            color: #262626 !important;
         }
         .dm-editable:focus {
             outline: none;
@@ -132,7 +133,7 @@
 
         .role-pill { background: rgba(0,0,0,0.05); border-radius: 99px; padding: 3px; display: inline-flex; gap: 4px; border: 1px solid rgba(0,0,0,0.1); align-self: center; }
         .role-tab { padding: 4px 14px; font-family: 'Cinzel', serif; font-size: 9px; font-weight: 900; border-radius: 99px; transition: 0.3s; color: #5d4037; text-transform: uppercase; cursor: pointer; }
-        .role-tab.active { background: #7a1d1d; color: white; }
+        .role-tab.active { background: #7a1d1d !important; color: white !important; }
 
         .link-user-btn { background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; font-size: 8px; font-weight: 900; padding: 4px 10px; border-radius: 2px; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
         .unbind-user-btn { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; font-size: 8px; font-weight: 900; padding: 4px 8px; border-radius: 2px; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
@@ -248,6 +249,16 @@
         </div>
     </div>
 
+    <!-- DM PASS MODAL -->
+    <div id="pass-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[110000] hidden p-4">
+        <div class="bg-gray-800 p-10 rounded-2xl w-full max-sm border-2 border-amber-600 text-white text-center shadow-2xl">
+            <h3 class="text-xl font-serif text-amber-500 font-bold mb-4 uppercase">Custodian Authorization</h3>
+            <input type="password" id="dm-pass" class="w-full bg-gray-900 text-center text-2xl rounded-lg p-3 mb-8 border border-gray-700 text-amber-500 focus:outline-none">
+            <button onclick="window.authDm()" class="w-full bg-amber-600 hover:bg-amber-500 text-white py-4 rounded-xl font-bold uppercase text-xs tracking-widest">Unlock Archives</button>
+            <button onclick="document.getElementById('pass-modal').classList.add('hidden')" class="text-[10px] text-gray-500 uppercase font-black mt-6 block w-full text-center">Cancel</button>
+        </div>
+    </div>
+
     <div id="lightbox-modal" class="lightbox hidden" onclick="this.classList.add('hidden')">
         <div id="lightbox-content"></div>
     </div>
@@ -316,7 +327,6 @@
                     </div>
                 </div>
 
-                <!-- NEW TEXT BOOK DROPDOWN -->
                 <div class="arch-dropdown" id="dd-textbook">
                     <button class="arch-btn" onclick="window.toggleDropdown(event, 'dd-textbook')">📓 Text Book</button>
                     <div class="arch-dropdown-content">
@@ -378,15 +388,6 @@
         </div>
     </div>
 
-    <div id="pass-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[110000] hidden p-4">
-        <div class="bg-gray-800 p-10 rounded-2xl w-full max-sm border-2 border-amber-600 text-white text-center shadow-2xl">
-            <h3 class="text-xl font-serif text-amber-500 font-bold mb-4 uppercase">Custodian Authorization</h3>
-            <input type="password" id="dm-pass" class="w-full bg-gray-900 text-center text-2xl rounded-lg p-3 mb-8 border border-gray-700 text-amber-500 focus:outline-none">
-            <button onclick="window.authDm()" class="w-full bg-amber-600 hover:bg-amber-500 text-white py-4 rounded-xl font-bold uppercase text-xs tracking-widest">Unlock Archives</button>
-            <button onclick="document.getElementById('pass-modal').classList.add('hidden')" class="text-[10px] text-gray-500 uppercase font-black mt-6 block w-full text-center">Cancel</button>
-        </div>
-    </div>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, collection, doc, updateDoc, setDoc, onSnapshot, addDoc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
@@ -400,7 +401,8 @@
 
         let manualSections = [], seenDocs = [], allUsers = [], targetSectionForUID = null;
         let manualHeader = { title: "Archival History", subtitle: "Verifying civilizations past." };
-        let activeRole = 'player', activeEditId = null, userAuth = null, saveTimer = null, deleteCallback = null;
+        let activeRole = localStorage.getItem('aeonfall_role') || 'player'; 
+        let activeEditId = null, userAuth = null, saveTimer = null, deleteCallback = null;
         let activeAnchorUID = null; 
         let draggedId = null, dropSide = null;
 
@@ -428,73 +430,38 @@
         window.handleDragOver = function(e) { 
             if (!draggedId) return; 
             e.preventDefault(); 
-            
             const rect = e.currentTarget.getBoundingClientRect(); 
             const relX = e.clientX - rect.left;
             const relY = e.clientY - rect.top;
-            
             const horizThreshold = rect.width * 0.25;
             const vertThreshold = rect.height * 0.25;
-            
             e.currentTarget.classList.remove('section-drag-over-top', 'section-drag-over-bottom', 'section-drag-over-left', 'section-drag-over-right', 'section-drag-over-center');
-            
-            if (relY < vertThreshold) {
-                dropSide = 'top';
-                e.currentTarget.classList.add('section-drag-over-top');
-            } else if (relY > rect.height - vertThreshold) {
-                dropSide = 'bottom';
-                e.currentTarget.classList.add('section-drag-over-bottom');
-            } 
-            else if (relX < horizThreshold) { 
-                dropSide = 'left'; 
-                e.currentTarget.classList.add('section-drag-over-left'); 
-            } else if (relX > rect.width - horizThreshold) { 
-                dropSide = 'right'; 
-                e.currentTarget.classList.add('section-drag-over-right'); 
-            } 
-            else { 
-                dropSide = 'center'; 
-                e.currentTarget.classList.add('section-drag-over-center'); 
-            }
+            if (relY < vertThreshold) { dropSide = 'top'; e.currentTarget.classList.add('section-drag-over-top'); } 
+            else if (relY > rect.height - vertThreshold) { dropSide = 'bottom'; e.currentTarget.classList.add('section-drag-over-bottom'); } 
+            else if (relX < horizThreshold) { dropSide = 'left'; e.currentTarget.classList.add('section-drag-over-left'); } 
+            else if (relX > rect.width - horizThreshold) { dropSide = 'right'; e.currentTarget.classList.add('section-drag-over-right'); } 
+            else { dropSide = 'center'; e.currentTarget.classList.add('section-drag-over-center'); }
         };
 
-        window.handleDragLeave = function(e) { 
-            e.currentTarget.classList.remove('section-drag-over-top', 'section-drag-over-bottom', 'section-drag-over-left', 'section-drag-over-right', 'section-drag-over-center'); 
-        };
+        window.handleDragLeave = function(e) { e.currentTarget.classList.remove('section-drag-over-top', 'section-drag-over-bottom', 'section-drag-over-left', 'section-drag-over-right', 'section-drag-over-center'); };
 
         window.handleDrop = async function(e, targetId) { 
             e.preventDefault(); e.currentTarget.classList.remove('section-drag-over-top', 'section-drag-over-bottom', 'section-drag-over-left', 'section-drag-over-right', 'section-drag-over-center'); 
-            
             if (!draggedId || draggedId === targetId) return; 
-            
             const sourceIdx = manualSections.findIndex(s => s.id === draggedId);
             const targetIdxOriginal = manualSections.findIndex(s => s.id === targetId);
             const targetBlock = manualSections[targetIdxOriginal];
             const newSections = [...manualSections];
             const [moved] = newSections.splice(sourceIdx, 1); 
-            
             let insertIdx = newSections.findIndex(s => s.id === targetId);
             const batch = writeBatch(db);
-            
-            if (dropSide === 'left' || dropSide === 'right') { 
-                batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', moved.id), { width: 48 }); 
-                batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', targetBlock.id), { width: 48 }); 
-                if (dropSide === 'right') insertIdx += 1; 
-            } else if (dropSide === 'top') {
-                // Insert Above - already handled by insertIdx
-            } else if (dropSide === 'bottom') {
-                insertIdx += 1;
-            } else {
-                if (insertIdx > sourceIdx) insertIdx += 0;
-            }
-            
+            if (dropSide === 'left' || dropSide === 'right') { batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', moved.id), { width: 48 }); batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', targetBlock.id), { width: 48 }); if (dropSide === 'right') insertIdx += 1; } 
+            else if (dropSide === 'top') {} else if (dropSide === 'bottom') { insertIdx += 1; } 
+            else { if (insertIdx > sourceIdx) insertIdx += 0; }
             newSections.splice(insertIdx, 0, moved); 
-            newSections.forEach((sec, i) => { 
-                batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', sec.id), { order: i }); 
-            }); 
-            
-            await batch.commit(); 
-            draggedId = null; 
+            newSections.forEach((sec, i) => { batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', sec.id), { order: i }); }); 
+            await batch.commit(); draggedId = null; 
+            window.showToast("Archive Records Reordered");
         };
 
         // --- IDENTITY ---
@@ -580,9 +547,40 @@
         window.openDelModal = (text, callback) => { const txt = document.getElementById('del-modal-text'); if (txt) txt.innerText = text; deleteCallback = callback; const m = document.getElementById('del-modal'); if(m) m.classList.remove('hidden'); };
         window.setEditing = (id) => { activeEditId = id; };
         window.clearEditing = () => { activeEditId = null; };
-        window.setRole = (r) => { if(r === 'dm') document.getElementById('pass-modal')?.classList.remove('hidden'); else { activeRole = 'player'; localStorage.setItem('aeonfall_role', 'player'); window.updateRoleUI(); } };
-        window.authDm = () => { if(document.getElementById('dm-pass')?.value === 'Rew4994') { activeRole='dm'; localStorage.setItem('aeonfall_role', 'dm'); document.getElementById('pass-modal')?.classList.add('hidden'); window.updateRoleUI(); } else { window.showToast("Key Mismatch"); } };
-        window.updateRoleUI = () => { const isDM = activeRole === 'dm'; document.getElementById('dm-global-controls')?.classList.toggle('hidden', !isDM); document.body.classList.toggle('dm-active-edit', isDM); window.renderManual(); };
+        
+        window.setRole = (r) => { 
+            if(r === 'dm') {
+                document.getElementById('pass-modal')?.classList.remove('hidden'); 
+            } else { 
+                activeRole = 'player'; 
+                localStorage.setItem('aeonfall_role', 'player'); 
+                window.updateRoleUI(); 
+            } 
+        };
+        
+        window.authDm = () => { 
+            if(document.getElementById('dm-pass')?.value === 'Rew4994') { 
+                activeRole='dm'; 
+                localStorage.setItem('aeonfall_role', 'dm'); 
+                document.getElementById('pass-modal')?.classList.add('hidden'); 
+                window.updateRoleUI(); 
+            } else { 
+                window.showToast("Key Mismatch"); 
+            } 
+        };
+
+        window.updateRoleUI = () => { 
+            const isDM = activeRole === 'dm'; 
+            document.getElementById('dm-global-controls')?.classList.toggle('hidden', !isDM); 
+            document.body.classList.toggle('dm-active-edit', isDM); 
+            
+            // Visual feedback for role switch
+            document.getElementById('role-dm')?.classList.toggle('active', isDM);
+            document.getElementById('role-player')?.classList.toggle('active', !isDM);
+            
+            window.renderManual(); 
+        };
+
         window.toggleDropdown = (e, id) => { e.stopPropagation(); const el = document.getElementById(id); if(!el) return; const isActive = el.classList.contains('active'); window.closeAllDropdowns(); if (!isActive) el.classList.add('active'); };
         window.closeAllDropdowns = () => { document.querySelectorAll('.arch-dropdown').forEach(d => d.classList.remove('active')); };
         window.openUserModal = (sectionId) => { targetSectionForUID = sectionId; document.getElementById('uid-link-modal')?.classList.remove('hidden'); const searchInput = document.getElementById('user-search'); if(searchInput) searchInput.value = ''; window.filterDMUsers(''); };
@@ -618,7 +616,6 @@
 
         window.unbindUIDFromSection = async (sectionId) => {
             try {
-                // When personal ties user is removed, visibility goes to secret (private) waiting for the dm
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', sectionId), { 
                     sharedWith: [],
                     visibility: 'secret'
@@ -638,14 +635,12 @@
             document.getElementById('uid-link-modal')?.classList.add('hidden'); 
             window.showToast("Override Complete"); 
         };
-
+        
         window.markAsSeen = async (id) => { 
-            // Update local state first for instant removal of notification
             if (!seenDocs.includes(id)) {
                 seenDocs.push(id);
                 window.renderManual();
             }
-            
             const anchored = sessionStorage.getItem('aeonfall_session_anchored') === 'true'; 
             if(anchored && activeAnchorUID) { 
                 await setDoc(doc(db, 'artifacts', appId, 'users', activeAnchorUID, 'seenDocuments', id), { seenAt: Date.now() }); 
@@ -680,7 +675,7 @@
             if(!container) return;
             const visibleSections = manualSections.filter(s => isDM || s.visibility === 'public' || (s.visibility === 'personal' && s.sharedWith?.includes(effectiveUID)));
             const headerEl = document.getElementById('manual-header');
-            if (headerEl) headerEl.innerHTML = `<h1 id="manual-main-title" class="manual-h1 dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('manual-main-title')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateHeader('title', this.innerText)">${activeEditId === 'manual-main-title' ? manualHeader.title : window.parseAeonfallContent(manualHeader.title, false)}</h1><p id="manual-main-subtitle" class="font-serif italic text-sm text-[#5d4037] mb-10 dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('manual-main-subtitle')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateHeader('subtitle', this.innerText)">${activeEditId === 'manual-main-subtitle' ? manualHeader.subtitle : window.parseAeonfallContent(manualHeader.subtitle, false)}</p>`;
+            if (headerEl) headerEl.innerHTML = `<h1 id="manual-main-title" class="manual-h1 dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('manual-main-title')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateHeader('title', this.innerText)">${activeEditId === 'manual-main-title' ? manualHeader.title : window.parseAeonfallContent(manualHeader.title, false)}</h1><p id="manual-main-subtitle" class="font-serif italic text-sm mb-10 dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('manual-main-subtitle')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateHeader('subtitle', this.innerText)">${activeEditId === 'manual-main-subtitle' ? manualHeader.subtitle : window.parseAeonfallContent(manualHeader.subtitle, false)}</p>`;
             if (navList) navList.innerHTML = visibleSections.filter(s => s.type === 'subheading').map(s => {
                 const isWithin24Hours = (Date.now() - (s.createdAt || 0)) < 86400000;
                 const label = (s.docType || 'item').toUpperCase();
