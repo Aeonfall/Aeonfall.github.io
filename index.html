@@ -165,7 +165,20 @@
         .cond-row input[type="checkbox"] { width: 12px; height: 12px; accent-color: #8b0000; }
 
         /* CRITICAL EFFECTS */
-        #critical-fail-overlay { position: fixed; inset: 0; background: black; z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.5s ease-in-out; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        #critical-fail-overlay, #critical-success-overlay { 
+            position: fixed; 
+            inset: 0; 
+            background: black; 
+            z-index: 9999; 
+            opacity: 0; 
+            pointer-events: none; 
+            transition: opacity 0.5s ease-in-out; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            text-align: center; 
+        }
         #fireworks-canvas { position: fixed; inset: 0; z-index: 9998; pointer-events: none; }
 
         /* DM AUTHORIZATION MODAL STYLES */
@@ -176,7 +189,7 @@
         .dm-auth-enter-btn:active { transform: scale(0.98); }
         .dm-auth-back-btn { background: transparent !important; color: #5b626e !important; font-weight: 900 !important; font-size: 0.9rem !important; text-transform: uppercase !important; margin-top: 24px !important; display: block !important; margin-left: auto !important; margin-right: auto !important; letter-spacing: 0.1em !important; }
     </style>
-</head>
+ head>
 <body class="min-h-screen">
 
     <div id="toast" class="toast">Message</div>
@@ -187,6 +200,12 @@
         <div class="font-serif">
             <div class="text-[12rem] leading-none mb-4 text-red-600 font-black drop-shadow-[0_0_30px_rgba(220,38,38,0.5)]">1</div>
             <div class="text-4xl tracking-[0.2em] font-black uppercase text-white drop-shadow-lg">Critical Fail</div>
+        </div>
+    </div>
+    <div id="critical-success-overlay">
+        <div class="font-serif">
+            <div class="text-[12rem] leading-none mb-4 text-amber-500 font-black drop-shadow-[0_0_50px_rgba(245,158,11,0.6)] animate-bounce">20</div>
+            <div class="text-4xl tracking-[0.2em] font-black uppercase text-white drop-shadow-lg">Critical Success</div>
         </div>
     </div>
     <canvas id="fireworks-canvas"></canvas>
@@ -886,6 +905,16 @@
         };
 
         const triggerCriticalSuccess = () => {
+            // Show Overlay
+            const overlay = document.getElementById('critical-success-overlay');
+            overlay.style.opacity = '1';
+            overlay.style.pointerEvents = 'auto';
+            setTimeout(() => {
+                overlay.style.opacity = '0';
+                overlay.style.pointerEvents = 'none';
+            }, 2000);
+
+            // Canvas Fireworks
             const canvas = document.getElementById('fireworks-canvas');
             const ctx = canvas.getContext('2d');
             canvas.width = window.innerWidth;
@@ -916,13 +945,19 @@
                 for (let i = 0; i < particleCount; i++) particles.push(new Particle(x, y, color));
             };
 
-            for(let i=0; i<5; i++) setTimeout(() => { createFirework(Math.random() * canvas.width, Math.random() * (canvas.height * 0.6)); }, i * 200);
+            // Immediate burst so particles isn't empty on frame 1
+            createFirework(canvas.width / 2, canvas.height / 2);
+            for(let i=0; i<4; i++) setTimeout(() => { createFirework(Math.random() * canvas.width, Math.random() * (canvas.height * 0.6)); }, (i + 1) * 200);
 
             let animationId;
             const animate = () => {
                 animationId = requestAnimationFrame(animate); ctx.clearRect(0, 0, canvas.width, canvas.height);
                 particles.forEach((p, i) => { if (p.alpha > 0) { p.update(); p.draw(); } else { particles.splice(i, 1); } });
-                if (particles.length === 0) cancelAnimationFrame(animationId);
+                // Only stop loop if we are definitely done
+                if (particles.length === 0) {
+                    cancelAnimationFrame(animationId);
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
             };
             animate();
         };
