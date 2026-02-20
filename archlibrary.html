@@ -92,8 +92,8 @@
         .shelf-item.newspaper { background: #fff; color: #1a0f0a; border-left-color: #000; border-top: 1px solid #ddd; }
         .shelf-item.parchment { background: #e0d1af; color: #5d4037; border-left-color: #8d7a5d; border-radius: 0 20px 20px 0; }
         
-        /* Updated Textbook Tab Color: Scholarly Purple & Rich Brown */
-        .shelf-item.textbook { background: #4a1c40; border-left-color: #3e2723; }
+        /* Updated Textbook Tab Style: Specific Gold Border and Green Background */
+        .shelf-item.textbook { background: #43a04b; border-left-color: #D2AC47; color: #f4edd8; }
         
         .shelf-item:hover { transform: translateX(10px); filter: brightness(1.2); }
         .shelf-item.active { transform: translateX(15px); box-shadow: -8px 8px 25px rgba(122, 29, 29, 0.5); z-index: 10; }
@@ -578,7 +578,8 @@
             if (headerEl) headerEl.innerHTML = `<h1 id="manual-main-title" class="manual-h1 dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('manual-main-title')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateHeader('title', this.innerText)">${activeEditId === 'manual-main-title' ? manualHeader.title : window.parseAeonfallContent(manualHeader.title, false)}</h1><p id="manual-main-subtitle" class="font-serif italic text-sm text-[#5d4037] mb-10 dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('manual-main-subtitle')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateHeader('subtitle', this.innerText)">${activeEditId === 'manual-main-subtitle' ? manualHeader.subtitle : window.parseAeonfallContent(manualHeader.subtitle, false)}</p>`;
             if (navList) navList.innerHTML = visibleSections.filter(s => s.type === 'subheading').map(s => {
                 const isWithin24Hours = (Date.now() - (s.createdAt || 0)) < 86400000;
-                return `<div class="shelf-item ${s.docType || 'book'}" onclick="window.markAsSeen('${s.id}')">${isWithin24Hours && !seenDocs.includes(s.id) ? '<span class="new-badge">NEW</span>' : ''}${s.visibility === 'personal' ? '<span class="personal-badge">Personal</span>' : ''}<span class="item-label">${s.docType || 'item'}</span>${s.title}</div>`;
+                const label = (s.docType || 'item').toUpperCase();
+                return `<div class="shelf-item ${s.docType || 'book'}" onclick="window.markAsSeen('${s.id}')">${isWithin24Hours && !seenDocs.includes(s.id) ? '<span class="new-badge">NEW</span>' : ''}${s.visibility === 'personal' ? '<span class="personal-badge">Personal</span>' : ''}<span class="item-label">${label}: </span>${s.title}</div>`;
             }).join('');
             container.innerHTML = visibleSections.map(s => {
                 const hId = `head-${s.id}`, cId = `content-${s.id}`, customStyle = `width: calc(${s.width ?? 100}% - 10px); font-size: ${s.fontSize ?? 14}px; margin-top: ${s.ySpacing ?? 0}px; flex-shrink: 0; box-sizing: border-box; padding: 5px;`;
