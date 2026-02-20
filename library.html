@@ -51,8 +51,11 @@
         .drag-handle:hover { opacity: 1; }
         .section-dragging { opacity: 0.2; transform: scale(0.98); border: 2px dashed #7a1d1d !important; }
         
-        .section-drag-over-before { border-left: 8px solid #7a1d1d !important; padding-left: 12px !important; }
-        .section-drag-over-after { border-right: 8px solid #7a1d1d !important; padding-right: 12px !important; }
+        /* Drag Indicators */
+        .section-drag-over-top { border-top: 4px solid #7a1d1d !important; }
+        .section-drag-over-bottom { border-bottom: 4px solid #7a1d1d !important; }
+        .section-drag-over-left { border-left: 8px solid #7a1d1d !important; padding-left: 12px !important; }
+        .section-drag-over-right { border-right: 8px solid #7a1d1d !important; padding-right: 12px !important; }
         .section-drag-over-center { background: rgba(122, 29, 29, 0.05); border-radius: 4px; }
 
         /* TOAST SYSTEM */
@@ -120,6 +123,9 @@
         .role-tab.active { background: #7a1d1d; color: white; }
 
         .link-user-btn { background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; font-size: 8px; font-weight: 900; padding: 4px 10px; border-radius: 2px; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
+        .unbind-user-btn { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; font-size: 8px; font-weight: 900; padding: 4px 8px; border-radius: 2px; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
+        .unbind-user-btn:hover { background: #c62828; color: white; }
+        
         .bind-tag-btn { background: #f4f4f4; color: #1a1a1a; padding: 4px 10px; border-radius: 2px; font-size: 8px; font-weight: 900; text-transform: uppercase; cursor: pointer; border: 1px solid #ddd; transition: 0.2s; }
         .bind-tag-btn:hover { background: #1565c0; color: white; border-color: #1565c0; }
 
@@ -386,32 +392,78 @@
 
         // --- DRAG AND DROP LOGIC ---
         window.handleDragStart = function(e, id) { if (activeRole !== 'dm') return; draggedId = id; e.currentTarget.classList.add('section-dragging'); };
+        
         window.handleDragOver = function(e) { 
-            if (!draggedId) return; e.preventDefault(); 
+            if (!draggedId) return; 
+            e.preventDefault(); 
+            
             const rect = e.currentTarget.getBoundingClientRect(); 
             const relX = e.clientX - rect.left;
-            const threshold = rect.width * 0.3;
-            e.currentTarget.classList.remove('section-drag-over-before', 'section-drag-over-after', 'section-drag-over-center');
-            if (relX < threshold) { dropSide = 'left'; e.currentTarget.classList.add('section-drag-over-before'); } 
-            else if (relX > rect.width - threshold) { dropSide = 'right'; e.currentTarget.classList.add('section-drag-over-after'); } 
-            else { dropSide = 'center'; e.currentTarget.classList.add('section-drag-over-center'); }
+            const relY = e.clientY - rect.top;
+            
+            const horizThreshold = rect.width * 0.25;
+            const vertThreshold = rect.height * 0.25;
+            
+            e.currentTarget.classList.remove('section-drag-over-top', 'section-drag-over-bottom', 'section-drag-over-left', 'section-drag-over-right', 'section-drag-over-center');
+            
+            if (relY < vertThreshold) {
+                dropSide = 'top';
+                e.currentTarget.classList.add('section-drag-over-top');
+            } else if (relY > rect.height - vertThreshold) {
+                dropSide = 'bottom';
+                e.currentTarget.classList.add('section-drag-over-bottom');
+            } 
+            else if (relX < horizThreshold) { 
+                dropSide = 'left'; 
+                e.currentTarget.classList.add('section-drag-over-left'); 
+            } else if (relX > rect.width - horizThreshold) { 
+                dropSide = 'right'; 
+                e.currentTarget.classList.add('section-drag-over-right'); 
+            } 
+            else { 
+                dropSide = 'center'; 
+                e.currentTarget.classList.add('section-drag-over-center'); 
+            }
         };
-        window.handleDragLeave = function(e) { e.currentTarget.classList.remove('section-drag-over-before', 'section-drag-over-after', 'section-drag-over-center'); };
+
+        window.handleDragLeave = function(e) { 
+            e.currentTarget.classList.remove('section-drag-over-top', 'section-drag-over-bottom', 'section-drag-over-left', 'section-drag-over-right', 'section-drag-over-center'); 
+        };
+
         window.handleDrop = async function(e, targetId) { 
-            e.preventDefault(); e.currentTarget.classList.remove('section-drag-over-before', 'section-drag-over-after', 'section-drag-over-center'); 
+            e.preventDefault(); 
+            e.currentTarget.classList.remove('section-drag-over-top', 'section-drag-over-bottom', 'section-drag-over-left', 'section-drag-over-right', 'section-drag-over-center'); 
+            
             if (!draggedId || draggedId === targetId) return; 
+            
             const sourceIdx = manualSections.findIndex(s => s.id === draggedId);
             const targetIdxOriginal = manualSections.findIndex(s => s.id === targetId);
             const targetBlock = manualSections[targetIdxOriginal];
             const newSections = [...manualSections];
             const [moved] = newSections.splice(sourceIdx, 1); 
+            
             let insertIdx = newSections.findIndex(s => s.id === targetId);
             const batch = writeBatch(db);
-            if (dropSide === 'left' || dropSide === 'right') { batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', moved.id), { width: 48 }); batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', targetBlock.id), { width: 48 }); if (dropSide === 'right') insertIdx += 1; } 
-            else { if (insertIdx > sourceIdx) insertIdx += 1; }
+            
+            if (dropSide === 'left' || dropSide === 'right') { 
+                batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', moved.id), { width: 48 }); 
+                batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', targetBlock.id), { width: 48 }); 
+                if (dropSide === 'right') insertIdx += 1; 
+            } else if (dropSide === 'top') {
+                // Insert Above - already handled by insertIdx
+            } else if (dropSide === 'bottom') {
+                insertIdx += 1;
+            } else {
+                if (insertIdx > sourceIdx) insertIdx += 0;
+            }
+            
             newSections.splice(insertIdx, 0, moved); 
-            newSections.forEach((sec, i) => { batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', sec.id), { order: i }); }); 
-            await batch.commit(); draggedId = null; 
+            newSections.forEach((sec, i) => { 
+                batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', sec.id), { order: i }); 
+            }); 
+            
+            await batch.commit(); 
+            draggedId = null; 
         };
 
         // --- IDENTITY ---
@@ -502,7 +554,6 @@
             const container = document.getElementById('user-results'); if(!container) return;
             const search = val.toLowerCase();
             const filtered = allUsers.filter(u => (u.username || '').toLowerCase().includes(search) || (u.uid || '').toLowerCase().includes(search));
-            const isDM = activeRole === 'dm';
             container.innerHTML = filtered.map(u => `
                 <div class="user-result flex justify-between items-center p-4 hover:bg-gray-50 border-b border-gray-100">
                     <div class="cursor-pointer flex-grow" onclick="window.assignUIDToSection('${u.uid}')">
@@ -517,8 +568,39 @@
             `).join('') || '<div class="p-8 text-center opacity-40 text-[10px]">No Signal Found.</div>';
         };
 
-        window.assignUIDToSection = async (uid) => { if(!targetSectionForUID) return; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', targetSectionForUID), { sharedWith: [uid] }); document.getElementById('uid-link-modal')?.classList.add('hidden'); window.showToast("Personal Link Established."); };
-        window.assignManualUID = async () => { const uidInput = document.getElementById('manual-uid-input'); const uid = uidInput ? uidInput.value.trim() : ''; if(!uid || !targetSectionForUID) return; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', targetSectionForUID), { sharedWith: [uid] }); document.getElementById('uid-link-modal')?.classList.add('hidden'); window.showToast("Override Complete"); };
+        window.assignUIDToSection = async (uid) => { 
+            if(!targetSectionForUID) return; 
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', targetSectionForUID), { 
+                sharedWith: [uid],
+                visibility: 'personal' // Ensure visibility is personal when bound
+            }); 
+            document.getElementById('uid-link-modal')?.classList.add('hidden'); 
+            window.showToast("Personal Link Established."); 
+        };
+
+        window.unbindUIDFromSection = async (sectionId) => {
+            try {
+                // When personal ties user is removed, visibility goes to secret (private) waiting for the dm
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', sectionId), { 
+                    sharedWith: [],
+                    visibility: 'secret'
+                });
+                window.showToast("LINK EXPUNGED - RECORD IS NOW PRIVATE");
+            } catch(e) { window.showToast("Unbind Failed."); }
+        };
+
+        window.assignManualUID = async () => { 
+            const uidInput = document.getElementById('manual-uid-input'); 
+            const uid = uidInput ? uidInput.value.trim() : ''; 
+            if(!uid || !targetSectionForUID) return; 
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', targetSectionForUID), { 
+                sharedWith: [uid],
+                visibility: 'personal'
+            }); 
+            document.getElementById('uid-link-modal')?.classList.add('hidden'); 
+            window.showToast("Override Complete"); 
+        };
+
         window.markAsSeen = async (id) => { const anchored = sessionStorage.getItem('aeonfall_session_anchored') === 'true'; if(!anchored || !activeAnchorUID) return; await setDoc(doc(db, 'artifacts', appId, 'users', activeAnchorUID, 'seenDocuments', id), { seenAt: Date.now() }); window.scrollToSection(id); };
         window.scrollToSection = (id) => { const el = document.getElementById(`section-${id}`); if (el) el.scrollIntoView({ behavior: 'smooth' }); };
         window.openReturnToLoreSequence = function() { const overlay = document.getElementById('cinematic-overlay'); overlay?.classList.add('active'); setTimeout(() => { window.location.href = 'lore.html'; }, 2000); };
@@ -554,8 +636,29 @@
             }).join('');
             container.innerHTML = visibleSections.map(s => {
                 const hId = `head-${s.id}`, cId = `content-${s.id}`, customStyle = `width: calc(${s.width ?? 100}% - 10px); font-size: ${s.fontSize ?? 14}px; margin-top: ${s.ySpacing ?? 0}px; flex-shrink: 0; box-sizing: border-box; padding: 5px;`;
+                const sharedUser = allUsers.find(u => u.uid === s.sharedWith?.[0]);
+                
                 let html = `<section id="section-${s.id}" class="group relative transition-all doc-${s.docType || 'book'}" draggable="${isDM}" ondragstart="window.handleDragStart(event, '${s.id}')" ondragover="window.handleDragOver(event)" ondragleave="window.handleDragLeave(event)" ondrop="window.handleDrop(event, '${s.id}')" style="${customStyle}">
-                    ${isDM ? `<div class="tuner-panel"><div class="drag-handle text-lg">⠿</div><div class="tuner-group"><span class="tuner-label">Width</span><input type="range" class="tuner-slider" min="10" max="100" value="${s.width ?? 100}" oninput="window.dbUpdateSection('${s.id}', 'width', parseInt(this.value))"></div><div class="tuner-group"><span class="tuner-label">Access</span><select class="tuner-select text-[8px] bg-slate-50 border border-slate-300 rounded" onchange="window.dbUpdateSection('${s.id}', 'visibility', this.value)"><option value="public" ${s.visibility==='public'?'selected':''}>Public</option><option value="secret" ${s.visibility==='secret'?'selected':''}>Secret</option><option value="personal" ${s.visibility==='personal'?'selected':''}>Personal Tie</option></select></div>${s.visibility === 'personal' ? `<div class="tuner-group"><span class="tuner-label">Binding</span><button class="link-user-btn !text-[7px] !px-3" onclick="window.openUserModal('${s.id}')">${allUsers.find(u => u.uid === s.sharedWith?.[0])?.username || 'Bind'}</button></div>` : ''}<button onclick="window.triggerDelete('${s.id}')" class="arch-btn arch-btn-del !rounded-md ml-auto">✕</button></div>` : ''}
+                    ${isDM ? `<div class="tuner-panel">
+                        <div class="drag-handle text-lg">⠿</div>
+                        <div class="tuner-group"><span class="tuner-label">Width</span><input type="range" class="tuner-slider" min="10" max="100" value="${s.width ?? 100}" oninput="window.dbUpdateSection('${s.id}', 'width', parseInt(this.value))"></div>
+                        <div class="tuner-group">
+                            <span class="tuner-label">Access</span>
+                            <select class="tuner-select text-[8px] bg-slate-50 border border-slate-300 rounded" onchange="window.dbUpdateSection('${s.id}', 'visibility', this.value)">
+                                <option value="public" ${s.visibility==='public'?'selected':''}>Public</option>
+                                <option value="secret" ${s.visibility==='secret'?'selected':''}>Secret</option>
+                                <option value="personal" ${s.visibility==='personal'?'selected':''}>Personal Tie</option>
+                            </select>
+                        </div>
+                        <div class="tuner-group">
+                            <span class="tuner-label">Binding</span>
+                            <div class="flex gap-1">
+                                <button class="link-user-btn !text-[7px] !px-3" onclick="window.openUserModal('${s.id}')">${sharedUser?.username || 'Bind'}</button>
+                                ${sharedUser ? `<button class="unbind-user-btn" onclick="window.unbindUIDFromSection('${s.id}')" title="Unbind and make private">✕</button>` : ''}
+                            </div>
+                        </div>
+                        <button onclick="window.triggerDelete('${s.id}')" class="arch-btn arch-btn-del !rounded-md ml-auto">✕</button>
+                    </div>` : ''}
                     <div class="flex justify-between items-end gap-4 mb-2">
                         ${s.type === 'subheading' ? `<h2 id="${hId}" class="manual-h2 dm-editable flex-grow !m-0" contenteditable="${isDM}" onfocus="window.setEditing('${hId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">${activeEditId === hId ? s.title : window.parseAeonfallContent(s.title, false)}</h2>` : (s.type === 'inner-subheading' ? `<h3 id="${hId}" class="manual-h3 dm-editable flex-grow !m-0" contenteditable="${isDM}" onfocus="window.setEditing('${hId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">${activeEditId === hId ? s.title : window.parseAeonfallContent(s.title, false)}</h3>` : '')}
                         ${isDM ? `<span class="visibility-tag tag-${s.visibility || 'public'}">${s.visibility || 'public'}</span>` : ''}
