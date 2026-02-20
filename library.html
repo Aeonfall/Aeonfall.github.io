@@ -91,6 +91,10 @@
         .shelf-item.manuscript { background: #dcd1b2; color: #1a0f0a; border-left-color: #7a1d1d; }
         .shelf-item.newspaper { background: #fff; color: #1a0f0a; border-left-color: #000; border-top: 1px solid #ddd; }
         .shelf-item.parchment { background: #e0d1af; color: #5d4037; border-left-color: #8d7a5d; border-radius: 0 20px 20px 0; }
+        
+        /* Updated Text Book Styling: Light Blue Background and Brown Border */
+        .shelf-item.textbook { background: #709fbc; border-left-color: #d2ad32; color: #1a0f0a; }
+        
         .shelf-item:hover { transform: translateX(10px); filter: brightness(1.2); }
         .shelf-item.active { transform: translateX(15px); box-shadow: -8px 8px 25px rgba(122, 29, 29, 0.5); z-index: 10; }
 
@@ -304,6 +308,17 @@
                     </div>
                 </div>
 
+                <!-- NEW TEXT BOOK DROPDOWN -->
+                <div class="arch-dropdown" id="dd-textbook">
+                    <button class="arch-btn" onclick="window.toggleDropdown(event, 'dd-textbook')">📓 Text Book</button>
+                    <div class="arch-dropdown-content">
+                        <div class="dropdown-link" onclick="window.addManualSection('subheading', 'textbook')">Lesson Volume</div>
+                        <div class="dropdown-link" onclick="window.addManualSection('textbook', 'textbook')">Custodian Teaching</div>
+                        <div class="dropdown-link" onclick="window.addManualSection('inner-subheading', 'textbook')">Lesson Subheading</div>
+                        <div class="dropdown-link" onclick="window.addManualSection('divider', 'textbook')">Subject Divider</div>
+                    </div>
+                </div>
+
                 <div class="arch-dropdown" id="dd-newspaper">
                     <button class="arch-btn" onclick="window.toggleDropdown(event, 'dd-newspaper')">📰 Newspaper</button>
                     <div class="arch-dropdown-content">
@@ -390,7 +405,7 @@
             } 
         };
 
-        // --- DRAG AND DROP LOGIC ---
+        // --- DRAG AND DROP LOGIC (UPGRADED FOR ABOVE/BELOW) ---
         window.handleDragStart = function(e, id) { if (activeRole !== 'dm') return; draggedId = id; e.currentTarget.classList.add('section-dragging'); };
         
         window.handleDragOver = function(e) { 
@@ -554,6 +569,7 @@
             const container = document.getElementById('user-results'); if(!container) return;
             const search = val.toLowerCase();
             const filtered = allUsers.filter(u => (u.username || '').toLowerCase().includes(search) || (u.uid || '').toLowerCase().includes(search));
+            const isDM = activeRole === 'dm';
             container.innerHTML = filtered.map(u => `
                 <div class="user-result flex justify-between items-center p-4 hover:bg-gray-50 border-b border-gray-100">
                     <div class="cursor-pointer flex-grow" onclick="window.assignUIDToSection('${u.uid}')">
@@ -610,7 +626,7 @@
 
         window.addManualSection = async (type, docType = 'book') => {
             if(!userAuth) return;
-            const data = { title: type === 'subheading' ? `NEW VOLUME` : (type === 'inner-subheading' ? "NEW CHAPTER" : type === 'divider' ? "" : "NEW SEGMENT"), content: type === 'divider' ? "" : "Details...", type, docType, order: manualSections.length, createdAt: Date.now(), width: 100, fontSize: 14, ySpacing: 0, visibility: 'public', sharedWith: [] };
+            const data = { title: type === 'subheading' ? `NEW VOLUME` : (type === 'inner-subheading' ? "NEW CHAPTER" : type === 'divider' ? "" : "NEW SEGMENT"), content: type === 'divider' ? "" : "Inscribe teachings here...", type, docType, order: manualSections.length, createdAt: Date.now(), width: 100, fontSize: 14, ySpacing: 0, visibility: 'public', sharedWith: [] };
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'librarySections'), data);
             window.closeAllDropdowns();
         };
@@ -632,7 +648,8 @@
             if (headerEl) headerEl.innerHTML = `<h1 id="manual-main-title" class="manual-h1 dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('manual-main-title')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateHeader('title', this.innerText)">${activeEditId === 'manual-main-title' ? manualHeader.title : window.parseAeonfallContent(manualHeader.title, false)}</h1><p id="manual-main-subtitle" class="font-serif italic text-sm text-[#5d4037] mb-10 dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('manual-main-subtitle')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateHeader('subtitle', this.innerText)">${activeEditId === 'manual-main-subtitle' ? manualHeader.subtitle : window.parseAeonfallContent(manualHeader.subtitle, false)}</p>`;
             if (navList) navList.innerHTML = visibleSections.filter(s => s.type === 'subheading').map(s => {
                 const isWithin24Hours = (Date.now() - (s.createdAt || 0)) < 86400000;
-                return `<div class="shelf-item ${s.docType || 'book'}" onclick="window.markAsSeen('${s.id}')">${isWithin24Hours && !seenDocs.includes(s.id) ? '<span class="new-badge">NEW</span>' : ''}${s.visibility === 'personal' ? '<span class="personal-badge">Personal</span>' : ''}<span class="item-label">${s.docType || 'item'}</span>${s.title}</div>`;
+                const label = (s.docType || 'item').toUpperCase();
+                return `<div class="shelf-item ${s.docType || 'book'}" onclick="window.markAsSeen('${s.id}')">${isWithin24Hours && !seenDocs.includes(s.id) ? '<span class="new-badge">NEW</span>' : ''}${s.visibility === 'personal' ? '<span class="personal-badge">Personal</span>' : ''}<span class="item-label">${label}: </span>${s.title}</div>`;
             }).join('');
             container.innerHTML = visibleSections.map(s => {
                 const hId = `head-${s.id}`, cId = `content-${s.id}`, customStyle = `width: calc(${s.width ?? 100}% - 10px); font-size: ${s.fontSize ?? 14}px; margin-top: ${s.ySpacing ?? 0}px; flex-shrink: 0; box-sizing: border-box; padding: 5px;`;
@@ -664,6 +681,7 @@
                         ${isDM ? `<span class="visibility-tag tag-${s.visibility || 'public'}">${s.visibility || 'public'}</span>` : ''}
                     </div>`;
                 if(s.type === 'text') html += `<div id="${cId}" class="manual-p dm-editable leading-relaxed" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div>`;
+                else if(s.type === 'textbook') html += `<div class="manual-textbook-box bg-[#f0f9ff] p-8 border-t-8 border-[#5d4037] rounded shadow-lg relative my-6"><div class="absolute -top-3 left-6 bg-[#5d4037] text-[#f4edd8] px-3 py-1 text-[8px] font-black uppercase tracking-widest">Scholar's Teaching</div><div id="${cId}" class="manual-p dm-editable leading-relaxed text-[#2c1810]" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
                 else if(s.type === 'note') html += `<div class="manual-note-box bg-slate-50 p-5 border-l-4 border-amber-800 rounded shadow-inner"><div id="${cId}" class="manual-p dm-editable italic" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
                 else if(s.type === 'divider') html += `<div class="manual-divider"></div>`;
                 html += `</section>`; return html;
