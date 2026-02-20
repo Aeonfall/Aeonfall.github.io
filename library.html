@@ -92,7 +92,7 @@
         .shelf-item.newspaper { background: #fff; color: #1a0f0a; border-left-color: #000; border-top: 1px solid #ddd; }
         .shelf-item.parchment { background: #e0d1af; color: #5d4037; border-left-color: #8d7a5d; border-radius: 0 20px 20px 0; }
         
-        /* Updated Text Book Styling: Light Blue Background and Brown Border */
+        /* Textbook Styling: Light Blue Background and Brown Border */
         .shelf-item.textbook { background: #709fbc; border-left-color: #d2ad32; color: #1a0f0a; }
         
         .shelf-item:hover { transform: translateX(10px); filter: brightness(1.2); }
@@ -105,8 +105,16 @@
         .manual-body { flex-grow: 1; padding: 60px 50px; height: 100%; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; box-sizing: border-box; }
         #manual-sections-container { display: flex; flex-wrap: wrap; align-items: flex-start; width: 100%; gap: 0; }
 
-        .manual-h2 { font-family: 'Cinzel', serif; font-weight: 900; font-size: 2.2rem; color: #7a1d1d; border-bottom: 4px double #7a1d1d; padding-bottom: 8px; text-transform: uppercase; margin-bottom: 25px; width: 100%; letter-spacing: 2px; }
-        .manual-h3 { font-family: 'Cinzel', serif; font-weight: 700; font-size: 1.4rem; color: #5d4037; border-bottom: 1px solid rgba(93, 64, 55, 0.4); padding-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; width: 100%; }
+        .manual-h1, .manual-h2, .manual-h3, .manual-p {
+            color: #262626 !important; /* Pencil Charcoal Grey/Black */
+        }
+        .dm-editable:focus {
+            outline: none;
+            color: #262626 !important;
+        }
+
+        .manual-h2 { font-family: 'Cinzel', serif; font-weight: 900; font-size: 2.2rem; border-bottom: 4px double #7a1d1d; padding-bottom: 8px; text-transform: uppercase; margin-bottom: 25px; width: 100%; letter-spacing: 2px; }
+        .manual-h3 { font-family: 'Cinzel', serif; font-weight: 700; font-size: 1.4rem; border-bottom: 1px solid rgba(93, 64, 55, 0.4); padding-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; width: 100%; }
         .manual-divider { width: 100%; height: 1px; background: linear-gradient(to right, transparent, rgba(122, 29, 29, 0.4), transparent); margin: 30px 0; flex-shrink: 0; }
 
         .arch-btn { font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 10px 20px; border-radius: 4px; cursor: pointer; border: 1px solid #7a1d1d; transition: 0.2s; display: inline-flex; align-items: center; gap: 10px; background: #7a1d1d; color: white; }
@@ -396,6 +404,15 @@
         let activeAnchorUID = null; 
         let draggedId = null, dropSide = null;
 
+        // Force plain text paste to strip formatting and maintain charcoal color
+        window.addEventListener('paste', function(e) {
+            if (e.target.hasAttribute('contenteditable')) {
+                e.preventDefault();
+                const text = e.clipboardData.getData('text/plain');
+                document.execCommand('insertText', false, text);
+            }
+        });
+
         // --- TOAST ---
         window.showToast = (m) => { 
             const t = document.getElementById('toast'); 
@@ -446,8 +463,7 @@
         };
 
         window.handleDrop = async function(e, targetId) { 
-            e.preventDefault(); 
-            e.currentTarget.classList.remove('section-drag-over-top', 'section-drag-over-bottom', 'section-drag-over-left', 'section-drag-over-right', 'section-drag-over-center'); 
+            e.preventDefault(); e.currentTarget.classList.remove('section-drag-over-top', 'section-drag-over-bottom', 'section-drag-over-left', 'section-drag-over-right', 'section-drag-over-center'); 
             
             if (!draggedId || draggedId === targetId) return; 
             
@@ -681,7 +697,7 @@
                         ${isDM ? `<span class="visibility-tag tag-${s.visibility || 'public'}">${s.visibility || 'public'}</span>` : ''}
                     </div>`;
                 if(s.type === 'text') html += `<div id="${cId}" class="manual-p dm-editable leading-relaxed" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div>`;
-                else if(s.type === 'textbook') html += `<div class="manual-textbook-box bg-[#f0f9ff] p-8 border-t-8 border-[#5d4037] rounded shadow-lg relative my-6"><div class="absolute -top-3 left-6 bg-[#5d4037] text-[#f4edd8] px-3 py-1 text-[8px] font-black uppercase tracking-widest">Scholar's Teaching</div><div id="${cId}" class="manual-p dm-editable leading-relaxed text-[#2c1810]" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
+                else if(s.type === 'textbook') html += `<div class="manual-textbook-box bg-[#f0f9ff] p-8 border-t-8 border-[#5d4037] rounded shadow-lg relative my-6"><div class="absolute -top-3 left-6 bg-[#5d4037] text-[#f4edd8] px-3 py-1 text-[8px] font-black uppercase tracking-widest">Scholar's Teaching</div><div id="${cId}" class="manual-p dm-editable leading-relaxed" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
                 else if(s.type === 'note') html += `<div class="manual-note-box bg-slate-50 p-5 border-l-4 border-amber-800 rounded shadow-inner"><div id="${cId}" class="manual-p dm-editable italic" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
                 else if(s.type === 'divider') html += `<div class="manual-divider"></div>`;
                 html += `</section>`; return html;
