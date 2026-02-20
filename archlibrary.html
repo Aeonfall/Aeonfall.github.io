@@ -92,7 +92,7 @@
         .shelf-item.newspaper { background: #fff; color: #1a0f0a; border-left-color: #000; border-top: 1px solid #ddd; }
         .shelf-item.parchment { background: #e0d1af; color: #5d4037; border-left-color: #8d7a5d; border-radius: 0 20px 20px 0; }
         
-        /* Updated Textbook Tab Style: Sea Green Background & Gold Border */
+        /* Textbook Tab Style: Sea Green Background & Gold Border */
         .shelf-item.textbook { background: #2E8B57; border-left-color: #E5C366; color: #f4edd8; }
         
         .shelf-item:hover { transform: translateX(10px); filter: brightness(1.2); }
@@ -133,7 +133,7 @@
 
         .role-pill { background: rgba(0,0,0,0.05); border-radius: 99px; padding: 3px; display: inline-flex; gap: 4px; border: 1px solid rgba(0,0,0,0.1); align-self: center; }
         .role-tab { padding: 4px 14px; font-family: 'Cinzel', serif; font-size: 9px; font-weight: 900; border-radius: 99px; transition: 0.3s; color: #5d4037; text-transform: uppercase; cursor: pointer; }
-        .role-tab.active { background: #7a1d1d; color: white; }
+        .role-tab.active { background: #7a1d1d !important; color: white !important; }
 
         .link-user-btn { background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; font-size: 8px; font-weight: 900; padding: 4px 10px; border-radius: 2px; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
         .bind-tag-btn { background: #f4f4f4; color: #1a1a1a; padding: 4px 10px; border-radius: 2px; font-size: 8px; font-weight: 900; text-transform: uppercase; cursor: pointer; border: 1px solid #ddd; transition: 0.2s; }
@@ -246,6 +246,16 @@
         </div>
     </div>
 
+    <!-- DM PASS MODAL -->
+    <div id="pass-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[110000] hidden p-4">
+        <div class="bg-gray-800 p-10 rounded-2xl w-full max-sm border-2 border-amber-600 text-white text-center shadow-2xl">
+            <h3 class="text-xl font-serif text-amber-500 font-bold mb-4 uppercase">Archivist Authorization</h3>
+            <input type="password" id="dm-pass" class="w-full bg-gray-900 text-center text-2xl rounded-lg p-3 mb-8 border border-gray-700 text-amber-500 focus:outline-none">
+            <button onclick="window.authDm()" class="w-full bg-amber-600 hover:bg-amber-500 text-white py-4 rounded-xl font-bold uppercase text-xs tracking-widest">Unlock Archives</button>
+            <button onclick="document.getElementById('pass-modal').classList.add('hidden')" class="text-[10px] text-gray-500 uppercase font-black mt-6 block w-full text-center">Cancel</button>
+        </div>
+    </div>
+
     <div id="lightbox-modal" class="lightbox hidden" onclick="this.classList.add('hidden')">
         <div id="lightbox-content"></div>
     </div>
@@ -314,7 +324,6 @@
                     </div>
                 </div>
 
-                <!-- NEW TEXT BOOK CATEGORY -->
                 <div class="arch-dropdown" id="dd-textbook">
                     <button class="arch-btn" onclick="window.toggleDropdown(event, 'dd-textbook')">📓 Text Book</button>
                     <div class="arch-dropdown-content">
@@ -389,7 +398,8 @@
 
         let manualSections = [], seenDocs = [], allUsers = [], targetSectionForUID = null;
         let manualHeader = { title: "Archivist's Scholar Library", subtitle: "Restricted logs and personal entries." };
-        let activeRole = 'player', activeEditId = null, userAuth = null, saveTimer = null, deleteCallback = null;
+        let activeRole = localStorage.getItem('aeonfall_role') || 'player'; 
+        let activeEditId = null, userAuth = null, saveTimer = null, deleteCallback = null;
         let activeAnchorUID = null; 
         let draggedId = null, dropSide = null;
 
@@ -534,9 +544,40 @@
         window.openDelModal = (text, callback) => { const txt = document.getElementById('del-modal-text'); if (txt) txt.innerText = text; deleteCallback = callback; const m = document.getElementById('del-modal'); if(m) m.classList.remove('hidden'); };
         window.setEditing = (id) => { activeEditId = id; };
         window.clearEditing = () => { activeEditId = null; };
-        window.setRole = (r) => { if(r === 'dm') document.getElementById('pass-modal')?.classList.remove('hidden'); else { activeRole = 'player'; localStorage.setItem('aeonfall_role', 'player'); window.updateRoleUI(); } };
-        window.authDm = () => { if(document.getElementById('dm-pass')?.value === 'Rew4994') { activeRole='dm'; localStorage.setItem('aeonfall_role', 'dm'); document.getElementById('pass-modal')?.classList.add('hidden'); window.updateRoleUI(); } else { window.showToast("Key Mismatch"); } };
-        window.updateRoleUI = () => { const isDM = activeRole === 'dm'; document.getElementById('dm-global-controls')?.classList.toggle('hidden', !isDM); document.body.classList.toggle('dm-active-edit', isDM); window.renderManual(); };
+        
+        window.setRole = (r) => { 
+            if(r === 'dm') {
+                document.getElementById('pass-modal')?.classList.remove('hidden'); 
+            } else { 
+                activeRole = 'player'; 
+                localStorage.setItem('aeonfall_role', 'player'); 
+                window.updateRoleUI(); 
+            } 
+        };
+        
+        window.authDm = () => { 
+            if(document.getElementById('dm-pass')?.value === 'Rew4994') { 
+                activeRole='dm'; 
+                localStorage.setItem('aeonfall_role', 'dm'); 
+                document.getElementById('pass-modal')?.classList.add('hidden'); 
+                window.updateRoleUI(); 
+            } else { 
+                window.showToast("Key Mismatch"); 
+            } 
+        };
+
+        window.updateRoleUI = () => { 
+            const isDM = activeRole === 'dm'; 
+            document.getElementById('dm-global-controls')?.classList.toggle('hidden', !isDM); 
+            document.body.classList.toggle('dm-active-edit', isDM); 
+            
+            // Visual feedback for role switch
+            document.getElementById('role-dm')?.classList.toggle('active', isDM);
+            document.getElementById('role-player')?.classList.toggle('active', !isDM);
+            
+            window.renderManual(); 
+        };
+
         window.toggleDropdown = (e, id) => { e.stopPropagation(); const el = document.getElementById(id); if(!el) return; const isActive = el.classList.contains('active'); window.closeAllDropdowns(); if (!isActive) el.classList.add('active'); };
         window.closeAllDropdowns = () => { document.querySelectorAll('.arch-dropdown').forEach(d => d.classList.remove('active')); };
         window.openUserModal = (sectionId) => { targetSectionForUID = sectionId; document.getElementById('uid-link-modal')?.classList.remove('hidden'); const searchInput = document.getElementById('user-search'); if(searchInput) searchInput.value = ''; window.filterDMUsers(''); };
@@ -560,16 +601,43 @@
             `).join('') || '<div class="p-8 text-center opacity-40 text-[10px]">No Signal Found.</div>';
         };
 
-        window.assignUIDToSection = async (uid) => { if(!targetSectionForUID) return; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'journalSections', targetSectionForUID), { sharedWith: [uid] }); document.getElementById('uid-link-modal')?.classList.add('hidden'); window.showToast("Personal Link Established."); };
-        window.assignManualUID = async () => { const uidInput = document.getElementById('manual-uid-input'); const uid = uidInput ? uidInput.value.trim() : ''; if(!uid || !targetSectionForUID) return; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'journalSections', targetSectionForUID), { sharedWith: [uid] }); document.getElementById('uid-link-modal')?.classList.add('hidden'); window.showToast("Override Complete"); };
+        window.assignUIDToSection = async (uid) => { 
+            if(!targetSectionForUID) return; 
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'journalSections', targetSectionForUID), { 
+                sharedWith: [uid],
+                visibility: 'personal' // Ensure visibility is personal when bound
+            }); 
+            document.getElementById('uid-link-modal')?.classList.add('hidden'); 
+            window.showToast("Personal Link Established."); 
+        };
+
+        window.unbindUIDFromSection = async (sectionId) => {
+            try {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'journalSections', sectionId), { 
+                    sharedWith: [],
+                    visibility: 'secret'
+                });
+                window.showToast("LINK EXPUNGED - RECORD IS NOW PRIVATE");
+            } catch(e) { window.showToast("Unbind Failed."); }
+        };
+
+        window.assignManualUID = async () => { 
+            const uidInput = document.getElementById('manual-uid-input'); 
+            const uid = uidInput ? uidInput.value.trim() : ''; 
+            if(!uid || !targetSectionForUID) return; 
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'journalSections', targetSectionForUID), { 
+                sharedWith: [uid],
+                visibility: 'personal'
+            }); 
+            document.getElementById('uid-link-modal')?.classList.add('hidden'); 
+            window.showToast("Override Complete"); 
+        };
         
         window.markAsSeen = async (id) => { 
-            // Update local state first for instant removal of notification
             if (!seenDocs.includes(id)) {
                 seenDocs.push(id);
                 window.renderManual();
             }
-            
             const anchored = sessionStorage.getItem('aeonfall_session_anchored') === 'true'; 
             if(anchored && activeAnchorUID) { 
                 await setDoc(doc(db, 'artifacts', appId, 'users', activeAnchorUID, 'seenDocuments', id), { seenAt: Date.now() }); 
@@ -604,7 +672,7 @@
             if(!container) return;
             const visibleSections = manualSections.filter(s => isDM || s.visibility === 'public' || (s.visibility === 'personal' && s.sharedWith?.includes(effectiveUID)));
             const headerEl = document.getElementById('manual-header');
-            if (headerEl) headerEl.innerHTML = `<h1 id="manual-main-title" class="manual-h1 dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('manual-main-title')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateHeader('title', this.innerText)">${activeEditId === 'manual-main-title' ? manualHeader.title : window.parseAeonfallContent(manualHeader.title, false)}</h1><p id="manual-main-subtitle" class="font-serif italic text-sm text-[#5d4037] mb-10 dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('manual-main-subtitle')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateHeader('subtitle', this.innerText)">${activeEditId === 'manual-main-subtitle' ? manualHeader.subtitle : window.parseAeonfallContent(manualHeader.subtitle, false)}</p>`;
+            if (headerEl) headerEl.innerHTML = `<h1 id="manual-main-title" class="manual-h1 dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('manual-main-title')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateHeader('title', this.innerText)">${activeEditId === 'manual-main-title' ? manualHeader.title : window.parseAeonfallContent(manualHeader.title, false)}</h1><p id="manual-main-subtitle" class="font-serif italic text-sm mb-10 dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('manual-main-subtitle')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateHeader('subtitle', this.innerText)">${activeEditId === 'manual-main-subtitle' ? manualHeader.subtitle : window.parseAeonfallContent(manualHeader.subtitle, false)}</p>`;
             if (navList) navList.innerHTML = visibleSections.filter(s => s.type === 'subheading').map(s => {
                 const isWithin24Hours = (Date.now() - (s.createdAt || 0)) < 86400000;
                 const label = (s.docType || 'item').toUpperCase();
