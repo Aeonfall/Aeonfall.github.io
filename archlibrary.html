@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aeonfall - Archivist's Scolar Library</title>
+    <title>Aeonfall - Archivist's Scholar Library</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Roboto+Slab:wght@300;400;700&family=Special+Elite&family=MedievalSharp&family=Homemade+Apple&family=Pirata+One&display=swap" rel="stylesheet">
     <style>
@@ -52,8 +52,8 @@
         .section-dragging { opacity: 0.2; transform: scale(0.98); border: 2px dashed #7a1d1d !important; }
         
         /* Drag Indicators */
-        .section-drag-over-top { border-top: 4px solid #7a1d1d !important; }
-        .section-drag-over-bottom { border-bottom: 4px solid #7a1d1d !important; }
+        .section-drag-over-top { border-top: 5px solid #7a1d1d !important; }
+        .section-drag-over-bottom { border-bottom: 5px solid #7a1d1d !important; }
         .section-drag-over-left { border-left: 8px solid #7a1d1d !important; padding-left: 12px !important; }
         .section-drag-over-right { border-right: 8px solid #7a1d1d !important; padding-right: 12px !important; }
         .section-drag-over-center { background: rgba(122, 29, 29, 0.05); border-radius: 4px; }
@@ -91,6 +91,10 @@
         .shelf-item.manuscript { background: #dcd1b2; color: #1a0f0a; border-left-color: #7a1d1d; }
         .shelf-item.newspaper { background: #fff; color: #1a0f0a; border-left-color: #000; border-top: 1px solid #ddd; }
         .shelf-item.parchment { background: #e0d1af; color: #5d4037; border-left-color: #8d7a5d; border-radius: 0 20px 20px 0; }
+        
+        /* Updated Textbook Tab Color: Scholarly Purple & Rich Brown */
+        .shelf-item.textbook { background: #4a1c40; border-left-color: #3e2723; }
+        
         .shelf-item:hover { transform: translateX(10px); filter: brightness(1.2); }
         .shelf-item.active { transform: translateX(15px); box-shadow: -8px 8px 25px rgba(122, 29, 29, 0.5); z-index: 10; }
 
@@ -123,9 +127,6 @@
         .role-tab.active { background: #7a1d1d; color: white; }
 
         .link-user-btn { background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; font-size: 8px; font-weight: 900; padding: 4px 10px; border-radius: 2px; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
-        .unbind-user-btn { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; font-size: 8px; font-weight: 900; padding: 4px 8px; border-radius: 2px; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
-        .unbind-user-btn:hover { background: #c62828; color: white; }
-        
         .bind-tag-btn { background: #f4f4f4; color: #1a1a1a; padding: 4px 10px; border-radius: 2px; font-size: 8px; font-weight: 900; text-transform: uppercase; cursor: pointer; border: 1px solid #ddd; transition: 0.2s; }
         .bind-tag-btn:hover { background: #1565c0; color: white; border-color: #1565c0; }
 
@@ -245,7 +246,7 @@
         <div class="manual-nav" onclick="event.stopPropagation()">
             <div class="mb-8 text-center">
                 <h1 class="font-serif font-black text-2xl text-[#7a1d1d] uppercase leading-none">Aeonfall</h1>
-                <p class="text-[8px] uppercase font-black tracking-widest opacity-50 mt-1">Archivist's Scolar Library</p>
+                <p class="text-[8px] uppercase font-black tracking-widest opacity-50 mt-1">Archivist's Scholar Library</p>
                 
                 <div id="user-display-container" class="mt-6 border-y border-black/5 py-4">
                     <div id="user-identity" class="font-serif text-[10px] font-black uppercase text-[#5d4037]">Securing signature...</div>
@@ -301,6 +302,17 @@
                         <div class="dropdown-link" onclick="window.addManualSection('text', 'journal')">Handwritten Log</div>
                         <div class="dropdown-link" onclick="window.addManualSection('media', 'journal')">Pinned Sketch</div>
                         <div class="dropdown-link" onclick="window.addManualSection('note', 'journal')">Personal Note</div>
+                    </div>
+                </div>
+
+                <!-- NEW TEXT BOOK CATEGORY -->
+                <div class="arch-dropdown" id="dd-textbook">
+                    <button class="arch-btn" onclick="window.toggleDropdown(event, 'dd-textbook')">📓 Text Book</button>
+                    <div class="arch-dropdown-content">
+                        <div class="dropdown-link" onclick="window.addManualSection('subheading', 'textbook')">Lesson Heading</div>
+                        <div class="dropdown-link" onclick="window.addManualSection('textbook', 'textbook')">Academic Teaching</div>
+                        <div class="dropdown-link" onclick="window.addManualSection('inner-subheading', 'textbook')">Subject Subtitle</div>
+                        <div class="dropdown-link" onclick="window.addManualSection('divider', 'textbook')">Module Spacing</div>
                     </div>
                 </div>
 
@@ -376,7 +388,7 @@
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'aeonfall-manager-v2';
 
         let manualSections = [], seenDocs = [], allUsers = [], targetSectionForUID = null;
-        let manualHeader = { title: "Archival History", subtitle: "Verifying civilizations past." };
+        let manualHeader = { title: "Archivist's Scholar Library", subtitle: "Restricted logs and personal entries." };
         let activeRole = 'player', activeEditId = null, userAuth = null, saveTimer = null, deleteCallback = null;
         let activeAnchorUID = null; 
         let draggedId = null, dropSide = null;
@@ -390,80 +402,44 @@
             } 
         };
 
-        // --- DRAG AND DROP LOGIC ---
+        // --- DRAG AND DROP LOGIC (UPGRADED FOR ABOVE/BELOW) ---
         window.handleDragStart = function(e, id) { if (activeRole !== 'dm') return; draggedId = id; e.currentTarget.classList.add('section-dragging'); };
         
         window.handleDragOver = function(e) { 
             if (!draggedId) return; 
             e.preventDefault(); 
-            
             const rect = e.currentTarget.getBoundingClientRect(); 
             const relX = e.clientX - rect.left;
             const relY = e.clientY - rect.top;
-            
             const horizThreshold = rect.width * 0.25;
             const vertThreshold = rect.height * 0.25;
-            
             e.currentTarget.classList.remove('section-drag-over-top', 'section-drag-over-bottom', 'section-drag-over-left', 'section-drag-over-right', 'section-drag-over-center');
-            
-            if (relY < vertThreshold) {
-                dropSide = 'top';
-                e.currentTarget.classList.add('section-drag-over-top');
-            } else if (relY > rect.height - vertThreshold) {
-                dropSide = 'bottom';
-                e.currentTarget.classList.add('section-drag-over-bottom');
-            } 
-            else if (relX < horizThreshold) { 
-                dropSide = 'left'; 
-                e.currentTarget.classList.add('section-drag-over-left'); 
-            } else if (relX > rect.width - horizThreshold) { 
-                dropSide = 'right'; 
-                e.currentTarget.classList.add('section-drag-over-right'); 
-            } 
-            else { 
-                dropSide = 'center'; 
-                e.currentTarget.classList.add('section-drag-over-center'); 
-            }
+            if (relY < vertThreshold) { dropSide = 'top'; e.currentTarget.classList.add('section-drag-over-top'); } 
+            else if (relY > rect.height - vertThreshold) { dropSide = 'bottom'; e.currentTarget.classList.add('section-drag-over-bottom'); } 
+            else if (relX < horizThreshold) { dropSide = 'left'; e.currentTarget.classList.add('section-drag-over-left'); } 
+            else if (relX > rect.width - horizThreshold) { dropSide = 'right'; e.currentTarget.classList.add('section-drag-over-right'); } 
+            else { dropSide = 'center'; e.currentTarget.classList.add('section-drag-over-center'); }
         };
 
-        window.handleDragLeave = function(e) { 
-            e.currentTarget.classList.remove('section-drag-over-top', 'section-drag-over-bottom', 'section-drag-over-left', 'section-drag-over-right', 'section-drag-over-center'); 
-        };
+        window.handleDragLeave = function(e) { e.currentTarget.classList.remove('section-drag-over-top', 'section-drag-over-bottom', 'section-drag-over-left', 'section-drag-over-right', 'section-drag-over-center'); };
 
         window.handleDrop = async function(e, targetId) { 
-            e.preventDefault(); 
-            e.currentTarget.classList.remove('section-drag-over-top', 'section-drag-over-bottom', 'section-drag-over-left', 'section-drag-over-right', 'section-drag-over-center'); 
-            
+            e.preventDefault(); e.currentTarget.classList.remove('section-drag-over-top', 'section-drag-over-bottom', 'section-drag-over-left', 'section-drag-over-right', 'section-drag-over-center'); 
             if (!draggedId || draggedId === targetId) return; 
-            
             const sourceIdx = manualSections.findIndex(s => s.id === draggedId);
             const targetIdxOriginal = manualSections.findIndex(s => s.id === targetId);
             const targetBlock = manualSections[targetIdxOriginal];
             const newSections = [...manualSections];
             const [moved] = newSections.splice(sourceIdx, 1); 
-            
             let insertIdx = newSections.findIndex(s => s.id === targetId);
             const batch = writeBatch(db);
-            
-            if (dropSide === 'left' || dropSide === 'right') { 
-                batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', moved.id), { width: 48 }); 
-                batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', targetBlock.id), { width: 48 }); 
-                if (dropSide === 'right') insertIdx += 1; 
-            } else if (dropSide === 'top') {
-                // Insert Above - already handled by insertIdx
-            } else if (dropSide === 'bottom') {
-                insertIdx += 1;
-            } else {
-                if (insertIdx > sourceIdx) insertIdx += 0;
-            }
-            
+            if (dropSide === 'left' || dropSide === 'right') { batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'journalSections', moved.id), { width: 48 }); batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'journalSections', targetBlock.id), { width: 48 }); if (dropSide === 'right') insertIdx += 1; } 
+            else if (dropSide === 'top') {} else if (dropSide === 'bottom') { insertIdx += 1; } 
+            else { if (insertIdx > sourceIdx) insertIdx += 0; }
             newSections.splice(insertIdx, 0, moved); 
-            newSections.forEach((sec, i) => { 
-                batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', sec.id), { order: i }); 
-            }); 
-            
-            await batch.commit(); 
-            draggedId = null; 
+            newSections.forEach((sec, i) => { batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'journalSections', sec.id), { order: i }); }); 
+            await batch.commit(); draggedId = null; 
+            window.showToast("Archive Records Reordered");
         };
 
         // --- IDENTITY ---
@@ -554,6 +530,7 @@
             const container = document.getElementById('user-results'); if(!container) return;
             const search = val.toLowerCase();
             const filtered = allUsers.filter(u => (u.username || '').toLowerCase().includes(search) || (u.uid || '').toLowerCase().includes(search));
+            const isDM = activeRole === 'dm';
             container.innerHTML = filtered.map(u => `
                 <div class="user-result flex justify-between items-center p-4 hover:bg-gray-50 border-b border-gray-100">
                     <div class="cursor-pointer flex-grow" onclick="window.assignUIDToSection('${u.uid}')">
@@ -568,54 +545,23 @@
             `).join('') || '<div class="p-8 text-center opacity-40 text-[10px]">No Signal Found.</div>';
         };
 
-        window.assignUIDToSection = async (uid) => { 
-            if(!targetSectionForUID) return; 
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', targetSectionForUID), { 
-                sharedWith: [uid],
-                visibility: 'personal' // Ensure visibility is personal when bound
-            }); 
-            document.getElementById('uid-link-modal')?.classList.add('hidden'); 
-            window.showToast("Personal Link Established."); 
-        };
-
-        window.unbindUIDFromSection = async (sectionId) => {
-            try {
-                // When personal ties user is removed, visibility goes to secret (private) waiting for the dm
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', sectionId), { 
-                    sharedWith: [],
-                    visibility: 'secret'
-                });
-                window.showToast("LINK EXPUNGED - RECORD IS NOW PRIVATE");
-            } catch(e) { window.showToast("Unbind Failed."); }
-        };
-
-        window.assignManualUID = async () => { 
-            const uidInput = document.getElementById('manual-uid-input'); 
-            const uid = uidInput ? uidInput.value.trim() : ''; 
-            if(!uid || !targetSectionForUID) return; 
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', targetSectionForUID), { 
-                sharedWith: [uid],
-                visibility: 'personal'
-            }); 
-            document.getElementById('uid-link-modal')?.classList.add('hidden'); 
-            window.showToast("Override Complete"); 
-        };
-
+        window.assignUIDToSection = async (uid) => { if(!targetSectionForUID) return; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'journalSections', targetSectionForUID), { sharedWith: [uid] }); document.getElementById('uid-link-modal')?.classList.add('hidden'); window.showToast("Personal Link Established."); };
+        window.assignManualUID = async () => { const uidInput = document.getElementById('manual-uid-input'); const uid = uidInput ? uidInput.value.trim() : ''; if(!uid || !targetSectionForUID) return; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'journalSections', targetSectionForUID), { sharedWith: [uid] }); document.getElementById('uid-link-modal')?.classList.add('hidden'); window.showToast("Override Complete"); };
         window.markAsSeen = async (id) => { const anchored = sessionStorage.getItem('aeonfall_session_anchored') === 'true'; if(!anchored || !activeAnchorUID) return; await setDoc(doc(db, 'artifacts', appId, 'users', activeAnchorUID, 'seenDocuments', id), { seenAt: Date.now() }); window.scrollToSection(id); };
         window.scrollToSection = (id) => { const el = document.getElementById(`section-${id}`); if (el) el.scrollIntoView({ behavior: 'smooth' }); };
         window.openReturnToLoreSequence = function() { const overlay = document.getElementById('cinematic-overlay'); overlay?.classList.add('active'); setTimeout(() => { window.location.href = 'lore.html'; }, 2000); };
 
-        window.dbUpdateSection = (id, field, val) => { if(saveTimer) clearTimeout(saveTimer); saveTimer = setTimeout(async () => { try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', id), { [field]: val }); window.showToast("Archive Synchronized"); } catch(e) {} }, 800); };
-        window.dbUpdateHeader = (field, val) => { if(saveTimer) clearTimeout(saveTimer); saveTimer = setTimeout(async () => { try { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'libraryHeader'), { [field]: val }, { merge: true }); window.showToast("Signature Sync Complete"); } catch(e) {} }, 800); };
+        window.dbUpdateSection = (id, field, val) => { if(saveTimer) clearTimeout(saveTimer); saveTimer = setTimeout(async () => { try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'journalSections', id), { [field]: val }); window.showToast("Archive Synchronized"); } catch(e) {} }, 800); };
+        window.dbUpdateHeader = (field, val) => { if(saveTimer) clearTimeout(saveTimer); saveTimer = setTimeout(async () => { try { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'journalHeader'), { [field]: val }, { merge: true }); window.showToast("Signature Sync Complete"); } catch(e) {} }, 800); };
 
         window.addManualSection = async (type, docType = 'book') => {
             if(!userAuth) return;
-            const data = { title: type === 'subheading' ? `NEW VOLUME` : (type === 'inner-subheading' ? "NEW CHAPTER" : type === 'divider' ? "" : "NEW SEGMENT"), content: type === 'divider' ? "" : "Details...", type, docType, order: manualSections.length, createdAt: Date.now(), width: 100, fontSize: 14, ySpacing: 0, visibility: 'public', sharedWith: [] };
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'librarySections'), data);
+            const data = { title: type === 'subheading' ? `NEW VOLUME` : (type === 'inner-subheading' ? "NEW CHAPTER" : type === 'divider' ? "" : "NEW SEGMENT"), content: type === 'divider' ? "" : "Inscribe teachings here...", type, docType, order: manualSections.length, createdAt: Date.now(), width: 100, fontSize: 14, ySpacing: 0, visibility: 'public', sharedWith: [] };
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'journalSections'), data);
             window.closeAllDropdowns();
         };
 
-        window.triggerDelete = (id) => { window.openDelModal("Expunge record?", async () => { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', id)); }); };
+        window.triggerDelete = (id) => { window.openDelModal("Expunge record?", async () => { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'journalSections', id)); }); };
 
         window.parseAeonfallContent = function(text, isDM) {
             if (!text) return ''; if (isDM && activeEditId !== null) return text;
@@ -636,34 +582,14 @@
             }).join('');
             container.innerHTML = visibleSections.map(s => {
                 const hId = `head-${s.id}`, cId = `content-${s.id}`, customStyle = `width: calc(${s.width ?? 100}% - 10px); font-size: ${s.fontSize ?? 14}px; margin-top: ${s.ySpacing ?? 0}px; flex-shrink: 0; box-sizing: border-box; padding: 5px;`;
-                const sharedUser = allUsers.find(u => u.uid === s.sharedWith?.[0]);
-                
                 let html = `<section id="section-${s.id}" class="group relative transition-all doc-${s.docType || 'book'}" draggable="${isDM}" ondragstart="window.handleDragStart(event, '${s.id}')" ondragover="window.handleDragOver(event)" ondragleave="window.handleDragLeave(event)" ondrop="window.handleDrop(event, '${s.id}')" style="${customStyle}">
-                    ${isDM ? `<div class="tuner-panel">
-                        <div class="drag-handle text-lg">⠿</div>
-                        <div class="tuner-group"><span class="tuner-label">Width</span><input type="range" class="tuner-slider" min="10" max="100" value="${s.width ?? 100}" oninput="window.dbUpdateSection('${s.id}', 'width', parseInt(this.value))"></div>
-                        <div class="tuner-group">
-                            <span class="tuner-label">Access</span>
-                            <select class="tuner-select text-[8px] bg-slate-50 border border-slate-300 rounded" onchange="window.dbUpdateSection('${s.id}', 'visibility', this.value)">
-                                <option value="public" ${s.visibility==='public'?'selected':''}>Public</option>
-                                <option value="secret" ${s.visibility==='secret'?'selected':''}>Secret</option>
-                                <option value="personal" ${s.visibility==='personal'?'selected':''}>Personal Tie</option>
-                            </select>
-                        </div>
-                        <div class="tuner-group">
-                            <span class="tuner-label">Binding</span>
-                            <div class="flex gap-1">
-                                <button class="link-user-btn !text-[7px] !px-3" onclick="window.openUserModal('${s.id}')">${sharedUser?.username || 'Bind'}</button>
-                                ${sharedUser ? `<button class="unbind-user-btn" onclick="window.unbindUIDFromSection('${s.id}')" title="Unbind and make private">✕</button>` : ''}
-                            </div>
-                        </div>
-                        <button onclick="window.triggerDelete('${s.id}')" class="arch-btn arch-btn-del !rounded-md ml-auto">✕</button>
-                    </div>` : ''}
+                    ${isDM ? `<div class="tuner-panel"><div class="drag-handle text-lg">⠿</div><div class="tuner-group"><span class="tuner-label">Width</span><input type="range" class="tuner-slider" min="10" max="100" value="${s.width ?? 100}" oninput="window.dbUpdateSection('${s.id}', 'width', parseInt(this.value))"></div><div class="tuner-group"><span class="tuner-label">Access</span><select class="tuner-select text-[8px] bg-slate-50 border border-slate-300 rounded" onchange="window.dbUpdateSection('${s.id}', 'visibility', this.value)"><option value="public" ${s.visibility==='public'?'selected':''}>Public</option><option value="secret" ${s.visibility==='secret'?'selected':''}>Secret</option><option value="personal" ${s.visibility==='personal'?'selected':''}>Personal Tie</option></select></div>${s.visibility === 'personal' ? `<div class="tuner-group"><span class="tuner-label">Binding</span><button class="link-user-btn !text-[7px] !px-3" onclick="window.openUserModal('${s.id}')">${allUsers.find(u => u.uid === s.sharedWith?.[0])?.username || 'Bind'}</button></div>` : ''}<button onclick="window.triggerDelete('${s.id}')" class="arch-btn arch-btn-del !rounded-md ml-auto">✕</button></div>` : ''}
                     <div class="flex justify-between items-end gap-4 mb-2">
                         ${s.type === 'subheading' ? `<h2 id="${hId}" class="manual-h2 dm-editable flex-grow !m-0" contenteditable="${isDM}" onfocus="window.setEditing('${hId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">${activeEditId === hId ? s.title : window.parseAeonfallContent(s.title, false)}</h2>` : (s.type === 'inner-subheading' ? `<h3 id="${hId}" class="manual-h3 dm-editable flex-grow !m-0" contenteditable="${isDM}" onfocus="window.setEditing('${hId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">${activeEditId === hId ? s.title : window.parseAeonfallContent(s.title, false)}</h3>` : '')}
                         ${isDM ? `<span class="visibility-tag tag-${s.visibility || 'public'}">${s.visibility || 'public'}</span>` : ''}
                     </div>`;
                 if(s.type === 'text') html += `<div id="${cId}" class="manual-p dm-editable leading-relaxed" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div>`;
+                else if(s.type === 'textbook') html += `<div class="manual-textbook-box bg-white p-8 border-t-8 border-[#7a1d1d] rounded shadow-lg relative my-6"><div class="absolute -top-3 left-6 bg-[#7a1d1d] text-white px-3 py-1 text-[8px] font-black uppercase tracking-widest">Scholar's Teaching</div><div id="${cId}" class="manual-p dm-editable leading-relaxed text-[#2c1810]" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
                 else if(s.type === 'note') html += `<div class="manual-note-box bg-slate-50 p-5 border-l-4 border-amber-800 rounded shadow-inner"><div id="${cId}" class="manual-p dm-editable italic" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
                 else if(s.type === 'divider') html += `<div class="manual-divider"></div>`;
                 html += `</section>`; return html;
@@ -674,8 +600,8 @@
         onAuthStateChanged(auth, async (u) => { 
             userAuth = u; 
             if (u) {
-                onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'libraryHeader'), d => { if (d.exists()) { manualHeader = d.data(); window.renderManual(); } });
-                onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'librarySections'), snap => { manualSections = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (a.order ?? 0) - (b.order ?? 0)); window.renderManual(); });
+                onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'journalHeader'), d => { if (d.exists()) { manualHeader = d.data(); window.renderManual(); } });
+                onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'journalSections'), snap => { manualSections = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (a.order ?? 0) - (b.order ?? 0)); window.renderManual(); });
                 onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'users'), snap => { 
                     allUsers = snap.docs.map(d => ({uid: d.id, ...d.data()})); 
                     window.updateIdentityUI();
