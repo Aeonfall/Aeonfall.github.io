@@ -23,25 +23,8 @@
             box-shadow: 0 10px 40px rgba(0,0,0,0.15);
         }
 
-        .beast-name-header {
-            font-family: 'Cinzel', serif;
-            font-weight: 900;
-            font-size: 38px;
-            color: #7a1d1d;
-            line-height: 1;
-            margin-bottom: 4px;
-            text-transform: uppercase;
-            width: 100%;
-        }
-
-        .beast-meta {
-            font-style: italic;
-            font-size: 15px;
-            color: #4b5563;
-            border-bottom: 2px solid #7a1d1d;
-            padding-bottom: 8px;
-            margin-bottom: 16px;
-        }
+        .beast-name-header { font-family: 'Cinzel', serif; font-weight: 900; font-size: 38px; color: #7a1d1d; line-height: 1; margin-bottom: 4px; text-transform: uppercase; width: 100%; }
+        .beast-meta { font-style: italic; font-size: 15px; color: #4b5563; border-bottom: 2px solid #7a1d1d; padding-bottom: 8px; margin-bottom: 16px; }
 
         .stat-line { margin: 6px 0; color: #1a1a1a; font-size: 15px; border-bottom: 1px solid #7a1d1d33; padding-bottom: 2px; }
         .stat-line b { color: #7a1d1d; font-weight: 900; }
@@ -52,37 +35,33 @@
         .ab-val { font-weight: 900; font-size: 18px; display: block; color: #111; }
         .ab-mod { font-size: 13px; color: #7a1d1d; font-weight: 700; margin-top: 2px; display: block; }
 
-        .section-header {
-            font-family: 'Cinzel', serif;
-            font-weight: 900;
-            font-size: 22px;
-            color: #7a1d1d;
-            border-bottom: 1px solid #7a1d1d;
-            margin: 24px 0 12px;
-            text-transform: uppercase;
-        }
+        .section-header { font-family: 'Cinzel', serif; font-weight: 900; font-size: 22px; color: #7a1d1d; border-bottom: 1px solid #7a1d1d; margin: 24px 0 12px; text-transform: uppercase; }
 
         .trait-text { font-size: 15px; margin-bottom: 12px; line-height: 1.6; }
         .trait-text b { font-style: italic; font-weight: 900; color: #111; }
 
+        /* Header UI matching Screenshot */
+        .header-logo { font-family: 'Cinzel', serif; font-weight: 900; color: #d97706; line-height: 1; }
+        .header-subtext { font-family: 'Noto Sans', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.2em; color: #475569; text-transform: uppercase; white-space: nowrap; }
+        
+        .user-pill { background: #0f172a; border: 1px solid #1e293b; border-radius: 99px; padding: 4px 16px; display: flex; align-items: center; gap: 8px; }
+        
+        .nav-link { font-family: 'Cinzel', serif; color: #94a3b8; font-weight: 900; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; transition: all 0.2s; cursor: pointer; text-decoration: none; position: relative; }
+        .nav-link.active { color: #d97706; }
+        .nav-link.active::after { content: ''; position: absolute; bottom: -8px; left: 0; width: 100%; height: 2px; background: #d97706; }
+        .nav-link:hover { color: #d97706; }
+
+        .role-selector { background: #0f172a; border-radius: 12px; padding: 4px; display: flex; gap: 4px; border: 1px solid #1e293b; }
+        .role-btn { padding: 8px 24px; font-family: 'Cinzel', serif; font-size: 11px; font-weight: 900; border-radius: 8px; transition: all 0.3s; color: #475569; text-transform: uppercase; cursor: pointer; }
+        .role-btn.active { background: #d97706; color: white; box-shadow: 0 4px 12px rgba(217, 119, 6, 0.4); }
+
+        /* Portrait UI matching Screenshot */
+        .portrait-frame { border: 4px solid #bba683; outline: 1px solid #2c1810; background: #fff; aspect-ratio: 1/1; overflow: hidden; position: relative; transition: all 0.2s ease-in-out; }
+        .portrait-frame.is-placeholder { border: 2px dashed #bba683; outline: none; background: rgba(255, 255, 255, 0.3); }
+
         .card { transition: all 0.2s; cursor: pointer; border-left-width: 4px; position: relative; }
         .card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.7); }
         
-        .nav-link { color: #94a3b8; font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; text-decoration: none; }
-        .nav-link.active { color: #f59e0b; border-bottom: 2px solid #f59e0b; padding-bottom: 4px; }
-
-        .portrait-circle {
-            width: 180px;
-            height: 180px;
-            border: 6px solid #bba683;
-            outline: 2px solid #2c1810;
-            border-radius: 50%;
-            overflow: hidden;
-            background: #fff;
-            position: relative;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-
         input, textarea { background: transparent; border: none; width: 100%; color: inherit; font-size: inherit; }
         input:focus, textarea:focus { outline: none; background: rgba(122, 29, 29, 0.04); }
 
@@ -90,27 +69,39 @@
         .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 12px 24px; border-radius: 30px; z-index: 1000; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
         
         .skill-row { display: flex; justify-content: space-between; border-bottom: 1px dotted #bba683; padding: 6px 0; font-size: 14px; }
-        .dm-panel { background: #1a1a1a; color: #fff; padding: 20px; border-radius: 12px; margin-bottom: 24px; border: 2px solid #f59e0b; }
+        .dm-panel { background: #1a1a1a; color: #fff; padding: 20px; border-radius: 12px; margin-bottom: 24px; border: 2px solid #d97706; }
         
         .category-header { font-family: 'Cinzel', serif; font-size: 18px; font-weight: 900; border-bottom: 2px solid #333; padding-bottom: 8px; margin-top: 32px; margin-bottom: 16px; color: #94a3b8; display: flex; justify-content: space-between; align-items: center; }
         .cat-count { background: #333; color: #fff; font-size: 10px; padding: 2px 8px; border-radius: 99px; }
+
+        /* Lightbox Specific Styles */
+        .cursor-zoom-in { cursor: zoom-in; }
+        #lightbox-modal { backdrop-filter: blur(10px); }
+        .lightbox-media { max-width: 90vw; max-height: 90vh; box-shadow: 0 0 50px rgba(0,0,0,0.8); border: 2px solid #d97706; border-radius: 4px; }
     </style>
 </head>
 <body class="min-h-screen">
 
     <div id="toast" class="toast">Message</div>
 
+    <!-- LIGHTBOX MODAL -->
+    <div id="lightbox-modal" class="fixed inset-0 bg-black/95 z-[500] hidden flex flex-col items-center justify-center p-4 md:p-12 transition-all duration-300">
+        <button onclick="window.closeLightbox()" class="absolute top-6 right-6 text-white text-4xl font-bold hover:text-[#d97706] transition-colors z-[510] drop-shadow-lg">✕</button>
+        <div id="lightbox-content" class="w-full h-full flex items-center justify-center"></div>
+    </div>
+
     <!-- AUTH MODAL -->
     <div id="auth-modal" class="fixed inset-0 bg-gray-950 z-[300] flex items-center justify-center p-4 hidden">
-        <div class="bg-gray-800 border-2 border-amber-600 rounded-2xl p-8 max-w-md w-full shadow-2xl text-center relative">
-            <h1 class="text-4xl text-amber-500 font-bold mb-2 font-serif tracking-tight mt-4">Aeonfall</h1>
+        <div class="bg-gray-800 border-2 border-[#d97706] rounded-2xl p-8 max-w-md w-full shadow-2xl text-center relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-amber-700 via-[#d97706] to-amber-700"></div>
+            <h1 class="text-4xl text-[#d97706] font-bold mb-2 font-serif tracking-tight mt-4 uppercase">AEONFALL</h1>
             <p class="text-gray-400 text-xs uppercase tracking-widest font-bold mb-8">Bestiary Authentication</p>
             <div class="space-y-4 mb-8">
-                <div class="text-left"><label class="text-[10px] font-black uppercase text-gray-500 ml-1">Username</label><input type="text" id="auth-username" class="w-full bg-gray-900 text-white rounded-lg p-3 border border-gray-700 focus:border-amber-500 transition-colors"></div>
-                <div class="text-left"><label class="text-[10px] font-black uppercase text-gray-500 ml-1">Password</label><input type="password" id="auth-password" class="w-full bg-gray-900 text-white rounded-lg p-3 border border-gray-700 focus:border-amber-500 transition-colors"></div>
+                <div class="text-left"><label class="text-[10px] font-black uppercase text-gray-500 ml-1">Username</label><input type="text" id="auth-username" class="w-full bg-gray-900 text-white rounded-lg p-3 border border-gray-700 focus:border-[#d97706] transition-colors"></div>
+                <div class="text-left"><label class="text-[10px] font-black uppercase text-gray-500 ml-1">Password</label><input type="password" id="auth-password" class="w-full bg-gray-900 text-white rounded-lg p-3 border border-gray-700 focus:border-[#d97706] transition-colors"></div>
             </div>
             <div class="grid grid-cols-2 gap-4">
-                <button onclick="window.authSystem.login()" class="bg-amber-600 hover:bg-amber-500 text-white py-3 rounded-xl font-bold uppercase text-xs">Login</button>
+                <button onclick="window.authSystem.login()" class="bg-[#d97706] hover:bg-[#b45309] text-white py-3 rounded-xl font-bold uppercase text-xs">Login</button>
                 <button onclick="window.authSystem.register()" class="bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-xl font-bold uppercase text-xs">Register</button>
             </div>
             <p id="auth-error" class="text-red-500 text-xs mt-4 font-bold min-h-[1rem]"></p>
@@ -119,39 +110,44 @@
 
     <!-- MAIN DASHBOARD -->
     <div id="dashboard-screen" class="min-h-screen dashboard-bg p-4 md:p-8">
-        <div class="max-w-6xl mx-auto">
-            <header class="flex flex-col md:flex-row justify-between items-center mb-10 border-b border-gray-800 pb-8 gap-6">
-                <div>
-                    <h1 class="text-4xl md:text-6xl text-amber-500 font-bold mb-2 font-serif tracking-tight">Aeonfall</h1>
-                    <div class="flex items-center gap-4">
-                        <p class="text-gray-500 text-xs md:text-sm uppercase tracking-widest font-bold">Bestiary Codex</p>
-                        <div class="bg-gray-800 px-3 py-1 rounded-full border border-gray-700 flex items-center gap-2">
-                            <span id="user-status-dot" class="w-2 h-2 rounded-full bg-gray-500"></span>
-                            <span id="user-display-name" class="text-[10px] font-black text-gray-300 uppercase tracking-wider">Guest</span>
-                            <button onclick="window.logout()" id="logout-btn" class="text-[10px] text-red-400 hover:text-red-300 font-bold ml-2 border-l border-gray-600 pl-2">LOGOUT</button>
+        <div class="max-w-7xl mx-auto">
+            <header class="flex flex-col lg:flex-row justify-between items-start mb-12 gap-8">
+                <!-- Branding & Identity -->
+                <div class="space-y-4">
+                    <h1 class="text-5xl md:text-6xl header-logo uppercase">AEONFALL</h1>
+                    <div class="flex flex-wrap items-center gap-4 mt-2">
+                        <p class="header-subtext uppercase">Campaign Management Suite</p>
+                        <div class="user-pill inline-flex items-center">
+                            <span id="user-status-dot" class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
+                            <span id="user-display-name" class="text-[10px] font-black text-gray-300 uppercase tracking-widest">Guest</span>
+                            <div class="w-px h-3 bg-gray-700 mx-1"></div>
+                            <button onclick="window.logout()" class="text-[10px] text-red-500 hover:text-red-400 font-black uppercase tracking-widest">Logout</button>
                         </div>
                     </div>
                 </div>
-                <div class="flex flex-col items-center gap-4">
-                    <div class="flex items-center gap-2 bg-gray-900 p-1 rounded-xl shadow-2xl">
-                        <button id="role-player-btn" onclick="window.setRole('player')" class="px-6 py-3 rounded-lg text-sm font-bold bg-amber-600 text-white shadow-lg">Player</button>
-                        <button id="role-dm-btn" onclick="window.setRole('dm')" class="px-6 py-3 rounded-lg text-sm font-bold text-gray-500 shadow-lg">DM</button>
+
+                <!-- Navigation & Role -->
+                <div class="flex flex-col items-center lg:items-end gap-6 lg:mt-4">
+                    <div class="role-selector">
+                        <button id="role-player-btn" onclick="window.setRole('player')" class="role-btn active">Player</button>
+                        <button id="role-dm-btn" onclick="window.setRole('dm')" class="role-btn">DM</button>
                     </div>
-                    <nav id="main-nav" class="flex gap-6">
+
+                    <nav class="flex flex-wrap justify-center lg:justify-end gap-8">
                         <a href="index.html" class="nav-link">Party</a>
                         <a href="npcs.html" class="nav-link">NPCs</a>
                         <a href="#" class="nav-link active">Bestiary</a>
                         <a href="partybag.html" class="nav-link">Backpack</a>
-                         <a href="playershandbook.html" class="nav-link">Handbook</a>
-                        <a href="#" onclick="window.setView('graveyard'); return false;" id="nav-graveyard" class="nav-link !text-red-900">Graveyard</a>
+                        <a href="playershandbook.html" class="nav-link">Handbook</a>
+                        <a href="#" onclick="window.setView('graveyard'); return false;" class="nav-link !text-red-900/60 hover:!text-red-600 transition-colors">Graveyard</a>
                     </nav>
                 </div>
             </header>
 
-            <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 border-t border-gray-800/50 pt-8">
                 <h2 class="text-2xl font-serif text-gray-400 uppercase font-bold tracking-widest">Creature Codex</h2>
                 <div id="dm-actions" class="hidden flex gap-2">
-                    <button onclick="window.createBeast('public')" class="bg-amber-600 text-white px-4 py-2.5 rounded-lg text-[10px] font-black uppercase shadow-lg hover:bg-amber-500 transition-colors">+ NEW PUBLIC ENTRY</button>
+                    <button onclick="window.createBeast('public')" class="bg-[#d97706] text-white px-4 py-2.5 rounded-lg text-[10px] font-black uppercase shadow-lg hover:bg-[#b45309] transition-colors">+ NEW PUBLIC ENTRY</button>
                     <button onclick="window.createBeast('unpublished')" class="bg-gray-700 text-white px-4 py-2.5 rounded-lg text-[10px] font-black uppercase shadow-lg hover:bg-gray-600 transition-colors">+ NEW DRAFT</button>
                 </div>
             </div>
@@ -196,22 +192,24 @@
                         <div class="flex-grow">
                             <h4 class="text-xs font-black uppercase text-amber-500 mb-2">Visibility Control</h4>
                             <div class="flex gap-2">
-                                <button onclick="window.updateVisibility('public')" class="bg-amber-600 px-3 py-2 rounded text-[9px] font-black uppercase">PUBLIC</button>
+                                <button onclick="window.updateVisibility('public')" class="bg-[#d97706] px-3 py-2 rounded text-[9px] font-black uppercase transition-colors hover:bg-[#b45309]">PUBLIC</button>
                                 <button onclick="window.updateVisibility('unpublished')" class="bg-gray-600 px-3 py-2 rounded text-[9px] font-black uppercase">DRAFT</button>
                                 <button onclick="window.openPrivateLinkModal()" class="bg-purple-600 px-3 py-2 rounded text-[9px] font-black uppercase">PRIVATE TIE</button>
                             </div>
                         </div>
                         <div class="text-right">
-                            <h4 class="text-xs font-black uppercase text-amber-500 mb-2">Portrait Upload</h4>
-                            <input type="file" id="portrait-input-file" accept="image/*" onchange="window.handlePortrait(event)" class="text-[10px]">
+                            <h4 class="text-xs font-black uppercase text-amber-500 mb-2">Portrait Management</h4>
+                            <div class="flex gap-2">
+                                <input type="file" id="portrait-input-file" accept="image/*" onchange="window.handlePortrait(event)" class="hidden">
+                                <button onclick="document.getElementById('portrait-input-file').click()" class="bg-gray-700 px-3 py-2 rounded text-[9px] font-black uppercase">Upload Image</button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="stat-block">
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-12">
-                        
-                        <!-- Header and Vitals -->
+                        <!-- Vitals -->
                         <div class="md:col-span-8">
                             <input type="text" data-key="name" class="beast-name-header" placeholder="BEAST NAME">
                             <input type="text" data-key="summary" class="beast-meta" placeholder="Large Elemental, Neutral">
@@ -238,11 +236,25 @@
                             <textarea data-key="personality" class="trait-text w-full min-h-[250px]" placeholder="Actions..."></textarea>
                         </div>
 
-                        <!-- Right Column -->
-                        <div class="md:col-span-4 flex flex-col items-center">
-                            <div class="portrait-circle mb-10">
-                                <img id="portrait-preview" class="hidden w-full h-full object-cover">
-                                <div id="portrait-placeholder" class="absolute inset-0 flex items-center justify-center text-4xl opacity-20">🐉</div>
+                        <!-- Portrait & Skills -->
+                        <div class="md:col-span-4 space-y-8">
+                            <!-- Portrait Section matching screenshot design -->
+                            <div class="space-y-4">
+                                <div id="portrait-frame-container" class="portrait-frame group is-placeholder">
+                                    <img id="portrait-preview" class="hidden w-full h-full object-cover cursor-zoom-in">
+                                    <video id="portrait-video" class="hidden w-full h-full object-cover cursor-zoom-in" autoplay loop muted playsinline></video>
+                                    
+                                    <div id="portrait-placeholder" class="absolute inset-0 flex flex-col items-center justify-center text-[#b0bec5]">
+                                        <svg class="w-16 h-16 mb-2 opacity-40" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                                        <span class="text-[12px] font-black uppercase tracking-wider opacity-60">Portrait Media</span>
+                                    </div>
+                                </div>
+
+                                <div id="dm-media-controls" class="hidden">
+                                    <div class="h-[2px] bg-[#bba683]/30 mb-4"></div>
+                                    <h4 class="text-[11px] font-black uppercase text-[#7a1d1d]/60 mb-1">Media URL (IMG/GIF/MP4)</h4>
+                                    <input type="text" data-key="imageSrc" id="dm-media-url" class="w-full text-xs italic border-b border-[#bba683] focus:border-[#7a1d1d] transition-colors py-1" placeholder="Paste URL here...">
+                                </div>
                             </div>
 
                             <div id="skills-section" class="w-full">
@@ -268,10 +280,10 @@
 
     <!-- MODALS -->
     <div id="password-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[200] hidden">
-        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border-2 border-amber-600 text-white text-center shadow-2xl">
-            <h3 class="text-xl font-serif text-amber-500 font-bold mb-2">DM AUTHORIZATION</h3>
-            <input type="password" id="dm-password" class="w-full bg-gray-900 text-center text-2xl rounded-lg p-3 mb-6 border border-gray-700">
-            <button onclick="window.verifyDmPassword()" class="w-full bg-amber-600 py-3 rounded-xl font-bold uppercase text-xs">Enter</button>
+        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border-2 border-[#d97706] text-white text-center shadow-2xl">
+            <h3 class="text-xl font-serif text-[#d97706] font-bold mb-2 uppercase">DM AUTHORIZATION</h3>
+            <input type="password" id="dm-password" class="w-full bg-gray-900 text-center text-2xl rounded-lg p-3 mb-6 border border-gray-700 focus:border-[#d97706]">
+            <button onclick="window.verifyDmPassword()" class="w-full bg-[#d97706] py-3 rounded-xl font-bold uppercase text-xs transition-colors hover:bg-[#b45309]">Enter</button>
         </div>
     </div>
 
@@ -299,12 +311,6 @@
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, updateDoc, deleteDoc, onSnapshot, addDoc, query, where, getDocs, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        window.hashPassword = async (str) => {
-            const msgBuffer = new TextEncoder().encode(str);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-            return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
-        };
-
         const firebaseConfig = { apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI", authDomain: "aeonfall-523c1.firebaseapp.com", projectId: "aeonfall-523c1", storageBucket: "aeonfall-523c1.firebasestorage.app", messagingSenderId: "716207733913", appId: "1:716207733913:web:7aac43906a70e2b5f50c08" };
         const appId = 'aeonfall-manager-v2';
         const app = initializeApp(firebaseConfig);
@@ -317,7 +323,29 @@
 
         window.showToast = (m) => { const t = document.getElementById('toast'); if(t){ t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 3000); } };
 
+        window.openLightbox = (src) => {
+            if (!src) return;
+            const modal = document.getElementById('lightbox-modal');
+            const content = document.getElementById('lightbox-content');
+            const isVideo = src.toLowerCase().endsWith('.mp4');
+            content.innerHTML = isVideo 
+                ? `<video src="${src}" class="lightbox-media" autoplay loop controls playsinline></video>`
+                : `<img src="${src}" class="lightbox-media">`;
+            modal.classList.remove('hidden');
+        };
+
+        window.closeLightbox = () => {
+            document.getElementById('lightbox-modal').classList.add('hidden');
+            document.getElementById('lightbox-content').innerHTML = '';
+        };
+
         window.logout = () => { localStorage.removeItem('aeonfall_user'); localStorage.removeItem('aeonfall_role'); window.location.reload(); };
+
+        window.hashPassword = async (str) => {
+            const msgBuffer = new TextEncoder().encode(str);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+        };
 
         window.authSystem = {
             login: async () => {
@@ -364,7 +392,6 @@
             currentUser = JSON.parse(saved);
             activeRole = role || 'player';
             document.getElementById('user-display-name').textContent = currentUser.username;
-            document.getElementById('dashboard-screen').classList.remove('hidden-view');
             return true;
         };
 
@@ -373,11 +400,12 @@
 
         window.updateRoleUI = () => {
             const isDM = activeRole === 'dm';
-            document.getElementById('role-player-btn').className = !isDM ? 'px-6 py-3 rounded-lg text-sm font-bold bg-amber-600 text-white shadow-lg' : 'px-6 py-3 text-gray-500 font-bold';
-            document.getElementById('role-dm-btn').className = isDM ? 'px-6 py-3 rounded-lg text-sm font-bold bg-amber-600 text-white shadow-lg' : 'px-6 py-3 text-gray-500 font-bold';
+            document.getElementById('role-player-btn').className = !isDM ? 'role-btn active' : 'role-btn';
+            document.getElementById('role-dm-btn').className = isDM ? 'role-btn active' : 'role-btn';
             document.getElementById('dm-actions').classList.toggle('hidden', !isDM);
             document.getElementById('dm-oversight').classList.toggle('hidden', !isDM);
             document.getElementById('dm-sheet-controls').classList.toggle('hidden', !isDM);
+            document.getElementById('dm-media-controls')?.classList.toggle('hidden', !isDM);
             window.renderDashboard();
             if (activeCharId) syncSheetData();
         };
@@ -390,7 +418,7 @@
 
             characters.filter(c => c.type === 'BEAST' && !c.isDeleted).forEach(b => {
                 let vis = b.visibility || 'public';
-                if (vis === 'public' || vis === 'private' || isDM) {
+                if (vis === 'public' || isDM || (vis === 'private' && currentUser && b.linkedUsername === currentUser.username)) {
                     countMap[vis]++;
                     grids[vis].appendChild(createBeastCard(b));
                 }
@@ -404,10 +432,20 @@
         function createBeastCard(b) {
             const d = document.createElement('div');
             let vis = b.visibility || 'public';
-            let borderCol = vis === 'unpublished' ? 'border-gray-500' : (vis === 'private' ? 'border-purple-600' : 'border-amber-600');
+            let borderCol = vis === 'unpublished' ? 'border-gray-500' : (vis === 'private' ? 'border-purple-600' : 'border-[#d97706]');
             d.className = `bg-gray-800 p-5 rounded-xl card border-l-4 shadow-xl ${borderCol}`;
             d.onclick = () => window.openSheet(b.id);
-            d.innerHTML = `<div class="flex items-center gap-4"><div class="w-12 h-12 rounded-lg bg-gray-700 overflow-hidden relative">${b.imageSrc ? `<img src="${b.imageSrc}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-xl">🐉</div>`}</div><div><h5 class="text-amber-500 font-serif font-bold uppercase text-xs">${b.name}</h5><p class="text-[10px] text-gray-400 uppercase">${vis === 'private' ? `Pet of ${b.linkedUsername || 'Unknown'}` : (b.summary || 'Level 1')}</p></div></div>`;
+            
+            const mediaSrc = b.imageSrc || "";
+            const isVideo = mediaSrc.toLowerCase().endsWith('.mp4');
+            let mediaHtml = `<div class="w-full h-full flex items-center justify-center text-xl">🐉</div>`;
+            if(mediaSrc) {
+                mediaHtml = isVideo 
+                    ? `<video src="${mediaSrc}" class="w-full h-full object-cover cursor-zoom-in" muted loop autoplay playsinline onclick="window.openLightbox('${mediaSrc}'); event.stopPropagation();"></video>`
+                    : `<img src="${mediaSrc}" class="w-full h-full object-cover cursor-zoom-in" onclick="window.openLightbox('${mediaSrc}'); event.stopPropagation();">`;
+            }
+
+            d.innerHTML = `<div class="flex items-center gap-4"><div class="w-12 h-12 rounded-lg bg-gray-700 overflow-hidden relative shadow-inner">${mediaHtml}</div><div><h5 class="text-[#d97706] font-serif font-bold uppercase text-xs">${b.name}</h5><p class="text-[10px] text-gray-400 uppercase">${vis === 'private' ? `Pet of ${b.linkedUsername || 'Unknown'}` : (b.summary || 'Level 1')}</p></div></div>`;
             return d;
         }
 
@@ -426,11 +464,11 @@
             const canEdit = isDM || isOwner;
             
             document.querySelectorAll('#sheet-screen input, #sheet-screen textarea').forEach(el => el.disabled = !canEdit);
-            document.getElementById('portrait-input-file').disabled = !canEdit;
             document.getElementById('dm-secret-sec').classList.toggle('hidden', !isDM);
             document.getElementById('skill-add-ui').classList.toggle('hidden', !canEdit);
             document.getElementById('dm-sheet-controls').classList.toggle('hidden', !canEdit);
             document.getElementById('view-only-badge').classList.toggle('hidden', canEdit);
+            document.getElementById('dm-media-controls')?.classList.toggle('hidden', !isDM);
 
             const vBadge = document.getElementById('vis-badge');
             if (vBadge) vBadge.textContent = (beast.visibility || 'PUBLIC').toUpperCase();
@@ -445,10 +483,32 @@
                 (beast.skills || []).forEach((sk, i) => { sL.innerHTML += `<div class="skill-row"><b>${sk.name}</b> <div><span>${sk.val}</span>${canEdit ? `<button onclick="window.removeSkill(${i})" class="ml-2 text-red-700">✕</button>` : ''}</div></div>`; });
             }
 
-            const prev = document.getElementById('portrait-preview');
+            const mediaSrc = beast.imageSrc || "";
+            const previewImg = document.getElementById('portrait-preview');
+            const previewVid = document.getElementById('portrait-video');
             const placeholder = document.getElementById('portrait-placeholder');
-            if (beast.imageSrc) { prev.src = beast.imageSrc; prev.classList.remove('hidden'); placeholder.classList.add('hidden'); }
-            else { prev.classList.add('hidden'); placeholder.classList.remove('hidden'); }
+            const frame = document.getElementById('portrait-frame-container');
+            
+            placeholder.classList.add('hidden');
+            previewImg.classList.add('hidden');
+            previewVid.classList.add('hidden');
+            frame.classList.remove('is-placeholder');
+
+            if (mediaSrc) {
+                const isVideo = mediaSrc.toLowerCase().endsWith('.mp4');
+                if (isVideo) {
+                    previewVid.src = mediaSrc;
+                    previewVid.classList.remove('hidden');
+                    previewVid.onclick = () => window.openLightbox(mediaSrc);
+                } else {
+                    previewImg.src = mediaSrc;
+                    previewImg.classList.remove('hidden');
+                    previewImg.onclick = () => window.openLightbox(mediaSrc);
+                }
+            } else {
+                placeholder.classList.remove('hidden');
+                frame.classList.add('is-placeholder');
+            }
             
             window.calcMods();
         }
@@ -473,7 +533,6 @@
             
             const data = {};
             document.querySelectorAll('#sheet-screen [data-key]').forEach(el => data[el.dataset.key] = el.value);
-            const p = document.getElementById('portrait-preview'); if (p && p.src && p.src.startsWith('data:')) data.imageSrc = p.src;
             updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), data);
             if (m) window.showToast("Codex Updated");
         };
@@ -485,12 +544,11 @@
                 const img = new Image();
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
-                    canvas.width = 600; canvas.height = 450;
-                    canvas.getContext('2d').drawImage(img, 0, 0, 600, 450);
+                    canvas.width = 600; canvas.height = 600;
+                    canvas.getContext('2d').drawImage(img, 0, 0, 600, 600);
                     const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
-                    document.getElementById('portrait-preview').src = dataUrl;
-                    document.getElementById('portrait-preview').classList.remove('hidden');
-                    document.getElementById('portrait-placeholder').classList.add('hidden');
+                    const urlInput = document.getElementById('dm-media-url');
+                    if (urlInput) urlInput.value = dataUrl;
                     window.saveBeast();
                 };
                 img.src = ev.target.result;
@@ -503,7 +561,7 @@
             try {
                 const ref = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), {
                     type: 'BEAST', visibility: vis, linkedUsername: linked, name: `UNKNOWN ENTITY`, summary: "Medium Beast, Unaligned", ac: 10, hpDisplay: "10 (2d8 + 2)",
-                    isDeleted: false, status: 'alive', str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10, skills: [], description: "", personality: "", dmNotes: ""
+                    isDeleted: false, status: 'alive', str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10, skills: [], description: "", personality: "", dmNotes: "", imageSrc: ""
                 });
                 window.openSheet(ref.id);
             } catch (e) { console.error(e); }
@@ -512,7 +570,6 @@
         window.updateVisibility = async (v) => {
             if (!activeCharId || activeRole !== 'dm') return;
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { visibility: v });
-            window.showToast(`Now ${v.toUpperCase()}`);
             syncSheetData();
         };
 
@@ -525,7 +582,6 @@
                 linkedUsername: target 
             });
             document.getElementById('private-link-modal').classList.add('hidden');
-            window.showToast(`Linked to ${target}`);
             syncSheetData();
         };
 
