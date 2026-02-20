@@ -72,6 +72,28 @@
         input:disabled, textarea:disabled, select:disabled { background-color: transparent !important; color: #555 !important; border-bottom: 1px dashed #ccc !important; cursor: not-allowed; opacity: 0.8; }
         input[readonly], textarea[readonly], select[readonly] { background-color: transparent !important; color: #333 !important; cursor: default; }
 
+        /* SKILL / SAVE ROW LAYOUT */
+        .stat-row { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-bottom: 1px solid #eee; transition: background 0.1s; }
+        .stat-row:hover { background: #f8fafc; }
+        .stat-row:last-child { border-bottom: none; }
+        
+        .prof-checkbox { appearance: none; width: 12px; height: 12px; border: 1.5px dashed #94a3b8; border-radius: 50%; cursor: pointer; flex-shrink: 0; position: relative; }
+        .prof-checkbox:checked { background-color: #1e293b; border: 1.5px solid #1e293b; }
+        
+        .stat-attr-tag { width: 32px; font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; font-family: 'Noto Sans', sans-serif; }
+        .stat-label-text { flex-grow: 1; font-size: 12px; font-weight: 700; color: #1e293b; font-family: 'Noto Sans', sans-serif; }
+        
+        .stat-mod-box { 
+            width: 44px; height: 24px; border: 1.5px solid #cbd5e1; border-radius: 6px; 
+            display: flex; align-items: center; justify-content: center; 
+            font-weight: 800; font-size: 13px; color: #1e293b; background: #fff;
+            cursor: pointer; transition: all 0.1s;
+        }
+        .stat-mod-box:hover { border-color: #312e81; background: #f1f5f9; transform: scale(1.05); }
+
+        .row-header { display: flex; gap: 8px; padding: 0 12px 4px 12px; border-bottom: 2px solid #e8e0cd; margin-bottom: 4px; }
+        .header-item { font-size: 9px; font-weight: 900; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; }
+
         .mode-btn { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 900; border: 2px solid #cbd5e1; color: #64748b; background: #f1f5f9; transition: all 0.2s; }
         .mode-btn.active-norm { background: #64748b !important; color: white !important; border-color: #64748b !important; }
         .mode-btn.active-adv { background: #16a34a !important; color: white !important; border-color: #16a34a !important; }
@@ -80,15 +102,8 @@
         .lvl-card { background: #fff; border: 1px solid #dcd3c0; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; min-height: 120px; }
         .lvl-header { font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; border-bottom: 2px solid #e8e0cd; margin-bottom: 8px; padding-bottom: 4px; }
         
-        .stat-row { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-radius: 6px; transition: background 0.1s; margin-bottom: 2px; }
-        .stat-row:hover { background: #f8fafc; }
-        .stat-row input[type="checkbox"] { width: 14px; height: 14px; cursor: pointer; accent-color: #312e81; flex-shrink: 0; }
-        .stat-label-text { flex-grow: 1; font-size: 11px; font-weight: 600; color: #475569; font-family: 'Noto Sans', sans-serif; text-transform: capitalize; }
-        .stat-mod-box { flex-shrink: 0; width: 40px; height: 24px; display: flex; align-items: center; justify-content: center; background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 4px; font-weight: 800; color: #1e293b; font-size: 12px; cursor: pointer; transition: all 0.1s; }
-        .stat-mod-box:hover { background: #312e81; color: white; border-color: #312e81; transform: scale(1.05); }
-
         .dm-panel { background: #1a1a1a; color: #fff; padding: 20px; border-radius: 12px; margin-bottom: 24px; border: 2px solid #f59e0b; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .dm-whisper-box { background: #f5f3ff; border-left: 4px solid #7c3aed; padding: 10px; border-radius: 4px; margin-bottom: 12px; }
+        .dm-whisper-box { background: #f5f3ff; border-left: 4px solid #7c3aed; padding: 10px; border-radius: 4px; margin-bottom: 12px; color: #333; }
         .whisper-tag { font-size: 9px; font-weight: 900; color: #7c3aed; text-transform: uppercase; margin-bottom: 4px; display: block; }
 
         .equip-header { background: #f8f9fa; font-size: 10px; font-weight: 900; color: #6c757d; text-transform: uppercase; padding: 8px 12px; border-radius: 4px; display: grid; grid-template-columns: 1fr 60px 80px 30px; gap: 12px; margin-bottom: 4px; }
@@ -148,12 +163,33 @@
         /* CONDITION STYLES */
         .cond-row { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 700; color: #475569; text-transform: uppercase; }
         .cond-row input[type="checkbox"] { width: 12px; height: 12px; accent-color: #8b0000; }
+
+        /* CRITICAL EFFECTS */
+        #critical-fail-overlay { position: fixed; inset: 0; background: black; z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.5s ease-in-out; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        #fireworks-canvas { position: fixed; inset: 0; z-index: 9998; pointer-events: none; }
+
+        /* DM AUTHORIZATION MODAL STYLES */
+        .dm-auth-container { background: #1e232b !important; border: 2px solid #c2782c !important; border-radius: 30px !important; max-width: 440px !important; padding: 48px 40px !important; }
+        .dm-auth-header { font-family: 'Cinzel', serif !important; font-size: 1.8rem !important; font-weight: 900 !important; color: #c2782c !important; text-transform: uppercase !important; border: none !important; margin-bottom: 30px !important; letter-spacing: 0.05em !important; }
+        .dm-auth-input { background: #13171c !important; border-radius: 12px !important; padding: 16px !important; color: #ffffff !important; font-size: 1.1rem !important; margin-bottom: 32px !important; border: 1px solid #2d343e !important; text-align: center !important; }
+        .dm-auth-enter-btn { background: #c2782c !important; color: white !important; font-family: 'Cinzel', serif !important; font-weight: 900 !important; font-size: 1.1rem !important; padding: 16px !important; border-radius: 18px !important; width: 100% !important; text-transform: uppercase !important; transition: transform 0.1s, background-color 0.2s !important; }
+        .dm-auth-enter-btn:active { transform: scale(0.98); }
+        .dm-auth-back-btn { background: transparent !important; color: #5b626e !important; font-weight: 900 !important; font-size: 0.9rem !important; text-transform: uppercase !important; margin-top: 24px !important; display: block !important; margin-left: auto !important; margin-right: auto !important; letter-spacing: 0.1em !important; }
     </style>
 </head>
 <body class="min-h-screen">
 
     <div id="toast" class="toast">Message</div>
     <div id="sync-indicator" class="fixed top-4 right-4 bg-green-600 text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest opacity-0 pointer-events-none transition-opacity">Cloud Synced</div>
+
+    <!-- CRITICAL EFFECTS OVERLAYS -->
+    <div id="critical-fail-overlay">
+        <div class="font-serif">
+            <div class="text-[12rem] leading-none mb-4 text-red-600 font-black drop-shadow-[0_0_30px_rgba(220,38,38,0.5)]">1</div>
+            <div class="text-4xl tracking-[0.2em] font-black uppercase text-white drop-shadow-lg">Critical Fail</div>
+        </div>
+    </div>
+    <canvas id="fireworks-canvas"></canvas>
 
     <!-- AUTH MODAL -->
     <div id="auth-modal" class="fixed inset-0 bg-gray-900 z-[300] flex items-center justify-center p-4">
@@ -286,8 +322,26 @@
                                     </div>
                                     <div id="stats-container" class="space-y-3"></div>
                                 </div>
-                                <div class="sheet-card"><h3>Saves</h3><div id="saves-container" class="space-y-1"></div></div>
-                                <div class="sheet-card"><h3>Skills</h3><div id="skills-container" class="space-y-0.5 max-h-[500px] overflow-y-auto pr-1"></div></div>
+                                <div class="sheet-card">
+                                    <h3>Saves</h3>
+                                    <div class="row-header">
+                                        <div class="w-4 header-item">Prof</div>
+                                        <div class="w-8 header-item ml-2">Mod</div>
+                                        <div class="flex-grow header-item">Stat</div>
+                                        <div class="w-10 header-item text-right pr-2">Bonus</div>
+                                    </div>
+                                    <div id="saves-container" class="space-y-0.5"></div>
+                                </div>
+                                <div class="sheet-card">
+                                    <h3>Skills</h3>
+                                    <div class="row-header">
+                                        <div class="w-4 header-item">Prof</div>
+                                        <div class="w-8 header-item ml-2">Mod</div>
+                                        <div class="flex-grow header-item">Skill</div>
+                                        <div class="w-10 header-item text-right pr-2">Bonus</div>
+                                    </div>
+                                    <div id="skills-container" class="space-y-0.5 max-h-[600px] overflow-y-auto pr-1"></div>
+                                </div>
                             </div>
                             <div class="space-y-6">
                                 <div class="grid grid-cols-4 gap-2">
@@ -312,7 +366,7 @@
                                     <!-- DMG ADJUST BUTTON -->
                                     <button onclick="window.openHpAdjustmentModal()" class="absolute top-2 left-2 text-xs bg-red-50 hover:bg-red-100 text-red-600 p-1.5 rounded-lg border border-red-100 transition-colors" title="Apply Damage/Healing">⚔️</button>
                                     
-                                    <div class="flex justify-between px-2 mb-2 text-[10px] font-black uppercase text-gray-400"><span>MAX HP: <input type="number" class="w-8" data-key="hpMax"></span><span>HD: <input type="text" class="w-12 text-right" data-key="hd" placeholder="1d10"></span></div>
+                                    <div class="flex justify-between px-2 mb-2 text-[10px] font-black uppercase text-gray-400"><span>MAX HP: <input type="number" class="w-8" data-key="hpMax"></span><span>HD: <input type="number" class="w-8 text-center" data-key="hdCurrent"> / <input type="text" class="w-10 text-right" data-key="hd" placeholder="1d10"></span></div>
                                     <input type="number" class="text-7xl font-black text-center w-full mb-1" data-key="hpCurrent" placeholder="10">
                                     <div class="text-[10px] font-black uppercase mt-4">Health Points</div>
                                     <input type="number" class="text-xl font-bold text-center w-full border-b mt-4" data-key="tempHp" placeholder="Temp HP">
@@ -404,7 +458,7 @@
                                             </div>
                                             <div>
                                                 <label class="prof-label">Damage Immunities</label>
-                                                <input type="text" data-key="defImmunities" class="prof-list-text w-full italic" placeholder="Mortis, Piercing...">
+                                                <input type="text" data-key="defImmunities" class="prof-list-text w-full italic" placeholder="Necrotic, Piercing...">
                                             </div>
                                             <div>
                                                 <label class="prof-label">Damage Vulnerabilities</label>
@@ -560,16 +614,14 @@
 
     <!-- MODALS -->
     
-    <!-- DM PASSWORD MODAL -->
+    <!-- DM AUTHORIZATION MODAL -->
     <div id="password-modal" class="modal-overlay hidden">
-        <div class="modal-container">
-            <h2 class="modal-header">DM Access</h2>
+        <div class="modal-container dm-auth-container">
+            <h2 class="dm-auth-header text-center">DM Authorization</h2>
             <div class="space-y-4">
-                <input type="password" id="dm-password" class="w-full bg-gray-100 p-4 rounded-lg font-mono text-center" placeholder="••••••••">
-            </div>
-            <div class="modal-footer">
-                <button onclick="document.getElementById('password-modal').classList.add('hidden')" class="px-6 py-2 text-gray-400 font-bold uppercase text-xs">Cancel</button>
-                <button onclick="window.verifyDmPassword()" class="px-8 py-2 bg-indigo-600 text-white rounded font-black uppercase text-xs">Verify</button>
+                <input type="password" id="dm-password" class="w-full dm-auth-input" placeholder="••••••••">
+                <button onclick="window.verifyDmPassword()" class="dm-auth-enter-btn">Enter</button>
+                <button onclick="document.getElementById('password-modal').classList.add('hidden')" class="dm-auth-back-btn">Back</button>
             </div>
         </div>
     </div>
@@ -655,27 +707,31 @@
         <div class="modal-container">
             <h2 class="modal-header">Short Rest</h2>
             <div class="space-y-6">
-                <div class="flex items-center justify-between bg-gray-50 p-4 rounded-lg">
-                    <span class="text-xs font-black uppercase text-gray-500">Constitution Mod</span>
-                    <span id="sr-con-mod-display" class="text-xl font-black text-indigo-600">+0</span>
+                <div class="flex flex-col items-center bg-gray-50 p-4 rounded-xl border border-gray-100">
+                    <div class="text-[10px] font-black uppercase text-gray-400 mb-1">Hit Dice Available</div>
+                    <div id="sr-hd-available" class="text-3xl font-black text-indigo-600">0 / 1</div>
+                    <div id="sr-die-type-label" class="text-[10px] font-bold text-gray-500 uppercase mt-1">d8</div>
                 </div>
-                <div>
-                    <label class="text-[10px] font-black uppercase text-gray-400 mb-2 block">Dice to Spend</label>
-                    <div class="flex items-center gap-4">
-                        <input type="number" id="sr-num-dice" value="1" min="1" class="w-16 bg-gray-100 p-3 rounded text-center font-bold">
-                        <div class="flex-grow flex gap-2">
-                            <button id="sr-btn-6" onclick="window.selectSrDie(6)" class="sr-die-btn flex-grow border-2 p-2 rounded text-xs font-black">d6</button>
-                            <button id="sr-btn-8" onclick="window.selectSrDie(8)" class="sr-die-btn flex-grow border-2 p-2 rounded text-xs font-black">d8</button>
-                            <button id="sr-btn-10" onclick="window.selectSrDie(10)" class="sr-die-btn flex-grow border-2 p-2 rounded text-xs font-black">d10</button>
-                            <button id="sr-btn-12" onclick="window.selectSrDie(12)" class="sr-die-btn flex-grow border-2 p-2 rounded text-xs font-black">d12</button>
-                        </div>
+
+                <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100 text-center">
+                    <div class="text-[10px] font-black uppercase text-indigo-400 mb-1">Constitution Mod</div>
+                    <div id="sr-con-mod-display" class="text-2xl font-black text-indigo-700" data-mod="0">+0</div>
+                </div>
+
+                <div id="sr-roll-result-area" class="hidden">
+                    <div class="text-center p-4 bg-amber-50 border border-amber-100 rounded-xl animate-pulse">
+                        <div class="text-[10px] font-black uppercase text-amber-600 mb-1">Recent Regain</div>
+                        <div id="sr-last-roll-total" class="text-4xl font-black text-amber-700">+0 HP</div>
+                        <div id="sr-last-roll-breakdown" class="text-[10px] font-mono text-amber-500">(0 + 0)</div>
                     </div>
                 </div>
-                <input type="hidden" id="sr-die-val" value="8">
-            </div>
-            <div class="modal-footer">
-                <button onclick="document.getElementById('short-rest-modal').classList.add('hidden')" class="px-6 py-2 text-gray-400 font-bold uppercase text-xs">Cancel</button>
-                <button onclick="window.confirmShortRest()" class="px-8 py-2 bg-indigo-600 text-white rounded font-black uppercase text-xs">Rest Now</button>
+
+                <div class="space-y-3 pt-2">
+                    <button id="sr-spend-btn" onclick="window.confirmShortRest()" class="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-black uppercase text-sm shadow-lg transition-all flex items-center justify-center gap-2">
+                        <span>Roll 1 Hit Die</span>
+                    </button>
+                    <button onclick="document.getElementById('short-rest-modal').classList.add('hidden')" class="w-full py-3 text-gray-400 font-black uppercase text-xs hover:text-gray-600">Finish Rest</button>
+                </div>
             </div>
         </div>
     </div>
@@ -814,9 +870,62 @@
             {n:'Athletics', s:'str'},{n:'Deception', s:'cha'},{n:'History', s:'int'},
             {n:'Insight', s:'wis'},{n:'Intimidation', s:'cha'},{n:'Investigation', s:'int'},
             {n:'Medicine', s:'wis'},{n:'Nature', s:'int'},{n:'Perception', s:'wis'},
-            {n:'Performance', s:'cha'},{n:'Persuasion', s:'cha'},{n:'Religion', s:'int'},
+            {n:'Performance', s:'cha'},{n:'Persuasion', s:'cha'},{n:'Belief', s:'int'},
             {n:'Sleight of Hand', s:'dex'},{n:'Stealth', s:'dex'},{n:'Survival', s:'wis'}
         ];
+
+        // --- CRITICAL EFFECTS SYSTEM ---
+        const triggerCriticalFailure = () => {
+            const overlay = document.getElementById('critical-fail-overlay');
+            overlay.style.opacity = '1';
+            overlay.style.pointerEvents = 'auto';
+            setTimeout(() => {
+                overlay.style.opacity = '0';
+                overlay.style.pointerEvents = 'none';
+            }, 2000);
+        };
+
+        const triggerCriticalSuccess = () => {
+            const canvas = document.getElementById('fireworks-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const particles = [];
+            const colors = ['#f59e0b', '#dc2626', '#3b82f6', '#16a34a', '#8b0000', '#ffffff'];
+
+            class Particle {
+                constructor(x, y, color) {
+                    this.x = x; this.y = y; this.color = color;
+                    this.velocity = { x: (Math.random() - 0.5) * 12, y: (Math.random() - 0.5) * 12 };
+                    this.alpha = 1; this.friction = 0.95;
+                }
+                draw() {
+                    ctx.globalAlpha = this.alpha; ctx.beginPath();
+                    ctx.arc(this.x, this.y, 2, 0, Math.PI * 2, false);
+                    ctx.fillStyle = this.color; ctx.fill();
+                }
+                update() {
+                    this.velocity.x *= this.friction; this.velocity.y *= this.friction;
+                    this.x += this.velocity.x; this.y += this.velocity.y; this.alpha -= 0.01;
+                }
+            }
+
+            const createFirework = (x, y) => {
+                const particleCount = 60; const color = colors[Math.floor(Math.random() * colors.length)];
+                for (let i = 0; i < particleCount; i++) particles.push(new Particle(x, y, color));
+            };
+
+            for(let i=0; i<5; i++) setTimeout(() => { createFirework(Math.random() * canvas.width, Math.random() * (canvas.height * 0.6)); }, i * 200);
+
+            let animationId;
+            const animate = () => {
+                animationId = requestAnimationFrame(animate); ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach((p, i) => { if (p.alpha > 0) { p.update(); p.draw(); } else { particles.splice(i, 1); } });
+                if (particles.length === 0) cancelAnimationFrame(animationId);
+            };
+            animate();
+        };
 
         // --- AUTH SYSTEM ---
         async function hashPassword(str) {
@@ -874,56 +983,33 @@
         window.switchSheetTab = (tabId) => {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
-            const btn = document.getElementById(`tab-btn-${tabId}`);
-            if(btn) btn.classList.add('active');
-            const pane = document.getElementById(`tab-content-${tabId}`);
-            if(pane) pane.classList.remove('hidden');
+            const btn = document.getElementById(`tab-btn-${tabId}`); if(btn) btn.classList.add('active');
+            const pane = document.getElementById(`tab-content-${tabId}`); if(pane) pane.classList.remove('hidden');
         };
 
-        // --- SUB-FILTER SWITCHER ---
         window.switchSubFilter = (filterId) => {
             document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
-            const btn = document.getElementById(`sub-btn-${filterId}`);
-            if(btn) btn.classList.add('active');
-            
+            const btn = document.getElementById(`sub-btn-${filterId}`); if(btn) btn.classList.add('active');
             const panes = document.querySelectorAll('.sub-pane');
-            panes.forEach(p => {
-                if (filterId === 'all') {
-                    p.classList.remove('hidden');
-                } else {
-                    if (p.id === `sub-content-${filterId}`) {
-                        p.classList.remove('hidden');
-                    } else {
-                        p.classList.add('hidden');
-                    }
-                }
-            });
+            panes.forEach(p => { if (filterId === 'all') p.classList.remove('hidden'); else p.classList.toggle('hidden', p.id !== `sub-content-${filterId}`); });
         };
 
-        // --- MEDIA RENDER HELPER ---
         function renderMedia(src, className, style = "") {
             if (!src) return ''; 
-            const srcLower = src.toLowerCase();
-            const isVideo = srcLower.endsWith('.mp4') || srcLower.endsWith('.webm') || srcLower.includes('mp4');
-            if (isVideo) {
-                return `<video src="${src}" class="${className}" style="${style}" autoplay loop muted playsinline></video>`;
-            }
-            return `<img src="${src}" class="${className}" style="${style}" onerror="this.parentElement.innerHTML='<div class=\'w-full h-full flex items-center justify-center text-[10px] text-red-500 font-bold px-1\'>Broken Media</div>'">`;
+            const srcLower = src.toLowerCase(); const isVideo = srcLower.endsWith('.mp4') || srcLower.endsWith('.webm') || srcLower.includes('mp4');
+            if (isVideo) return `<video src="${src}" class="${className}" style="${style}" autoplay loop muted playsinline></video>`;
+            return `<img src="${src}" class="${className}" style="${style}" onerror="this.parentElement.innerHTML='<div class=\\'w-full h-full flex items-center justify-center text-[10px] text-red-500 font-bold px-1\\'>Broken Media</div>'">`;
         }
 
         window.logout = () => { localStorage.removeItem('aeonfall_user'); window.location.reload(); };
 
-        // --- GLOBAL FUNCTIONS ---
         window.updateRoleUI = () => {
             const isDM = activeRole === 'dm';
-            const rp = document.getElementById('role-player-btn');
-            const rd = document.getElementById('role-dm-btn');
+            const rp = document.getElementById('role-player-btn'); const rd = document.getElementById('role-dm-btn');
             if(rp) rp.className = !isDM ? 'px-6 py-3 rounded-lg text-sm font-bold bg-amber-600 text-white shadow-lg' : 'px-6 py-3 text-gray-500 font-bold';
             if(rd) rd.className = isDM ? 'px-6 py-3 rounded-lg text-sm font-bold bg-amber-600 text-white shadow-lg' : 'px-6 py-3 text-gray-500 font-bold';
-            const dmPanel = document.getElementById('dm-oversight-panel');
-            if (dmPanel) dmPanel.classList.toggle('hidden-view', !isDM);
-            window.renderDashboard();
-            if (activeCharId) syncSheetData();
+            const dmPanel = document.getElementById('dm-oversight-panel'); if (dmPanel) dmPanel.classList.toggle('hidden-view', !isDM);
+            window.renderDashboard(); if (activeCharId) syncSheetData();
         };
 
         window.setRole = (r) => { if (r === 'dm') document.getElementById('password-modal')?.classList.remove('hidden'); else { activeRole = 'player'; window.updateRoleUI(); } };
@@ -938,17 +1024,13 @@
             parties.forEach(p => {
                 const s = document.createElement('div'); s.className = "bg-gray-900/40 p-6 rounded-2xl border border-gray-800 shadow-xl mb-8";
                 s.innerHTML = `<div class="flex justify-between items-center mb-4"><h3 class="text-indigo-400 font-serif font-bold uppercase text-sm">${p.name}</h3><button onclick="window.openManageParty('${p.id}')" class="text-[9px] font-black uppercase text-gray-500 hover:text-indigo-400 bg-black/20 px-2 py-1 rounded">Manage</button></div><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="party-grid-${p.id}"></div>`;
-                pcC.appendChild(s);
-                const g = s.querySelector(`#party-grid-${p.id}`); 
-                activePCs.filter(c => c.partyId === p.id).forEach(c => g.appendChild(createCard(c)));
+                pcC.appendChild(s); const g = s.querySelector(`#party-grid-${p.id}`); activePCs.filter(c => c.partyId === p.id).forEach(c => g.appendChild(createCard(c)));
             });
             const unassignedPCs = activePCs.filter(c => !c.partyId);
             if (unassignedPCs.length > 0) {
                 const s = document.createElement('div'); s.className = "space-y-4 mb-8";
                 s.innerHTML = `<h3 class="text-gray-500 font-serif font-bold uppercase text-sm mb-4">Unassigned Adventurers</h3><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="unassigned-grid"></div>`;
-                pcC.appendChild(s);
-                const g = s.querySelector('#unassigned-grid'); 
-                unassignedPCs.forEach(c => g.appendChild(createCard(c)));
+                pcC.appendChild(s); const g = s.querySelector('#unassigned-grid'); unassignedPCs.forEach(c => g.appendChild(createCard(c)));
             }
             characters.filter(c => c.isDeleted && c.type === 'PC').forEach(c => grC.appendChild(createCard(c)));
         };
@@ -957,8 +1039,8 @@
             let statusClass = "border-amber-600", badgeHtml = "", imgStyle = "";
             if (c.status === 'coma') { statusClass = "card-coma"; badgeHtml += `<span class="status-badge badge-coma" style="right: 8px">Coma</span>`; }
             else if (c.status === 'dead') { statusClass = "card-dead"; badgeHtml += `<span class="status-badge badge-dead" style="right: 8px">Dead</span>`; imgStyle = "filter: grayscale(1)"; }
-            if (currentUser && c.owner === currentUser.username) { badgeHtml += `<span class="status-badge bg-green-700 text-white" style="left: 8px; right: auto;">YOURS</span>`; } 
-            else if (!c.owner) { badgeHtml += `<span class="status-badge bg-gray-500 text-white" style="left: 8px; right: auto;">UNCLAIMED</span>`; }
+            if (currentUser && c.owner === currentUser.username) badgeHtml += `<span class="status-badge bg-green-700 text-white" style="left: 8px; right: auto;">YOURS</span>`;
+            else if (!c.owner) badgeHtml += `<span class="status-badge bg-gray-500 text-white" style="left: 8px; right: auto;">UNCLAIMED</span>`;
             const mediaSrc = c.imageSrc ? renderMedia(c.imageSrc, "w-full h-full object-cover", imgStyle) : `<div class="w-full h-full flex items-center justify-center text-xl" style="${imgStyle}">👤</div>`;
             const d = document.createElement('div'); d.className = `bg-gray-800 p-5 rounded-xl card border-l-4 shadow-xl ${statusClass}`;
             d.onclick = () => window.openSheet(c.id);
@@ -973,164 +1055,111 @@
             if (!user || !currentUser) return; 
             try { 
                 const initialOwner = (activeRole === 'dm') ? null : currentUser.username;
-                const ref = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), { type, name: `New ${type}`, ownerId: user.uid, owner: initialOwner, isDeleted: false, status: 'alive', hpMax: 10, hpCurrent: 10, level: 1, str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10, profBonus: 2, scoresGenerated: false, languages: [], attacks: [], moves: [], dmWhispers: [], dsSucc: 0, dsFail: 0, age: "", gender: "", alignment: "Neutral", faith: "", hair: "", skin: "", size: "Medium", height: "", weight: "", appearance: "", backgroundTitle: "New Background", backgroundDesc: "", profArmor: "", profWeapons: "", profTools: "", imageSrc: "", heroicInspiration: 0, exhaustion: 0 }); 
+                const ref = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), { type, name: `New ${type}`, ownerId: user.uid, owner: initialOwner, isDeleted: false, status: 'alive', hpMax: 10, hpCurrent: 10, level: 1, str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10, profBonus: 2, scoresGenerated: false, languages: [], attacks: [], moves: [], dmWhispers: [], dsSucc: 0, dsFail: 0, hdCurrent: 1, hd: "1d8", age: "", gender: "", alignment: "Neutral", faith: "", hair: "", skin: "", size: "Medium", height: "", weight: "", appearance: "", backgroundTitle: "New Background", backgroundDesc: "", profArmor: "", profWeapons: "", profTools: "", imageSrc: "", heroicInspiration: 0, exhaustion: 0 }); 
                 window.openSheet(ref.id); 
-            } catch (e) { console.error(e); window.showToast("Create Failed"); } 
+            } catch (e) { window.showToast("Create Failed"); } 
         };
 
         function initSheetUI() {
             const sC = document.getElementById('stats-container'), svC = document.getElementById('saves-container'), skC = document.getElementById('skills-container');
             if (!sC) return; sC.innerHTML = ''; svC.innerHTML = ''; skC.innerHTML = '';
-            STATS.forEach(s => { sC.innerHTML += `<div class="flex items-center gap-3"><div class="w-12 h-12 bg-gray-100 rounded-lg flex flex-col items-center justify-center border-2 border-gray-300 font-black rollable" onclick="window.rollStat('${s}')"><span class="text-[8px] uppercase text-gray-400">${s}</span><span id="mod-${s}">+0</span></div><input type="number" data-key="${s}" class="w-10 text-center font-bold" value="10" onchange="window.calcMods()"></div>`; svC.innerHTML += `<div class="stat-row"><input type="checkbox" data-key="save_prof_${s}" onchange="window.calcMods()"><span class="stat-label-text">${s}</span><span class="stat-mod-box" id="save-mod-${s}" onclick="window.rollSave('${s}')">+0</span></div>`; });
-            SKILLS.forEach(sk => { const safe = sk.n.toLowerCase().replace(/ /g,'_').replace(/[()]/g,''); skC.innerHTML += `<div class="stat-row"><input type="checkbox" data-key="prof_${safe}" onchange="window.calcMods()"><span class="stat-label-text">${sk.n} <span class="stat-attr-tag">${sk.s}</span></span><span class="stat-mod-box" id="skill-mod-${safe}" onclick="window.rollSkill('${sk.n}')">+0</span></div>`; });
+            STATS.forEach(s => { 
+                sC.innerHTML += `<div class="flex items-center gap-3"><div class="w-12 h-12 bg-gray-100 rounded-lg flex flex-col items-center justify-center border-2 border-gray-300 font-black rollable" onclick="window.rollStat('${s}')"><span class="text-[8px] uppercase text-gray-400">${s}</span><span id="mod-${s}">+0</span></div><input type="number" data-key="${s}" class="w-10 text-center font-bold" value="10" onchange="window.calcMods()"></div>`; 
+                svC.innerHTML += `<div class="stat-row"><input type="checkbox" data-key="save_prof_${s}" class="prof-checkbox" onchange="window.calcMods()"><span class="stat-attr-tag">${s}</span><span class="stat-label-text">Save</span><span class="stat-mod-box" id="save-mod-${s}" onclick="window.rollSave('${s}')">+0</span></div>`;
+            });
+            SKILLS.forEach(sk => { 
+                const safe = sk.n.toLowerCase().replace(/ /g,'_').replace(/[()]/g,''); 
+                skC.innerHTML += `<div class="stat-row"><input type="checkbox" data-key="prof_${safe}" class="prof-checkbox" onchange="window.calcMods()"><span class="stat-attr-tag">${sk.s}</span><span class="stat-label-text">${sk.n}</span><span class="stat-mod-box" id="skill-mod-${safe}" onclick="window.rollSkill('${sk.n}')">+0</span></div>`; 
+            });
         }
 
         function syncSheetData() {
             const char = characters.find(c => c.id === activeCharId); if (!char) return;
             const ps = document.getElementById('party-select'); if (ps) { ps.innerHTML = '<option value="">Unassigned</option>'; parties.forEach(p => ps.innerHTML += `<option value="${p.id}">${p.name}</option>`); }
-            const isOwner = currentUser && char.owner === currentUser.username; 
-            const isDM = activeRole === 'dm'; 
-            const canEdit = isOwner || isDM; 
+            const isOwner = currentUser && char.owner === currentUser.username; const isDM = activeRole === 'dm'; const canEdit = isOwner || isDM; 
 
-            document.querySelectorAll('#sheet-container input, #sheet-container textarea, #sheet-container select').forEach(el => { 
-                if (el.tagName === 'SELECT' || el.type === 'checkbox') {
-                    el.disabled = !canEdit;
-                } else {
-                    el.readOnly = !canEdit;
-                }
-            });
-
-            document.getElementById('add-attack-btn').style.display = canEdit ? 'block' : 'none';
-            document.getElementById('sync-btn').style.display = canEdit ? 'block' : 'none';
-            document.getElementById('delete-char-btn').style.display = canEdit ? 'block' : 'none';
+            document.querySelectorAll('#sheet-container input, #sheet-container textarea, #sheet-container select').forEach(el => { if (el.tagName === 'SELECT' || el.type === 'checkbox') el.disabled = !canEdit; else el.readOnly = !canEdit; });
+            document.getElementById('add-attack-btn').style.display = canEdit ? 'block' : 'none'; document.getElementById('sync-btn').style.display = canEdit ? 'block' : 'none'; document.getElementById('delete-char-btn').style.display = canEdit ? 'block' : 'none';
             document.querySelectorAll('.read-only-hide').forEach(el => el.classList.toggle('hidden', !canEdit));
             document.getElementById('sheet-readonly-badge').classList.toggle('hidden', canEdit);
-            const claimBtn = document.getElementById('claim-char-btn'); 
-            if (claimBtn) { if (!char.owner && currentUser && char.type !== 'NPC') claimBtn.classList.remove('hidden'); else claimBtn.classList.add('hidden'); }
-            document.querySelectorAll('.ds-dot').forEach(el => { el.style.pointerEvents = canEdit ? 'auto' : 'none'; el.style.opacity = canEdit ? '1' : '0.5'; });
+            const claimBtn = document.getElementById('claim-char-btn'); if (claimBtn) { if (!char.owner && currentUser && char.type !== 'NPC') claimBtn.classList.remove('hidden'); else claimBtn.classList.add('hidden'); }
             
-            document.querySelectorAll('[data-key]').forEach(el => { 
-                if (el.type === 'checkbox') el.checked = !!char[el.dataset.key]; 
-                else el.value = char[el.dataset.key] || ""; 
-            });
-
+            document.querySelectorAll('[data-key]').forEach(el => { if (el.type === 'checkbox') el.checked = !!char[el.dataset.key]; else el.value = char[el.dataset.key] || ""; });
             const sCont = document.getElementById('sheet-container'); if (sCont) { sCont.classList.remove('status-coma', 'status-dead'); if (char.status === 'coma') sCont.classList.add('status-coma'); if (char.status === 'dead') sCont.classList.add('status-dead'); }
-            const wl = document.getElementById('whispers-list'); if (wl) { wl.innerHTML = (char.dmWhispers || []).map((w, i) => `<div class="dm-whisper-box relative group"><div class="flex justify-between items-start"><span class="whisper-tag">DM SECRET</span>${isDM ? `<button onclick="window.deleteWhisper(${i})" class="text-red-400 hover:text-red-600 font-bold text-[10px] leading-none p-1" title="Remove Whisper">✕</button>` : ''}</div><p class="text-xs italic">${w.text}</p></div>`).reverse().join(''); }
+            
+            // Render DM Whispers
+            const whispers = char.dmWhispers || [];
+            const wl = document.getElementById('whispers-list');
+            const wdb = document.getElementById('whisper-display-box');
+            if (wl && wdb) {
+                if (whispers.length > 0 || isDM) {
+                    wdb.classList.remove('hidden-view');
+                    wl.innerHTML = whispers.map((w, i) => `
+                        <div class="dm-whisper-box relative group">
+                            <div class="flex justify-between items-start">
+                                <span class="whisper-tag">DM SECRET</span>
+                                ${isDM ? `<button onclick="window.deleteWhisper(${i})" class="text-red-400 hover:text-red-600 font-bold text-[10px] leading-none p-1">✕</button>` : ''}
+                            </div>
+                            <p class="text-xs italic">${w.text}</p>
+                        </div>
+                    `).reverse().join('');
+                } else {
+                    wdb.classList.add('hidden-view');
+                }
+            }
+
             const log = document.getElementById('dice-log'); if (log) { log.innerHTML = ''; (char.rollHistory || []).forEach(r => { const d = document.createElement('div'); d.className = "flex justify-between border-b border-gray-100 py-1.5"; d.innerHTML = `<span class="text-gray-500 font-bold">${r.label}</span><b class="text-indigo-900">${r.total}</b>`; log.appendChild(d); }); }
             
             const pDisplay = document.getElementById('portrait-media-display');
             if (pDisplay) {
-                if (char.imageSrc) {
-                    pDisplay.innerHTML = renderMedia(char.imageSrc, "w-full h-full object-cover", char.status === 'dead' ? 'filter: grayscale(1)' : '');
-                    document.getElementById('portrait-placeholder')?.classList.add('hidden');
-                } else {
-                    pDisplay.innerHTML = '';
-                    document.getElementById('portrait-placeholder')?.classList.remove('hidden');
-                }
+                if (char.imageSrc) { pDisplay.innerHTML = renderMedia(char.imageSrc, "w-full h-full object-cover", char.status === 'dead' ? 'filter: grayscale(1)' : ''); document.getElementById('portrait-placeholder')?.classList.add('hidden'); } 
+                else { pDisplay.innerHTML = ''; document.getElementById('portrait-placeholder')?.classList.remove('hidden'); }
             }
 
-            for(let i=1; i<=3; i++) { const s = document.getElementById(`ds-succ-${i}`), f = document.getElementById(`ds-fail-${i}`); if (s) s.classList.toggle('checked-succ', (char.dsSucc || 0) >= i); if (f) f.classList.toggle('checked-fail', (char.dsFail || 0) >= i); }
-            const lc = document.getElementById('languages-list'); if (lc) { lc.innerHTML = ''; const langs = (char.languages || []); if (langs.length === 0) lc.innerHTML = '<span class="text-slate-400 font-normal italic">None</span>'; else { langs.forEach((l, idx) => { const d = document.createElement('div'); d.className = "flex items-center gap-1"; const delBtn = canEdit ? `<button onclick="window.removeLanguageItem(${idx})" class="text-red-400 hover:text-red-600">×</button>` : ''; d.innerHTML = `<span>${l}${idx < langs.length - 1 ? ',' : ''}</span>${delBtn}`; lc.appendChild(d); }); } }
-            const ac = document.getElementById('attacks-list'); if (ac) { ac.innerHTML = ''; (char.attacks || []).forEach(a => { const d = document.createElement('div'); d.className = "equip-row"; const disabledAttr = !canEdit ? 'disabled' : ''; const delBtn = canEdit ? `<button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-300">×</button>` : ''; d.innerHTML = `<input type="text" class="atk-name font-bold" value="${a.name}" ${disabledAttr}><input type="text" class="atk-bonus text-center" value="${a.bonus}" ${disabledAttr}><input type="text" class="atk-dmg text-center" value="${a.dmg}" ${disabledAttr}>${delBtn}`; ac.appendChild(d); }); }
+            const lc = document.getElementById('languages-list'); if (lc) { lc.innerHTML = ''; const langs = (char.languages || []); if (langs.length === 0) lc.innerHTML = '<span class="text-slate-400 font-normal italic">None</span>'; else langs.forEach((l, idx) => { const d = document.createElement('div'); d.className = "flex items-center gap-1"; const delBtn = canEdit ? `<button onclick="window.removeLanguageItem(${idx})" class="text-red-400 hover:text-red-600">×</button>` : ''; d.innerHTML = `<span>${l}${idx < langs.length - 1 ? ',' : ''}</span>${delBtn}`; lc.appendChild(d); }); }
+            const ac = document.getElementById('attacks-list'); if (ac) { ac.innerHTML = ''; (char.attacks || []).forEach(a => { const d = document.createElement('div'); d.className = "equip-row"; const disabledAttr = !canEdit ? 'disabled' : ''; const delBtn = canEdit ? `<button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-300">✕</button>` : ''; d.innerHTML = `<input type="text" class="atk-name font-bold" value="${a.name}" ${disabledAttr}><input type="text" class="atk-bonus text-center" value="${a.bonus}" ${disabledAttr}><input type="text" class="atk-dmg text-center" value="${a.dmg}" ${disabledAttr}>${delBtn}`; ac.appendChild(d); }); }
             window.calcMods(); window.renderMovesGrid();
         }
 
-        // --- HP ADJUSTMENT Logic ---
-        window.openHpAdjustmentModal = () => {
+        window.sendDmWhisper = async () => {
+            const input = document.getElementById('dm-whisper-input');
+            if (!input || !input.value.trim() || !activeCharId || activeRole !== 'dm') return;
             const char = characters.find(c => c.id === activeCharId);
             if (!char) return;
-            document.getElementById('hp-adjust-amount').value = '';
-            document.getElementById('hp-adjustment-modal').classList.remove('hidden');
-            document.getElementById('hp-adjust-amount').focus();
+            const whispers = [...(char.dmWhispers || [])];
+            whispers.push({ text: input.value.trim(), timestamp: Date.now() });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { dmWhispers: whispers });
+            input.value = '';
+            window.showToast("Whisper Sent");
         };
 
+        window.deleteWhisper = async (idx) => {
+            if (!activeCharId || activeRole !== 'dm') return;
+            const char = characters.find(c => c.id === activeCharId);
+            if (!char) return;
+            const whispers = [...(char.dmWhispers || [])];
+            whispers.splice(idx, 1);
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { dmWhispers: whispers });
+            window.showToast("Whisper Removed");
+        };
+
+        window.openHpAdjustmentModal = () => { document.getElementById('hp-adjust-amount').value = ''; document.getElementById('hp-adjustment-modal').classList.remove('hidden'); document.getElementById('hp-adjust-amount').focus(); };
         window.applyHpAdjustment = async (type) => {
-            const amtIn = document.getElementById('hp-adjust-amount');
-            const amount = parseInt(amtIn.value);
-            if (isNaN(amount) || amount <= 0) { amtIn.focus(); return; }
-            
-            const char = characters.find(c => c.id === activeCharId);
-            if (!char) return;
-
-            let curHp = parseInt(char.hpCurrent) || 0;
-            let maxHp = parseInt(char.hpMax) || 1;
-            let tempHp = parseInt(char.tempHp) || 0;
-            let updates = {};
-
-            if (type === 'dmg') {
-                let remainingDmg = amount;
-                if (tempHp > 0) {
-                    const absorbed = Math.min(tempHp, remainingDmg);
-                    tempHp -= absorbed;
-                    remainingDmg -= absorbed;
-                    updates.tempHp = tempHp;
-                }
-                if (remainingDmg > 0) {
-                    curHp = Math.max(0, curHp - remainingDmg);
-                    updates.hpCurrent = curHp;
-                }
-                window.showToast(`Took ${amount} Damage`);
-            } else if (type === 'heal') {
-                curHp = Math.min(maxHp, curHp + amount);
-                updates.hpCurrent = curHp;
-                window.showToast(`Healed ${amount} HP`);
-            }
-
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), updates);
-            document.getElementById('hp-adjustment-modal').classList.add('hidden');
+            const amtIn = document.getElementById('hp-adjust-amount'); const amount = parseInt(amtIn.value); if (isNaN(amount) || amount <= 0) { amtIn.focus(); return; }
+            const char = characters.find(c => c.id === activeCharId); if (!char) return;
+            let curHp = parseInt(char.hpCurrent) || 0, maxHp = parseInt(char.hpMax) || 1, tempHp = parseInt(char.tempHp) || 0, updates = {};
+            if (type === 'dmg') { let remainingDmg = amount; if (tempHp > 0) { const absorbed = Math.min(tempHp, remainingDmg); tempHp -= absorbed; remainingDmg -= absorbed; updates.tempHp = tempHp; } if (remainingDmg > 0) { curHp = Math.max(0, curHp - remainingDmg); updates.hpCurrent = curHp; } window.showToast(`Took ${amount} Damage`); } 
+            else if (type === 'heal') { curHp = Math.min(maxHp, curHp + amount); updates.hpCurrent = curHp; window.showToast(`Healed ${amount} HP`); }
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), updates); document.getElementById('hp-adjustment-modal').classList.add('hidden');
         };
 
-        // --- SCORE GENERATOR ---
-        window.openScoreGenModal = () => { 
-            sessionRerollUsed = false; 
-            document.getElementById('score-gen-modal')?.classList.remove('hidden'); 
-            document.getElementById('gen-results-area')?.classList.add('hidden'); 
-            document.getElementById('gen-apply-area')?.classList.add('hidden'); 
-            document.getElementById('gen-controls')?.classList.remove('hidden'); 
-        };
-
+        window.openScoreGenModal = () => { sessionRerollUsed = false; document.getElementById('score-gen-modal')?.classList.remove('hidden'); document.getElementById('gen-results-area')?.classList.add('hidden'); document.getElementById('gen-apply-area')?.classList.add('hidden'); document.getElementById('gen-controls')?.classList.remove('hidden'); };
         window.generateScores = (method, isReroll = false) => { 
-            if (method === 'standard') {
-                lastGeneratedScores = [15, 14, 13, 12, 10, 8]; 
-            } else { 
-                if (isReroll) sessionRerollUsed = true; 
-                lastGeneratedScores = Array.from({length: 6}, () => { 
-                    const r = [Math.floor(Math.random()*6)+1, Math.floor(Math.random()*6)+1, Math.floor(Math.random()*6)+1, Math.floor(Math.random()*6)+1]; 
-                    r.sort((a,b)=>b-a); 
-                    return r[0]+r[1]+r[2]; 
-                }).sort((a,b)=>b-a); 
-            } 
-            
+            if (method === 'standard') lastGeneratedScores = [15, 14, 13, 12, 10, 8]; 
+            else { if (isReroll) sessionRerollUsed = true; lastGeneratedScores = Array.from({length: 6}, () => { const r = [Math.floor(Math.random()*6)+1, Math.floor(Math.random()*6)+1, Math.floor(Math.random()*6)+1, Math.floor(Math.random()*6)+1]; r.sort((a,b)=>b-a); return r[0]+r[1]+r[2]; }).sort((a,b)=>b-a); } 
             document.getElementById('gen-numbers-display').innerHTML = lastGeneratedScores.map(n => `<span class="score-line-val font-black mx-2 text-2xl text-indigo-700">${n}</span>`).join(''); 
-            
-            document.getElementById('assign-grid').innerHTML = STATS.map(s => `
-                <div class="bg-gray-100 p-2 px-3 rounded-lg flex justify-between items-center">
-                    <span class="font-black text-[10px] uppercase text-gray-400">${s}</span>
-                    <select data-assign-stat="${s}" class="text-xs font-black border-none bg-transparent focus:ring-0">
-                        <option value="">-</option>
-                        ${lastGeneratedScores.map((n, i) => `<option value="${i}">${n}</option>`).join('')}
-                    </select>
-                </div>`).join(''); 
-
-            document.getElementById('gen-results-area')?.classList.remove('hidden'); 
-            document.getElementById('gen-apply-area')?.classList.remove('hidden'); 
-            document.getElementById('gen-controls')?.classList.add('hidden'); 
-            document.getElementById('heroic-reroll-area')?.classList.toggle('hidden', method !== 'heroic' || sessionRerollUsed); 
-        };
-
-        window.applyScores = async () => { 
-            if (!activeCharId) return; 
-            const selects = Array.from(document.querySelectorAll('[data-assign-stat]')); 
-            const chosen = selects.map(s => s.value).filter(v => v !== ""); 
-            if (chosen.length < 6 || new Set(chosen).size < 6) return window.showToast("Assign unique values to all stats"); 
-            
-            const updates = { scoresGenerated: true }; 
-            selects.forEach(s => updates[s.dataset.assignStat] = lastGeneratedScores[parseInt(s.value)]); 
-            
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), updates); 
-            document.getElementById('score-gen-modal')?.classList.add('hidden'); 
-            window.showToast("Abilities Applied");
-            window.calcMods(); 
+            document.getElementById('assign-grid').innerHTML = STATS.map(s => `<div class="bg-gray-100 p-2 px-3 rounded-lg flex justify-between items-center"><span class="font-black text-[10px] uppercase text-gray-400">${s}</span><select data-assign-stat="${s}" class="text-xs font-black border-none bg-transparent focus:ring-0"><option value="">-</option>${lastGeneratedScores.map((n, i) => `<option value="${i}">${n}</option>`).join('')}</select></div>`).join(''); 
+            document.getElementById('gen-results-area')?.classList.remove('hidden'); document.getElementById('gen-apply-area')?.classList.remove('hidden'); document.getElementById('gen-controls')?.classList.add('hidden'); document.getElementById('heroic-reroll-area')?.classList.toggle('hidden', method !== 'heroic' || sessionRerollUsed); 
         };
 
         window.randomizeAssignment = () => { 
@@ -1138,82 +1167,296 @@
             Array.from(document.querySelectorAll('[data-assign-stat]')).forEach((s,i)=>s.value=p[i]); 
         };
 
+        window.applyScores = async () => { 
+            const selects = Array.from(document.querySelectorAll('[data-assign-stat]')); const chosen = selects.map(s => s.value).filter(v => v !== ""); if (chosen.length < 6 || new Set(chosen).size < 6) return window.showToast("Assign unique values to all stats"); 
+            const updates = { scoresGenerated: true }; selects.forEach(s => updates[s.dataset.assignStat] = lastGeneratedScores[parseInt(s.value)]); 
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), updates); document.getElementById('score-gen-modal')?.classList.add('hidden'); window.calcMods(); 
+        };
+
         const addRollToHistory = async (label, total) => {
-            if (!activeCharId) return; const char = characters.find(c => c.id === activeCharId); if (!char) return; const newEntry = { label, total, timestamp: Date.now() }; const history = [newEntry, ...(char.rollHistory || [])].slice(0, 20); 
-            const log = document.getElementById('dice-log'); if (log) { const d = document.createElement('div'); d.className = "flex justify-between border-b border-gray-100 py-1.5"; d.innerHTML = `<span class="text-gray-500 font-bold">${label}</span><b class="text-indigo-900">${total}</b>`; log.prepend(d); if (log.children.length > 20) log.lastElementChild.remove(); }
+            if (!activeCharId) return; 
+            const char = characters.find(c => c.id === activeCharId); 
+            if (!char) return;
+            const log = document.getElementById('dice-log'); 
+            if (log) { 
+                const d = document.createElement('div'); 
+                d.className = "flex justify-between border-b border-gray-100 py-1.5"; 
+                d.innerHTML = `<span class="text-gray-500 font-bold">${label}</span><b class="text-indigo-900">${total}</b>`; 
+                log.prepend(d); 
+                if (log.children.length > 20) log.lastElementChild.remove(); 
+            }
+            const history = [{ label, total, timestamp: Date.now() }, ...(char.rollHistory || [])].slice(0, 20); 
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { rollHistory: history });
         };
 
-        function execRoll(label, bonus) { const r1 = Math.floor(Math.random() * 20) + 1, r2 = Math.floor(Math.random() * 20) + 1; let final, btxt; if (rollMode === 'adv') { final = Math.max(r1, r2); btxt = `Adv: High(${r1}, ${r2})`; } else if (rollMode === 'dis') { final = Math.min(r1, r2); btxt = `Dis: Low(${r1}, ${r2})`; } else { final = r1; btxt = `(${r1})`; } const total = final + bonus; document.getElementById('roll-label').textContent = label; document.getElementById('roll-total').textContent = total; document.getElementById('roll-breakdown').textContent = `${btxt} + ${bonus}`; document.getElementById('dice-result-overlay').classList.remove('hidden'); addRollToHistory(label, total); }
+        function execRoll(label, bonus) { 
+            const r1 = Math.floor(Math.random() * 20) + 1, r2 = Math.floor(Math.random() * 20) + 1; 
+            let final, btxt; if (rollMode === 'adv') { final = Math.max(r1, r2); btxt = `Adv: High(${r1}, ${r2})`; } else if (rollMode === 'dis') { final = Math.min(r1, r2); btxt = `Dis: Low(${r1}, ${r2})`; } else { final = r1; btxt = `(${r1})`; } 
+            if (final === 1) triggerCriticalFailure(); if (final === 20) triggerCriticalSuccess();
+            const total = final + bonus; 
+            const displayTotal = (total >= 0 ? '+' : '') + total;
+            document.getElementById('roll-label').textContent = label; 
+            document.getElementById('roll-total').textContent = displayTotal; 
+            document.getElementById('roll-breakdown').textContent = `${btxt} + ${bonus}`; 
+            document.getElementById('dice-result-overlay').classList.remove('hidden'); 
+            addRollToHistory(label, displayTotal); 
+        }
+
         window.rollStat = (s) => execRoll(`${s.toUpperCase()} Check`, parseInt(document.getElementById(`mod-${s}`).textContent) || 0);
         window.rollSave = (s) => execRoll(`${s.toUpperCase()} Save`, parseInt(document.getElementById(`save-mod-${s}`).textContent) || 0);
         window.rollSkill = (n) => execRoll(`${n} Check`, parseInt(document.getElementById(`skill-mod-${n.toLowerCase().replace(/ /g,'_').replace(/[()]/g,'')}`).textContent) || 0);
-        window.rollDice = (s) => { const count = parseInt(document.getElementById('roll-count').value) || 1; let label, total, breakdown; if (count === 1 && rollMode !== 'normal') { const r1 = Math.floor(Math.random() * s) + 1, r2 = Math.floor(Math.random() * s) + 1; if (rollMode === 'adv') { total = Math.max(r1, r2); breakdown = `Adv: High(${r1}, ${r2})`; } else { total = Math.min(r1, r2); breakdown = `Dis: Low(${r1}, ${r2})`; } label = `d${s} Roll`; } else { const rolls = Array.from({length: count}, () => Math.floor(Math.random() * s) + 1); total = rolls.reduce((a, b) => a + b, 0); label = `${count}d${s} Roll`; breakdown = count > 1 ? `${rolls.join(' + ')} = ${total}` : `(${rolls[0]})`; } document.getElementById('roll-label').textContent = label; document.getElementById('roll-total').textContent = total; document.getElementById('roll-breakdown').textContent = breakdown; document.getElementById('dice-result-overlay').classList.remove('hidden'); addRollToHistory(label, total); };
+        
+        window.rollDice = (s) => { 
+            const count = parseInt(document.getElementById('roll-count').value) || 1; let label, total, breakdown; 
+            if (count === 1 && rollMode !== 'normal') { 
+                const r1 = Math.floor(Math.random() * s) + 1, r2 = Math.floor(Math.random() * s) + 1; let final = rollMode === 'adv' ? Math.max(r1, r2) : Math.min(r1, r2);
+                if (s === 20) { if (final === 1) triggerCriticalFailure(); if (final === 20) triggerCriticalSuccess(); }
+                total = final; label = `d${s} Roll`; breakdown = `${rollMode.toUpperCase()}: (${r1}, ${r2})`;
+            } else { 
+                const rolls = Array.from({length: count}, () => Math.floor(Math.random() * s) + 1); 
+                if (count === 1 && s === 20) { if (rolls[0] === 1) triggerCriticalFailure(); if (rolls[0] === 20) triggerCriticalSuccess(); }
+                total = rolls.reduce((a, b) => a + b, 0); label = `${count}d${s} Roll`; breakdown = count > 1 ? `${rolls.join(' + ')} = ${total}` : `(${rolls[0]})`; 
+            } 
+            document.getElementById('roll-label').textContent = label; document.getElementById('roll-total').textContent = total; document.getElementById('roll-breakdown').textContent = breakdown; document.getElementById('dice-result-overlay').classList.remove('hidden'); addRollToHistory(label, total); 
+        };
+
         window.setRollMode = (m) => { rollMode = m; document.querySelectorAll('.roll-mode').forEach(b => b.classList.remove('active-norm', 'active-adv', 'active-dis')); if (m === 'normal') document.getElementById('mode-norm').classList.add('active-norm'); else if (m === 'adv') document.getElementById('mode-adv').classList.add('active-adv'); else if (m === 'dis') document.getElementById('mode-dis').classList.add('active-dis'); };
 
-        window.renderMovesGrid = () => { const s = document.getElementById('moves-selector'); if (!s) return; const t = s.value, g = document.getElementById('features-lvl-grid'); if (!g) return; g.innerHTML = ''; const char = characters.find(c => c.id === activeCharId); const moves = char?.moves || []; let levels = (t === 'features') ? Array.from({length: 20}, (_, i) => `Level ${i + 1}`) : ['Tricks (0)', ...Array.from({length: 9}, (_, i) => `Level ${i + 1}`)];
-            const isOwner = currentUser && char.owner === currentUser.username; const canEdit = isOwner || activeRole === 'dm'; levels.forEach(lvl => { const card = document.createElement('div'); card.className = "lvl-card"; const filtered = moves.filter(m => m.lvl === lvl && m.type === t); let html = `<div class="lvl-header">${lvl.toUpperCase()}</div><div class="flex-grow space-y-1">`; filtered.forEach(m => { const mIdx = moves.indexOf(m); const onclick = canEdit ? `onclick="window.openMoveModal('${lvl}', ${mIdx})"` : ''; html += `<div class="move-pill" ${onclick}><span class="move-name">${m.name}</span><span class="move-roll">${m.roll || ''}</span></div>`; }); if (canEdit) { html += `</div><button onclick="window.openMoveModal('${lvl}')" class="text-[9px] font-black uppercase text-blue-500 text-center mt-2">+ ADD</button>`; } else { html += `</div>`; } card.innerHTML = html; g.appendChild(card); }); };
-        window.openMoveModal = (lvl, idx = null) => { activeMoveLvl = lvl; editingMoveIndex = idx; const char = characters.find(c => c.id === activeCharId); const moves = char?.moves || []; if (idx !== null) { const m = moves[idx]; document.getElementById('move-name-in').value = m.name; document.getElementById('move-roll-in').value = m.roll; document.getElementById('move-desc-in').value = m.desc; document.getElementById('move-modal-title').textContent = "Edit Move"; document.getElementById('move-delete-btn').classList.remove('hidden'); } else { document.getElementById('move-name-in').value = ''; document.getElementById('move-roll-in').value = ''; document.getElementById('move-desc-in').value = ''; document.getElementById('move-modal-title').textContent = "Add Move - " + lvl; document.getElementById('move-delete-btn').classList.add('hidden'); } document.getElementById('move-modal').classList.remove('hidden'); };
-        window.saveMove = async () => { if (!activeCharId) return; const char = characters.find(c => c.id === activeCharId); const moves = char.moves || []; const t = document.getElementById('moves-selector').value; const newMove = { name: document.getElementById('move-name-in').value, roll: document.getElementById('move-roll-in').value, desc: document.getElementById('move-desc-in').value, lvl: activeMoveLvl, type: t }; if (editingMoveIndex !== null) moves[editingMoveIndex] = newMove; else moves.push(newMove); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { moves }); document.getElementById('move-modal').classList.add('hidden'); window.showToast("Move Saved"); };
-        window.deleteMove = async () => { if (!activeCharId || editingMoveIndex === null) return; const char = characters.find(c => c.id === activeCharId); const moves = char.moves || []; moves.splice(editingMoveIndex, 1); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { moves }); document.getElementById('move-modal').classList.add('hidden'); window.showToast("Move Removed"); };
+        window.renderMovesGrid = () => { 
+            const s = document.getElementById('moves-selector'); if (!s) return; const t = s.value, g = document.getElementById('features-lvl-grid'); if (!g) return; g.innerHTML = '';
+            const char = characters.find(c => c.id === activeCharId); const moves = char?.moves || []; let levels = (t === 'features') ? Array.from({length: 20}, (_, i) => `Level ${i + 1}`) : ['Tricks (0)', ...Array.from({length: 9}, (_, i) => `Level ${i + 1}`)];
+            const canEdit = (currentUser && char.owner === currentUser.username) || activeRole === 'dm';
+            levels.forEach(lvl => { 
+                const card = document.createElement('div'); card.className = "lvl-card"; const filtered = moves.filter(m => m.lvl === lvl && m.type === t); let html = `<div class="lvl-header">${lvl.toUpperCase()}</div><div class="flex-grow space-y-1">`;
+                filtered.forEach(m => { const mIdx = moves.indexOf(m); html += `<div class="move-pill" ${canEdit ? `onclick="window.openMoveModal('${lvl}', ${mIdx})"` : ''}><span class="move-name">${m.name}</span><span class="move-roll">${m.roll || ''}</span></div>`; });
+                if (canEdit) html += `</div><button onclick="window.openMoveModal('${lvl}')" class="text-[9px] font-black uppercase text-blue-500 text-center mt-2">+ ADD</button>`; else html += `</div>`;
+                card.innerHTML = html; g.appendChild(card);
+            }); 
+        };
+        window.openMoveModal = (lvl, idx = null) => { 
+            activeMoveLvl = lvl; editingMoveIndex = idx; const char = characters.find(c => c.id === activeCharId); const moves = char?.moves || [];
+            if (idx !== null) { const m = moves[idx]; document.getElementById('move-name-in').value = m.name; document.getElementById('move-roll-in').value = m.roll; document.getElementById('move-desc-in').value = m.desc; document.getElementById('move-modal-title').textContent = "Edit Move"; document.getElementById('move-delete-btn').classList.remove('hidden'); } 
+            else { document.getElementById('move-name-in').value = ''; document.getElementById('move-roll-in').value = ''; document.getElementById('move-desc-in').value = ''; document.getElementById('move-modal-title').textContent = "Add Move - " + lvl; document.getElementById('move-delete-btn').classList.add('hidden'); }
+            document.getElementById('move-modal').classList.remove('hidden'); 
+        };
+        window.saveMove = async () => { const char = characters.find(c => c.id === activeCharId); const moves = char.moves || []; const newMove = { name: document.getElementById('move-name-in').value, roll: document.getElementById('move-roll-in').value, desc: document.getElementById('move-desc-in').value, lvl: activeMoveLvl, type: document.getElementById('moves-selector').value }; if (editingMoveIndex !== null) moves[editingMoveIndex] = newMove; else moves.push(newMove); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { moves }); document.getElementById('move-modal').classList.add('hidden'); };
+        window.deleteMove = async () => { const char = characters.find(c => c.id === activeCharId); const moves = char.moves || []; moves.splice(editingMoveIndex, 1); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { moves }); document.getElementById('move-modal').classList.add('hidden'); };
 
-        window.saveCurrentCharacter = (m) => { if (!activeCharId || !user) return; const char = characters.find(c => c.id === activeCharId); if (!char) return; const isOwner = currentUser && char.owner === currentUser.username; const isDM = activeRole === 'dm'; if (!isOwner && !isDM) return; const data = {}; document.querySelectorAll('[data-key]').forEach(el => data[el.dataset.key] = el.type === 'checkbox' ? el.checked : el.value); data.languages = char.languages || []; data.attacks = Array.from(document.querySelectorAll('#attacks-list > div')).map(r => ({ name: r.querySelector('.atk-name')?.value || "", bonus: r.querySelector('.atk-bonus')?.value || "", dmg: r.querySelector('.atk-dmg')?.value || "" })); if (char) data.moves = char.moves || []; updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), data); if (m) window.showToast("Synced"); const si = document.getElementById('sync-indicator'); if (si) { si.style.opacity = 1; setTimeout(()=>si.style.opacity = 0, 1000); } };
-        window.claimCharacter = async () => { if (!activeCharId || !currentUser) return; const char = characters.find(c => c.id === activeCharId); if (!char || char.owner) return; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { owner: currentUser.username }); window.showToast("Character Claimed"); syncSheetData(); };
-        window.calcMods = () => { const p = parseInt(document.querySelector('[data-key="profBonus"]')?.value) || 2; STATS.forEach(s => { const v = parseInt(document.querySelector(`[data-key="${s}"]`)?.value) || 10; const m = Math.floor((v - 10) / 2); const el = document.getElementById(`mod-${s}`); if(el) el.textContent = (m >= 0 ? '+' : '') + m; const sp = document.querySelector(`[data-key="save_prof_${s}"]`)?.checked; const sel = document.getElementById(`save-mod-${s}`); if(sel) sel.textContent = (m + (sp ? p : 0) >= 0 ? '+' : '') + (m + (sp ? p : 0)); }); SKILLS.forEach(sk => { const attrVal = parseInt(document.querySelector(`[data-key="${sk.s}"]`)?.value) || 10; const m = Math.floor((attrVal - 10) / 2); const safe = sk.n.toLowerCase().replace(/ /g,'_').replace(/[()]/g,''); const sp = document.querySelector(`[data-key="prof_${safe}"]`)?.checked; const sel = document.getElementById(`skill-mod-${safe}`); if(sel) sel.textContent = (m + (sp ? p : 0) >= 0 ? '+' : '') + (m + (sp ? p : 0)); }); };
+        window.saveCurrentCharacter = (m) => { if (!activeCharId || !user) return; const char = characters.find(c => c.id === activeCharId); if (!((currentUser && char.owner === currentUser.username) || activeRole === 'dm')) return; const data = {}; document.querySelectorAll('[data-key]').forEach(el => data[el.dataset.key] = el.type === 'checkbox' ? el.checked : el.value); data.languages = char.languages || []; data.attacks = Array.from(document.querySelectorAll('#attacks-list > div')).map(r => ({ name: r.querySelector('.atk-name')?.value || "", bonus: r.querySelector('.atk-bonus')?.value || "", dmg: r.querySelector('.atk-dmg')?.value || "" })); data.moves = char.moves || []; updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), data); if (m) window.showToast("Synced"); const si = document.getElementById('sync-indicator'); if (si) { si.style.opacity = 1; setTimeout(()=>si.style.opacity = 0, 1000); } };
+        window.claimCharacter = async () => { const char = characters.find(c => c.id === activeCharId); if (char.owner) return; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { owner: currentUser.username }); window.showToast("Character Claimed"); };
         
-        window.updateCharStatus = async (s) => { if (!activeCharId) return; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { status: s }); window.showToast(s.toUpperCase()); };
-        window.addAttackItem = () => { const c = document.getElementById('attacks-list'); if (!c) return; const d = document.createElement('div'); d.className = "equip-row"; d.innerHTML = `<input type="text" class="atk-name font-bold" placeholder="Weapon"><input type="text" class="atk-bonus text-center" placeholder="+0"><input type="text" class="atk-dmg text-center" placeholder="1d8"><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-300">×</button>`; c.appendChild(d); };
-        window.addLanguageItem = async () => { const i = document.getElementById('lang-input'); if (!i || !i.value || !activeCharId) return; const char = characters.find(c => c.id === activeCharId); const langs = [...(char.languages || [])]; langs.push(i.value); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { languages: langs }); i.value = ''; window.showToast("Language Added"); };
-        window.removeLanguageItem = async (idx) => { if (!activeCharId) return; const char = characters.find(c => c.id === activeCharId); const langs = [...(char.languages || [])]; langs.splice(idx, 1); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { languages: langs }); };
+        window.calcMods = () => { 
+            const p = parseInt(document.querySelector('[data-key="profBonus"]')?.value) || 2; 
+            STATS.forEach(s => { 
+                const v = parseInt(document.querySelector(`[data-key="${s}"]`)?.value) || 10; const m = Math.floor((v - 10) / 2); 
+                const el = document.getElementById(`mod-${s}`); if(el) el.textContent = (m >= 0 ? '+' : '') + m; 
+                const sp = document.querySelector(`[data-key="save_prof_${s}"]`)?.checked; const sel = document.getElementById(`save-mod-${s}`); if(sel) sel.textContent = (m + (sp ? p : 0) >= 0 ? '+' : '') + (m + (sp ? p : 0)); 
+            }); 
+            SKILLS.forEach(sk => { 
+                const v = parseInt(document.querySelector(`[data-key="${sk.s}"]`)?.value) || 10; const m = Math.floor((v - 10) / 2); 
+                const safe = sk.n.toLowerCase().replace(/ /g,'_').replace(/[()]/g,''); const sp = document.querySelector(`[data-key="prof_${safe}"]`)?.checked; 
+                const sel = document.getElementById(`skill-mod-${safe}`); if(sel) sel.textContent = (m + (sp ? p : 0) >= 0 ? '+' : '') + (m + (sp ? p : 0)); 
+            }); 
+        };
+        
+        window.updateCharStatus = async (s) => { if (!activeCharId) return; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { status: s }); };
+        window.addAttackItem = () => { const c = document.getElementById('attacks-list'); const d = document.createElement('div'); d.className = "equip-row"; d.innerHTML = `<input type="text" class="atk-name font-bold" placeholder="Weapon"><input type="text" class="atk-bonus text-center" placeholder="+0"><input type="text" class="atk-dmg text-center" placeholder="1d8"><button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-300">✕</button>`; c.appendChild(d); };
+        window.addLanguageItem = async () => { const i = document.getElementById('lang-input'); if (!i.value) return; const char = characters.find(c => c.id === activeCharId); const langs = [...(char.languages || []), i.value]; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { languages: langs }); i.value = ''; };
+        window.removeLanguageItem = async (idx) => { const char = characters.find(c => c.id === activeCharId); const langs = [...(char.languages || [])]; langs.splice(idx, 1); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { languages: langs }); };
         window.updateLevelDependencies = (v) => { const l = parseInt(v) || 1; const b = l >= 17 ? 6 : l >= 13 ? 5 : l >= 9 ? 4 : l >= 5 ? 3 : 2; const pi = document.querySelector('[data-key="profBonus"]'); if (pi) pi.value = b; window.calcMods(); window.saveCurrentCharacter(); };
         
-        window.rest = async (t) => { if (!activeCharId) return; const c = characters.find(x => x.id === activeCharId); if (!currentUser || (c.owner && c.owner !== currentUser.username && activeRole !== 'dm')) return; const maxI = document.querySelector('[data-key="hpMax"]'), hpI = document.querySelector('[data-key="hpCurrent"]'); const maxVal = maxI ? (parseInt(maxI.value) || 0) : (parseInt(c.hpMax) || 0); if (t === 'long') { if (maxVal > 0) { if (hpI) hpI.value = maxVal; const tHpi = document.querySelector('[data-key="tempHp"]'); if (tHpi) tHpi.value = 0; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { dsSucc: 0, dsFail: 0, hpCurrent: maxVal, tempHp: 0 }); window.showToast("Long Rest: HP Restored"); } else window.showToast("Set Max HP first"); } else if (t === 'short') { const conI = document.querySelector('[data-key="con"]'); const conVal = conI ? (parseInt(conI.value) || 10) : (c.con || 10); const conMod = Math.floor((conVal - 10) / 2); document.getElementById('sr-con-mod-display').textContent = (conMod >= 0 ? '+' : '') + conMod; document.getElementById('sr-con-mod-display').dataset.mod = conMod; const hdI = document.querySelector('[data-key="hd"]'); const hdText = hdI ? hdI.value : (c.hd || "1d8"); const m = hdText.match(/d(\d+)/); const defaultDie = m ? parseInt(m[1]) : 8; window.selectSrDie(defaultDie); document.getElementById('sr-num-dice').value = 1; document.getElementById('short-rest-modal').classList.remove('hidden'); } };
-        window.selectSrDie = (die) => { document.getElementById('sr-die-val').value = die; document.querySelectorAll('.sr-die-btn').forEach(b => { b.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600'); b.classList.add('text-gray-400', 'border-gray-200'); }); const btn = document.getElementById(`sr-btn-${die}`); if (btn) { btn.classList.remove('text-gray-400', 'border-gray-200'); btn.classList.add('bg-indigo-600', 'text-white', 'border-indigo-600'); } };
-        window.confirmShortRest = async () => { const n = parseInt(document.getElementById('sr-num-dice').value) || 1, d = parseInt(document.getElementById('sr-die-val').value) || 8, c = parseInt(document.getElementById('sr-con-mod-display').dataset.mod) || 0; let t = 0, rs = []; for (let i = 0; i < n; i++) { const r = Math.floor(Math.random() * d) + 1; t += Math.max(0, r + c); rs.push(r); } const maxI = document.querySelector('[data-key="hpMax"]'), hpI = document.querySelector('[data-key="hpCurrent"]'); const char = characters.find(x => x.id === activeCharId); const maxV = maxI ? (parseInt(maxI.value) || 0) : (parseInt(char.hpMax) || 0); const curHp = hpI ? (parseInt(hpI.value) || 0) : (parseInt(char.hpCurrent) || 0); const newHp = Math.min(maxV, curHp + t); if (hpI) hpI.value = newHp; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { hpCurrent: newHp }); document.getElementById('short-rest-modal').classList.add('hidden'); window.showToast(`Short Rest: +${t} HP`); addRollToHistory(`Short Rest (${n}d${d})`, `${t} [${rs.map(r => `(${r}${c>=0?'+'+c:c})`).join(' + ')}]`); };
-        window.deleteWhisper = async (idx) => { if (!activeCharId || activeRole !== 'dm') return; const char = characters.find(c => c.id === activeCharId); if (!char) return; const nws = [...(char.dmWhispers || [])]; nws.splice(idx, 1); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { dmWhispers: nws }); window.showToast("Whisper Removed"); };
-        window.toggleDS = async (type, num) => { const char = characters.find(c => c.id === activeCharId); if (!char) return; const key = type === 'succ' ? 'dsSucc' : 'dsFail'; const newVal = (char[key] || 0) === num ? num - 1 : num; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { [key]: newVal }); };
-        window.triggerDeleteModal = () => { const char = characters.find(c => c.id === activeCharId); if (!char) return; window.resetDeleteModal(); const isA = !!char.isDeleted; document.getElementById('archive-btn')?.classList.toggle('hidden', isA); document.getElementById('restore-btn')?.classList.toggle('hidden', !isA); document.getElementById('delete-modal')?.classList.remove('hidden'); };
-        window.showPermDeleteConfirm = () => { document.getElementById('delete-stage-1')?.classList.add('hidden'); document.getElementById('delete-stage-confirm')?.classList.remove('hidden'); };
-        window.resetDeleteModal = () => { document.getElementById('delete-stage-1')?.classList.remove('hidden'); document.getElementById('delete-stage-confirm')?.classList.add('hidden'); };
-        window.archiveCharacter = async () => { if (!activeCharId) return; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { isDeleted: true, status: 'dead' }); document.getElementById('delete-modal')?.classList.add('hidden'); window.closeSheet(); };
-        window.restoreCharacter = async () => { if (!activeCharId) return; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { isDeleted: false, status: 'alive' }); document.getElementById('delete-modal')?.classList.add('hidden'); window.showToast("Recovered"); syncSheetData(); };
-        window.executePermDelete = async () => { if (!activeCharId) return; await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId)); document.getElementById('delete-modal')?.classList.add('hidden'); window.closeSheet(); };
-        window.openManageParty = (id) => { const p = parties.find(x => x.id === id); if (!p) return; activeManagePartyId = id; document.getElementById('manage-party-name').value = p.name; window.resetPartyManageState(); document.getElementById('manage-party-modal').classList.remove('hidden'); };
-        window.resetPartyManageState = () => { document.getElementById('party-manage-main').classList.remove('hidden'); document.getElementById('party-manage-delete').classList.add('hidden'); };
-        window.confirmDeletePartyState = () => { document.getElementById('party-manage-main').classList.add('hidden'); document.getElementById('party-manage-delete').classList.remove('hidden'); };
-        window.savePartyRename = async () => { if (!activeManagePartyId) return; const n = document.getElementById('manage-party-name').value; if (!n) return window.showToast("Name required"); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'parties', activeManagePartyId), { name: n }); document.getElementById('manage-party-modal').classList.add('hidden'); window.showToast("Party Renamed"); };
-        window.executeDeleteParty = async () => { if (!activeManagePartyId) return; const af = characters.filter(c => c.partyId === activeManagePartyId); for (const char of af) { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', char.id), { partyId: "" }); } await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'parties', activeManagePartyId)); document.getElementById('manage-party-modal').classList.add('hidden'); window.showToast("Party Disbanded"); };
-        window.setView = (v) => { document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active')); document.getElementById(`nav-${v}`)?.classList.add('active'); if (v === 'graveyard') { document.getElementById('party-view-container').classList.add('hidden-view'); document.getElementById('graveyard-view-container').classList.remove('hidden-view'); } else { document.getElementById('graveyard-view-container').classList.add('hidden-view'); document.getElementById('party-view-container').classList.remove('hidden-view'); } window.renderDashboard(); };
-        window.sendDmWhisper = async () => { const i = document.getElementById('dm-whisper-input'); if (!i || !i.value || !activeCharId) return; const c = characters.find(x => x.id === activeCharId), w = c.dmWhispers || []; w.push({text: i.value, timestamp: Date.now()}); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), {dmWhispers: w}); i.value = ''; window.showToast("Sent"); };
+        window.rest = async (t) => { 
+            const char = characters.find(x => x.id === activeCharId); 
+            if (t === 'long') { 
+                const maxHd = parseInt(char.level) || 1;
+                const currentHd = parseInt(char.hdCurrent) || 0;
+                const regain = Math.max(1, Math.floor(maxHd / 2));
+                const newHd = Math.min(maxHd, currentHd + regain);
+
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { 
+                    hpCurrent: char.hpMax, 
+                    tempHp: 0, 
+                    dsSucc: 0, 
+                    dsFail: 0,
+                    hdCurrent: newHd
+                }); 
+                window.showToast("Long Rest: Recovered HP & " + regain + " HD"); 
+            } 
+            else { 
+                const conMod = Math.floor(((char.con || 10) - 10) / 2); 
+                const hdText = char.hd || "1d8";
+                const dieMatch = hdText.match(/d(\d+)/);
+                const dieType = dieMatch ? dieMatch[1] : "8";
+
+                document.getElementById('sr-con-mod-display').textContent = (conMod >= 0 ? '+' : '') + conMod; 
+                document.getElementById('sr-con-mod-display').dataset.mod = conMod; 
+                document.getElementById('sr-hd-available').textContent = (char.hdCurrent || 0) + " / " + (char.level || 1);
+                document.getElementById('sr-die-type-label').textContent = "d" + dieType;
+                document.getElementById('sr-roll-result-area').classList.add('hidden');
+                
+                const spendBtn = document.getElementById('sr-spend-btn');
+                if ((char.hdCurrent || 0) <= 0) {
+                    spendBtn.disabled = true;
+                    spendBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    spendBtn.textContent = "No Hit Dice Left";
+                } else {
+                    spendBtn.disabled = false;
+                    spendBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    spendBtn.textContent = "Roll 1 Hit Die (d" + dieType + ")";
+                }
+
+                document.getElementById('short-rest-modal').classList.remove('hidden'); 
+            }
+        };
+
+        window.confirmShortRest = async () => { 
+            const char = characters.find(x => x.id === activeCharId);
+            if (!char || (char.hdCurrent || 0) <= 0) return;
+
+            const hdText = char.hd || "1d8";
+            const dieMatch = hdText.match(/d(\d+)/);
+            const dieSize = dieMatch ? parseInt(dieMatch[1]) : 8;
+            const conMod = parseInt(document.getElementById('sr-con-mod-display').dataset.mod) || 0; 
+            
+            const roll = Math.floor(Math.random() * dieSize) + 1;
+            const gain = Math.max(0, roll + conMod);
+            const newHp = Math.min(parseInt(char.hpMax) || gain, (parseInt(char.hpCurrent) || 0) + gain);
+            const newHdCount = (char.hdCurrent || 0) - 1;
+
+            const resArea = document.getElementById('sr-roll-result-area');
+            resArea.classList.remove('hidden');
+            document.getElementById('sr-last-roll-total').textContent = "+" + gain + " HP";
+            document.getElementById('sr-last-roll-breakdown').textContent = "(" + roll + " + " + conMod + ")";
+            document.getElementById('sr-hd-available').textContent = newHdCount + " / " + (char.level || 1);
+
+            const spendBtn = document.getElementById('sr-spend-btn');
+            if (newHdCount <= 0) {
+                spendBtn.disabled = true;
+                spendBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                spendBtn.textContent = "No Hit Dice Left";
+            }
+
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { 
+                hpCurrent: newHp,
+                hdCurrent: newHdCount
+            });
+
+            addRollToHistory(`Spent Hit Die (d${dieSize})`, `+${gain} HP`);
+        };
+
+        window.toggleDS = async (type, num) => {
+            const char = characters.find(c => c.id === activeCharId);
+            if (!char) return;
+            const key = type === 'succ' ? 'dsSucc' : 'dsFail';
+            const newVal = (char[key] || 0) === num ? num - 1 : num;
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { [key]: newVal });
+        };
+
+        window.triggerDeleteModal = () => {
+            const char = characters.find(c => c.id === activeCharId);
+            if (!char) return;
+            window.resetDeleteModal();
+            const isA = !!char.isDeleted;
+            document.getElementById('archive-btn')?.classList.toggle('hidden', isA);
+            document.getElementById('restore-btn')?.classList.toggle('hidden', !isA);
+            document.getElementById('delete-modal')?.classList.remove('hidden');
+        };
+
+        window.showPermDeleteConfirm = () => {
+            document.getElementById('delete-stage-1')?.classList.add('hidden');
+            document.getElementById('delete-stage-confirm')?.classList.remove('hidden');
+        };
+
+        window.resetDeleteModal = () => {
+            document.getElementById('delete-stage-1')?.classList.remove('hidden');
+            document.getElementById('delete-stage-confirm')?.classList.add('hidden');
+        };
+
+        window.archiveCharacter = async () => {
+            if (!activeCharId) return;
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { isDeleted: true, status: 'dead' });
+            document.getElementById('delete-modal')?.classList.add('hidden');
+            window.closeSheet();
+        };
+
+        window.restoreCharacter = async () => {
+            if (!activeCharId) return;
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { isDeleted: false, status: 'alive' });
+            document.getElementById('delete-modal')?.classList.add('hidden');
+            window.showToast("Recovered");
+            syncSheetData();
+        };
+
+        window.executePermDelete = async () => {
+            if (!activeCharId) return;
+            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId));
+            document.getElementById('delete-modal')?.classList.add('hidden');
+            window.closeSheet();
+        };
+
+        window.openManageParty = (id) => {
+            const p = parties.find(x => x.id === id);
+            if (!p) return;
+            activeManagePartyId = id;
+            document.getElementById('manage-party-name').value = p.name;
+            window.resetPartyManageState();
+            document.getElementById('manage-party-modal').classList.remove('hidden');
+        };
+
+        window.resetPartyManageState = () => {
+            document.getElementById('party-manage-main').classList.remove('hidden');
+            document.getElementById('party-manage-delete').classList.add('hidden');
+        };
+
+        window.confirmDeletePartyState = () => {
+            document.getElementById('party-manage-main').classList.add('hidden');
+            document.getElementById('party-manage-delete').classList.remove('hidden');
+        };
+
+        window.savePartyRename = async () => {
+            if (!activeManagePartyId) return;
+            const n = document.getElementById('manage-party-name').value;
+            if (!n) return window.showToast("Name required");
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'parties', activeManagePartyId), { name: n });
+            document.getElementById('manage-party-modal').classList.add('hidden');
+            window.showToast("Party Renamed");
+        };
+
+        window.executeDeleteParty = async () => {
+            if (!activeManagePartyId) return;
+            const af = characters.filter(c => c.partyId === activeManagePartyId);
+            for (const char of af) {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', char.id), { partyId: "" });
+            }
+            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'parties', activeManagePartyId));
+            document.getElementById('manage-party-modal').classList.add('hidden');
+            window.showToast("Party Disbanded");
+        };
+
+        window.setView = (v) => {
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.getElementById(`nav-${v}`)?.classList.add('active');
+            if (v === 'graveyard') {
+                document.getElementById('party-view-container').classList.add('hidden-view');
+                document.getElementById('graveyard-view-container').classList.remove('hidden-view');
+            } else {
+                document.getElementById('graveyard-view-container').classList.add('hidden-view');
+                document.getElementById('party-view-container').classList.remove('hidden-view');
+            }
+            window.renderDashboard();
+        };
 
         const setupListeners = () => {
             if (!user) return;
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), (snap) => {
-                characters = snap.docs.map(d => ({id: d.id, ...d.data()}));
-                window.renderDashboard();
-                if (activeCharId) syncSheetData();
-            });
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'parties'), (snap) => {
-                parties = snap.docs.map(d => ({id: d.id, ...d.data()}));
-                window.renderDashboard();
-                if (activeCharId) syncSheetData();
-            });
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), (snap) => { characters = snap.docs.map(d => ({id: d.id, ...d.data()})); window.renderDashboard(); if (activeCharId) syncSheetData(); });
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'parties'), (snap) => { parties = snap.docs.map(d => ({id: d.id, ...d.data()})); window.renderDashboard(); if (activeCharId) syncSheetData(); });
         };
 
         const initAuth = async () => {
-            try {
-                await signInAnonymously(auth);
-                onAuthStateChanged(auth, (u) => { 
-                    user = u; if (user) { 
-                        setupListeners(); window.updateRoleUI(); 
-                        const savedUser = localStorage.getItem('aeonfall_user');
-                        if (savedUser) { try { currentUser = JSON.parse(savedUser); authSystem.completeAuth(); } catch (e) { localStorage.removeItem('aeonfall_user'); } }
-                    } 
-                });
-            } catch (err) { console.error("Firebase Auth failed:", err); }
+            try { await signInAnonymously(auth); onAuthStateChanged(auth, (u) => { user = u; if (user) { setupListeners(); window.updateRoleUI(); const savedUser = localStorage.getItem('aeonfall_user'); if (savedUser) { try { currentUser = JSON.parse(savedUser); authSystem.completeAuth(); } catch(e) { localStorage.removeItem('aeonfall_user'); } } } }); } catch (err) {}
         };
 
-        document.addEventListener('input', (e) => { if (e.target.dataset.key || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') { if (autoSaveTimer) clearTimeout(autoSaveTimer); autoSaveTimer = setTimeout(() => window.saveCurrentCharacter(), 1000); } });
+        document.addEventListener('input', (e) => { if (e.target.dataset.key) { if (autoSaveTimer) clearTimeout(autoSaveTimer); autoSaveTimer = setTimeout(() => window.saveCurrentCharacter(), 1000); } });
         initAuth();
     </script>
 </body>
