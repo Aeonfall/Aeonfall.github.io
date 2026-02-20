@@ -507,6 +507,12 @@
             document.getElementById('access-terminal')?.classList.add('unlocked');
             window.updateIdentityUI();
             window.renderManual();
+            
+            // Set up listener for seen documents
+            onSnapshot(collection(db, 'artifacts', appId, 'users', uid, 'seenDocuments'), snap => {
+                seenDocs = snap.docs.map(d => d.id);
+                window.renderManual();
+            }, err => {});
         };
         window.claimIdentity = (uid) => window.anchorIdentity(uid);
 
@@ -633,7 +639,20 @@
             window.showToast("Override Complete"); 
         };
 
-        window.markAsSeen = async (id) => { const anchored = sessionStorage.getItem('aeonfall_session_anchored') === 'true'; if(!anchored || !activeAnchorUID) return; await setDoc(doc(db, 'artifacts', appId, 'users', activeAnchorUID, 'seenDocuments', id), { seenAt: Date.now() }); window.scrollToSection(id); };
+        window.markAsSeen = async (id) => { 
+            // Update local state first for instant removal of notification
+            if (!seenDocs.includes(id)) {
+                seenDocs.push(id);
+                window.renderManual();
+            }
+            
+            const anchored = sessionStorage.getItem('aeonfall_session_anchored') === 'true'; 
+            if(anchored && activeAnchorUID) { 
+                await setDoc(doc(db, 'artifacts', appId, 'users', activeAnchorUID, 'seenDocuments', id), { seenAt: Date.now() }); 
+            }
+            window.scrollToSection(id); 
+        };
+        
         window.scrollToSection = (id) => { const el = document.getElementById(`section-${id}`); if (el) el.scrollIntoView({ behavior: 'smooth' }); };
         window.openReturnToLoreSequence = function() { const overlay = document.getElementById('cinematic-overlay'); overlay?.classList.add('active'); setTimeout(() => { window.location.href = 'lore.html'; }, 2000); };
 
@@ -697,7 +716,7 @@
                         ${isDM ? `<span class="visibility-tag tag-${s.visibility || 'public'}">${s.visibility || 'public'}</span>` : ''}
                     </div>`;
                 if(s.type === 'text') html += `<div id="${cId}" class="manual-p dm-editable leading-relaxed" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div>`;
-                else if(s.type === 'textbook') html += `<div class="manual-textbook-box bg-[#f0f9ff] p-8 border-t-8 border-[#5d4037] rounded shadow-lg relative my-6"><div class="absolute -top-3 left-6 bg-[#5d4037] text-[#f4edd8] px-3 py-1 text-[8px] font-black uppercase tracking-widest">Scholar's Teaching</div><div id="${cId}" class="manual-p dm-editable leading-relaxed" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
+                else if(s.type === 'textbook') html += `<div class="manual-textbook-box bg-[#f0f9ff] p-8 border-t-8 border-[#5d4037] rounded shadow-lg relative my-6"><div class="absolute -top-3 left-6 bg-[#5d4037] text-[#f4edd8] px-3 py-1 text-[8px] font-black uppercase tracking-widest">Scholar's Teaching</div><div id="${cId}" class="manual-p dm-editable leading-relaxed text-[#2c1810]" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
                 else if(s.type === 'note') html += `<div class="manual-note-box bg-slate-50 p-5 border-l-4 border-amber-800 rounded shadow-inner"><div id="${cId}" class="manual-p dm-editable italic" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
                 else if(s.type === 'divider') html += `<div class="manual-divider"></div>`;
                 html += `</section>`; return html;
