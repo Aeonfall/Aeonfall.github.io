@@ -16,11 +16,11 @@
             overflow: hidden; 
         }
 
-        /* GUESTBOOK RECEPTION TERMINAL */
+        /* GUESTBOOK ACCESS TERMINAL */
         #access-terminal {
             position: fixed; inset: 0; background: rgba(0,0,0,0.98); z-index: 100000;
             display: flex; align-items: center; justify-content: center; padding: 20px;
-            transition: opacity 1.2s ease, transform 1.2s ease;
+            transition: opacity 0.8s ease, transform 0.8s ease;
         }
         #access-terminal.unlocked { opacity: 0; pointer-events: none; transform: scale(1.05); }
         
@@ -41,12 +41,11 @@
         .ledger-line { width: 100%; border-bottom: 1px solid rgba(0,0,0,0.15); padding: 18px 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .ledger-line:hover { background: rgba(122, 29, 29, 0.08); border-bottom-color: #7a1d1d; padding-left: 20px; }
         .ledger-name { font-family: 'Homemade Apple', cursive; color: #1a0f0a; font-size: 20px; }
-        .ledger-status-group { display: flex; align-items: center; gap: 15px; }
         .ledger-status { font-family: 'Special Elite'; font-size: 8px; opacity: 0.5; text-transform: uppercase; font-weight: bold; color: #7a1d1d; }
 
         .sign-here-input { width: 100%; background: transparent; border: none; border-bottom: 2px solid #7a1d1d; font-family: 'Homemade Apple', cursive; font-size: 32px; padding: 20px 0; color: #1a0f0a; outline: none; text-align: center; transition: 0.3s; }
 
-        /* TOAST SYSTEM */
+        /* TOAST NOTIFICATION */
         .toast { 
             position: fixed; top: 40px; left: 50%; transform: translateX(-50%); 
             background: #1a0f0a; color: #f4edd8; padding: 20px 50px; border-radius: 4px; 
@@ -55,6 +54,15 @@
             border: 3px double #7a1d1d; box-shadow: 0 20px 60px rgba(0,0,0,0.9);
             letter-spacing: 3px; text-transform: uppercase;
         }
+
+        /* TRANSITION OVERLAY */
+        #cinematic-overlay {
+            position: fixed; inset: 0; background: #000; z-index: 90000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.8s ease;
+        }
+        #cinematic-overlay.active { opacity: 1; pointer-events: auto; }
+        .loading-text { font-family: 'Cinzel', serif; color: #7a1d1d; font-size: 12px; letter-spacing: 6px; text-transform: uppercase; font-weight: 900; animation: pulse 2s infinite; margin-top: 20px; }
 
         /* MASTER LAYOUT */
         .parchment-container {
@@ -91,16 +99,7 @@
 
         .manual-h2 { font-family: 'Cinzel', serif; font-weight: 900; font-size: 2.2rem; color: #7a1d1d; border-bottom: 4px double #7a1d1d; padding-bottom: 8px; text-transform: uppercase; margin-bottom: 25px; width: 100%; letter-spacing: 2px; }
         .manual-h3 { font-family: 'Cinzel', serif; font-weight: 700; font-size: 1.4rem; color: #5d4037; border-bottom: 1px solid rgba(93, 64, 55, 0.4); padding-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; width: 100%; }
-
-        /* DIVIDER STYLING */
-        .manual-divider {
-            width: 100%;
-            height: 1px;
-            background: linear-gradient(to right, transparent, rgba(122, 29, 29, 0.4), transparent);
-            margin: 20px 0;
-            border: none;
-            flex-shrink: 0;
-        }
+        .manual-divider { width: 100%; height: 1px; background: linear-gradient(to right, transparent, rgba(122, 29, 29, 0.4), transparent); margin: 30px 0; flex-shrink: 0; }
 
         .arch-btn { font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 10px 20px; border-radius: 4px; cursor: pointer; border: 1px solid #7a1d1d; transition: 0.2s; display: inline-flex; align-items: center; gap: 10px; background: #7a1d1d; color: white; }
         .arch-btn:hover { background: #000; border-color: #000; transform: translateY(-2px); }
@@ -110,15 +109,6 @@
         .arch-dropdown.active .arch-dropdown-content { display: block; }
         .dropdown-link { padding: 12px 18px; display: block; font-size: 10px; font-weight: 900; text-transform: uppercase; color: #1a0f0a; border-bottom: 1px solid rgba(0,0,0,0.05); transition: 0.2s; cursor: pointer; }
         .dropdown-link:hover { background: #7a1d1d; color: #f4edd8; padding-left: 22px; }
-
-        /* CINEMATIC BLACKOUT */
-        #cinematic-overlay {
-            position: fixed; inset: 0; background: #000; z-index: 90000;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            opacity: 0; pointer-events: none; transition: opacity 0.8s ease;
-        }
-        #cinematic-overlay.active { opacity: 1; pointer-events: auto; }
-        .loading-text { font-family: 'Cinzel', serif; color: #7a1d1d; font-size: 12px; letter-spacing: 6px; text-transform: uppercase; font-weight: 900; animation: pulse 2s infinite; margin-top: 20px; }
 
         #uid-link-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 95000; display: flex; align-items: center; justify-content: center; padding: 20px; }
         .modal-box-dossier { background: #fff; width: 100%; max-width: 500px; border: 4px double #7a1d1d; border-radius: 4px; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.7); }
@@ -132,25 +122,19 @@
         .bind-tag-btn { background: #f4f4f4; color: #1a1a1a; padding: 4px 10px; border-radius: 2px; font-size: 8px; font-weight: 900; text-transform: uppercase; cursor: pointer; border: 1px solid #ddd; transition: 0.2s; }
         .bind-tag-btn:hover { background: #1565c0; color: white; border-color: #1565c0; }
 
+        .purge-btn { background: rgba(122, 29, 29, 0.1); color: #7a1d1d; border: 1px solid #7a1d1d; font-size: 7px; padding: 2px 6px; border-radius: 2px; text-transform: uppercase; font-weight: 900; transition: 0.2s; cursor: pointer; }
+        .purge-btn:hover { background: #7a1d1d; color: white; }
+
         .tuner-panel { background: #fff; border: 1px solid #7a1d1d; padding: 10px 15px; border-radius: 4px; margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 15px; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; box-sizing: border-box; position: relative; z-index: 100; }
         .tuner-group { display: flex; flex-direction: column; gap: 1px; }
         .tuner-label { font-size: 7px; font-weight: 900; text-transform: uppercase; color: #7a1d1d; letter-spacing: 1px; }
         .tuner-slider { width: 80px; accent-color: #7a1d1d; height: 12px; }
-
-        .visibility-tag { font-size: 8px; font-weight: 900; text-transform: uppercase; padding: 2px 6px; border-radius: 2px; margin-left: 10px; vertical-align: middle; }
-        .tag-public { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
-        .tag-secret { background: #fff3e0; color: #ef6c00; border: 1px solid #ffe0b2; }
-        .tag-personal { background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; }
-
-        .purge-btn { background: rgba(122, 29, 29, 0.1); color: #7a1d1d; border: 1px solid #7a1d1d; font-size: 7px; padding: 2px 6px; border-radius: 2px; text-transform: uppercase; font-weight: 900; transition: 0.2s; cursor: pointer; }
-        .purge-btn:hover { background: #7a1d1d; color: white; }
 
         .hidden { display: none !important; }
     </style>
 </head>
 <body onclick="window.closeAllDropdowns()">
 
-    <!-- HIGH-PRIORITY TOAST SYSTEM -->
     <div id="toast" class="toast">Signature Processed</div>
 
     <!-- GUESTBOOK ACCESS TERMINAL -->
@@ -162,7 +146,7 @@
                 <div class="book-title">Archival Registry</div>
                 <div class="book-sub">Citizen Guestbook • Sign Ledger to Enter</div>
                 
-                <input type="text" id="terminal-search" class="terminal-input !bg-transparent !border-b !border-t-0 !border-x-0 !border-black/10 !mb-4 !text-black !p-3 !outline-none !font-serif" placeholder="Find character signature..." oninput="window.filterTerminal(this.value)">
+                <input type="text" id="terminal-search" class="terminal-input !bg-transparent !border-b !border-t-0 !border-x-0 !border-black/10 !mb-4 !text-black !p-3 !outline-none !font-serif" placeholder="Locate Character Signature..." oninput="window.filterTerminal(this.value)">
                 
                 <div id="terminal-results" class="flex-grow overflow-y-auto pr-4">
                     <!-- Citizens populated via JS -->
@@ -190,12 +174,12 @@
                     </div>
 
                     <div class="flex flex-col gap-4 items-center">
-                        <button id="reg-bind-btn" onclick="window.registerCitizen()" class="arch-btn !bg-black !border-black !px-12 !py-4 shadow-xl hover:!bg-[#7a1d1d] transition-all">Sign the Registry</button>
+                        <button id="reg-bind-btn" onclick="window.registerCitizen()" class="arch-btn !bg-black !border-black !px-12 !py-4 shadow-xl hover:!bg-[#7a1d1d] active:scale-95 transition-all">Sign the Registry</button>
                         <button onclick="window.toggleTerminalView('login')" class="text-[8px] font-black uppercase opacity-40 hover:opacity-100">Back to Ledger</button>
                     </div>
                 </div>
 
-                <div class="text-center opacity-20 font-serif text-[8px] mt-4 uppercase font-black tracking-[3px]">Ver. 8.5 • Archival Sync Enabled</div>
+                <div class="text-center opacity-20 font-serif text-[8px] mt-4 uppercase font-black tracking-[3px]">Ver. 8.5 • Persistent Signature Ledger</div>
             </div>
         </div>
     </div>
@@ -217,7 +201,7 @@
                 <input type="text" id="user-search" class="w-full bg-gray-50 border border-gray-200 p-3 mb-4 rounded font-serif text-sm italic" placeholder="Search Character Name or paste UID..." oninput="window.filterDMUsers(this.value)">
                 
                 <div id="user-results" class="max-h-48 overflow-y-auto border border-gray-100 rounded mb-8 bg-white">
-                    <!-- Results via JS -->
+                    <!-- Results populated via JS -->
                 </div>
 
                 <div class="pt-6 border-t border-dashed border-gray-300">
@@ -266,7 +250,7 @@
             </div>
         </div>
 
-        <!-- CONTENT -->
+        <!-- CONTENT AREA -->
         <div class="manual-body" id="content-pane" onclick="window.closeAllDropdowns()">
             <div id="manual-header"></div>
             <div id="manual-sections-container" class="flex flex-wrap items-start w-full"></div>
@@ -333,11 +317,11 @@
                     </div>
                 </div>
             </div>
-            <div class="page-indicator mt-20 opacity-30 text-center uppercase tracking-widest text-[9px] font-black">End of Archive Record • Ver. 8.5.0</div>
+            <div class="page-indicator mt-20 opacity-30 text-center uppercase tracking-widest text-[9px] font-black">End of Archive Record • Ver. 8.5.1</div>
         </div>
     </div>
 
-    <!-- DM AUTH MODALS -->
+    <!-- AUTH MODALS -->
     <div id="del-modal" class="fixed inset-0 z-[110000] flex items-center justify-center p-4 hidden">
         <div class="absolute inset-0 bg-black/90" onclick="document.getElementById('del-modal').classList.add('hidden')"></div>
         <div class="bg-white p-10 rounded-2xl w-full max-w-sm text-center relative z-10 shadow-2xl text-black">
@@ -373,6 +357,7 @@
         let manualSections = [], seenDocs = [], allUsers = [], targetSectionForUID = null;
         let manualHeader = { title: "Archival History", subtitle: "Verifying civilizations past." };
         let activeRole = 'player', activeEditId = null, userAuth = null, saveTimer = null, deleteCallback = null;
+        let activeAnchorUID = null; // Volatile anchor resets on refresh
 
         // --- TOAST ---
         window.showToast = (m) => { 
@@ -383,52 +368,46 @@
             } 
         };
 
-        // --- IDENTITY LOGIC ---
+        // --- IDENTITY ANCHORING LOGIC ---
         window.showGuestbook = () => {
             const terminal = document.getElementById('access-terminal');
-            if(terminal) { terminal.classList.remove('unlocked'); window.filterTerminal(''); }
+            if(terminal) {
+                terminal.classList.remove('unlocked');
+                window.filterTerminal(''); 
+            }
+        };
+
+        window.anchorIdentity = (uid) => {
+            activeAnchorUID = uid;
+            localStorage.setItem('aeonfall_claimed_uid', uid);
+            window.showToast("COGNITIVE SIGNATURE ANCHORED");
+            document.getElementById('access-terminal')?.classList.add('unlocked');
+            window.updateIdentityUI();
+            window.renderManual();
         };
 
         window.claimIdentity = (uid) => {
-            sessionStorage.setItem('aeonfall_session_anchored', 'true');
-            localStorage.setItem('aeonfall_claimed_uid', uid);
-            window.showToast("COGNITIVE SIGNATURE ANCHORED");
-            setTimeout(() => {
-                document.getElementById('access-terminal')?.classList.add('unlocked');
-                window.renderManual();
-            }, 800);
+            window.anchorIdentity(uid);
         };
 
         window.filterTerminal = (val) => {
             const container = document.getElementById('terminal-results'); if(!container) return;
             const search = val.toLowerCase();
             const filtered = allUsers.filter(u => (u.username || '').toLowerCase().includes(search));
-            const isDM = activeRole === 'dm';
             
             container.innerHTML = filtered.map(u => `
                 <div class="ledger-line" onclick="window.claimIdentity('${u.uid}')">
                     <span class="ledger-name text-black">${u.username || 'Unidentified'}</span>
-                    <div class="ledger-status-group">
-                        <span class="ledger-status">Anchor Signature</span>
-                        ${isDM ? `<button onclick="window.triggerPurgeCitizen(event, '${u.uid}')" class="purge-btn">Purge</button>` : ''}
-                    </div>
+                    <span class="ledger-status">Sign In</span>
                 </div>
-            `).join('') || (val ? '<div class="p-8 text-center text-[#7a1d1d] font-bold uppercase text-[10px] opacity-40">Identity Not Found</div>' : '<div class="p-8 text-center opacity-30 text-[9px] uppercase font-black">Archive Registry Synchronization Active</div>');
-        };
-
-        window.triggerPurgeCitizen = (e, uid) => {
-            e.stopPropagation();
-            window.openDelModal("Permanently expunge this citizen's cognitive signature from the registry?", async () => {
-                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', uid));
-                window.showToast("CITIZEN RECORD PURGED");
-            });
+            `).join('') || (val ? '<div class="p-8 text-center text-[#7a1d1d] font-bold uppercase text-[10px] opacity-40">Identity Not Found</div>' : '<div class="p-8 text-center opacity-30 text-[9px] uppercase font-black tracking-widest">Sign the Registry to unlock personal dossiers</div>');
         };
 
         window.registerCitizen = async () => {
             const characterName = document.getElementById('reg-name-input')?.value.trim();
             if (!characterName) { window.showToast("Signature Required"); return; }
             const currentUser = auth.currentUser || userAuth;
-            if (!currentUser) { window.showToast("Establishing Archival Channel..."); return; }
+            if (!currentUser) { window.showToast("Channel Error..."); return; }
 
             try {
                 await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', currentUser.uid), {
@@ -436,10 +415,8 @@
                     registeredAt: Date.now(),
                     role: 'citizen'
                 });
-                localStorage.setItem('aeonfall_claimed_uid', currentUser.uid);
-                sessionStorage.setItem('aeonfall_session_anchored', 'true');
+                window.anchorIdentity(currentUser.uid);
                 window.showToast("IDENTITY RECORD CREATED");
-                setTimeout(() => window.location.reload(), 1500);
             } catch (e) { window.showToast("Registration Refused."); }
         };
 
@@ -450,19 +427,46 @@
             else { login?.classList.remove('hidden'); reg?.classList.add('hidden'); }
         };
 
-        window.bypassTerminal = () => { document.getElementById('access-terminal')?.classList.add('unlocked'); window.showToast("PROCEEDING AS GUEST"); };
+        window.bypassTerminal = () => { 
+            activeAnchorUID = null;
+            document.getElementById('access-terminal')?.classList.add('unlocked'); 
+            window.showToast("PROCEEDING AS GUEST");
+            window.updateIdentityUI();
+            window.renderManual();
+        };
 
         window.proceedAsRegistered = () => {
-            const claimedUID = localStorage.getItem('aeonfall_claimed_uid');
-            if (claimedUID) { window.claimIdentity(claimedUID); } 
-            else { window.showToast("NO SIGNATURE FOUND ON LEDGER"); }
+            const lastUID = localStorage.getItem('aeonfall_claimed_uid');
+            if (lastUID) {
+                window.anchorIdentity(lastUID);
+            } else { window.showToast("NO ANCHOR FOUND ON LEDGER"); }
         };
 
         window.resetIdentity = () => { 
+            activeAnchorUID = null;
             localStorage.removeItem('aeonfall_claimed_uid'); 
-            sessionStorage.removeItem('aeonfall_session_anchored');
             window.showToast("LEAVING LEDGER...");
-            setTimeout(() => window.location.reload(), 800);
+            setTimeout(() => window.location.reload(), 500);
+        };
+
+        window.updateIdentityUI = () => {
+            const effectiveUID = activeAnchorUID;
+            const idChar = allUsers.find(au => au.uid === effectiveUID);
+            const identText = document.getElementById('user-identity');
+            const guestAction = document.getElementById('guest-login-action');
+            const signoutContainer = document.getElementById('user-signout-container');
+
+            if(identText) {
+                if(idChar) {
+                    identText.innerText = `CITIZEN ANCHORED: ${idChar.username}`;
+                    guestAction?.classList.add('hidden');
+                    signoutContainer?.classList.remove('hidden');
+                } else {
+                    identText.innerText = 'UNIDENTIFIED GUEST';
+                    guestAction?.classList.remove('hidden');
+                    signoutContainer?.classList.add('hidden');
+                }
+            }
         };
 
         // --- GLOBAL HOISTING ---
@@ -474,10 +478,7 @@
         
         window.updateRoleUI = () => { 
             const isDM = activeRole === 'dm'; 
-            const controls = document.getElementById('dm-global-controls');
-            if(controls) controls.classList.toggle('hidden', !isDM);
-            const rPlayer = document.getElementById('role-player'); if(rPlayer) rPlayer.classList.toggle('active', !isDM);
-            const rDm = document.getElementById('role-dm'); if(rDm) rDm.classList.toggle('active', isDM);
+            document.getElementById('dm-global-controls')?.classList.toggle('hidden', !isDM);
             document.body.classList.toggle('dm-active-edit', isDM); window.renderManual(); 
         };
 
@@ -495,7 +496,6 @@
             const container = document.getElementById('user-results'); if(!container) return;
             const search = val.toLowerCase();
             const filtered = allUsers.filter(u => (u.username || '').toLowerCase().includes(search) || (u.uid || '').toLowerCase().includes(search));
-            const isDM = activeRole === 'dm';
             container.innerHTML = filtered.map(u => `
                 <div class="user-result flex justify-between items-center p-4 hover:bg-gray-50 border-b border-gray-100">
                     <div class="cursor-pointer flex-grow" onclick="window.assignUIDToSection('${u.uid}')">
@@ -504,10 +504,18 @@
                     </div>
                     <div class="flex gap-2">
                         <button onclick="window.assignUIDToSection('${u.uid}')" class="bind-tag-btn">Sync</button>
-                        ${isDM ? `<button onclick="window.triggerPurgeCitizen(event, '${u.uid}')" class="purge-btn">Purge</button>` : ''}
+                        <button onclick="window.triggerPurgeCitizen(event, '${u.uid}')" class="purge-btn">Purge</button>
                     </div>
                 </div>
-            `).join('') || '<div class="p-8 text-center opacity-40 text-[10px]">Registry Empty.</div>';
+            `).join('') || '<div class="p-8 text-center opacity-40 text-[10px]">No matches.</div>';
+        };
+
+        window.triggerPurgeCitizen = (e, uid) => {
+            e.stopPropagation();
+            window.openDelModal("Expunge citizen signature from registry?", async () => {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', uid));
+                window.showToast("RECORD PURGED");
+            });
         };
 
         window.assignUIDToSection = async (uid) => {
@@ -523,15 +531,12 @@
             if(!uid || !targetSectionForUID) return;
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', targetSectionForUID), { sharedWith: [uid] });
             document.getElementById('uid-link-modal')?.classList.add('hidden');
-            window.showToast("Override Complete");
+            window.showToast("Override Sync Complete.");
         };
 
         window.markAsSeen = async (id) => {
-            if(!userAuth) return;
-            const anchored = sessionStorage.getItem('aeonfall_session_anchored') === 'true';
-            const claimedUID = localStorage.getItem('aeonfall_claimed_uid') || userAuth.uid;
-            if(!anchored) return;
-            await setDoc(doc(db, 'artifacts', appId, 'users', claimedUID, 'seenDocuments', id), { seenAt: Date.now() });
+            if(!activeAnchorUID) return;
+            await setDoc(doc(db, 'artifacts', appId, 'users', activeAnchorUID, 'seenDocuments', id), { seenAt: Date.now() });
             window.scrollToSection(id);
         };
 
@@ -564,8 +569,7 @@
         };
 
         window.renderManual = () => {
-            const isDM = activeRole === 'dm', isAnchored = sessionStorage.getItem('aeonfall_session_anchored') === 'true';
-            const claimedUID = localStorage.getItem('aeonfall_claimed_uid'), effectiveUID = isAnchored ? claimedUID : 'guest';
+            const isDM = activeRole === 'dm', effectiveUID = activeAnchorUID || 'guest';
             const navList = document.getElementById('nav-list'), container = document.getElementById('manual-sections-container');
             if(!container) return;
 
@@ -575,8 +579,7 @@
             if (headerEl) headerEl.innerHTML = `<h1 id="manual-main-title" class="manual-h1 dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('manual-main-title')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateHeader('title', this.innerText)">${activeEditId === 'manual-main-title' ? manualHeader.title : window.parseAeonfallContent(manualHeader.title, false)}</h1><p id="manual-main-subtitle" class="font-serif italic text-sm text-[#5d4037] mb-10 dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('manual-main-subtitle')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateHeader('subtitle', this.innerText)">${activeEditId === 'manual-main-subtitle' ? manualHeader.subtitle : window.parseAeonfallContent(manualHeader.subtitle, false)}</p>`;
             
             if (navList) navList.innerHTML = visibleSections.filter(s => s.type === 'subheading').map(s => {
-                const isWithin24Hours = (Date.now() - (s.createdAt || 0)) < 86400000;
-                const isNew = isWithin24Hours && !seenDocs.includes(s.id);
+                const isNew = (Date.now() - (s.createdAt || 0)) < 86400000 && !seenDocs.includes(s.id);
                 const isPersonal = s.visibility === 'personal';
                 return `<div class="shelf-item ${s.docType || 'book'}" onclick="window.markAsSeen('${s.id}')">
                     ${isNew ? '<span class="new-badge">NEW</span>' : ''}
@@ -604,7 +607,7 @@
                     </div>`;
                 if(s.type === 'text') html += `<div id="${cId}" class="manual-p dm-editable leading-relaxed" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div>`;
                 else if(s.type === 'note') html += `<div class="manual-note-box"><div id="${cId}" class="manual-p dm-editable italic" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
-                else if(s.type === 'divider') html += `<hr class="manual-divider">`;
+                else if(s.type === 'divider') html += `<div class="manual-divider"></div>`;
                 html += `</section>`; return html;
             }).join('');
         };
@@ -619,35 +622,12 @@
         onAuthStateChanged(auth, async (u) => { 
             userAuth = u; 
             if (u) {
-                const isAnchored = sessionStorage.getItem('aeonfall_session_anchored') === 'true';
-                const claimedUID = localStorage.getItem('aeonfall_claimed_uid');
-                const effectiveUID = isAnchored ? claimedUID : null;
-
                 onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'libraryHeader'), d => { if (d.exists()) { manualHeader = d.data(); window.renderManual(); } });
                 onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'librarySections'), snap => { manualSections = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (a.order ?? 0) - (b.order ?? 0)); window.renderManual(); });
                 
-                if (effectiveUID) {
-                    onSnapshot(collection(db, 'artifacts', appId, 'users', effectiveUID, 'seenDocuments'), snap => { seenDocs = snap.docs.map(d => d.id); window.renderManual(); });
-                }
-
                 onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'users'), snap => { 
                     allUsers = snap.docs.map(d => ({uid: d.id, ...d.data()})); 
-                    const idChar = allUsers.find(au => au.uid === effectiveUID);
-                    const identText = document.getElementById('user-identity');
-                    const guestAction = document.getElementById('guest-login-action');
-                    const signoutContainer = document.getElementById('user-signout-container');
-
-                    if(identText) {
-                        if(idChar) {
-                            identText.innerText = `CITIZEN SIGNED: ${idChar.username}`;
-                            guestAction?.classList.add('hidden');
-                            signoutContainer?.classList.remove('hidden');
-                        } else {
-                            identText.innerText = 'UNIDENTIFIED GUEST';
-                            guestAction?.classList.remove('hidden');
-                            signoutContainer?.classList.add('hidden');
-                        }
-                    }
+                    window.updateIdentityUI();
                     window.filterTerminal('');
                     window.renderManual(); 
                 });
