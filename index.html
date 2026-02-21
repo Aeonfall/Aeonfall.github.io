@@ -342,7 +342,7 @@
                                     <h3 class="flex justify-between items-center">Abilities & Modifiers <button id="main-gen-btn" onclick="window.openScoreGenModal()" class="bg-blue-100 text-[8px] px-1.5 rounded text-blue-700 font-black">GENERATE</button></h3>
                                     <div class="grid grid-cols-2 gap-4 mb-4">
                                         <div class="text-center"><input type="number" data-key="profBonus" class="text-xl font-black text-center" value="2" onchange="window.calcMods()"><label class="tiny-label">Proficiency</label></div>
-                                        <div class="text-center"><input type="number" data-key="passivePerception" class="text-xl font-black text-center" value="10" onchange="window.calcMods()"><label class="tiny-label">Pass. Perception</label></div>
+                                        <div class="text-center"><input type="number" data-key="passivePerception" class="text-xl font-black text-center" value="10" readonly><label class="tiny-label">Pass. Perception</label></div>
                                     </div>
                                     <div id="stats-container" class="space-y-3"></div>
                                 </div>
@@ -1391,11 +1391,18 @@
         
         window.calcMods = () => { 
             const p = parseInt(document.querySelector('[data-key="profBonus"]')?.value) || 2; 
+            let wisMod = 0;
             STATS.forEach(s => { 
                 const v = parseInt(document.querySelector(`[data-key="${s}"]`)?.value) || 10; const m = Math.floor((v - 10) / 2); 
+                if (s === 'wis') wisMod = m;
                 const el = document.getElementById(`mod-${s}`); if(el) el.textContent = (m >= 0 ? '+' : '') + m; 
                 const sp = document.querySelector(`[data-key="save_prof_${s}"]`)?.checked; const sel = document.getElementById(`save-mod-${s}`); if(sel) sel.textContent = (m + (sp ? p : 0) >= 0 ? '+' : '') + (m + (sp ? p : 0)); 
             }); 
+
+            // Automate Passive Perception calculation
+            const ppInput = document.querySelector('[data-key="passivePerception"]');
+            if (ppInput) ppInput.value = 10 + wisMod + p;
+
             SKILLS.forEach(sk => { 
                 const v = parseInt(document.querySelector(`[data-key="${sk.s}"]`)?.value) || 10; const m = Math.floor((v - 10) / 2); 
                 const safe = sk.n.toLowerCase().replace(/ /g,'_').replace(/[()]/g,''); const sp = document.querySelector(`[data-key="prof_${safe}"]`)?.checked; 
