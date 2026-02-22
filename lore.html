@@ -74,7 +74,6 @@
             transition: opacity 0.3s ease;
         }
 
-        /* End of Subject Indicator */
         .subject-group::after {
             content: '';
             position: absolute;
@@ -127,7 +126,7 @@
 
         .manual-h3 { font-family: 'Cinzel', serif; font-weight: 700; font-size: 1.3rem; color: #000; border-bottom: 1px solid rgba(0,0,0,0.2); padding-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; width: 100%; }
 
-        /* INNER HEADINGS (Markdown Style) */
+        /* INNER HEADINGS */
         .inner-h1 { font-family: 'Cinzel', serif; font-weight: 900; font-size: 1.4rem; color: var(--arch-burgundy); margin: 1.8rem 0 0.8rem 0; text-transform: uppercase; border-bottom: 1px solid rgba(122,29,29,0.2); }
         .inner-h2 { font-family: 'Cinzel', serif; font-weight: 700; font-size: 1.2rem; color: var(--arch-burgundy); margin: 1.5rem 0 0.6rem 0; }
         .inner-h3 { font-family: 'Cinzel', serif; font-weight: 700; font-size: 1.05rem; color: var(--charcoal-pencil); border-left: 3px solid var(--arch-burgundy); padding-left: 10px; margin: 1.2rem 0 0.5rem 0; }
@@ -138,6 +137,28 @@
         .manual-p { color: var(--charcoal-pencil) !important; line-height: 1.8; font-size: 1.08rem; margin-bottom: 1rem; font-weight: 400; }
         .manual-p * { color: var(--charcoal-pencil) !important; }
         b, strong { color: #000 !important; font-weight: 900; } 
+
+        /* EMBEDDED IMAGES / MEDIA */
+        .inline-img-wrapper {
+            margin: 2rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            position: relative;
+        }
+        .inline-arch-asset {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            display: block;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+            border: 1px solid rgba(187, 166, 131, 0.4);
+            transition: transform 0.3s ease, filter 0.3s;
+            cursor: zoom-in;
+        }
+        .inline-img-wrapper:hover .inline-arch-asset { transform: scale(1.01); filter: brightness(1.05); }
+        .media-footnote { color: var(--charcoal-pencil); font-size: 0.8rem; font-style: italic; margin-top: 8px; opacity: 0.9; text-align: center; width: 100%; }
 
         /* SAGE NOTE - HOVERING GREEN BUBBLE STYLE */
         .manual-note-box { 
@@ -152,18 +173,6 @@
             margin-bottom: 3.5rem;
             position: relative;
             transform: translateY(-5px);
-        }
-
-        /* RESEARCH - DASHED STYLE */
-        .manual-research-box { 
-            border: 1px dashed var(--arch-burgundy) !important; 
-            padding: 20px 25px !important; 
-            background: rgba(122, 29, 29, 0.02) !important; 
-            position: relative; 
-            width: 100%; 
-            box-sizing: border-box; 
-            color: var(--charcoal-pencil);
-            margin-bottom: 1.5rem;
         }
 
         /* INFO BOX - HOVERING BUBBLE STYLE */
@@ -181,7 +190,7 @@
             transform: translateY(-5px);
         }
 
-        /* DATA TABLE - BORDERED ROUNDED SQUARE STYLE */
+        /* DATA TABLE STYLE */
         .table-wrap { 
             background: rgba(255, 255, 255, 0.2) !important;
             border: 2px solid var(--arch-gold) !important;
@@ -194,32 +203,7 @@
             box-sizing: border-box;
             position: relative;
         }
-
-        /* Zebra Striping using Sage Green */
-        .manual-table tbody tr:nth-child(even) {
-            background-color: var(--sage-note-bg) !important;
-        }
-
-        /* EMBEDDED IMAGES / MEDIA */
-        .inline-img-wrapper {
-            margin: 2rem 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            cursor: zoom-in;
-        }
-        .inline-arch-asset {
-            max-width: 100%;
-            height: auto;
-            border-radius: 12px;
-            display: block;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
-            border: 1px solid rgba(187, 166, 131, 0.4);
-            transition: transform 0.3s ease, filter 0.3s;
-        }
-        .inline-img-wrapper:hover .inline-arch-asset { transform: scale(1.01); filter: brightness(1.05); }
-        .media-footnote { color: var(--charcoal-pencil); font-size: 0.8rem; font-style: italic; margin-top: 8px; opacity: 0.9; text-align: center; width: 100%; }
+        .manual-table tbody tr:nth-child(even) { background-color: var(--sage-note-bg) !important; }
 
         /* CHRONICLE LINK STYLE */
         .arch-link { color: var(--arch-burgundy); text-decoration: underline; text-underline-offset: 2px; font-weight: 700; transition: 0.2s; cursor: pointer; }
@@ -239,6 +223,11 @@
         .tuner-group { display: flex; flex-direction: column; gap: 1px; }
         .tuner-label { font-size: 7px; font-weight: 900; text-transform: uppercase; color: var(--arch-burgundy); letter-spacing: 1px; }
         .tuner-slider { width: 60px; accent-color: var(--arch-burgundy); height: 10px; }
+        .align-btn { width: 22px; height: 22px; background: rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.1); border-radius: 3px; font-size: 8px; font-weight: 900; color: #000; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        .align-btn:hover { background: var(--arch-burgundy); color: white; }
+        .align-btn.active { background: var(--arch-burgundy); color: white; border-color: var(--arch-burgundy); }
+        .purge-media-btn { height: 22px; padding: 0 8px; background: #fee2e2; border: 1px solid #ef4444; border-radius: 3px; font-size: 7px; font-weight: 900; color: #b91c1c; text-transform: uppercase; cursor: pointer; transition: 0.2s; }
+        .purge-media-btn:hover { background: #ef4444; color: white; }
 
         /* DRAG FEEDBACK */
         .drag-handle { cursor: grab; opacity: 0.4; transition: 0.2s; color: var(--arch-burgundy); font-size: 16px; }
@@ -325,7 +314,7 @@
                 <button onclick="window.addManualSection('info')" class="arch-btn arch-btn-add">📊 Info Box</button>
                 <button onclick="window.addManualSection('media')" class="arch-btn arch-btn-add">🖼️ Media</button>
             </div>
-            <div class="page-indicator mt-20 opacity-30 text-center text-black uppercase font-black tracking-widest text-[9px]">End of Lore Record • Archive Ver. 1.13.0</div>
+            <div class="page-indicator mt-20 opacity-30 text-center text-black uppercase font-black tracking-widest text-[9px]">End of Lore Record • Archive Ver. 1.16.0</div>
         </div>
     </div>
 
@@ -394,7 +383,18 @@
             }
         });
 
-        // --- EDITING / DRAG PRIORITY LOGIC ---
+        // --- PURGE ALL MEDIA FROM BLOCK ---
+        window.purgeMediaFromText = (id) => {
+            const sec = manualSections.find(s => s.id === id);
+            if (!sec) return;
+            window.openDelModal("Purge all embedded media from this block?", async () => {
+                const newContent = sec.content.replace(/\{\{[^}]+\}\}/g, '');
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id), { content: newContent });
+                window.showToast("Archival Media Expunged");
+            });
+        };
+
+        // --- DRAG PRIORITY LOGIC ---
         window.toggleDraggable = (id, state) => {
             const el = document.getElementById(`section-${id}`);
             if (el && activeRole === 'dm') el.draggable = state;
@@ -403,15 +403,8 @@
         // --- DUAL TIER DRAG AND DROP ---
         window.handleDragStart = function(e, id, type) { 
             if (activeRole !== 'dm') return; 
-
-            // If drag originates from inside an editable field, cancel it to allow selection
-            if (e.target.isContentEditable || e.target.closest('[contenteditable="true"]')) {
-                e.preventDefault();
-                return;
-            }
-
-            draggedId = id; 
-            isGroupMove = (type === 'heading'); 
+            if (e.target.isContentEditable || e.target.closest('[contenteditable="true"]')) { e.preventDefault(); return; }
+            draggedId = id; isGroupMove = (type === 'heading'); 
             e.currentTarget.classList.add(isGroupMove ? 'group-dragging' : 'unit-dragging'); 
             e.stopPropagation();
         };
@@ -428,10 +421,8 @@
         window.handleDragLeave = function(e) { e.currentTarget.classList.remove('unit-drag-over-before', 'unit-drag-over-after'); };
 
         window.handleDrop = async function(e, targetId) { 
-            e.preventDefault(); 
-            e.currentTarget.classList.remove('unit-drag-over-before', 'unit-drag-over-after'); 
+            e.preventDefault(); e.currentTarget.classList.remove('unit-drag-over-before', 'unit-drag-over-after'); 
             if (!draggedId || draggedId === targetId) return; 
-
             const allItems = [...manualSections];
             const getGroupIndices = (headId) => {
                 const startIdx = allItems.findIndex(s => s.id === headId);
@@ -439,7 +430,6 @@
                 if (endIdx === -1) endIdx = allItems.length;
                 return { startIdx, endIdx };
             };
-
             const batch = writeBatch(db);
             if (isGroupMove) {
                 const source = getGroupIndices(draggedId);
@@ -457,10 +447,8 @@
                 if (dropSide === 'after') insertIdx += 1;
                 allItems.splice(insertIdx, 0, movedUnit);
             }
-
             allItems.forEach((sec, i) => { batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', sec.id), { order: i }); }); 
-            await batch.commit(); 
-            draggedId = null; isGroupMove = false;
+            await batch.commit(); draggedId = null; isGroupMove = false;
             window.showToast("Lore Record Synchronized");
             e.stopPropagation();
         };
@@ -470,7 +458,7 @@
 
         window.addManualSection = async (type) => {
             if(!userAuth) return;
-            const data = { title: type==='heading'?"NEW SUBJECT GROUP": (type==='subheading'?"INTERNAL SUB-TOPIC":type==='research'?"RESEARCH":type==='info'?"INFO":"NEW DATA NODE"), content: type==='table'||type==='media'||type==='heading'||type==='subheading'?"":"Inscribe details here...", type, order: manualSections.length, createdAt: Date.now(), width: 100, fontSize: 14, ySpacing: 0 };
+            const data = { title: type==='heading'?"NEW SUBJECT GROUP": (type==='subheading'?"INTERNAL SUB-TOPIC":type==='research'?"RESEARCH":type==='info'?"INFO":"NEW DATA NODE"), content: type==='table'||type==='media'||type==='heading'||type==='subheading'?"":"Inscribe details here...", type, order: manualSections.length, createdAt: Date.now(), width: 100, fontSize: 14, ySpacing: 0, align: 'left' };
             if(type==='table'){data.tableHeaders=["Chronicle","Value"]; data.tableRows=JSON.stringify([["Val","Val"]]);}
             if(type==='media'){data.mediaUrl=""; data.mediaDescription="Asset Insight..."; data.width=50;}
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'loreSections'), data);
@@ -494,7 +482,6 @@
 
         window.parseAeonfallContent = (text, isDM) => {
             if (!text) return ''; if (isDM && activeEditId !== null) return text;
-
             let parsed = text
                 .replace(/^#####\s+(.*)$/gm, '<h6 class="inner-h5">$1</h6>')
                 .replace(/^####\s+(.*)$/gm, '<h5 class="inner-h4">$1</h5>')
@@ -504,12 +491,9 @@
 
             return parsed.replace(/&&([^&]+)&&/g, (m, c) => { const p = c.split('|'); return `<span class="term-hover def-term">${p[0].trim()}<span class="tooltip-content">${p[1] || 'No technical record.'}</span></span>`; })
                        .replace(/\{\{([^}|]+)(?:\|([^}]+))?\}\}/g, (m, url, desc) => {
-                            const trimmedUrl = url.trim();
-                            const isVideo = trimmedUrl.toLowerCase().endsWith('.mp4');
+                            const trimmedUrl = url.trim(); const isVideo = trimmedUrl.toLowerCase().endsWith('.mp4');
                             return `<div class="inline-img-wrapper" onclick="window.openZoom(event, '${trimmedUrl}')">
-                                ${isVideo ? 
-                                    `<video src="${trimmedUrl}" class="inline-arch-asset" autoplay loop muted playsinline></video>` : 
-                                    `<img src="${trimmedUrl}" class="inline-arch-asset">`}
+                                ${isVideo ? `<video src="${trimmedUrl}" class="inline-arch-asset" autoplay loop muted playsinline></video>` : `<img src="${trimmedUrl}" class="inline-arch-asset">`}
                                 ${desc ? `<div class="media-footnote">${desc.trim()}</div>` : ''}
                             </div>`;
                        })
@@ -520,9 +504,7 @@
         window.renderManual = () => {
             const isDM = activeRole === 'dm'; const navList = document.getElementById('nav-list'); const container = document.getElementById('manual-sections-container'); const header = document.getElementById('manual-header');
             if (header) { header.innerHTML = `<h1 id="manual-main-title" class="manual-h1 dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('manual-main-title')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateHeader('title', this.innerText)">${activeEditId === 'manual-main-title' ? manualHeader.title : window.parseAeonfallContent(manualHeader.title, false)}</h1><p id="manual-main-subtitle" class="font-serif italic text-sm text-black mb-10 dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('manual-main-subtitle')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateHeader('subtitle', this.innerText)">${activeEditId === 'manual-main-subtitle' ? manualHeader.subtitle : window.parseAeonfallContent(manualHeader.subtitle, false)}</p>`; }
-            
             if (navList) navList.innerHTML = manualSections.filter(s => s.type === 'heading').map(s => `<div class="nav-item" onclick="window.scrollToSection('${s.id}')">${s.title}</div>`).join('');
-            
             if (container) {
                 let groupsHtml = ''; let currentGroup = [];
                 manualSections.forEach((s) => {
@@ -532,32 +514,31 @@
                     }
                     currentGroup.push(s);
                 });
-                if (currentGroup.length > 0) {
-                    groupsHtml += `<div class="subject-group">${renderGroupContent(currentGroup, isDM)}</div>`;
-                }
+                if (currentGroup.length > 0) { groupsHtml += `<div class="subject-group">${renderGroupContent(currentGroup, isDM)}</div>`; }
                 container.innerHTML = groupsHtml;
             }
         };
 
         const renderGroupContent = (sections, isDM) => {
             return sections.map((s, idx) => {
-                const hId = `head-${s.id}`, cId = `content-${s.id}`;
-                const customStyle = `width: calc(${s.width ?? 100}% - 10px); font-size: ${s.fontSize ?? 14}px; margin-top: ${s.ySpacing ?? 0}px; transition: width 0.3s;`;
+                const hId = `head-${s.id}`, cId = `content-${s.id}`, style = `width: calc(${s.width ?? 100}% - 10px); margin-top: ${s.ySpacing ?? 0}px; text-align: ${s.align || 'left'}; transition: width 0.3s;`;
                 const isHeading = (s.type === 'heading');
+                const hasMedia = s.content && s.content.includes('{{');
                 
-                let html = `<section id="section-${s.id}" class="manual-section-unit group relative transition-all" draggable="${isDM}" ondragstart="window.handleDragStart(event, '${s.id}', '${s.type}')" ondragover="window.handleDragOver(event)" ondragleave="window.handleDragLeave(event)" ondrop="window.handleDrop(event, '${s.id}')" style="${customStyle}">
+                let html = `<section id="section-${s.id}" class="manual-section-unit group relative transition-all" draggable="${isDM}" ondragstart="window.handleDragStart(event, '${s.id}', '${s.type}')" ondragover="window.handleDragOver(event)" ondragleave="window.handleDragLeave(event)" ondrop="window.handleDrop(event, '${s.id}')" style="${style}">
                     ${isHeading ? `<div class="drag-handle-anchor" title="Drag Subject Group">🔗</div>` : ''}
                     ${isDM ? `<div class="tuner-panel">
                         <div class="drag-handle text-lg">⠿</div>
                         <div class="tuner-group"><span class="tuner-label">Width</span><input type="range" class="tuner-slider" min="10" max="100" value="${s.width ?? 100}" oninput="window.dbUpdateSection('${s.id}', 'width', parseInt(this.value))"></div>
                         <div class="tuner-group"><span class="tuner-label">V-Space</span><input type="range" class="tuner-slider" min="0" max="150" value="${s.ySpacing ?? 0}" oninput="window.dbUpdateSection('${s.id}', 'ySpacing', parseInt(this.value))"></div>
+                        <div class="tuner-group"><span class="tuner-label">Align</span><div class="flex gap-1"><button class="align-btn ${s.align==='left'?'active':''}" onclick="window.dbUpdateSection('${s.id}', 'align', 'left')">L</button><button class="align-btn ${s.align==='center'?'active':''}" onclick="window.dbUpdateSection('${s.id}', 'align', 'center')">C</button><button class="align-btn ${s.align==='right'?'active':''}" onclick="window.dbUpdateSection('${s.id}', 'align', 'right')">R</button></div></div>
+                        ${hasMedia ? `<button class="purge-media-btn" onclick="window.purgeMediaFromText('${s.id}')">∅ Img</button>` : ''}
                         <button onclick="window.triggerDelete('${s.id}')" class="arch-btn arch-btn-del ml-auto">✕</button>
                     </div>` : ''}
                     <div class="flex justify-between items-end gap-4 mb-2">
                         ${s.type === 'heading' ? `<h2 id="${hId}" class="manual-h2 dm-editable flex-grow !m-0" contenteditable="${isDM}" onfocus="window.setEditing('${hId}'); window.toggleDraggable('${s.id}', false)" onblur="window.clearEditing(); window.toggleDraggable('${s.id}', true); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">${activeEditId === hId ? s.title : window.parseAeonfallContent(s.title, false)}</h2>` : ''}
                         ${s.type === 'subheading' ? `<h3 id="${hId}" class="manual-h3 dm-editable flex-grow !m-0" contenteditable="${isDM}" onfocus="window.setEditing('${hId}'); window.toggleDraggable('${s.id}', false)" onblur="window.clearEditing(); window.toggleDraggable('${s.id}', true); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">${activeEditId === hId ? s.title : window.parseAeonfallContent(s.title, false)}</h3>` : ''}
                     </div>`;
-                
                 if(s.type === 'text') html += `<div id="${cId}" class="manual-p dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('${cId}'); window.toggleDraggable('${s.id}', false)" onblur="window.clearEditing(); window.toggleDraggable('${s.id}', true); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div>`;
                 else if(s.type === 'note') html += `<div class="manual-note-box"><div id="${hId}" class="font-bold uppercase text-[10px] dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('${hId}'); window.toggleDraggable('${s.id}', false)" onblur="window.clearEditing(); window.toggleDraggable('${s.id}', true); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">📑 ${s.title}</div><div id="${cId}" class="manual-p dm-editable italic" contenteditable="${isDM}" onfocus="window.setEditing('${cId}'); window.toggleDraggable('${s.id}', false)" onblur="window.clearEditing(); window.toggleDraggable('${s.id}', true); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
                 else if(s.type === 'research') html += `<div class="manual-research-box"><div id="${hId}" class="font-bold uppercase text-[10px] dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('${hId}'); window.toggleDraggable('${s.id}', false)" onblur="window.clearEditing(); window.toggleDraggable('${s.id}', true); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">${s.title}</div><div id="${cId}" class="manual-p dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('${cId}'); window.toggleDraggable('${s.id}', false)" onblur="window.clearEditing(); window.toggleDraggable('${s.id}', true); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
@@ -567,7 +548,6 @@
                 html += `</section>`; return html;
             }).join('');
         };
-
         const start = async () => { try { if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token); else await signInAnonymously(auth); } catch(e) { await signInAnonymously(auth); } };
         onAuthStateChanged(auth, (u) => { userAuth = u; if (u) {
             onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'loreHeader'), (d) => { if (d.exists()) { manualHeader = d.data(); window.renderManual(); } }, (err) => console.error(err));
