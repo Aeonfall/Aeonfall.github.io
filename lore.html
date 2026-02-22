@@ -74,6 +74,7 @@
             transition: opacity 0.3s ease;
         }
 
+        /* End of Subject Indicator */
         .subject-group::after {
             content: '';
             position: absolute;
@@ -118,7 +119,7 @@
             color: white;
             font-size: 12px;
             cursor: grab;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
             transition: transform 0.2s;
             user-select: none;
         }
@@ -130,6 +131,26 @@
         .manual-p { color: var(--charcoal-pencil) !important; line-height: 1.8; font-size: 1.08rem; margin-bottom: 1rem; font-weight: 400; }
         .manual-p * { color: var(--charcoal-pencil) !important; }
         b, strong { color: #000 !important; font-weight: 900; }
+
+        /* EMBEDDED IMAGES / MEDIA */
+        .inline-img-wrapper {
+            margin: 2rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            cursor: zoom-in;
+        }
+        .inline-arch-asset {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            display: block;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+            border: 1px solid rgba(187, 166, 131, 0.4);
+            transition: transform 0.3s ease, filter 0.3s;
+        }
+        .inline-img-wrapper:hover .inline-arch-asset { transform: scale(1.01); filter: brightness(1.05); }
 
         /* SAGE NOTE - HOVERING GREEN BUBBLE STYLE */
         .manual-note-box { 
@@ -177,9 +198,9 @@
         .table-wrap { 
             background: rgba(255, 255, 255, 0.2) !important;
             border: 2px solid var(--arch-gold) !important;
-            border-radius: 12px !important; /* Rounded corner square */
+            border-radius: 12px !important; 
             padding: 20px !important;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important; /* Drop shadow */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important; 
             margin-bottom: 3rem;
             overflow-x: auto;
             width: 100%;
@@ -195,6 +216,10 @@
         /* CHRONICLE LINK STYLE */
         .arch-link { color: var(--arch-burgundy); text-decoration: underline; text-underline-offset: 2px; font-weight: 700; transition: 0.2s; cursor: pointer; }
         .arch-link:hover { color: #000; background: rgba(122, 29, 29, 0.05); }
+
+        /* LIGHTBOX */
+        .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 12000; display: flex; align-items: center; justify-content: center; padding: 40px; }
+        .lightbox-asset { max-width: 90vw; max-height: 85vh; border: 4px solid #f4edd8; border-radius: 4px; box-shadow: 0 20px 80px rgba(0,0,0,0.5); }
 
         /* TUNER */
         .tuner-panel { 
@@ -225,6 +250,8 @@
         .arch-btn-add { background: var(--arch-burgundy); color: white; border-color: var(--arch-burgundy); }
         .arch-btn-del { background: rgba(122,29,29,0.1); color: var(--arch-burgundy); }
         .arch-btn-group { background: #000; color: #fff; border-color: #000; }
+
+        .media-footnote { color: var(--charcoal-pencil); font-size: 0.8rem; font-style: italic; margin-top: 8px; opacity: 0.9; text-align: center; width: 100%; }
 
         .hidden { display: none !important; }
         .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #1a0f0a; color: white; padding: 12px 32px; border-radius: 4px; z-index: 10000; opacity: 0; transition: 0.3s; font-family: 'Cinzel'; font-size: 11px; pointer-events: none; border: 1px solid var(--arch-gold); }
@@ -292,7 +319,7 @@
                 <button onclick="window.addManualSection('info')" class="arch-btn arch-btn-add">📊 Info Box</button>
                 <button onclick="window.addManualSection('media')" class="arch-btn arch-btn-add">🖼️ Media</button>
             </div>
-            <div class="page-indicator mt-20 opacity-30 text-center text-black uppercase font-black tracking-widest text-[9px]">End of Lore Record • Archive Ver. 1.10.0</div>
+            <div class="page-indicator mt-20 opacity-30 text-center text-black uppercase font-black tracking-widest text-[9px]">End of Lore Record • Archive Ver. 1.11.0</div>
         </div>
     </div>
 
@@ -449,6 +476,16 @@
         window.parseAeonfallContent = (text, isDM) => {
             if (!text) return ''; if (isDM && activeEditId !== null) return text;
             return text.replace(/&&([^&]+)&&/g, (m, c) => { const p = c.split('|'); return `<span class="term-hover def-term">${p[0].trim()}<span class="tooltip-content">${p[1] || 'No technical record.'}</span></span>`; })
+                       .replace(/\{\{([^}|]+)(?:\|([^}]+))?\}\}/g, (m, url, desc) => {
+                            const trimmedUrl = url.trim();
+                            const isVideo = trimmedUrl.toLowerCase().endsWith('.mp4');
+                            return `<div class="inline-img-wrapper" onclick="window.openZoom(event, '${trimmedUrl}')">
+                                ${isVideo ? 
+                                    `<video src="${trimmedUrl}" class="inline-arch-asset" autoplay loop muted playsinline></video>` : 
+                                    `<img src="${trimmedUrl}" class="inline-arch-asset">`}
+                                ${desc ? `<div class="media-footnote">${desc.trim()}</div>` : ''}
+                            </div>`;
+                       })
                        .replace(/\[\[([^|]+)\|([^\]]+)\]\]/g, '<a href="$2" target="_blank" class="arch-link">$1</a>')
                        .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*(?!\*)([^\*]+?)\*(?!\*)/g, '<i>$1</i>').replace(/__(.*?)__/g, '<u>$1</u>');
         };
@@ -499,7 +536,7 @@
                 else if(s.type === 'research') html += `<div class="manual-research-box"><div id="${hId}" class="font-bold uppercase text-[10px] dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('${hId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">${s.title}</div><div id="${cId}" class="manual-p dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
                 else if(s.type === 'info') html += `<div class="manual-info-box"><div id="${hId}" class="font-bold uppercase text-[10px] dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('${hId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">${s.title}</div><div id="${cId}" class="manual-p dm-editable leading-relaxed" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
                 else if(s.type === 'table') { const r = JSON.parse(s.tableRows || '[]'); html += `<div class="table-wrap">${isDM ? `<div class="flex gap-2 mb-4"><button onclick="window.addRow('${s.id}')" class="arch-btn arch-btn-add">+R</button><button onclick="window.remRow('${s.id}')" class="arch-btn arch-btn-del">-R</button><button onclick="window.addCol('${s.id}')" class="arch-btn arch-btn-add">+C</button><button onclick="window.remCol('${s.id}')" class="arch-btn arch-btn-del">-C</button></div>` : ''}<table class="manual-table"><thead><tr>${s.tableHeaders.map((h, i) => `<th contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}', 'headers', ${i}, this.innerText)">${h}</th>`).join('')}</tr></thead><tbody>${r.map((row, idxR) => `<tr>${row.map((c, idxC) => `<td contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}', 'rows', ${idxR}, this.innerText, ${idxC})">${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`; }
-                else if(s.type === 'media') { const url = s.mediaUrl || ""; html += `<div class="media-container" onclick="window.openZoom(event, '${url}')">${url ? (url.toLowerCase().endsWith('.mp4') ? `<video src="${url}" class="w-full h-auto rounded border" autoplay loop muted playsinline></video>` : `<img src="${url}" class="w-full h-auto rounded border shadow-sm">`) : `<div class="w-full h-32 bg-black/5 border-2 border-dashed border-black/10 rounded flex items-center justify-center text-[10px] uppercase font-bold opacity-30">No Asset Signal</div>`}</div><div id="md-${s.id}" class="text-[9px] mt-2 opacity-60 dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('md-${s.id}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'mediaDescription', this.innerText)">${s.mediaDescription}</div>${isDM ? `<div class="mt-2 mb-4"><input type="text" class="w-full text-[10px] p-2 bg-white/50 border rounded" value="${url}" placeholder="Asset URL..." oninput="window.dbUpdateSection('${s.id}', 'mediaUrl', this.value)"></div>` : ''}`; }
+                else if(s.type === 'media') { const url = s.mediaUrl || ""; html += `<div class="media-container" onclick="window.openZoom(event, '${url}')">${url ? (url.toLowerCase().endsWith('.mp4') ? `<video src="${url}" class="w-full h-auto rounded border" autoplay loop muted playsinline></video>` : `<img src="${url}" class="w-full h-auto rounded border shadow-sm">`) : `<div class="w-full h-32 bg-black/5 border-2 border-dashed border-black/10 rounded flex items-center justify-center text-[10px] uppercase font-bold opacity-30">No Asset Signal</div>`}</div><div id="md-${s.id}" class="media-footnote dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('md-${s.id}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'mediaDescription', this.innerText)">${s.mediaDescription}</div>${isDM ? `<div class="mt-2 mb-4"><input type="text" class="w-full text-[10px] p-2 bg-white/50 border rounded" value="${url}" placeholder="Asset URL..." oninput="window.dbUpdateSection('${s.id}', 'mediaUrl', this.value)"></div>` : ''}`; }
                 html += `</section>`; return html;
             }).join('');
         };
