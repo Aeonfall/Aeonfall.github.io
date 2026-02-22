@@ -25,91 +25,81 @@
 
         /* THE MASTER PARCHMENT */
         .parchment-container {
-            max-width: 1400px;
-            margin: 20px auto;
-            background: var(--arch-parchment);
+            max-width: 1400px; margin: 20px auto; background: var(--arch-parchment);
             background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
             box-shadow: 0 50px 100px rgba(0,0,0,0.8), inset 0 0 100px rgba(0,0,0,0.05);
-            border-radius: 4px;
-            position: relative;
-            display: flex;
-            min-height: 90vh;
-            border: 1px solid #dcd1b2;
-            box-sizing: border-box;
-            overflow: hidden;
+            border-radius: 4px; position: relative; display: flex; min-height: 90vh;
+            border: 1px solid #dcd1b2; box-sizing: border-box; overflow: hidden;
         }
 
         /* SIDEBAR NAV */
         .manual-nav {
-            width: 300px;
-            background: rgba(0,0,0,0.03);
-            border-right: 1px solid rgba(122, 29, 29, 0.1);
-            padding: 40px 20px;
-            flex-shrink: 0;
-            display: flex;
-            flex-direction: column;
+            width: 300px; background: rgba(0,0,0,0.03); border-right: 1px solid rgba(122, 29, 29, 0.1);
+            padding: 40px 20px; flex-shrink: 0; display: flex; flex-direction: column;
         }
         .nav-item {
-            font-family: 'Cinzel', serif;
-            font-size: 11px;
-            font-weight: 900;
-            text-transform: uppercase;
-            color: #000;
-            padding: 12px 15px;
-            margin-bottom: 5px;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: 0.2s;
-            letter-spacing: 1px;
-            line-height: 1.2;
-            border-left: 3px solid transparent;
+            font-family: 'Cinzel', serif; font-size: 11px; font-weight: 900; text-transform: uppercase;
+            color: #000; padding: 12px 15px; margin-bottom: 5px; cursor: pointer;
+            border-radius: 4px; transition: 0.2s; letter-spacing: 1px; line-height: 1.2; border-left: 3px solid transparent;
         }
         .nav-item:hover { background: rgba(122, 29, 29, 0.05); border-left-color: var(--arch-burgundy); }
         .nav-item.active { background: var(--arch-burgundy); color: white; box-shadow: 0 4px 10px rgba(122, 29, 29, 0.2); border-left-color: var(--arch-gold); }
 
         /* CONTENT AREA */
         .manual-body {
-            flex-grow: 1;
-            padding: 60px 40px 60px 80px;
-            max-height: 90vh;
-            overflow-y: auto;
-            overflow-x: hidden; 
-            scroll-behavior: smooth;
-            box-sizing: border-box;
+            flex-grow: 1; padding: 60px 40px 60px 80px; max-height: 90vh;
+            overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; box-sizing: border-box;
         }
 
-        /* FLUID TACTICAL GRID */
-        #manual-sections-container {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: flex-start;
-            width: 100%;
-            gap: 0; 
+        /* SUBJECT GROUPING */
+        #manual-sections-container { display: flex; flex-direction: column; width: 100%; gap: 0; }
+        
+        .subject-group { 
+            position: relative; 
+            width: 100%; 
+            margin-bottom: 3.5rem; 
+            border-left: 2px solid rgba(122, 29, 29, 0.15); 
+            padding-left: 2.5rem; 
+            transition: opacity 0.3s ease;
         }
+        
+        .group-dragging { opacity: 0.4; }
 
-        /* HEADINGS - BLACK */
+        .manual-section-unit { position: relative; display: inline-block; vertical-align: top; margin-bottom: 12px; width: 100%; }
+
+        /* HEADINGS */
         .manual-h1 { font-family: 'Homemade Apple', cursive; font-size: 3.5rem; color: #000; line-height: 1; margin-bottom: 30px; width: 100%; }
+        .manual-h2 { font-family: 'Cinzel', serif; font-weight: 900; font-size: 2rem; color: #000; border-bottom: 3px double var(--arch-burgundy); padding-bottom: 8px; text-transform: uppercase; margin-bottom: 25px; width: 100%; letter-spacing: 2px; }
         
-        /* Segment Heading (Starts Sidebar Tab) */
-        .manual-h2 { font-family: 'Cinzel', serif; font-weight: 900; font-size: 2rem; color: #000; border-bottom: 3px double var(--arch-burgundy); padding-bottom: 8px; text-transform: uppercase; margin-bottom: 20px; width: 100%; letter-spacing: 2px; }
+        /* Heading anchor style */
+        .subject-group > .manual-section-unit:first-child .manual-h2 {
+            margin-left: -2.5rem;
+            width: calc(100% + 2.5rem);
+            background: var(--arch-parchment);
+            z-index: 10;
+            position: relative;
+        }
         
-        /* Subheading (Internal only) */
-        .manual-h3 { font-family: 'Cinzel', serif; font-weight: 700; font-size: 1.3rem; color: #000; border-bottom: 1px solid rgba(0,0,0,0.2); padding-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; width: 100%; }
+        .subject-group > .manual-section-unit:first-child::before {
+            content: '';
+            position: absolute;
+            left: -2.6rem;
+            top: 1.5rem;
+            width: 10px;
+            height: 10px;
+            background: var(--arch-burgundy);
+            border-radius: 50%;
+            z-index: 20;
+        }
 
-        /* TABLE STYLING */
-        .manual-table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: inherit; table-layout: auto; color: #000; }
-        .manual-table th { font-family: 'Cinzel', serif; font-weight: 900; text-align: left; padding: 12px; border-bottom: 2px solid var(--arch-burgundy); color: #000; background: rgba(0,0,0,0.02); }
-        .manual-table td { padding: 12px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .manual-h3 { font-family: 'Cinzel', serif; font-weight: 700; font-size: 1.3rem; color: #000; border-bottom: 1px solid rgba(0,0,0,0.2); padding-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; width: 100%; }
 
         /* BOX STYLES */
         .manual-note-box { background: #d9e4b5; border: 1px solid #000; padding: 25px 30px; position: relative; box-shadow: 5px 5px 0px rgba(0,0,0,0.1); width: 100%; box-sizing: border-box; }
-        .manual-note-box::before { top: -1px; left: -1px; border-width: 15px 15px 0 0; border-color: #000 transparent transparent transparent; content: ""; position: absolute; }
-        .manual-note-box::after { bottom: -1px; right: -1px; border-width: 0 0 15px 15px; border-color: transparent transparent #000 transparent; content: ""; position: absolute; }
-
         .manual-research-box { border: 1px dashed var(--arch-burgundy); padding: 20px 25px; background: rgba(122, 29, 29, 0.02); position: relative; width: 100%; box-sizing: border-box; }
         .manual-info-box { border: 2px solid var(--arch-gold); border-radius: 8px; padding: 25px; background: #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.05); width: 100%; box-sizing: border-box; }
 
-        /* DIMENSIONAL TUNER */
+        /* TUNER */
         .tuner-panel { 
             background: #fff; border: 1px solid var(--arch-gold); padding: 12px 15px; border-radius: 4px; 
             margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 15px; align-items: center; 
@@ -124,16 +114,18 @@
         .drag-handle { cursor: grab; opacity: 0.4; transition: 0.2s; color: var(--arch-burgundy); font-size: 20px; }
         .drag-handle:hover { opacity: 1; color: var(--arch-gold); }
         .section-dragging { opacity: 0.1; transform: scale(0.96); border: 2px dashed var(--arch-gold) !important; }
-        
-        /* DROP INDICATORS */
-        .section-drag-over-before { border-top: 6px solid var(--arch-gold) !important; padding-top: 15px !important; }
-        .section-drag-over-after { border-bottom: 6px solid var(--arch-gold) !important; padding-bottom: 15px !important; }
-        .section-drag-over-center { background: rgba(187, 166, 131, 0.1); border-radius: 8px; outline: 1px solid var(--arch-gold); }
+        .subject-drag-over-before { border-top: 6px solid var(--arch-gold) !important; padding-top: 15px !important; }
+        .subject-drag-over-after { border-bottom: 6px solid var(--arch-gold) !important; padding-bottom: 15px !important; }
 
-        /* PARAGRAPH - BLACK */
+        /* PARAGRAPH */
         .manual-p { color: #000 !important; line-height: 1.8; font-size: 1.05rem; margin-bottom: 1rem; }
         .manual-p * { color: #000 !important; }
         b, strong { color: #000 !important; font-weight: 900; }
+
+        /* TABLE */
+        .manual-table { width: 100%; border-collapse: collapse; margin: 15px 0; color: #000; }
+        .manual-table th { font-family: 'Cinzel', serif; font-weight: 900; text-align: left; padding: 12px; border-bottom: 2px solid var(--arch-burgundy); background: rgba(0,0,0,0.02); }
+        .manual-table td { padding: 12px; border-bottom: 1px solid rgba(0,0,0,0.05); }
 
         .role-pill { background: rgba(0,0,0,0.05); border-radius: 99px; padding: 3px; display: inline-flex; gap: 4px; border: 1px solid rgba(0,0,0,0.1); margin-bottom: 20px; }
         .role-tab { padding: 6px 18px; font-family: 'Cinzel', serif; font-size: 9px; font-weight: 900; border-radius: 99px; transition: 0.3s; color: #000; text-transform: uppercase; cursor: pointer; }
@@ -141,14 +133,12 @@
 
         .arch-btn { font-size: 9px; font-weight: 900; text-transform: uppercase; padding: 6px 12px; border-radius: 20px; cursor: pointer; border: 1px solid rgba(0,0,0,0.1); transition: 0.2s; display: inline-flex; align-items: center; gap: 5px; }
         .arch-btn-add { background: var(--arch-burgundy); color: white; border-color: var(--arch-burgundy); }
-        .arch-btn-del { background: rgba(122,29,29,0.1); color: var(--arch-burgundy); font-size: 11px; }
+        .arch-btn-del { background: rgba(122,29,29,0.1); color: var(--arch-burgundy); }
+        .arch-btn-group { background: #000; color: #fff; border-color: #000; }
 
         .hidden { display: none !important; }
         .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #1a0f0a; color: white; padding: 12px 32px; border-radius: 4px; z-index: 10000; opacity: 0; transition: 0.3s; font-family: 'Cinzel'; font-size: 11px; pointer-events: none; border: 1px solid var(--arch-gold); }
         
-        .table-wrap { overflow-x: auto; width: 100%; border-radius: 4px; }
-
-        /* TOOLTIPS */
         .term-hover { position: relative; border-bottom: 1px dotted var(--arch-burgundy); color: var(--arch-burgundy); font-weight: 700; cursor: help; }
         .tooltip-content {
             visibility: hidden; width: 220px; background-color: #1a0f0a; color: var(--arch-parchment);
@@ -164,10 +154,6 @@
 
     <div id="toast" class="toast">Manual Synchronized</div>
 
-    <div id="lightbox-modal" class="lightbox hidden" onclick="this.classList.add('hidden')">
-        <div id="lightbox-content"></div>
-    </div>
-
     <div class="parchment-container">
         <div class="manual-nav">
             <div class="mb-8 text-center">
@@ -180,7 +166,6 @@
                 <div id="role-dm" onclick="window.setRole('dm')" class="role-tab">DM</div>
             </div>
             
-            <!-- SEGMENT HEADINGS LIST -->
             <div id="nav-list" class="flex-grow"></div>
 
             <div class="mt-20 pt-10 border-t border-black/5">
@@ -194,7 +179,7 @@
 
             <!-- DM CONTROLS -->
             <div id="dm-global-controls" class="hidden mt-16 pt-8 border-t border-black/10 flex flex-wrap gap-4">
-                <button onclick="window.addManualSection('heading')" class="arch-btn arch-btn-add">🚩 + Heading (Starts Segment)</button>
+                <button onclick="window.addManualSection('heading')" class="arch-btn arch-btn-group">🔗 + Subject Group</button>
                 <button onclick="window.addManualSection('subheading')" class="arch-btn arch-btn-add">📑 + Subheading</button>
                 <button onclick="window.addManualSection('text')" class="arch-btn arch-btn-add">+ Text Block</button>
                 <button onclick="window.addManualSection('table')" class="arch-btn arch-btn-add">+ Data Table</button>
@@ -241,8 +226,8 @@
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'aeonfall-manager-v2';
 
         let manualSections = [];
-        let manualHeader = { title: "Operations Guide", subtitle: "Verification of synchronization with reality-engine protocols." };
-        let activeRole = 'player', activeEditId = null, userAuth = null, saveTimer = null, deleteCallback = null, draggedId = null, dropSide = null;
+        let manualHeader = { title: "Operations Guide", subtitle: "Protocols for synchronization with reality-engine history." };
+        let activeRole = 'player', activeEditId = null, userAuth = null, saveTimer = null, deleteCallback = null, draggedGroupId = null, dropSide = null;
 
         // --- GLOBAL HOISTING ---
         window.showToast = function(m) { const t = document.getElementById('toast'); if(t) { t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 2000); } };
@@ -250,53 +235,59 @@
         window.setEditing = function(id) { activeEditId = id; };
         window.clearEditing = function() { activeEditId = null; };
         window.setRole = function(r) { if(r === 'dm') document.getElementById('pass-modal')?.classList.remove('hidden'); else { activeRole = 'player'; localStorage.setItem('aeonfall_role', 'player'); window.updateRoleUI(); } };
-        window.authDm = function() { if(document.getElementById('dm-pass').value === 'Rew4994') { activeRole='dm'; localStorage.setItem('aeonfall_role', 'dm'); document.getElementById('pass-modal')?.classList.add('hidden'); document.getElementById('dm-pass').value=''; window.updateRoleUI(); } else { window.showToast("Access Denied"); } };
+        window.authDm = function() { if(document.getElementById('dm-pass').value === 'Rew4994') { activeRole='dm'; localStorage.setItem('aeonfall_role', 'dm'); document.getElementById('pass-modal')?.classList.add('hidden'); document.getElementById('dm-pass').value=''; window.updateRoleUI(); } else { window.showToast("Access Refused"); } };
         window.updateRoleUI = function() { const isDM = activeRole === 'dm'; document.getElementById('role-player')?.classList.toggle('active', !isDM); document.getElementById('role-dm')?.classList.toggle('active', isDM); document.getElementById('dm-global-controls')?.classList.toggle('hidden', !isDM); document.body.classList.toggle('dm-active-edit', isDM); window.renderManual(); };
         window.openZoom = function(e, url) { e.stopPropagation(); if(!url) return; const modal = document.getElementById('lightbox-modal'); const content = document.getElementById('lightbox-content'); content.innerHTML = url.toLowerCase().endsWith('.mp4') ? `<video src="${url}" class="lightbox-asset" autoplay loop muted playsinline></video>` : `<img src="${url}" class="lightbox-asset">`; modal.classList.remove('hidden'); };
         
-        // --- DRAG AND DROP ---
-        window.handleDragStart = function(e, id) { if (activeRole !== 'dm') return; draggedId = id; e.currentTarget.classList.add('section-dragging'); };
+        // --- DRAG AND DROP (ANCHORED GROUP LOGIC) ---
+        window.handleDragStart = function(e, groupId) { if (activeRole !== 'dm') return; draggedGroupId = groupId; e.currentTarget.classList.add('group-dragging'); };
+
         window.handleDragOver = function(e) { 
-            if (!draggedId) return; e.preventDefault(); 
-            const rect = e.currentTarget.getBoundingClientRect(); const relY = e.clientY - rect.top; const threshold = rect.height * 0.3;
-            e.currentTarget.classList.remove('section-drag-over-before', 'section-drag-over-after', 'section-drag-over-center');
-            if (relY < threshold) { dropSide = 'before'; e.currentTarget.classList.add('section-drag-over-before'); } 
-            else if (relY > rect.height - threshold) { dropSide = 'after'; e.currentTarget.classList.add('section-drag-over-after'); } 
-            else { dropSide = 'center'; e.currentTarget.classList.add('section-drag-over-center'); }
+            if (!draggedGroupId) return; e.preventDefault(); 
+            const rect = e.currentTarget.getBoundingClientRect(); const relY = e.clientY - rect.top; 
+            e.currentTarget.classList.remove('subject-drag-over-before', 'subject-drag-over-after');
+            if (relY < rect.height / 2) { dropSide = 'before'; e.currentTarget.classList.add('subject-drag-over-before'); } 
+            else { dropSide = 'after'; e.currentTarget.classList.add('subject-drag-over-after'); }
         };
-        window.handleDragLeave = function(e) { e.currentTarget.classList.remove('section-drag-over-before', 'section-drag-over-after', 'section-drag-over-center'); };
-        window.handleDrop = async function(e, targetId) { 
-            e.preventDefault(); e.currentTarget.classList.remove('section-drag-over-before', 'section-drag-over-after', 'section-drag-over-center'); 
-            if (!draggedId || draggedId === targetId) return; 
-            const sourceIdx = manualSections.findIndex(s => s.id === draggedId);
-            const targetIdxOriginal = manualSections.findIndex(s => s.id === targetId);
-            const targetBlock = manualSections[targetIdxOriginal];
-            const newSections = [...manualSections];
-            const [moved] = newSections.splice(sourceIdx, 1); 
-            let insertIdx = newSections.findIndex(s => s.id === targetId);
-            const batch = writeBatch(db);
 
-            if (dropSide === 'center') {
-                batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', moved.id), { width: 48 });
-                batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', targetBlock.id), { width: 48 });
-            } else if (dropSide === 'after') {
-                insertIdx += 1;
+        window.handleDragLeave = function(e) { e.currentTarget.classList.remove('subject-drag-over-before', 'subject-drag-over-after'); };
+
+        window.handleDrop = async function(e, targetGroupId) { 
+            e.preventDefault(); e.currentTarget.classList.remove('subject-drag-over-before', 'subject-drag-over-after'); 
+            if (!draggedGroupId || draggedGroupId === targetGroupId) return; 
+
+            const allItems = [...manualSections];
+            const getGroupIndices = (headId) => {
+                const startIdx = allItems.findIndex(s => s.id === headId);
+                let endIdx = allItems.findIndex((s, i) => i > startIdx && s.type === 'heading');
+                if (endIdx === -1) endIdx = allItems.length;
+                return { startIdx, endIdx };
+            };
+
+            const source = getGroupIndices(draggedGroupId);
+            const target = getGroupIndices(targetGroupId);
+
+            const movingChunk = allItems.splice(source.startIdx, source.endIdx - source.startIdx);
+            let insertIdx = allItems.findIndex(s => s.id === targetGroupId);
+            if (dropSide === 'after') {
+                let nextHeadIdx = allItems.findIndex((s, i) => i > insertIdx && s.type === 'heading');
+                insertIdx = nextHeadIdx === -1 ? allItems.length : nextHeadIdx;
             }
+            allItems.splice(insertIdx, 0, ...movingChunk);
 
-            newSections.splice(insertIdx, 0, moved); 
-            newSections.forEach((sec, i) => { batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', sec.id), { order: i }); }); 
-            await batch.commit(); draggedId = null; 
-            window.showToast("Manual Structure Updated");
+            const batch = writeBatch(db);
+            allItems.forEach((sec, i) => { batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', sec.id), { order: i }); }); 
+            await batch.commit(); draggedGroupId = null; window.showToast("Manual Structure Shifted");
         };
 
-        window.dbUpdateSection = (id, field, val) => { if(saveTimer) clearTimeout(saveTimer); saveTimer = setTimeout(async () => { try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { [field]: val }); window.showToast("Record Synchronized"); } catch(e) {} }, 800); };
-        window.dbUpdateHeader = (field, val) => { if(saveTimer) clearTimeout(saveTimer); saveTimer = setTimeout(async () => { try { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'header'), { [field]: val }, { merge: true }); window.showToast("Global Signature Updated"); } catch(e) {} }, 800); };
+        window.dbUpdateSection = (id, field, val) => { if(saveTimer) clearTimeout(saveTimer); saveTimer = setTimeout(async () => { try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { [field]: val }); window.showToast("Data Synchronized"); } catch(e) {} }, 800); };
+        window.dbUpdateHeader = (field, val) => { if(saveTimer) clearTimeout(saveTimer); saveTimer = setTimeout(async () => { try { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'header'), { [field]: val }, { merge: true }); window.showToast("Signature Sync"); } catch(e) {} }, 800); };
 
         window.addManualSection = async (type) => {
             if(!userAuth) return;
-            const data = { title: type==='heading'?"SEGMENT NAME": (type==='subheading'?"SUB-TOPIC":type==='research'?"RESEARCH":type==='info'?"INFO":"NEW BLOCK"), content: type==='table'||type==='media'||type==='heading'||type==='subheading'?"":"Record details here...", type, order: manualSections.length, createdAt: Date.now(), width: 100, fontSize: 14, ySpacing: 0 };
-            if(type==='table'){data.tableHeaders=["A","B"]; data.tableRows=JSON.stringify([["Val","Val"]]);}
-            if(type==='media'){data.mediaUrl=""; data.mediaDescription="Asset Footnote..."; data.width=50;}
+            const data = { title: type==='heading'?"NEW SUBJECT GROUP": (type==='subheading'?"SUB-TOPIC":type==='research'?"RESEARCH":type==='info'?"INFO":"NEW BLOCK"), content: type==='table'||type==='media'||type==='heading'||type==='subheading'?"":"Record details here...", type, order: manualSections.length, createdAt: Date.now(), width: 100, fontSize: 14, ySpacing: 0 };
+            if(type==='table'){data.tableHeaders=["Chronicle","Value"]; data.tableRows=JSON.stringify([["Val","Val"]]);}
+            if(type==='media'){data.mediaUrl=""; data.mediaDescription="Asset Insight..."; data.width=50;}
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'manualSections'), data);
         };
 
@@ -318,7 +309,7 @@
 
         window.parseAeonfallContent = (text, isDM) => {
             if (!text) return ''; if (isDM && activeEditId !== null) return text;
-            return text.replace(/&&([^&]+)&&/g, (m, c) => { const p = c.split('|'); return `<span class="term-hover def-term">${p[0].trim()}<span class="tooltip-content">${p[1] || 'No technical record.'}</span></span>`; })
+            return text.replace(/&&([^&]+)&&/g, (m, c) => { const p = c.split('|'); return `<span class="term-hover def-term">${p[0].trim()}<span class="tooltip-content">${p[1] || 'No protocol record.'}</span></span>`; })
                        .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*(?!\*)([^\*]+?)\*(?!\*)/g, '<i>$1</i>').replace(/__(.*?)__/g, '<u>$1</u>');
         };
 
@@ -326,34 +317,48 @@
             const isDM = activeRole === 'dm'; const navList = document.getElementById('nav-list'); const container = document.getElementById('manual-sections-container'); const header = document.getElementById('manual-header');
             if (header) { header.innerHTML = `<h1 id="manual-main-title" class="manual-h1 dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('manual-main-title')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateHeader('title', this.innerText)">${manualHeader.title}</h1><p id="manual-main-subtitle" class="font-serif italic text-sm text-black mb-10 dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('manual-main-subtitle')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateHeader('subtitle', this.innerText)">${manualHeader.subtitle}</p>`; }
             
-            // SIDEBAR: Only items of type 'heading' appear here
             if (navList) navList.innerHTML = manualSections.filter(s => s.type === 'heading').map(s => `<div class="nav-item" onclick="window.scrollToSection('${s.id}')">${s.title}</div>`).join('');
             
             if (container) {
-                container.innerHTML = manualSections.map(s => {
-                    const hId = `head-${s.id}`, cId = `content-${s.id}`;
-                    const customStyle = `width: calc(${s.width ?? 100}% - 10px); font-size: ${s.fontSize ?? 14}px; margin-top: ${s.ySpacing ?? 0}px; flex-shrink: 0; box-sizing: border-box; padding: 10px; transition: width 0.3s;`;
-                    let html = `<section id="section-${s.id}" class="group relative transition-all" draggable="${isDM}" ondragstart="window.handleDragStart(event, '${s.id}')" ondragover="window.handleDragOver(event)" ondragleave="window.handleDragLeave(event)" ondrop="window.handleDrop(event, '${s.id}')" style="${customStyle}">
-                        ${isDM ? `<div class="tuner-panel"><div class="drag-handle text-lg">⠿</div><div class="tuner-group"><span class="tuner-label">Width</span><input type="range" class="tuner-slider" min="10" max="100" value="${s.width ?? 100}" oninput="window.dbUpdateSection('${s.id}', 'width', parseInt(this.value))"></div><div class="tuner-group"><span class="tuner-label">V-Space</span><input type="range" class="tuner-slider" min="0" max="150" value="${s.ySpacing ?? 0}" oninput="window.dbUpdateSection('${s.id}', 'ySpacing', parseInt(this.value))"></div><button onclick="window.triggerDelete('${s.id}')" class="arch-btn arch-btn-del ml-auto">✕</button></div>` : ''}
-                        <div class="flex justify-between items-end gap-4 mb-2">
-                            ${s.type === 'heading' ? `<h2 id="${hId}" class="manual-h2 dm-editable flex-grow !m-0" contenteditable="${isDM}" onfocus="window.setEditing('${hId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">${activeEditId === hId ? s.title : window.parseAeonfallContent(s.title, false)}</h2>` : ''}
-                            ${s.type === 'subheading' ? `<h3 id="${hId}" class="manual-h3 dm-editable flex-grow !m-0" contenteditable="${isDM}" onfocus="window.setEditing('${hId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">${activeEditId === hId ? s.title : window.parseAeonfallContent(s.title, false)}</h3>` : ''}
-                        </div>`;
-                    if(s.type === 'text') html += `<div id="${cId}" class="manual-p dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div>`;
-                    else if(s.type === 'note') html += `<div class="manual-note-box"><div id="${hId}" class="font-bold uppercase text-[10px] dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('${hId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">📑 ${s.title}</div><div id="${cId}" class="manual-p dm-editable italic" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
-                    else if(s.type === 'research') html += `<div class="manual-research-box"><div id="${hId}" class="font-bold uppercase text-[10px] dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('${hId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">${s.title}</div><div id="${cId}" class="manual-p dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
-                    else if(s.type === 'info') html += `<div class="manual-info-box"><div id="${hId}" class="font-bold uppercase text-[10px] dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('${hId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">${s.title}</div><div id="${cId}" class="manual-p dm-editable leading-relaxed" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
-                    else if(s.type === 'table') { const r = JSON.parse(s.tableRows || '[]'); html += `<div class="table-wrap">${isDM ? `<div class="flex gap-2 mb-4"><button onclick="window.addRow('${s.id}')" class="arch-btn arch-btn-add">+R</button><button onclick="window.remRow('${s.id}')" class="arch-btn arch-btn-del">-R</button><button onclick="window.addCol('${s.id}')" class="arch-btn arch-btn-add">+C</button><button onclick="window.remCol('${s.id}')" class="arch-btn arch-btn-del">-C</button></div>` : ''}<table class="manual-table"><thead><tr>${s.tableHeaders.map((h, i) => `<th contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}', 'headers', ${i}, this.innerText)">${h}</th>`).join('')}</tr></thead><tbody>${r.map((row, idxR) => `<tr>${row.map((c, idxC) => `<td contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}', 'rows', ${idxR}, this.innerText, ${idxC})">${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`; }
-                    else if(s.type === 'media') { const url = s.mediaUrl || ""; html += `<div class="media-container" onclick="window.openZoom(event, '${url}')">${url ? (url.toLowerCase().endsWith('.mp4') ? `<video src="${url}" class="w-full h-auto rounded border" autoplay loop muted playsinline></video>` : `<img src="${url}" class="w-full h-auto rounded border shadow-sm">`) : `<div class="w-full h-32 bg-black/5 border-2 border-dashed border-black/10 rounded flex items-center justify-center text-[10px] uppercase font-bold opacity-30">No Asset Signal</div>`}</div><div id="md-${s.id}" class="text-[9px] mt-2 opacity-60 dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('md-${s.id}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'mediaDescription', this.innerText)">${s.mediaDescription}</div>${isDM ? `<div class="mt-2 mb-4"><input type="text" class="w-full text-[10px] p-2 bg-white/50 border rounded" value="${url}" placeholder="Asset URL..." oninput="window.dbUpdateSection('${s.id}', 'mediaUrl', this.value)"></div>` : ''}`; }
-                    html += `</section>`; return html;
-                }).join('');
+                let groupsHtml = ''; let currentGroup = [];
+                manualSections.forEach((s) => {
+                    if (s.type === 'heading' && currentGroup.length > 0) {
+                        groupsHtml += `<div class="subject-group" draggable="${isDM}" ondragstart="window.handleDragStart(event, '${currentGroup[0].id}')" ondragover="window.handleDragOver(event)" ondragleave="window.handleDragLeave(event)" ondrop="window.handleDrop(event, '${currentGroup[0].id}')">${renderGroupContent(currentGroup, isDM)}</div>`;
+                        currentGroup = [];
+                    }
+                    currentGroup.push(s);
+                });
+                if (currentGroup.length > 0) {
+                    groupsHtml += `<div class="subject-group" draggable="${isDM}" ondragstart="window.handleDragStart(event, '${currentGroup[0].id}')" ondragover="window.handleDragOver(event)" ondragleave="window.handleDragLeave(event)" ondrop="window.handleDrop(event, '${currentGroup[0].id}')">${renderGroupContent(currentGroup, isDM)}</div>`;
+                }
+                container.innerHTML = groupsHtml;
             }
+        };
+
+        const renderGroupContent = (sections, isDM) => {
+            return sections.map(s => {
+                const hId = `head-${s.id}`, cId = `content-${s.id}`;
+                const customStyle = `width: calc(${s.width ?? 100}% - 10px); font-size: ${s.fontSize ?? 14}px; margin-top: ${s.ySpacing ?? 0}px; transition: width 0.3s;`;
+                let html = `<section id="section-${s.id}" class="manual-section-unit group relative transition-all" style="${customStyle}">
+                    ${isDM ? `<div class="tuner-panel"><div class="drag-handle text-lg">⠿</div><div class="tuner-group"><span class="tuner-label">Width</span><input type="range" class="tuner-slider" min="10" max="100" value="${s.width ?? 100}" oninput="window.dbUpdateSection('${s.id}', 'width', parseInt(this.value))"></div><div class="tuner-group"><span class="tuner-label">V-Space</span><input type="range" class="tuner-slider" min="0" max="150" value="${s.ySpacing ?? 0}" oninput="window.dbUpdateSection('${s.id}', 'ySpacing', parseInt(this.value))"></div><button onclick="window.triggerDelete('${s.id}')" class="arch-btn arch-btn-del ml-auto">✕</button></div>` : ''}
+                    <div class="flex justify-between items-end gap-4 mb-2">
+                        ${s.type === 'heading' ? `<h2 id="${hId}" class="manual-h2 dm-editable flex-grow !m-0" contenteditable="${isDM}" onfocus="window.setEditing('${hId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">${activeEditId === hId ? s.title : window.parseAeonfallContent(s.title, false)}</h2>` : ''}
+                        ${s.type === 'subheading' ? `<h3 id="${hId}" class="manual-h3 dm-editable flex-grow !m-0" contenteditable="${isDM}" onfocus="window.setEditing('${hId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">${activeEditId === hId ? s.title : window.parseAeonfallContent(s.title, false)}</h3>` : ''}
+                    </div>`;
+                if(s.type === 'text') html += `<div id="${cId}" class="manual-p dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div>`;
+                else if(s.type === 'note') html += `<div class="manual-note-box"><div id="${hId}" class="font-bold uppercase text-[10px] dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('${hId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">📑 ${s.title}</div><div id="${cId}" class="manual-p dm-editable italic" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
+                else if(s.type === 'research') html += `<div class="manual-research-box"><div id="${hId}" class="font-bold uppercase text-[10px] dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('${hId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">${s.title}</div><div id="${cId}" class="manual-p dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
+                else if(s.type === 'info') html += `<div class="manual-info-box"><div id="${hId}" class="font-bold uppercase text-[10px] dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('${hId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">${s.title}</div><div id="${cId}" class="manual-p dm-editable leading-relaxed" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
+                else if(s.type === 'table') { const r = JSON.parse(s.tableRows || '[]'); html += `<div class="table-wrap">${isDM ? `<div class="flex gap-2 mb-4"><button onclick="window.addRow('${s.id}')" class="arch-btn arch-btn-add">+R</button><button onclick="window.remRow('${s.id}')" class="arch-btn arch-btn-del">-R</button><button onclick="window.addCol('${s.id}')" class="arch-btn arch-btn-add">+C</button><button onclick="window.remCol('${s.id}')" class="arch-btn arch-btn-del">-C</button></div>` : ''}<table class="manual-table"><thead><tr>${s.tableHeaders.map((h, i) => `<th contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}', 'headers', ${i}, this.innerText)">${h}</th>`).join('')}</tr></thead><tbody>${r.map((row, idxR) => `<tr>${row.map((c, idxC) => `<td contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}', 'rows', ${idxR}, this.innerText, ${idxC})">${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`; }
+                else if(s.type === 'media') { const url = s.mediaUrl || ""; html += `<div class="media-container" onclick="window.openZoom(event, '${url}')">${url ? (url.toLowerCase().endsWith('.mp4') ? `<video src="${url}" class="w-full h-auto rounded border" autoplay loop muted playsinline></video>` : `<img src="${url}" class="w-full h-auto rounded border shadow-sm">`) : `<div class="w-full h-32 bg-black/5 border-2 border-dashed border-black/10 rounded flex items-center justify-center text-[10px] uppercase font-bold opacity-30">No Asset Signal</div>`}</div><div id="md-${s.id}" class="text-[9px] mt-2 opacity-60 dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('md-${s.id}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'mediaDescription', this.innerText)">${s.mediaDescription}</div>${isDM ? `<div class="mt-2 mb-4"><input type="text" class="w-full text-[10px] p-2 bg-white/50 border rounded" value="${url}" placeholder="Asset URL..." oninput="window.dbUpdateSection('${s.id}', 'mediaUrl', this.value)"></div>` : ''}`; }
+                html += `</section>`; return html;
+            }).join('');
         };
 
         const start = async () => { try { if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token); else await signInAnonymously(auth); } catch(e) { await signInAnonymously(auth); } };
         onAuthStateChanged(auth, (u) => { userAuth = u; if (u) {
-            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'header'), (d) => { if (d.exists()) { manualHeader = d.data(); window.renderManual(); } });
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'manualSections'), (snap) => { manualSections = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (a.order ?? 0) - (b.order ?? 0)); window.renderManual(); });
+            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'header'), (d) => { if (d.exists()) { manualHeader = d.data(); window.renderManual(); } }, (err) => console.error(err));
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'manualSections'), (snap) => { manualSections = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (a.order ?? 0) - (b.order ?? 0)); window.renderManual(); }, (err) => console.error(err));
             window.updateRoleUI();
         }});
         document.getElementById('confirm-del-btn').onclick = async () => { if (deleteCallback) await deleteCallback(); document.getElementById('del-modal')?.classList.add('hidden'); deleteCallback = null; };
