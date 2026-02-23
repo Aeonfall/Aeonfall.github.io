@@ -37,19 +37,20 @@
         
         .user-pill { background: #0f172a; border: 1px solid #1e293b; border-radius: 99px; padding: 4px 12px; display: flex; align-items: center; gap: 8px; }
         
-        .nav-link { font-family: 'Cinzel', serif; color: #94a3b8; font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; transition: all 0.2s; cursor: pointer; text-decoration: none; position: relative; white-space: nowrap; }
+        .nav-link { font-family: 'Cinzel', serif; color: #94a3b8; font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; transition: all 0.2s; cursor: pointer; text-decoration: none; position: relative; white-space: nowrap; padding: 4px 0; }
         .nav-link.active { color: #d97706; }
-        .nav-link.active::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 100%; height: 2px; background: #d97706; }
+        .nav-link.active::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px; background: #d97706; }
         .nav-link:hover { color: #d97706; }
 
-        .role-selector { background: #0f172a; border-radius: 12px; padding: 4px; display: flex; gap: 4px; border: 1px solid #1e293b; width: fit-content; }
-        .role-btn { padding: 6px 16px; font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; border-radius: 8px; transition: all 0.3s; color: #475569; text-transform: uppercase; cursor: pointer; }
+        .role-selector { background: #0f172a; border-radius: 12px; padding: 4px; display: flex; gap: 4px; border: 1px solid #1e293b; width: fit-content; position: relative; z-index: 10; }
+        .role-btn { padding: 8px 16px; font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; border-radius: 8px; transition: all 0.3s; color: #475569; text-transform: uppercase; cursor: pointer; }
         .role-btn.active { background: #d97706; color: white; box-shadow: 0 4px 12px rgba(217, 119, 6, 0.4); }
 
         /* Scrollable Navs for Mobile */
         .horizontal-scroll {
-            display: flex; overflow-x: auto; gap: 20px; padding-bottom: 4px;
+            display: flex; overflow-x: auto; gap: 24px; padding-bottom: 8px;
             scrollbar-width: none; -ms-overflow-style: none;
+            -webkit-overflow-scrolling: touch;
         }
         .horizontal-scroll::-webkit-scrollbar { display: none; }
 
@@ -166,7 +167,7 @@
         <div class="max-w-7xl mx-auto">
             
             <!-- HEADER -->
-            <header class="flex flex-col lg:flex-row justify-between items-start mb-8 md:mb-12 gap-6 md:gap-8">
+            <header class="flex flex-col lg:flex-row justify-between items-start mb-8 md:mb-12 gap-6 md:gap-8 relative z-[20]">
                 <div class="space-y-3 w-full lg:w-auto">
                     <h1 class="text-4xl md:text-6xl header-logo uppercase text-[#d97706]">AEONFALL</h1>
                     <div class="flex flex-wrap items-center gap-3 mt-1">
@@ -180,7 +181,7 @@
                     </div>
                 </div>
 
-                <div class="flex flex-col items-start lg:items-end gap-5 w-full lg:w-auto overflow-hidden">
+                <div class="flex flex-col items-start lg:items-end gap-5 w-full lg:w-auto">
                     <div class="role-selector">
                         <button id="role-player-btn" onclick="window.setRole('player')" class="role-btn active">Player</button>
                         <button id="role-dm-btn" onclick="window.setRole('dm')" class="role-btn">DM</button>
@@ -353,9 +354,7 @@
         </div>
     </div>
 
-    <!-- Transfer/Currency distribution modals are likewise responsive by using max-width-xl and p-6 -->
-
-    <!-- Transfer Modal Placeholder -->
+    <!-- Transfer Modal -->
     <div id="transfer-modal" class="fixed inset-0 z-[400] flex items-center justify-center p-4 hidden">
         <div class="modal-overlay absolute inset-0" onclick="document.getElementById('transfer-modal').classList.add('hidden')"></div>
         <div class="bg-white text-gray-900 p-6 md:p-8 rounded-3xl w-full max-w-xs relative z-10 shadow-2xl border-4 border-[#d97706] text-center">
@@ -366,7 +365,7 @@
         </div>
     </div>
 
-    <!-- Currency Distribution Placeholder -->
+    <!-- Currency Distribution Modal -->
     <div id="distribute-modal" class="fixed inset-0 z-[450] flex items-center justify-center p-4 hidden">
         <div class="modal-overlay absolute inset-0" onclick="document.getElementById('distribute-modal').classList.add('hidden')"></div>
         <div class="bg-white text-gray-900 p-6 md:p-8 rounded-3xl w-full max-w-lg relative z-10 shadow-2xl border-4 border-[#d97706]">
@@ -392,6 +391,7 @@
             <h3 class="text-lg md:text-xl font-serif text-[#d97706] font-bold mb-4 uppercase">Authorize</h3>
             <input type="password" id="dm-password" class="w-full bg-gray-900 text-center text-xl rounded-lg p-3 mb-6 border border-gray-700 outline-none">
             <button onclick="window.verifyDmPassword()" class="w-full bg-[#d97706] text-white py-3 rounded-xl font-bold uppercase text-[10px]">Enter</button>
+            <button onclick="document.getElementById('password-modal').classList.add('hidden')" class="w-full text-gray-500 mt-4 text-[9px] uppercase font-bold">Back</button>
         </div>
     </div>
 
@@ -420,22 +420,48 @@
         window.authSystem = {
             login: async () => {
                 const u = document.getElementById('auth-username').value.trim().toLowerCase();
-                if (!u) return;
-                const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'players'), where('username', '==', u));
-                const snap = await getDocs(q);
-                if (snap.empty) { document.getElementById('auth-error').textContent = "User not found"; return; }
-                currentUser = { username: u, id: snap.docs[0].id };
-                localStorage.setItem('aeonfall_user', JSON.stringify(currentUser));
-                completeLoginUI();
+                const p = document.getElementById('auth-password').value;
+                if (!u || !p) return;
+                try {
+                    const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'players'), where('username', '==', u));
+                    const snap = await getDocs(q);
+                    if (snap.empty) { document.getElementById('auth-error').textContent = "User not found"; return; }
+                    const userData = snap.docs[0].data();
+                    const inputHash = await window.hashPassword(p);
+                    if (userData.passwordHash === inputHash) {
+                        currentUser = { username: u, id: snap.docs[0].id };
+                        localStorage.setItem('aeonfall_user', JSON.stringify(currentUser));
+                        document.getElementById('auth-modal').classList.add('hidden');
+                        document.getElementById('app-screen').classList.remove('hidden-view');
+                        document.getElementById('user-display-name').textContent = currentUser.username;
+                        initBackpack();
+                        window.updateRoleUI();
+                    }
+                } catch (e) { console.error(e); }
             },
             register: async () => {
                 const u = document.getElementById('auth-username').value.trim().toLowerCase();
-                if (!u) return;
-                const newDoc = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'players'), { username: u, createdAt: Date.now() });
-                currentUser = { username: u, id: newDoc.id };
-                localStorage.setItem('aeonfall_user', JSON.stringify(currentUser));
-                completeLoginUI();
+                const p = document.getElementById('auth-password').value;
+                if (!u || !p) return;
+                try {
+                    const passHash = await window.hashPassword(p);
+                    const newDoc = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'players'), { username: u, passwordHash: passHash, createdAt: Date.now() });
+                    currentUser = { username: u, id: newDoc.id };
+                    localStorage.setItem('aeonfall_user', JSON.stringify(currentUser));
+                    document.getElementById('auth-modal').classList.add('hidden');
+                    document.getElementById('app-screen').classList.remove('hidden-view');
+                    document.getElementById('user-display-name').textContent = currentUser.username;
+                    initBackpack();
+                    window.updateRoleUI();
+                } catch (e) { console.error(e); }
             }
+        };
+
+        const checkSession = () => {
+            const savedUser = localStorage.getItem('aeonfall_user');
+            const role = localStorage.getItem('aeonfall_role');
+            if (savedUser) { currentUser = JSON.parse(savedUser); activeRole = role || 'player'; completeLoginUI(); return true; }
+            document.getElementById('auth-modal').classList.remove('hidden'); return false;
         };
 
         function completeLoginUI() {
@@ -445,13 +471,6 @@
             initBackpack();
             window.updateRoleUI();
         }
-
-        const checkSession = () => {
-            const savedUser = localStorage.getItem('aeonfall_user');
-            const role = localStorage.getItem('aeonfall_role');
-            if (savedUser) { currentUser = JSON.parse(savedUser); activeRole = role || 'player'; completeLoginUI(); return true; }
-            document.getElementById('auth-modal').classList.remove('hidden'); return false;
-        };
 
         window.logout = () => { localStorage.removeItem('aeonfall_user'); localStorage.removeItem('aeonfall_role'); window.location.reload(); };
         window.setRole = (r) => { if (r === 'dm') document.getElementById('password-modal').classList.remove('hidden'); else { activeRole = 'player'; localStorage.setItem('aeonfall_role', 'player'); window.updateRoleUI(); } };
@@ -497,7 +516,6 @@
         window.ontouchmove = (e) => { if (!isPanning) return; const t = e.touches[0]; mapPosX = t.clientX - startX; mapPosY = t.clientY - startY; updateMapTransform(); };
         window.onmouseup = window.ontouchend = () => isPanning = false;
 
-        window.triggerMapSelect = () => { if (activeRole === 'dm') document.getElementById('dm-map-input-file').click(); };
         window.handleMapUpload = (e) => {
             const file = e.target.files[0]; if (!file) return;
             const reader = new FileReader();
@@ -653,6 +671,12 @@
                 allCharacters = s.docs.map(d => ({id: d.id, ...d.data()}));
                 window.renderBackpack();
             });
+        };
+
+        window.hashPassword = async (str) => {
+            const msgBuffer = new TextEncoder().encode(str);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
         };
 
         signInAnonymously(auth).then(() => { onAuthStateChanged(auth, (u) => { if (u) { user = u; checkSession(); } }); });
