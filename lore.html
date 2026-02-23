@@ -65,7 +65,8 @@
         .shelf-item.active { background: var(--arch-burgundy); color: white; border-left-color: var(--arch-gold); box-shadow: 4px 4px 15px rgba(122, 29, 29, 0.3); }
 
         .manual-body { flex-grow: 1; padding: 60px 40px 100px 80px; height: 100vh; overflow-y: auto; scroll-behavior: smooth; position: relative; }
-
+        
+        /* Flex Container for Side-by-Side Tiling */
         #manual-sections-container { display: flex; flex-direction: row; flex-wrap: wrap; align-items: flex-start; width: 100%; gap: 15px; }
 
         /* Drag Feedbacks */
@@ -92,7 +93,6 @@
         .tuner-panel { font-size: 8px; gap: 12px; padding: 10px 15px; flex-wrap: wrap; display: flex; align-items: center; background: white; border: 1px solid var(--arch-gold); border-radius: 30px; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         .tuner-label { font-weight: 900; color: var(--arch-burgundy); text-transform: uppercase; font-size: 7px; letter-spacing: 1px; margin-bottom: 2px; }
         .tuner-slider { accent-color: var(--arch-burgundy); width: 60px; height: 12px; }
-        
         .align-btn { width: 22px; height: 22px; border: 1px solid #ddd; background: #f9f9f9; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #555; transition: 0.2s; cursor: pointer; }
         .align-btn.active { background: var(--arch-burgundy); color: white; border-color: var(--arch-burgundy); }
         .purge-btn { border-color: #fecaca; color: #ef4444; }
@@ -101,30 +101,24 @@
         .arch-btn { font-family: 'Cinzel', serif; font-size: 8px; font-weight: 900; text-transform: uppercase; padding: 8px 14px; border-radius: 25px; cursor: pointer; border: 1px solid var(--arch-burgundy); transition: 0.2s; display: inline-flex; align-items: center; gap: 4px; background: var(--arch-burgundy); color: white; white-space: nowrap; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .arch-btn:hover { background: #000; border-color: #000; transform: translateY(-2px); }
 
-        .manual-note-box, .manual-info-box { background: #ffffff !important; border-radius: 30px !important; padding: clamp(20px, 5vw, 40px) !important; box-shadow: 0 25px 60px rgba(0,0,0,0.05) !important; width: 100%; margin-bottom: 3.5rem; position: relative; color: var(--charcoal-pencil); }
+        .manual-note-box, .manual-info-box { background: #ffffff !important; border-radius: 30px !important; padding: clamp(20px, 5vw, 40px) !important; box-shadow: 0 25px 60px rgba(0,0,0,0.05) !important; width: 100%; margin-bottom: 3.5rem; position: relative; }
         .manual-note-box { background: var(--sage-note-bg) !important; }
-
-        /* Footnote Styling */
-        .media-footnote { 
-            color: var(--charcoal-pencil); 
-            font-size: 0.7rem; 
-            font-style: italic; 
-            margin-top: 8px; 
-            opacity: 0.7; 
-            text-align: center; 
-            font-family: 'Special Elite', cursive; 
-            width: 100%;
-        }
 
         /* STRICT GRAPHITE COLOR Protocol */
         .dm-editable, .dm-editable *, [contenteditable], [contenteditable] *, .manual-p, .manual-h2, .manual-h3 { color: #262626 !important; }
         body.dm-mode-active .dm-editable { border-bottom: 1px dashed rgba(122, 29, 29, 0.2); }
         .drag-handle-anchor { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; color: var(--arch-burgundy); font-size: 18px; cursor: grab; opacity: 0.6; transition: 0.2s; margin-right: 10px; user-select: none; }
-        .drag-handle-anchor:hover { opacity: 1; transform: scale(1.1); }
+        .drag-handle-anchor:hover { opacity: 1; background: rgba(122, 29, 29, 0.05); transform: scale(1.1); }
 
         .role-pill { background: rgba(0,0,0,0.05); border-radius: 99px; padding: 4px; display: inline-flex; gap: 4px; border: 1px solid rgba(0,0,0,0.1); margin: 20px auto 0 auto; }
         .role-tab { padding: 8px 24px; font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; border-radius: 99px; transition: 0.3s; color: #5d4037; text-transform: uppercase; cursor: pointer; user-select: none; }
         .role-tab.active { background: var(--arch-burgundy) !important; color: white !important; }
+
+        /* EMBEDDED FOOTNOTES */
+        .inline-img-wrapper { margin: 2.5rem 0; display: flex; flex-direction: column; align-items: center; width: 100%; position: relative; }
+        .inline-arch-asset { max-width: 100%; height: auto; border-radius: 12px; display: block; border: 1.5px solid rgba(187, 166, 131, 0.4); box-shadow: 0 10px 30px rgba(0,0,0,0.12); cursor: zoom-in; }
+        .embed-purge-btn { position: absolute; top: -12px; right: -12px; width: 28px; height: 28px; background: #ef4444; color: white; border-radius: 50%; border: 3px solid white; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 900; cursor: pointer; z-index: 100; transition: 0.2s; }
+        .media-footnote { color: var(--charcoal-pencil); font-size: 0.7rem; font-style: italic; margin-top: 8px; opacity: 0.7; text-align: center; font-family: 'Special Elite', cursive; width: 100%; }
 
         .hidden { display: none !important; }
     </style>
@@ -132,6 +126,11 @@
 <body class="dm-mode-active" onclick="window.closeAllDropdowns()">
 
     <div id="toast" class="toast fixed bottom-10 left-1/2 -translate-x-1/2 bg-black text-white px-8 py-3 rounded-full opacity-0 pointer-events-none transition-opacity duration-300 z-[2000000] font-serif uppercase font-bold text-xs border border-[#7a1d1d]">Lore Data Synchronized</div>
+
+    <div id="nav-toggle" class="fixed top-4 left-4 z-[1500] bg-[#7a1d1d] text-white p-2 rounded lg:hidden" onclick="window.toggleNav()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    </div>
+    <div id="nav-overlay" class="fixed inset-0 bg-black/50 z-[900] opacity-0 pointer-events-none transition-opacity duration-300" onclick="window.toggleNav()"></div>
 
     <div id="cinematic-overlay" class="fixed inset-0 bg-black z-[100000] flex items-center justify-center pointer-events-none opacity-0 transition-opacity duration-500"><div class="loading-text">Manifesting Archival Records...</div></div>
 
@@ -161,7 +160,7 @@
             <div id="nav-list"></div>
             <div class="sidebar-footer">
                 <div class="pb-10 text-black text-center">
-                    <div onclick="window.openArchiveSequence('library.html')" class="block font-serif uppercase font-black text-[11px] !text-[#7a1d1d] hover:underline mb-4 cursor-pointer">Custodian's Archive</div>
+                    <div onclick="window.openArchiveSequence('library.html')" class="block font-serif uppercase font-black text-[11px] !text-[#7a1d1d] hover:underline mb-4 cursor-pointer">Custodian's Public Archive</div>
                     <a href="playershandbook.html" class="block text-center font-serif uppercase font-black text-[11px] no-underline !text-[#7a1d1d] hover:underline">← System Hub</a>
                 </div>
             </div>
@@ -171,8 +170,8 @@
             <div id="manual-header"></div>
             <div id="manual-sections-container"></div>
             <div id="dm-global-controls">
-                <button onclick="window.addManualSection('heading')" class="arch-btn">🔗 Group</button>
-                <button onclick="window.addManualSection('subheading')" class="arch-btn">📑 Subhead</button>
+                <button onclick="window.addManualSection('heading')" class="arch-btn">🔗 + Group</button>
+                <button onclick="window.addManualSection('subheading')" class="arch-btn">📑 + Subhead</button>
                 <button onclick="window.addManualSection('text')" class="arch-btn">+ Text</button>
                 <button onclick="window.addManualSection('table')" class="arch-btn">+ Table</button>
                 <button onclick="window.addManualSection('note')" class="arch-btn">📑 Note</button>
@@ -197,6 +196,13 @@
         import { getFirestore, collection, doc, updateDoc, setDoc, onSnapshot, addDoc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
+        // BOOTSTRAP STUB FUNCTIONS TO PREVENT TYPEERRORS
+        window.closeAllDropdowns = () => {};
+        window.showToast = (m) => { 
+            const t = document.getElementById('toast'); 
+            if(t) { t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 3000); } 
+        };
+
         // EXPLICIT GLOBAL STATE
         window.aeonState = {
             manualSections: [],
@@ -210,17 +216,13 @@
             deleteCallback: null
         };
 
-        window.closeAllDropdowns = () => {}; 
+        window.toggleNav = () => { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('nav-overlay').classList.toggle('active'); };
+        
         window.openDelModal = (text, callback) => {
             const txt = document.getElementById('del-modal-text');
             if (txt) txt.innerText = text;
             window.aeonState.deleteCallback = callback;
             document.getElementById('del-modal')?.classList.remove('hidden');
-        };
-
-        window.showToast = (m) => { 
-            const t = document.getElementById('toast'); 
-            if(t) { t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 3000); } 
         };
 
         window.addEventListener('paste', function(e) {
@@ -295,17 +297,20 @@
             }
             remaining.splice(targetIdx, 0, ...movedGroup);
             remaining.forEach((sec, i) => { batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', sec.id), { order: i }); }); 
-            await batch.commit(); draggedId = null; window.showToast("Lore Anchored");
+            await batch.commit(); window.aeonState.draggedId = null; window.showToast("Lore Anchored");
         };
 
         window.dbUpdateSection = (id, field, val) => { if(window.aeonState.saveTimer) clearTimeout(window.aeonState.saveTimer); window.aeonState.saveTimer = setTimeout(async () => { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id), { [field]: val }); window.showToast("Data Sync"); }, 800); };
         window.dbUpdateHeader = (field, val) => { if(window.aeonState.saveTimer) clearTimeout(window.aeonState.saveTimer); window.aeonState.saveTimer = setTimeout(async () => { try { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'loreHeader'), { [field]: val }, { merge: true }); window.showToast("Header Sync"); } catch(e) {} }, 800); };
         window.updateTableCell = (id, type, rIdx, val, cIdx = null) => { if(window.aeonState.saveTimer) clearTimeout(window.aeonState.saveTimer); window.aeonState.saveTimer = setTimeout(async () => { const s = window.aeonState.manualSections.find(x => x.id === id); if(!s) return; if(type === 'headers') { const h = [...s.tableHeaders]; h[rIdx] = val; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id), { tableHeaders: h }); } else { const r = JSON.parse(s.tableRows); r[rIdx][cIdx] = val; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id), { tableRows: JSON.stringify(r) }); } }, 800); };
         
+        window.addManualSection = async (type) => { const data = { title: type==='heading'?"NEW SUBJECT GROUP": "NEW ENTRY", content: type==='table'?"[]":"Inscribe details...", type, order: window.aeonState.manualSections.length, createdAt: Date.now(), width: 100, fontSize: 14, ySpacing: 0, align: 'left', tableHeaders: type==='table'?["Key","Val"]:null, tableRows: type==='table'?JSON.stringify([["Detail","Detail"]]):null, mediaUrl: "", mediaDescription: "" }; await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'loreSections'), data); };
+        window.triggerDelete = (id) => { window.openDelModal("Purge archival segment?", async () => { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id)); }); };
+        
         window.purgeAllEmbeds = async (id) => {
             const s = window.aeonState.manualSections.find(x => x.id === id);
             if (!s || !s.content) return;
-            window.openDelModal("Purge all embedded images from this block?", async () => {
+            window.openDelModal("Purge all images from this block?", async () => {
                 const newC = s.content.replace(/\{\{[^}]+\}\}/g, '');
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id), { content: newC });
                 window.showToast("Assets Purged");
@@ -314,10 +319,9 @@
 
         window.purgeSpecificEmbed = async (id, tag) => {
             const s = window.aeonState.manualSections.find(x => x.id === id); if(!s) return;
-            window.openDelModal("Purge specific asset?", async () => {
+            window.openDelModal("Purge asset?", async () => {
                 const newC = s.content.replace(tag, '');
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id), { content: newC });
-                window.showToast("Asset Purged");
             });
         };
 
@@ -335,23 +339,23 @@
             const isDM = window.aeonState.activeRole === 'dm';
             const container = document.getElementById('manual-sections-container'); if(!container) return;
             const headerEl = document.getElementById('manual-header');
-            if (headerEl) headerEl.innerHTML = `<h1 class="manual-h1 dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('h1')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateHeader('title', this.innerText)">${window.aeonState.activeEditId === 'h1' ? window.aeonState.manualHeader.title : window.aeonState.manualHeader.title}</h1><p class="manual-main-subtitle dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('h2')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateHeader('subtitle', this.innerText)">${window.aeonState.activeEditId === 'h2' ? window.aeonState.manualHeader.subtitle : window.aeonState.manualHeader.subtitle}</p>`;
+            if (headerEl) headerEl.innerHTML = `<h1 class="manual-h1 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='h1'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateHeader('title', this.innerText)">${window.aeonState.activeEditId === 'h1' ? window.aeonState.manualHeader.title : window.aeonState.manualHeader.title}</h1><p class="manual-main-subtitle dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='h2'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateHeader('subtitle', this.innerText)">${window.aeonState.activeEditId === 'h2' ? window.aeonState.manualHeader.subtitle : window.aeonState.manualHeader.subtitle}</p>`;
             document.getElementById('nav-list').innerHTML = window.aeonState.manualSections.filter(s => s.type === 'heading').map(s => `<div class="shelf-item" onclick="document.getElementById('section-${s.id}').scrollIntoView({behavior:'smooth'});">${s.title}</div>`).join('');
 
             container.innerHTML = window.aeonState.manualSections.map(s => {
                 const style = `width: calc(${s.width ?? 100}% - 15px); margin-top: ${s.ySpacing ?? 0}px; text-align: ${s.align || 'left'};`;
-                return `<section id="section-${s.id}" class="manual-section-unit group relative" draggable="false" ondragstart="window.handleDragStart(event, '${s.id}')" ondragover="window.handleDragOver(event)" ondragleave="window.handleDragLeave(event)" ondrop="window.handleDrop(event, '${s.id}')" style="${style}">
+                return `<section id="section-${s.id}" class="manual-section-unit group relative" style="${style}" ondragover="window.handleDragOver(event)" ondragleave="window.handleDragLeave(event)" ondrop="window.handleDrop(event, '${s.id}')">
                     ${isDM ? `<div class="tuner-panel">
                         <div class="drag-handle-anchor cursor-grab" onmousedown="window.handleHandleDown(event, '${s.id}')" onmouseup="window.handleHandleUp(event, '${s.id}')" onmouseleave="window.handleHandleUp(event, '${s.id}')">⠿</div>
-                        <div class="tuner-group"><span class="tuner-label">Width</span><input type="range" class="tuner-slider" min="10" max="100" value="${s.width ?? 100}" oninput="window.dbUpdateSection('${s.id}', 'width', parseInt(this.value))"></div>
-                        <div class="tuner-group"><span class="tuner-label">V-Space</span><input type="range" class="tuner-slider" min="0" max="150" value="${s.ySpacing ?? 0}" oninput="window.dbUpdateSection('${s.id}', 'ySpacing', parseInt(this.value))"></div>
-                        <div class="tuner-group"><span class="tuner-label">Align</span><div class="flex gap-1"><button class="align-btn ${s.align==='left'?'active':''}" onclick="window.dbUpdateSection('${s.id}', 'align', 'left')">L</button><button class="align-btn ${s.align==='center'?'active':''}" onclick="window.dbUpdateSection('${s.id}', 'align', 'center')">C</button><button class="align-btn ${s.align==='right'?'active':''}" onclick="window.dbUpdateSection('${s.id}', 'align', 'right')">R</button></div></div>
-                        <div class="tuner-group"><span class="tuner-label">Images</span><button class="align-btn purge-btn" onclick="window.purgeAllEmbeds('${s.id}')">✕</button></div>
-                        <button onclick="window.triggerDelete('${s.id}')" class="ml-auto text-red-700 font-black">✕</button>
+                        <div class="tuner-group"><span>Width</span><input type="range" class="tuner-slider" min="10" max="100" value="${s.width ?? 100}" oninput="window.dbUpdateSection('${s.id}', 'width', parseInt(this.value))"></div>
+                        <div class="tuner-group"><span>V-Space</span><input type="range" class="tuner-slider" min="0" max="150" value="${s.ySpacing ?? 0}" oninput="window.dbUpdateSection('${s.id}', 'ySpacing', parseInt(this.value))"></div>
+                        <div class="tuner-group"><span>Align</span><div class="flex gap-1"><button class="align-btn ${s.align==='left'?'active':''}" onclick="window.dbUpdateSection('${s.id}', 'align', 'left')">L</button><button class="align-btn ${s.align==='center'?'active':''}" onclick="window.dbUpdateSection('${s.id}', 'align', 'center')">C</button><button class="align-btn ${s.align==='right'?'active':''}" onclick="window.dbUpdateSection('${s.id}', 'align', 'right')">R</button></div></div>
+                        <div class="tuner-group"><span>Images</span><button class="align-btn purge-btn" onclick="window.purgeAllEmbeds('${s.id}')">✕</button></div>
+                        <button onclick="window.triggerDelete('${s.id}')" class="ml-auto text-red-700 font-black text-lg">✕</button>
                     </div>` : ''}
-                    ${s.type === 'heading' ? `<h2 class="manual-h2 dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('${s.id}-t')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">${window.aeonState.activeEditId === s.id + '-t' ? s.title : s.title}</h2>` : ''}
-                    ${s.type === 'subheading' ? `<h3 class="manual-h3 dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('${s.id}-t')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">${window.aeonState.activeEditId === s.id + '-t' ? s.title : s.title}</h3>` : ''}
-                    ${s.type === 'text' ? `<div class="manual-p dm-editable leading-relaxed" contenteditable="${isDM}" onfocus="window.setEditing('${s.id}-c')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${window.aeonState.activeEditId === s.id + '-c' ? s.content : window.parseAeonfallContent(s.content, false, s.id)}</div>` : ''}
+                    ${s.type==='heading'?`<h2 class="manual-h2 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-t'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','title',this.innerText)">${s.title}</h2>`:''}
+                    ${s.type==='subheading'?`<h3 class="manual-h3 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-t'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','title',this.innerText)">${s.title}</h3>`:''}
+                    ${s.type==='text'?`<div class="manual-p dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-c'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','content',this.innerHTML)">${window.aeonState.activeEditId==='${s.id}-c'?s.content:window.parseAeonfallContent(s.content, false, s.id)}</div>`:''}
                 </section>`;
             }).join('');
         };
@@ -364,6 +368,7 @@
         
         const confirmBtn = document.getElementById('confirm-del-btn');
         if (confirmBtn) { confirmBtn.onclick = async () => { if (window.aeonState.deleteCallback) await window.aeonState.deleteCallback(); document.getElementById('del-modal')?.classList.add('hidden'); }; }
+        
         signInAnonymously(auth);
     </script>
 </body>
