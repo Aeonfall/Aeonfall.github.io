@@ -7,23 +7,23 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Roboto+Slab:wght@300;400;700&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Roboto Slab', serif; background-color: #1a1a1a; color: #e2e8f0; overflow-x: hidden; }
+        body { font-family: 'Roboto Slab', serif; background-color: #1a1a1a; color: #e2e8f0; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
         .dashboard-bg { background-image: url('https://www.transparenttextures.com/patterns/dark-wood.png'); background-color: #0c0c0c; }
         
         /* HEADER STYLING - MATCHING BRANDING */
-        .brand-title { font-family: 'Cinzel', serif; font-weight: 900; color: #f59e0b; font-size: 3.5rem; line-height: 1; margin-bottom: 0.2rem; }
-        .brand-sub { font-family: 'Cinzel', serif; font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.15em; text-transform: uppercase; }
+        .brand-title { font-family: 'Cinzel', serif; font-weight: 900; color: #f59e0b; line-height: 1; margin-bottom: 0.2rem; }
+        .brand-sub { font-family: 'Cinzel', serif; font-size: 10px; font-weight: 700; color: #64748b; letter-spacing: 0.15em; text-transform: uppercase; }
         
-        .user-pill { background: rgba(30, 41, 59, 0.6); border: 1px solid #334155; padding: 6px 16px; border-radius: 99px; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        .user-pill { background: rgba(30, 41, 59, 0.6); border: 1px solid #334155; padding: 6px 14px; border-radius: 99px; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
         .status-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 10px #22c55e; }
-        .user-name-text { font-family: 'Cinzel', serif; font-size: 11px; font-weight: 900; color: #e2e8f0; text-transform: uppercase; }
-        .logout-btn { font-family: 'Cinzel', serif; font-size: 10px; font-weight: 700; color: #ef4444; border-left: 1px solid #475569; padding-left: 10px; margin-left: 4px; cursor: pointer; }
+        .user-name-text { font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; color: #e2e8f0; text-transform: uppercase; }
+        .logout-btn { font-family: 'Cinzel', serif; font-size: 10px; font-weight: 700; color: #ef4444; border-left: 1px solid #475569; padding-left: 8px; margin-left: 4px; cursor: pointer; }
         
-        .role-selector { background: #0f172a; border-radius: 12px; padding: 4px; display: flex; gap: 4px; border: 1px solid #1e293b; }
-        .role-btn { padding: 8px 24px; font-family: 'Cinzel', serif; font-size: 11px; font-weight: 900; border-radius: 8px; transition: all 0.3s; color: #475569; text-transform: uppercase; }
+        .role-selector { background: #0f172a; border-radius: 12px; padding: 4px; display: flex; gap: 4px; border: 1px solid #1e293b; width: fit-content; }
+        .role-btn { padding: 6px 16px; font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; border-radius: 8px; transition: all 0.3s; color: #475569; text-transform: uppercase; }
         .role-btn.active { background: #d97706; color: white; box-shadow: 0 4px 12px rgba(217, 119, 6, 0.4); }
 
-        .nav-link { font-family: 'Cinzel', serif; color: #94a3b8; font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.2s; padding-bottom: 6px; border-bottom: 2px solid transparent; }
+        .nav-link { font-family: 'Cinzel', serif; color: #94a3b8; font-weight: 900; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.2s; padding-bottom: 4px; border-bottom: 2px solid transparent; white-space: nowrap; }
         .nav-link:hover { color: #f59e0b; }
         .nav-link.active { color: #f59e0b; border-bottom-color: #f59e0b; }
         .nav-link.graveyard { color: #7f1d1d; }
@@ -31,174 +31,98 @@
         /* SCRIPT/ITEM CARD Aesthetic */
         .script-card {
             background-color: #fdfaf3; border: 2px solid #bba683; border-radius: 12px;
-            padding: 24px; color: #2c1810; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            padding: 20px; color: #2c1810; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             position: relative; height: 100%; display: flex; flex-direction: column;
             transition: all 0.3s;
         }
         .script-card-header { border-bottom: 2px solid #7a1d1d; margin-bottom: 8px; padding-bottom: 4px; }
-        .script-card-title { font-family: 'Cinzel', serif; font-weight: 900; font-size: 24px; color: #7a1d1d; text-transform: uppercase; }
-        .script-card-level { font-style: italic; font-size: 14px; margin-bottom: 12px; display: block; }
-        .script-prop-list { list-style: disc; margin-left: 20px; font-size: 14px; margin-bottom: 16px; }
+        .script-card-title { font-family: 'Cinzel', serif; font-weight: 900; font-size: 20px; color: #7a1d1d; text-transform: uppercase; }
+        .script-card-level { font-style: italic; font-size: 13px; margin-bottom: 12px; display: block; }
+        .script-prop-list { list-style: disc; margin-left: 18px; font-size: 13px; margin-bottom: 16px; }
         .script-prop-list li { margin-bottom: 2px; }
         .script-prop-list b { font-weight: 900; }
-        .script-body { font-size: 14px; line-height: 1.6; white-space: pre-wrap; flex-grow: 1; }
-        .script-higher-levels { font-size: 13px; margin-top: 12px; padding-top: 12px; border-top: 1px dotted #7a1d1d33; }
+        .script-body { font-size: 13px; line-height: 1.6; white-space: pre-wrap; flex-grow: 1; }
+        .script-higher-levels { font-size: 12px; margin-top: 12px; padding-top: 12px; border-top: 1px dotted #7a1d1d33; }
         .script-higher-levels b { font-weight: 900; }
-        .script-footer { font-style: italic; font-size: 12px; margin-top: 12px; border-top: 1px solid #7a1d1d33; padding-top: 8px; }
+        .script-footer { font-style: italic; font-size: 11px; margin-top: 12px; border-top: 1px solid #7a1d1d33; padding-top: 8px; }
         .script-footer b { font-weight: 900; font-style: normal; }
 
         /* Progression Table Styling */
         .progression-table-container { 
             background-color: #fdfaf3; border: 4px double #bba683; border-radius: 12px; 
-            padding: 20px; color: #2c1810; margin-bottom: 32px; overflow-x: auto;
+            padding: 16px; color: #2c1810; margin-bottom: 24px; overflow-x: auto;
             position: relative;
         }
-        .progression-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .progression-table { width: 100%; min-width: 500px; border-collapse: collapse; font-size: 12px; }
         .progression-table th { 
             font-family: 'Cinzel', serif; font-weight: 900; text-transform: uppercase; 
-            color: #7a1d1d; border-bottom: 2px solid #7a1d1d; padding: 12px 8px; text-align: left;
+            color: #7a1d1d; border-bottom: 2px solid #7a1d1d; padding: 10px 6px; text-align: left;
             background: rgba(122, 29, 29, 0.02);
         }
-        .progression-table td { padding: 10px 8px; border-bottom: 1px solid rgba(122, 29, 29, 0.1); }
-        .progression-table tr:hover { background: rgba(122, 29, 29, 0.03); }
+        .progression-table td { padding: 8px 6px; border-bottom: 1px solid rgba(122, 29, 29, 0.1); }
 
         /* Archetype Heading Styling */
         .archetype-divider { 
-            grid-column: 1 / -1; margin: 48px 0 24px 0; 
-            border-left: 8px solid #f59e0b; background: rgba(245, 158, 11, 0.05);
-            padding: 16px 24px; border-radius: 4px 16px 16px 4px;
+            grid-column: 1 / -1; margin: 32px 0 16px 0; 
+            border-left: 6px solid #f59e0b; background: rgba(245, 158, 11, 0.05);
+            padding: 12px 16px; border-radius: 4px 12px 12px 4px;
             display: flex; align-items: center; justify-content: space-between;
-            transition: all 0.3s;
+            flex-wrap: wrap; gap: 12px;
         }
-        .archetype-name { font-family: 'Cinzel', serif; font-weight: 900; font-size: 24px; color: #f59e0b; text-transform: uppercase; letter-spacing: 0.1em; }
-        .archetype-controls { display: flex; gap: 8px; }
-        .arch-btn { font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 6px 12px; border-radius: 4px; transition: all 0.2s; cursor: pointer; }
-        .arch-btn-add { background: #22c55e; color: white; }
-        .arch-btn-util { background: #64748b; color: white; }
-        .arch-btn-delete { background: #ef4444; color: white; opacity: 0.4; }
-        .arch-btn-delete:hover { opacity: 1; }
+        .archetype-name { font-family: 'Cinzel', serif; font-weight: 900; font-size: 20px; color: #f59e0b; text-transform: uppercase; letter-spacing: 0.1em; }
+        .archetype-controls { display: flex; gap: 6px; flex-wrap: wrap; }
+        .arch-btn { font-size: 9px; font-weight: 900; text-transform: uppercase; padding: 4px 10px; border-radius: 4px; cursor: pointer; }
 
-        /* Drag handles & Visible Reordering Logic */
-        .dm-active-edit { position: relative; }
-        .drag-handle { 
-            width: 32px; height: 32px; border-radius: 6px; 
-            background: rgba(122, 29, 29, 0.1); border: 1px solid rgba(122, 29, 29, 0.2);
-            display: flex; align-items: center; justify-content: center;
-            cursor: grab; color: #7a1d1d; font-size: 18px; line-height: 1;
-            transition: all 0.2s;
+        /* Scrollable Navs for Mobile */
+        .horizontal-scroll {
+            display: flex; overflow-x: auto; gap: 8px; padding-bottom: 4px;
+            scrollbar-width: none; -ms-overflow-style: none;
         }
-        .drag-handle:hover { background: #7a1d1d; color: white; }
-        .drag-handle:active { cursor: grabbing; }
+        .horizontal-scroll::-webkit-scrollbar { display: none; }
 
-        .is-dragging-mode .script-card, 
-        .is-dragging-mode .archetype-divider,
-        .is-dragging-mode .progression-table-container {
-            outline: 2px dashed rgba(245, 158, 11, 0.3);
-            outline-offset: 4px;
-        }
-
-        .dragging { opacity: 0.2 !important; transform: scale(0.95); transition: none; }
-        
-        .drag-over { 
-            background-color: rgba(245, 158, 11, 0.1) !important; 
-            border-color: #f59e0b !important;
-            box-shadow: 0 0 20px rgba(245, 158, 11, 0.2) !important;
-            transform: scale(1.02);
-        }
-
-        /* Item Linking */
-        .item-reference-link {
-            color: #7a1d1d; text-decoration: underline; text-decoration-style: dotted; cursor: pointer; font-weight: 700;
-        }
-        .item-reference-link:hover { color: #f59e0b; }
-        
-        @keyframes highlight-pulse {
-            0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); transform: scale(1); }
-            50% { box-shadow: 0 0 30px 10px rgba(245, 158, 11, 0.4); transform: scale(1.02); }
-            100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); transform: scale(1); }
-        }
-        .highlight-glow { animation: highlight-pulse 2s ease-in-out 2; z-index: 50; }
-
-        /* Item Image Styling */
-        .item-preview-img {
-            width: 100%; height: 160px; object-fit: cover; border-radius: 8px; border: 2px solid #bba683;
-            margin-bottom: 16px; cursor: zoom-in; transition: transform 0.2s, filter 0.2s; background: #e5e7eb;
-        }
-        .item-preview-img:hover { filter: brightness(1.1); transform: scale(1.02); }
-        .item-url-input { font-size: 10px; color: #7a1d1d; opacity: 0.6; margin-bottom: 12px; display: block; background: rgba(0,0,0,0.03); padding: 4px 8px; border-radius: 4px; }
-
-        /* Rarity Color Coding */
-        .rarity-common { color: #64748b !important; }
-        .rarity-uncommon { color: #16a34a !important; font-weight: 900; }
-        .rarity-rare { color: #2563eb !important; font-weight: 900; }
-        .rarity-very-rare { color: #9333ea !important; font-weight: 900; }
-        .rarity-legendary { color: #d97706 !important; font-weight: 900; text-shadow: 0 0 1px rgba(217, 119, 6, 0.2); }
-
-        /* Lightbox Styling */
-        .lightbox-modal { background: rgba(0,0,0,0.95); backdrop-filter: blur(12px); }
-        .lightbox-img { max-width: 90vw; max-height: 80vh; object-fit: contain; border: 4px solid #f59e0b; border-radius: 8px; box-shadow: 0 0 60px rgba(0,0,0,1); }
-
-        /* Classification Styling */
-        .classification-pill { font-weight: 900; color: #7a1d1d; cursor: pointer; border-bottom: 1px dashed rgba(122, 29, 29, 0.4); transition: color 0.2s; }
-        .classification-pill:hover { color: #f59e0b; }
-        .classification-none { opacity: 0.4; font-style: normal; font-weight: 400; }
-
-        /* Tooltip */
-        .term-hover { position: relative; border-bottom: 1px dotted #7a1d1d; cursor: help; display: inline; }
+        /* Tooltip behavior on mobile */
+        .term-hover { border-bottom: 1px dotted #7a1d1d; cursor: help; position: relative; }
         .tooltip-content {
-            visibility: hidden; width: 220px; background-color: #fdfaf3; color: #2c1810;
-            text-align: left; border: 2px solid #7a1d1d; border-radius: 6px; padding: 10px;
-            position: absolute; z-index: 100; bottom: 125%; left: 50%; margin-left: -110px;
+            visibility: hidden; width: 200px; background-color: #fdfaf3; color: #2c1810;
+            text-align: left; border: 2px solid #7a1d1d; border-radius: 6px; padding: 8px;
+            position: absolute; z-index: 100; bottom: 125%; left: 50%; transform: translateX(-50%);
             opacity: 0; transition: opacity 0.3s; font-size: 11px; line-height: 1.4;
-            font-family: 'Roboto Slab', serif; box-shadow: 0 5px 15px rgba(0,0,0,0.3); pointer-events: none; font-style: normal;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); pointer-events: none;
         }
-        .tooltip-content::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px; border-width: 5px; border-style: solid; border-color: #7a1d1d transparent transparent transparent; }
         .term-hover:hover .tooltip-content { visibility: visible; opacity: 1; }
 
-        .class-link { color: #7a1d1d; text-decoration: underline; text-decoration-style: dotted; cursor: pointer; font-weight: 700; transition: color 0.2s; }
-        .class-link:hover { color: #f59e0b; }
-
-        /* Formatting Scraps */
-        .def-term { color: #7a1d1d; font-weight: 900; border-bottom: 1px dashed #7a1d1d; }
-
-        /* Hub Buttons */
+        /* Hub Buttons Responsive */
         .archive-button {
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            border: 1px solid #334155; border-radius: 16px; padding: 24px;
-            display: flex; align-items: center; gap: 20px; transition: all 0.3s;
+            border: 1px solid #334155; border-radius: 16px; padding: 16px 20px;
+            display: flex; align-items: center; gap: 16px; transition: all 0.3s;
             cursor: pointer; width: 100%;
         }
-        .archive-button:hover { transform: translateY(-4px); border-color: #f59e0b; }
-        .button-label { font-family: 'Cinzel', serif; font-weight: 900; font-size: 18px; color: #f59e0b; text-transform: uppercase; }
-        .button-desc { font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; margin-top: 2px; }
+        .archive-button:hover { border-color: #f59e0b; }
+        .button-label { font-family: 'Cinzel', serif; font-weight: 900; font-size: 16px; color: #f59e0b; text-transform: uppercase; }
+        .button-desc { font-size: 9px; color: #64748b; text-transform: uppercase; font-weight: 700; margin-top: 1px; }
 
         .hidden-view { display: none !important; }
-        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(50%); background: #1e293b; color: #fff; padding: 12px 24px; border-radius: 30px; z-index: 2000; opacity: 0; transition: opacity 0.3s; pointer-events: none; border: 1px solid #3b82f6; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1e293b; color: #fff; padding: 10px 20px; border-radius: 30px; z-index: 2000; opacity: 0; transition: opacity 0.3s; border: 1px solid #3b82f6; }
         
-        /* DM Edit Overlays */
-        .dm-editable { transition: background 0.2s; border-radius: 4px; }
-        .dm-active-edit .dm-editable { background: rgba(122, 29, 29, 0.05); outline: 1px dashed #7a1d1d; padding: 2px; }
-        
-        .class-tab { padding: 8px 16px; font-size: 10px; font-weight: 900; text-transform: uppercase; cursor: pointer; border: 1px solid #333; border-radius: 4px; color: #94a3b8; }
+        .class-tab { padding: 6px 12px; font-size: 9px; font-weight: 900; text-transform: uppercase; cursor: pointer; border: 1px solid #333; border-radius: 4px; color: #94a3b8; white-space: nowrap; }
         .class-tab.active { background: #f59e0b; color: #000; border-color: #f59e0b; }
-        .level-bubble { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 11px; cursor: pointer; border: 2px solid #bba683; background: #fdfaf3; }
+        
+        .level-bubble { min-width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 10px; cursor: pointer; border: 2px solid #bba683; background: #fdfaf3; color: #2c1810; flex-shrink: 0; }
         .level-bubble.active { background: #7a1d1d; color: #fff; border-color: #7a1d1d; }
 
-        .section-label { font-size: 10px; text-transform: uppercase; font-weight: 900; color: #f59e0b; opacity: 0.5; margin-bottom: 8px; letter-spacing: 0.2em; display: block; border-bottom: 1px solid rgba(245, 158, 11, 0.1); padding-bottom: 4px; }
+        .section-label { font-size: 9px; text-transform: uppercase; font-weight: 900; color: #f59e0b; opacity: 0.5; margin-bottom: 6px; letter-spacing: 0.2em; display: block; border-bottom: 1px solid rgba(245, 158, 11, 0.1); padding-bottom: 3px; }
 
-        input, textarea { background: transparent; border: none; width: 100%; color: inherit; }
-        .modal-overlay { background: rgba(0,0,0,0.95); backdrop-filter: blur(8px); }
+        /* Adjustments for Sessions on Mobile */
+        #sessions-view .bg-\[\#fdfaf3\] { padding: 20px; border-width: 4px; }
+        .session-field-group { font-size: 13px; }
 
-        /* Session Log Styling */
-        .session-field-group { margin-bottom: 8px; font-size: 14px; }
-        .session-field-group b { font-weight: 900; text-transform: uppercase; color: #7a1d1d; margin-right: 4px; }
-        .dm-intel-box { 
-            background: rgba(122, 29, 29, 0.05); border: 2px solid #7a1d1d; border-radius: 8px; 
-            padding: 20px; margin-top: 32px; position: relative;
-        }
-        .dm-intel-label { 
-            position: absolute; top: -12px; left: 20px; background: #7a1d1d; color: #fff; 
-            font-size: 10px; font-weight: 900; padding: 2px 8px; border-radius: 4px; text-transform: uppercase;
+        @media (max-width: 768px) {
+            .brand-title { font-size: 2.5rem; }
+            .script-card-title { font-size: 18px; }
+            .archive-button { padding: 12px 16px; }
+            .button-label { font-size: 14px; }
+            .button-desc { font-size: 8px; }
         }
     </style>
 </head>
@@ -210,11 +134,11 @@
     <div id="hub-view" class="p-4 md:p-8">
         <div class="max-w-7xl mx-auto">
             
-            <header class="flex flex-col md:flex-row justify-between items-end mb-12 border-b border-gray-800/50 pb-8 gap-6">
-                <div class="flex flex-col items-start">
-                    <h1 class="brand-title">Aeonfall</h1>
-                    <div class="flex items-center gap-6">
-                        <p class="brand-sub">Campaign Management Suite</p>
+            <header class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 md:mb-12 border-b border-gray-800/50 pb-6 md:pb-8 gap-6">
+                <div class="flex flex-col items-start w-full md:w-auto">
+                    <h1 class="brand-title text-4xl md:text-6xl">Aeonfall</h1>
+                    <div class="flex flex-wrap items-center gap-4 mt-1">
+                        <p class="brand-sub">Campaign Suite</p>
                         <div class="user-pill">
                             <span class="status-dot"></span>
                             <span id="user-display-name" class="user-name-text">Guest</span>
@@ -223,91 +147,82 @@
                     </div>
                 </div>
 
-                <div class="flex flex-col items-end gap-6 w-full md:w-auto">
+                <div class="flex flex-col items-start md:items-end gap-5 w-full md:w-auto overflow-hidden">
                     <div class="role-selector">
                         <button id="role-player-btn" onclick="window.setRole('player')" class="role-btn">Player</button>
                         <button id="role-dm-btn" onclick="window.setRole('dm')" class="role-btn">DM</button>
                     </div>
-                    <nav class="flex gap-8 items-center">
+                    <nav class="horizontal-scroll w-full md:w-auto gap-5 md:gap-8 border-b border-transparent">
                         <a href="index.html" class="nav-link">Party</a>
                         <a href="npcs.html" class="nav-link">NPCs</a>
                         <a href="beasts.html" class="nav-link">Bestiary</a>
                         <a href="partybag.html" class="nav-link">Backpack</a>
-                         <a href="#" class="nav-link active">Handbook</a>
+                        <a href="#" class="nav-link active">Handbook</a>
                         <a href="#" onclick="window.setView('graveyard'); return false;" id="nav-graveyard" class="nav-link !text-red-900">Graveyard</a>
                     </nav>
                 </div>
             </header>
 
-            <div class="flex flex-col gap-5 max-w-2xl mx-auto mt-16 pb-16">
-                <a href="https://homebrewery.naturalcrit.com/share/he6P3R1e5dgq" target="_blank" class="archive-button no-underline">
-                    <span class="text-4xl">📖</span>
-                    <div class="flex flex-col text-left">
-                        <span class="button-label">Players Handbook</span>
-                        <span class="button-desc">Official Aeonfall Rules & Mechanics</span>
-                    </div>
-                    <span class="ml-auto text-amber-900 font-black">→</span>
-                </a>
-
+            <div class="flex flex-col gap-4 max-w-xl mx-auto mt-8 md:mt-12 pb-16">
                 <a href="howtoplay.html" class="archive-button no-underline">
-                    <span class="text-4xl">🎲</span>
+                    <span class="text-3xl md:text-4xl">🎲</span>
                     <div class="flex flex-col text-left">
                         <span class="button-label">How to Play</span>
-                        <span class="button-desc">Dice, Conditions & Character Operations</span>
+                        <span class="button-desc">Rules & Operations</span>
                     </div>
                     <span class="ml-auto text-amber-900 font-black">→</span>
                 </a>
 
                 <a href="lineages.html" class="archive-button no-underline">
-                    <span class="text-4xl">🧬</span>
+                    <span class="text-3xl md:text-4xl">🧬</span>
                     <div class="flex flex-col text-left">
                         <span class="button-label">Lineages</span>
-                        <span class="button-desc">Biological Heritage & Ancestry</span>
+                        <span class="button-desc">Biological Heritage</span>
                     </div>
                     <span class="ml-auto text-amber-900 font-black">→</span>
                 </a>
 
                 <a href="classes.html" class="archive-button no-underline">
-                    <span class="text-4xl">🛡️</span>
+                    <span class="text-3xl md:text-4xl">🛡️</span>
                     <div class="flex flex-col text-left">
                         <span class="button-label">Vocations</span>
-                        <span class="button-desc">Class Identities & Combat Specialties</span>
+                        <span class="button-desc">Class Identities</span>
                     </div>
                     <span class="ml-auto text-amber-900 font-black">→</span>
                 </a>
 
                 <div onclick="window.switchView('scripts')" class="archive-button">
-                    <span class="text-4xl">📜</span>
+                    <span class="text-3xl md:text-4xl">📜</span>
                     <div class="flex flex-col">
                         <span class="button-label">Script Codex</span>
-                        <span class="button-desc">Class Abilities & Tech Schools</span>
+                        <span class="button-desc">Code Abilities</span>
                     </div>
                     <span class="ml-auto text-amber-900 font-black">→</span>
                 </div>
 
                 <div onclick="window.switchView('sessions')" class="archive-button">
-                    <span class="text-4xl">🖋️</span>
+                    <span class="text-3xl md:text-4xl">🖋️</span>
                     <div class="flex flex-col">
                         <span class="button-label">Session Logs</span>
-                        <span class="button-desc">Chronicles of the Party Deeds</span>
+                        <span class="button-desc">Party Chronicles</span>
                     </div>
                     <span class="ml-auto text-amber-900 font-black">→</span>
                 </div>
 
                 <div onclick="window.switchView('items')" class="archive-button">
-                    <span class="text-4xl">⚔️</span>
+                    <span class="text-3xl md:text-4xl">⚔️</span>
                     <div class="flex flex-col">
                         <span class="button-label">Gear & Artifacts</span>
-                        <span class="button-desc">Equipment, Loot, and Scavenged Tech</span>
+                        <span class="button-desc">Loot & Hardware</span>
                     </div>
                     <span class="ml-auto text-amber-900 font-black">→</span>
                 </div>
 
                 <a href="lore.html" class="archive-button no-underline">
-                    <span class="text-4xl">🌍</span>
+                    <span class="text-3xl md:text-4xl">🌍</span>
                     <div class="flex flex-col text-left">
                         <span class="button-label">World Lore</span>
-                        <span class="button-desc">Languages, Story & The People of Aeonfall</span>
+                        <span class="button-desc">History & Culture</span>
                     </div>
                     <span class="ml-auto text-amber-900 font-black">→</span>
                 </a>
@@ -315,64 +230,63 @@
         </div>
     </div>
 
-    <!-- FEATURES VIEW (Kept as legacy code, but inaccessible via Hub) -->
+    <!-- FEATURES VIEW -->
     <div id="features-view" class="hidden-view p-4 md:p-8">
         <div class="max-w-6xl mx-auto">
-            <button onclick="window.switchView('hub')" class="text-amber-500 font-black text-xs uppercase mb-8 hover:text-amber-400">← Back to Archives</button>
+            <button onclick="window.switchView('hub')" class="text-amber-500 font-black text-[10px] uppercase mb-6 hover:text-amber-400">← Back</button>
             
             <div class="mb-8">
                 <span class="section-label">Martial Classes</span>
-                <div class="flex flex-wrap gap-2 mb-6" id="feature-martial-tabs"></div>
+                <div class="horizontal-scroll mb-6" id="feature-martial-tabs"></div>
                 
                 <span class="section-label">Script Users</span>
-                <div class="flex flex-wrap gap-2" id="feature-script-tabs"></div>
+                <div class="horizontal-scroll" id="feature-script-tabs"></div>
             </div>
             
-            <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-                <div class="text-center md:text-left">
-                    <h2 class="font-serif font-black text-3xl uppercase text-amber-500" id="current-feature-title">Feature Moves</h2>
-                    <p class="text-xs text-amber-900/60 font-black uppercase tracking-widest mt-2" id="current-feature-class-label">Vanguard Features</p>
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                <div class="text-left">
+                    <h2 class="font-serif font-black text-2xl md:text-3xl uppercase text-amber-500" id="current-feature-title">Feature Moves</h2>
+                    <p class="text-[9px] text-amber-900/60 font-black uppercase tracking-widest mt-1" id="current-feature-class-label">Vanguard Features</p>
                 </div>
-                <div class="flex gap-2 flex-wrap">
-                    <button id="add-table-btn" onclick="window.addTableEntry()" class="hidden bg-amber-900/80 text-white px-6 py-3 rounded-full font-black text-xs uppercase shadow-xl hover:bg-amber-800 active:scale-95 transition-all">Add Table</button>
-                    <button id="add-archetype-btn" onclick="window.addArchetypeEntry()" class="hidden bg-amber-800 text-white px-6 py-3 rounded-full font-black text-xs uppercase shadow-xl hover:bg-amber-700 active:scale-95 transition-all">Add Archetype</button>
-                    <button id="add-feature-btn" onclick="window.addFeatureEntry()" class="hidden bg-amber-600 text-white px-8 py-3 rounded-full font-black text-xs uppercase shadow-xl hover:bg-amber-500 active:scale-95 transition-all">+ Document Move</button>
+                <div class="flex flex-wrap gap-2">
+                    <button id="add-table-btn" onclick="window.addTableEntry()" class="hidden bg-amber-900/80 text-white px-4 py-2 rounded-full font-black text-[9px] uppercase">Add Table</button>
+                    <button id="add-archetype-btn" onclick="window.addArchetypeEntry()" class="hidden bg-amber-800 text-white px-4 py-2 rounded-full font-black text-[9px] uppercase">Add Archetype</button>
+                    <button id="add-feature-btn" onclick="window.addFeatureEntry()" class="hidden bg-amber-600 text-white px-5 py-2 rounded-full font-black text-[9px] uppercase">+ Document Move</button>
                 </div>
             </div>
 
-            <!-- FEATURES LIST (Includes Tables & Archetypes) -->
-            <div id="features-list" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div>
+            <div id="features-list" class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8"></div>
         </div>
     </div>
 
     <!-- SCRIPTS VIEW -->
     <div id="scripts-view" class="hidden-view p-4 md:p-8">
         <div class="max-w-6xl mx-auto">
-            <button onclick="window.switchView('hub')" class="text-amber-500 font-black text-xs uppercase mb-8 hover:text-amber-400">← Back to Archives</button>
-            <div class="flex flex-wrap gap-2 mb-8" id="class-tabs"></div>
+            <button onclick="window.switchView('hub')" class="text-amber-500 font-black text-[10px] uppercase mb-6 hover:text-amber-400">← Back</button>
+            <div class="horizontal-scroll mb-8" id="class-tabs"></div>
             
-            <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-                <div class="text-center md:text-left">
-                    <h2 class="font-serif font-black text-3xl uppercase text-amber-500" id="current-class-title">Scripts</h2>
-                    <div class="flex items-center gap-3 mt-4" id="level-nav"></div>
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-6">
+                <div class="text-left w-full">
+                    <h2 class="font-serif font-black text-2xl md:text-3xl uppercase text-amber-500" id="current-class-title">Scripts</h2>
+                    <div class="horizontal-scroll mt-4" id="level-nav"></div>
                 </div>
-                <button id="add-script-btn" onclick="window.addScriptEntry()" class="hidden bg-amber-600 text-white px-8 py-3 rounded-full font-black text-xs uppercase shadow-xl hover:bg-amber-500 active:scale-95 transition-all">+ Inscribe New Script</button>
+                <button id="add-script-btn" onclick="window.addScriptEntry()" class="hidden bg-amber-600 text-white px-6 py-2 rounded-full font-black text-[9px] uppercase">+ New Script</button>
             </div>
-            <div id="scripts-list" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div>
+            <div id="scripts-list" class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8"></div>
         </div>
     </div>
 
     <!-- SESSIONS VIEW -->
     <div id="sessions-view" class="hidden-view p-4 md:p-8">
         <div class="max-w-6xl mx-auto">
-            <button onclick="window.switchView('hub')" class="text-amber-500 font-black text-xs uppercase mb-8 hover:text-amber-400">← Back to Archives</button>
-            <div class="bg-[#fdfaf3] border-8 border-[#bba683] p-10 text-gray-900 min-h-[600px] shadow-2xl relative">
-                <div class="absolute inset-0 border-2 border-[#2c1810] pointer-events-none" style="margin: 4px;"></div>
-                <div class="flex justify-between items-end mb-8 border-b-2 border-gray-900 pb-4">
-                    <h2 class="font-serif font-black text-3xl uppercase tracking-widest text-[#7a1d1d]">Campaign Chronicles</h2>
-                    <button id="add-session-btn" onclick="window.addSessionEntry()" class="hidden bg-amber-800 text-white px-6 py-2 rounded-full font-black text-[10px] uppercase shadow-lg">+ New Session</button>
+            <button onclick="window.switchView('hub')" class="text-amber-500 font-black text-[10px] uppercase mb-6 hover:text-amber-400">← Back</button>
+            <div class="bg-[#fdfaf3] border-4 md:border-8 border-[#bba683] p-4 md:p-10 text-gray-900 min-h-[400px] shadow-2xl relative">
+                <div class="absolute inset-0 border-2 border-[#2c1810] pointer-events-none" style="margin: 2px;"></div>
+                <div class="flex flex-wrap justify-between items-end mb-8 border-b-2 border-gray-900 pb-4 gap-4">
+                    <h2 class="font-serif font-black text-xl md:text-3xl uppercase tracking-widest text-[#7a1d1d]">Campaign Chronicles</h2>
+                    <button id="add-session-btn" onclick="window.addSessionEntry()" class="hidden bg-amber-800 text-white px-4 py-2 rounded-full font-black text-[9px] uppercase">+ New Session</button>
                 </div>
-                <div id="sessions-list" class="space-y-20"></div>
+                <div id="sessions-list" class="space-y-12 md:space-y-20"></div>
             </div>
         </div>
     </div>
@@ -380,49 +294,49 @@
     <!-- ITEMS VIEW -->
     <div id="items-view" class="hidden-view p-4 md:p-8">
         <div class="max-w-6xl mx-auto">
-            <button onclick="window.switchView('hub')" class="text-amber-500 font-black text-xs uppercase mb-8 hover:text-amber-400">← Back to Archives</button>
-            <div class="flex flex-wrap gap-2 mb-8" id="item-category-tabs"></div>
+            <button onclick="window.switchView('hub')" class="text-amber-500 font-black text-[10px] uppercase mb-6 hover:text-amber-400">← Back</button>
+            <div class="horizontal-scroll mb-8" id="item-category-tabs"></div>
             
-            <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-                <div class="text-center md:text-left">
-                    <h2 class="font-serif font-black text-3xl uppercase text-amber-500">Gear & Artifacts</h2>
-                    <p class="text-xs text-amber-900/60 font-black uppercase tracking-widest mt-2" id="current-item-category-title">All Equipment</p>
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                <div class="text-left">
+                    <h2 class="font-serif font-black text-2xl md:text-3xl uppercase text-amber-500">Gear & Artifacts</h2>
+                    <p class="text-[9px] text-amber-900/60 font-black uppercase tracking-widest mt-1" id="current-item-category-title">All Equipment</p>
                 </div>
-                <button id="add-item-btn" onclick="window.addItemEntry()" class="hidden bg-amber-600 text-white px-8 py-3 rounded-full font-black text-xs uppercase shadow-xl hover:bg-amber-500 active:scale-95 transition-all">+ Log New Item</button>
+                <button id="add-item-btn" onclick="window.addItemEntry()" class="hidden bg-amber-600 text-white px-6 py-2 rounded-full font-black text-[9px] uppercase">+ New Item</button>
             </div>
-            <div id="items-list" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div>
+            <div id="items-list" class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8"></div>
         </div>
     </div>
 
     <!-- LIGHTBOX MODAL -->
     <div id="lightbox-modal" class="fixed inset-0 z-[1000] flex items-center justify-center p-4 hidden">
         <div class="modal-overlay lightbox-modal absolute inset-0" onclick="document.getElementById('lightbox-modal').classList.add('hidden')"></div>
-        <div class="relative z-10 flex flex-col items-center gap-4">
-            <img id="lightbox-img" src="" alt="Zoomed Asset" class="lightbox-img">
-            <button onclick="document.getElementById('lightbox-modal').classList.add('hidden')" class="bg-amber-600 text-white px-8 py-3 rounded-full font-black text-[11px] uppercase tracking-widest shadow-2xl border-2 border-white/20 active:scale-95 transition-transform">Close Optical Feed</button>
+        <div class="relative z-10 flex flex-col items-center gap-4 w-full">
+            <img id="lightbox-img" src="" alt="Zoomed Asset" class="lightbox-img w-full">
+            <button onclick="document.getElementById('lightbox-modal').classList.add('hidden')" class="bg-amber-600 text-white px-6 py-2 rounded-full font-black text-[9px] uppercase tracking-widest">Close Optical Feed</button>
         </div>
     </div>
 
     <!-- DELETE CONFIRMATION MODAL -->
     <div id="delete-modal" class="fixed inset-0 z-[600] flex items-center justify-center p-4 hidden">
         <div class="modal-overlay absolute inset-0" onclick="document.getElementById('delete-modal').classList.add('hidden')"></div>
-        <div class="bg-white p-8 rounded-2xl w-full max-sm border-4 border-red-600 text-center text-gray-900 relative z-10 shadow-2xl">
-            <h3 class="text-2xl font-serif font-black text-red-700 uppercase mb-4">Archive Disposal</h3>
-            <p class="text-sm text-gray-500 mb-8 italic leading-relaxed">This record will be permanently erased. This action is irreversible.</p>
-            <div class="flex flex-col gap-3">
-                <button id="confirm-delete-btn" class="w-full bg-red-700 hover:bg-red-800 text-white py-4 rounded-xl font-black text-xs uppercase shadow-lg transition-all active:scale-95">Yes, Erase Permanently</button>
-                <button onclick="document.getElementById('delete-modal').classList.add('hidden')" class="w-full bg-gray-100 text-gray-500 py-3 rounded-xl font-black text-[10px] uppercase">Cancel</button>
+        <div class="bg-white p-6 rounded-2xl w-full max-w-xs border-4 border-red-600 text-center text-gray-900 relative z-10 shadow-2xl">
+            <h3 class="text-xl font-serif font-black text-red-700 uppercase mb-2">Disposal</h3>
+            <p class="text-xs text-gray-500 mb-6 italic leading-relaxed">This record will be permanently erased.</p>
+            <div class="flex flex-col gap-2">
+                <button id="confirm-delete-btn" class="w-full bg-red-700 text-white py-3 rounded-xl font-black text-[10px] uppercase">Erase Permanently</button>
+                <button onclick="document.getElementById('delete-modal').classList.add('hidden')" class="w-full bg-gray-100 text-gray-500 py-2 rounded-xl font-black text-[9px] uppercase">Cancel</button>
             </div>
         </div>
     </div>
 
     <!-- DM PASSWORD MODAL -->
     <div id="password-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[500] hidden">
-        <div class="bg-gray-800 p-8 rounded-2xl w-full max-sm border-2 border-amber-600 text-white text-center shadow-2xl">
-            <h3 class="text-xl font-serif text-amber-500 font-bold mb-2 uppercase">Dungeon Master Access</h3>
-            <input type="password" id="dm-password" class="w-full bg-gray-900 text-center text-2xl rounded-lg p-3 mb-6 border border-gray-700">
-            <button onclick="window.verifyDmPassword()" class="w-full bg-amber-600 text-white py-3 rounded-xl font-bold uppercase text-xs">Unlock Archives</button>
-            <button onclick="document.getElementById('password-modal').classList.add('hidden')" class="w-full text-gray-500 mt-4 text-[10px] uppercase font-bold">Cancel</button>
+        <div class="bg-gray-800 p-6 rounded-2xl w-full max-w-xs border-2 border-amber-600 text-white text-center shadow-2xl mx-4">
+            <h3 class="text-lg font-serif text-amber-500 font-bold mb-2 uppercase">DM Access</h3>
+            <input type="password" id="dm-password" class="w-full bg-gray-900 text-center text-xl rounded-lg p-3 mb-4 border border-gray-700 outline-none">
+            <button onclick="window.verifyDmPassword()" class="w-full bg-amber-600 text-white py-3 rounded-xl font-bold uppercase text-[10px]">Unlock Archives</button>
+            <button onclick="document.getElementById('password-modal').classList.add('hidden')" class="w-full text-gray-500 mt-4 text-[9px] uppercase font-bold">Cancel</button>
         </div>
     </div>
 
@@ -545,16 +459,12 @@
             renderLists();
         };
 
-        // DRAG AND DROP LOGIC
+        // DRAG AND DROP LOGIC (DM ONLY)
         window.handleDragStart = (e, id, type) => {
             if (activeRole !== 'dm') return;
             e.dataTransfer.setData('application/json', JSON.stringify({ id, type }));
-            
-            // Visual feedback for reordering session
             document.body.classList.add('is-dragging-mode');
-            
-            const target = e.currentTarget;
-            target.classList.add('dragging');
+            e.currentTarget.classList.add('dragging');
         };
 
         window.handleDragEnd = (e) => {
@@ -583,11 +493,8 @@
             e.currentTarget.classList.remove('drag-over');
             
             const data = JSON.parse(e.dataTransfer.getData('application/json'));
-            
-            if (data.id === targetId) return;
-            if (data.type !== targetType) return;
+            if (data.id === targetId || data.type !== targetType) return;
 
-            // Find swap partners
             let list = [];
             let collectionName = '';
             if (data.type === 'script') { collectionName = 'handbookScripts'; list = scripts; }
@@ -597,16 +504,13 @@
 
             const sourceItem = list.find(i => i.id === data.id);
             const targetItem = list.find(i => i.id === targetId);
-
             if (!sourceItem || !targetItem) return;
 
-            // Swap order values
             const sourceOrder = sourceItem.order ?? sourceItem.createdAt;
             const targetOrder = targetItem.order ?? targetItem.createdAt;
 
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', collectionName, sourceItem.id), { order: targetOrder });
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', collectionName, targetItem.id), { order: sourceOrder });
-            
             window.showToast("Record Snapped into Place");
         };
 
@@ -670,7 +574,7 @@
                     }
                 }, 200);
             } else {
-                window.showToast(`Resource "${itemName}" is not registered. Remind your DM to add it to Gear & Artifacts!`);
+                window.showToast(`Resource "${itemName}" is not registered.`);
             }
         };
 
@@ -754,7 +658,7 @@
             textArea.select();
             try {
                 document.execCommand('copy');
-                window.showToast("Data Compiled & Copied to Clipboard");
+                window.showToast("Data Compiled & Copied");
             } catch (err) {
                 window.showToast("Failed to access system clipboard");
             }
@@ -802,9 +706,9 @@
                         <li><b>${wrapWithTooltip('Duration')}:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'duration', this.innerText)">${s.duration || 'Instantaneous'}</span></li>
                     </ul>
                     <div class="script-body ${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'content', this.innerText)">${parseAeonfallContent(s.content, isDM)}</div>
-                    <div class="script-higher-levels"><b>${wrapWithTooltip('At Higher Levels')}.</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'higherLevels', this.innerText)">${s.higherLevels || 'No scaling details.'}</span></div>
-                    <div class="script-footer"><b>Script Lists:</b> <span class="${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'scriptLists', this.innerText)">${isDM ? (s.scriptLists || currentClass) : linkifyClasses(s.scriptLists || currentClass)}</span></div>
-                    <button onclick="window.copyScript('${s.id}')" class="mt-6 w-full bg-[#2c1810]/5 hover:bg-[#7a1d1d]/10 border border-[#7a1d1d33] py-2 rounded-lg text-[#7a1d1d] font-black text-[10px] uppercase transition-all flex items-center justify-center gap-2"><span>📋</span> Copy Script Data</button>
+                    <div class="script-higher-levels"><b>${wrapWithTooltip('At Higher Levels')}.</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'higherLevels', this.innerText)">${s.higherLevels || '...'}</span></div>
+                    <div class="script-footer"><b>Lists:</b> <span class="${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdate('${s.id}', 'scriptLists', this.innerText)">${isDM ? (s.scriptLists || currentClass) : linkifyClasses(s.scriptLists || currentClass)}</span></div>
+                    <button onclick="window.copyScript('${s.id}')" class="mt-4 w-full bg-[#2c1810]/5 hover:bg-[#7a1d1d]/10 border border-[#7a1d1d33] py-2 rounded-lg text-[#7a1d1d] font-black text-[9px] uppercase transition-all flex items-center justify-center gap-2"><span>📋</span> Copy Script Data</button>
                 </div>
             `;
         }
@@ -831,7 +735,7 @@
                         <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateFeature('${f.id}', 'type', this.innerText)">${f.type || 'Feature Move'}</span>
                     </span>
                     <div class="script-body mt-4 ${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdateFeature('${f.id}', 'content', this.innerText)">${parseAeonfallContent(f.content, isDM)}</div>
-                    <button onclick="window.copyFeature('${f.id}')" class="mt-6 w-full bg-[#2c1810]/5 hover:bg-[#7a1d1d]/10 border border-[#7a1d1d33] py-2 rounded-lg text-[#7a1d1d] font-black text-[10px] uppercase transition-all flex items-center justify-center gap-2"><span>📋</span> Copy Feature Data</button>
+                    <button onclick="window.copyFeature('${f.id}')" class="mt-4 w-full bg-[#2c1810]/5 hover:bg-[#7a1d1d]/10 border border-[#7a1d1d33] py-2 rounded-lg text-[#7a1d1d] font-black text-[9px] uppercase transition-all flex items-center justify-center gap-2"><span>📋</span> Copy Feature Data</button>
                 </div>
             `;
         }
@@ -844,7 +748,7 @@
             }).join('');
 
             return `
-                <div class="progression-table-container shadow-2xl mb-12 grid-column-span-full ${isDM ? 'dm-active-edit' : ''}" 
+                <div class="progression-table-container shadow-2xl mb-8 grid-column-span-full ${isDM ? 'dm-active-edit' : ''}" 
                      style="grid-column: 1 / -1;"
                      draggable="${isDM}" 
                      ondragstart="window.handleDragStart(event, '${t.id}', 'table')" 
@@ -852,18 +756,16 @@
                      ondragover="window.handleDragOver(event)" 
                      ondragleave="window.handleDragLeave(event)"
                      ondrop="window.handleDrop(event, '${t.id}', 'table')">
-                    <div class="flex justify-between items-center mb-6">
+                    <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
                         <div class="flex items-center gap-3">
                             ${isDM ? '<div class="drag-handle" title="Move Table">⠿</div>' : ''}
-                            <h3 class="font-serif font-black uppercase text-xl text-[#7a1d1d] dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateTable('${t.id}', 'title', this.innerText)">${t.title}</h3>
+                            <h3 class="font-serif font-black uppercase text-lg md:text-xl text-[#7a1d1d] dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateTable('${t.id}', 'title', this.innerText)">${t.title}</h3>
                         </div>
                         ${isDM ? `
                             <div class="flex gap-2">
                                 <button onclick="window.addRowToTable('${t.id}')" class="arch-btn arch-btn-add">+ Row</button>
-                                <button onclick="window.removeRowFromTable('${t.id}')" class="arch-btn arch-btn-delete">- Row</button>
                                 <button onclick="window.addColumnToTable('${t.id}')" class="arch-btn arch-btn-util">+ Col</button>
-                                <button onclick="window.removeColumnFromTable('${t.id}')" class="arch-btn arch-btn-util">- Col</button>
-                                <button onclick="window.triggerDeleteTable('${t.id}')" class="arch-btn arch-btn-delete">Dispose Table</button>
+                                <button onclick="window.triggerDeleteTable('${t.id}')" class="arch-btn arch-btn-delete">Dispose</button>
                             </div>
                         ` : ''}
                     </div>
@@ -878,22 +780,17 @@
         const renderLists = () => {
             const isDM = activeRole === 'dm';
             
-            // Render Features View (Includes Tables, Archetypes & linked scripts)
+            // Render Features
             const fList = document.getElementById('features-list');
             if (fList) {
                 fList.innerHTML = '';
-                
-                // Get general resources (no archetype)
                 const classTables = tables.filter(t => t.parentClass === currentFeatureClass && !t.archetypeId);
                 const generalFeatures = features.filter(f => f.className === currentFeatureClass && !f.archetypeId);
                 const classArchetypes = archetypes.filter(a => a.parentClass === currentFeatureClass);
 
-                // Render Top Level Tables
                 classTables.forEach(t => fList.innerHTML += createTableHtml(t, isDM));
-                // Render Top Level Features
                 generalFeatures.forEach(f => fList.innerHTML += createFeatureCard(f, isDM));
 
-                // Render Archetype Sections
                 classArchetypes.forEach(arch => {
                     const archTables = tables.filter(t => t.archetypeId === arch.id);
                     const archFeatures = features.filter(f => f.archetypeId === arch.id);
@@ -916,10 +813,10 @@
                         </div>
                         ${isDM ? `
                             <div class="archetype-controls">
-                                <button onclick="window.addTableEntry('${arch.id}')" class="arch-btn arch-btn-add">+ Table</button>
-                                <button onclick="window.addFeatureEntry('${arch.id}')" class="arch-btn arch-btn-add">+ Feature</button>
-                                <button onclick="window.addScriptEntry(null, '${arch.id}')" class="arch-btn arch-btn-add">+ Script</button>
-                                <button onclick="window.triggerDeleteArchetype('${arch.id}')" class="arch-btn arch-btn-delete">Dispose Archetype</button>
+                                <button onclick="window.addTableEntry('${arch.id}')" class="arch-btn arch-btn-add">+ Tbl</button>
+                                <button onclick="window.addFeatureEntry('${arch.id}')" class="arch-btn arch-btn-add">+ Feat</button>
+                                <button onclick="window.addScriptEntry(null, '${arch.id}')" class="arch-btn arch-btn-add">+ Scr</button>
+                                <button onclick="window.triggerDeleteArchetype('${arch.id}')" class="arch-btn arch-btn-delete">Dispose</button>
                             </div>
                         ` : ''}
                     `;
@@ -929,20 +826,16 @@
                     archFeatures.forEach(f => fList.innerHTML += createFeatureCard(f, isDM));
                     archScripts.forEach(s => fList.innerHTML += createScriptCard(s, isDM));
 
-                    if (archTables.length === 0 && archFeatures.length === 0 && archScripts.length === 0) {
+                    if (!archTables.length && !archFeatures.length && !archScripts.length) {
                         const empty = document.createElement('p');
-                        empty.className = 'col-span-full text-center italic opacity-30 py-8 text-xs uppercase font-black';
-                        empty.textContent = 'Archetype Data Buffer Empty';
+                        empty.className = 'col-span-full text-center italic opacity-30 py-6 text-[10px] uppercase font-black';
+                        empty.textContent = 'Archetype Buffer Empty';
                         fList.appendChild(empty);
                     }
                 });
-
-                if (generalFeatures.length === 0 && classArchetypes.length === 0 && classTables.length === 0) {
-                    fList.innerHTML = `<p class="col-span-full text-center italic opacity-40 py-24 uppercase font-black text-amber-900 tracking-widest">No Class Records Available</p>`;
-                }
             }
 
-            // Render Script Codex View
+            // Render Scripts
             const sList = document.getElementById('scripts-list');
             if (sList) {
                 sList.innerHTML = '';
@@ -952,22 +845,19 @@
                     return listText.includes(currentClass.toLowerCase());
                 });
                 filteredScripts.forEach(s => sList.innerHTML += createScriptCard(s, isDM));
-                if (filteredScripts.length === 0) sList.innerHTML = `<p class="col-span-full text-center italic opacity-40 py-24 uppercase font-black text-amber-900 tracking-widest">Entry Restricted or Unavailable</p>`;
+                if (!filteredScripts.length) sList.innerHTML = `<p class="col-span-full text-center italic opacity-40 py-20 uppercase font-black text-amber-900 tracking-widest text-xs">No Records Found</p>`;
             }
 
             // Render Items
             const iList = document.getElementById('items-list');
             if (iList) {
                 iList.innerHTML = '';
-                const filteredItems = items.filter(i => {
-                    if (currentItemCategory === "All") return true;
-                    return (i.category || 'General').toLowerCase() === currentItemCategory.toLowerCase();
-                });
+                const filteredItems = items.filter(i => currentItemCategory === "All" || (i.category || 'General').toLowerCase() === currentItemCategory.toLowerCase());
                 filteredItems.forEach(i => {
                     const card = document.createElement('div');
                     card.className = `script-card ${isDM ? 'dm-active-edit' : ''}`;
                     const imgUrl = (i.imageUrl || '').trim();
-                    let imgHtml = imgUrl ? `<img src="${imgUrl}" class="item-preview-img" onclick="window.zoomImage('${imgUrl}')" onerror="this.src='https://placehold.co/400x400/000000/f59e0b?text=ASSET+LOST'">` : (isDM ? `<div class="w-full h-12 bg-black/5 border-dashed border-2 border-amber-900/20 rounded-lg flex items-center justify-center text-[10px] uppercase font-black opacity-40 mb-4 tracking-widest">No Signal: Input Asset Link Below</div>` : '');
+                    let imgHtml = imgUrl ? `<img src="${imgUrl}" class="item-preview-img" onclick="window.zoomImage('${imgUrl}')" onerror="this.src='https://placehold.co/400x400/000000/f59e0b?text=ASSET+LOST'">` : (isDM ? `<div class="w-full h-10 bg-black/5 border-dashed border-2 border-amber-900/20 rounded-lg flex items-center justify-center text-[8px] uppercase font-black opacity-40 mb-4 tracking-widest">Signal Lost: Input Link Below</div>` : '');
                     card.innerHTML = `
                         <div class="script-card-header">
                             <div class="script-card-title dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'title', this.innerText)">${i.title}</div>
@@ -975,22 +865,20 @@
                         </div>
                         <span class="script-card-level">
                             <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'category', this.innerText)">${i.category || 'General'}</span> — 
-                            <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'type', this.innerText)">${i.type || 'Gear'}</span> — 
                             <span class="dm-editable ${getRarityClass(i.rarity)}" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'rarity', this.innerText)">${i.rarity || 'Common'}</span>
                         </span>
                         ${imgHtml}
-                        ${isDM ? `<span class="item-url-input">Optical Asset Link: <span class="dm-editable inline-block min-w-[50px] border-b border-amber-900/20" contenteditable="true" oninput="window.debounceUpdateItem('${i.id}', 'imageUrl', this.innerText)">${imgUrl}</span></span>` : ''}
+                        ${isDM ? `<span class="item-url-input">Asset: <span class="dm-editable inline-block min-w-[50px] border-b border-amber-900/20" contenteditable="true" oninput="window.debounceUpdateItem('${i.id}', 'imageUrl', this.innerText)">${imgUrl}</span></span>` : ''}
                         <ul class="script-prop-list">
                             <li><b>Weight:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'weight', this.innerText)">${i.weight || '1 lb'}</span></li>
                             <li><b>Value:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'cost', this.innerText)">${i.cost || '-'}</span></li>
                         </ul>
                         <div class="script-body ${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'content', this.innerText)">${parseAeonfallContent(i.content, isDM)}</div>
                         <div class="script-higher-levels"><b>Properties.</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'properties', this.innerText)">${i.properties || 'None.'}</span></div>
-                        <button onclick="window.copyItem('${i.id}')" class="mt-6 w-full bg-[#2c1810]/5 hover:bg-[#7a1d1d]/10 border border-[#7a1d1d33] py-2 rounded-lg text-[#7a1d1d] font-black text-[10px] uppercase transition-all flex items-center justify-center gap-2"><span>📋</span> Copy Item Data</button>
+                        <button onclick="window.copyItem('${i.id}')" class="mt-4 w-full bg-[#2c1810]/5 hover:bg-[#7a1d1d]/10 border border-[#7a1d1d33] py-2 rounded-lg text-[#7a1d1d] font-black text-[9px] uppercase transition-all flex items-center justify-center gap-2"><span>📋</span> Copy Data</button>
                     `;
                     iList.appendChild(card);
                 });
-                if (filteredItems.length === 0) iList.innerHTML = `<p class="col-span-full text-center italic opacity-40 py-24 uppercase font-black text-amber-900 tracking-widest">No Items Registered in this category</p>`;
             }
 
             // Render Sessions
@@ -1001,33 +889,32 @@
                     const div = document.createElement('div');
                     div.className = `relative ${isDM ? 'dm-active-edit' : ''}`;
                     let html = `
-                        <div class="flex justify-between items-start mb-6 border-b border-gray-900/10 pb-2">
-                            <div class="font-serif font-black text-4xl uppercase text-[#7a1d1d] dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'title', this.innerText)">${s.title}</div>
-                            ${isDM ? `<button onclick="window.triggerDeleteSession('${s.id}')" class="text-red-700 font-black text-[10px] uppercase border border-red-200 px-2 py-1 rounded">Erase Log</button>` : ''}
+                        <div class="flex flex-wrap justify-between items-start mb-6 border-b border-gray-900/10 pb-2 gap-4">
+                            <div class="font-serif font-black text-2xl md:text-4xl uppercase text-[#7a1d1d] dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'title', this.innerText)">${s.title}</div>
+                            ${isDM ? `<button onclick="window.triggerDeleteSession('${s.id}')" class="text-red-700 font-black text-[9px] uppercase border border-red-200 px-2 py-1 rounded">Delete</button>` : ''}
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-x-12">
                             <div>
                                 <div class="session-field-group"><b>Date:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'date', this.innerText)">${s.date}</span></div>
-                                <div class="session-field-group"><b>Starting Point:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'startingPoint', this.innerText)">${s.startingPoint || '...'}</span></div>
+                                <div class="session-field-group"><b>Location:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'startingPoint', this.innerText)">${s.startingPoint || '...'}</span></div>
                                 <div class="session-field-group"><b>Summary:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'lastSessionSummary', this.innerText)">${s.lastSessionSummary || '...'}</span></div>
                             </div>
                         </div>
                         <div class="mt-8">
-                            <h4 class="font-serif font-black text-xl uppercase text-[#7a1d1d] mb-4">Scenes / Beats</h4>
+                            <h4 class="font-serif font-black text-lg uppercase text-[#7a1d1d] mb-4">Scenes & Beats</h4>
                             <div class="space-y-4">
-                                <div class="session-field-group"><b>1. Hook / Opening:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene1', this.innerText)">${s.scene1 || '...'}</div></div>
-                                <div class="session-field-group"><b>2. Key NPCs & Goals:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene2', this.innerText)">${s.scene2 || '...'}</div></div>
-                                <div class="session-field-group"><b>3. Challenges / Encounters:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene3', this.innerText)">${s.scene3 || '...'}</div></div>
-                                <div class="session-field-group"><b>4. Secrets or Clues:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene4', this.innerText)">${s.scene4 || '...'}</div></div>
-                                <div class="session-field-group"><b>5. Closing Scene:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene5', this.innerText)">${s.scene5 || '...'}</div></div>
+                                <div class="session-field-group"><b>1. Opening:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene1', this.innerText)">${s.scene1 || '...'}</div></div>
+                                <div class="session-field-group"><b>2. Key Goals:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene2', this.innerText)">${s.scene2 || '...'}</div></div>
+                                <div class="session-field-group"><b>3. Challenges:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene3', this.innerText)">${s.scene3 || '...'}</div></div>
+                                <div class="session-field-group"><b>4. Secrets:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene4', this.innerText)">${s.scene4 || '...'}</div></div>
+                                <div class="session-field-group"><b>5. Closing:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene5', this.innerText)">${s.scene5 || '...'}</div></div>
                             </div>
                         </div>
                     `;
                     if (isDM) html += `
-                        <div class="dm-intel-box"><span class="dm-intel-label">DM Intel — Private</span>
-                            <div class="mb-6"><div class="font-black text-[11px] uppercase text-[#7a1d1d] mb-2">Session Goals</div><div class="dm-editable min-h-[60px] bg-white/50 p-2 rounded" contenteditable="true" oninput="window.debounceUpdateSession('${s.id}', 'dmGoals', this.innerText)">${s.dmGoals || '...'}</div></div>
-                            <div class="mb-6"><div class="font-black text-[11px] uppercase text-[#7a1d1d] mb-2">Running Notes</div><div class="dm-editable min-h-[100px] bg-white/50 p-2 rounded" contenteditable="true" oninput="window.debounceUpdateSession('${s.id}', 'dmRunningNotes', this.innerText)">${s.dmRunningNotes || '...'}</div></div>
-                            <div><div class="font-black text-[11px] uppercase text-[#7a1d1d] mb-2">Aftermath</div><div class="dm-editable min-h-[80px] bg-white/50 p-2 rounded" contenteditable="true" oninput="window.debounceUpdateSession('${s.id}', 'dmAftermath', this.innerText)">${s.dmAftermath || '...'}</div></div>
+                        <div class="dm-intel-box mt-10"><span class="dm-intel-label">DM Intel</span>
+                            <div class="mb-4"><div class="font-black text-[10px] uppercase text-[#7a1d1d] mb-1">Goals</div><div class="dm-editable min-h-[40px] bg-white/50 p-2 rounded" contenteditable="true" oninput="window.debounceUpdateSession('${s.id}', 'dmGoals', this.innerText)">${s.dmGoals || '...'}</div></div>
+                            <div class="mb-4"><div class="font-black text-[10px] uppercase text-[#7a1d1d] mb-1">Notes</div><div class="dm-editable min-h-[60px] bg-white/50 p-2 rounded" contenteditable="true" oninput="window.debounceUpdateSession('${s.id}', 'dmRunningNotes', this.innerText)">${s.dmRunningNotes || '...'}</div></div>
                         </div>`;
                     div.innerHTML = html;
                     sessList.appendChild(div);
@@ -1043,65 +930,33 @@
         window.debounceUpdateTableCell = (id, field, idx, val, cellIdx = null) => {
             if (autoSaveTimer) clearTimeout(autoSaveTimer);
             autoSaveTimer = setTimeout(async () => {
-                const tableRef = doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id);
                 const table = tables.find(t => t.id === id);
                 if (!table) return;
-                
+                const tableRef = doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id);
                 if (field === 'headers') {
-                    const newHeaders = [...table.headers];
-                    newHeaders[idx] = val;
+                    const newHeaders = [...table.headers]; newHeaders[idx] = val;
                     await updateDoc(tableRef, { headers: newHeaders });
                 } else if (field === 'rows') {
-                    const newRows = [...table.rows];
-                    newRows[idx][cellIdx] = val;
+                    const newRows = [...table.rows]; newRows[idx][cellIdx] = val;
                     await updateDoc(tableRef, { rows: JSON.stringify(newRows) });
                 }
             }, 1000);
         };
 
         window.addRowToTable = async (id) => {
-            const tableRef = doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id);
             const table = tables.find(t => t.id === id);
             if (!table) return;
-            const newRow = new Array(table.headers.length).fill("...");
-            const updatedRows = [...table.rows, newRow];
-            await updateDoc(tableRef, { rows: JSON.stringify(updatedRows) });
-            window.showToast("Row Appended");
-        };
-
-        window.removeRowFromTable = async (id) => {
-            const tableRef = doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id);
-            const table = tables.find(t => t.id === id);
-            if (!table || table.rows.length <= 1) return;
-            const updatedRows = table.rows.slice(0, -1);
-            await updateDoc(tableRef, { rows: JSON.stringify(updatedRows) });
-            window.showToast("Row Removed");
+            const updatedRows = [...table.rows, new Array(table.headers.length).fill("...")];
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id), { rows: JSON.stringify(updatedRows) });
         };
 
         window.addColumnToTable = async (id) => {
-            const tableRef = doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id);
             const table = tables.find(t => t.id === id);
             if (!table) return;
-            const updatedHeaders = [...table.headers, "New Section"];
-            const updatedRows = table.rows.map(row => [...row, "..."]);
-            await updateDoc(tableRef, { 
-                headers: updatedHeaders,
-                rows: JSON.stringify(updatedRows)
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id), { 
+                headers: [...table.headers, "New"],
+                rows: JSON.stringify(table.rows.map(row => [...row, "..."]))
             });
-            window.showToast("Column Added");
-        };
-
-        window.removeColumnFromTable = async (id) => {
-            const tableRef = doc(db, 'artifacts', appId, 'public', 'data', 'handbookTables', id);
-            const table = tables.find(t => t.id === id);
-            if (!table || table.headers.length <= 1) return;
-            const updatedHeaders = table.headers.slice(0, -1);
-            const updatedRows = table.rows.map(row => row.slice(0, -1));
-            await updateDoc(tableRef, { 
-                headers: updatedHeaders,
-                rows: JSON.stringify(updatedRows)
-            });
-            window.showToast("Column Removed");
         };
 
         window.debounceUpdateArchetype = (id, field, val) => {
@@ -1137,51 +992,41 @@
             const collectionName = deleteType === 'script' ? 'handbookScripts' : deleteType === 'session' ? 'handbookSessions' : deleteType === 'feature' ? 'handbookFeatures' : deleteType === 'archetype' ? 'handbookArchetypes' : deleteType === 'table' ? 'handbookTables' : 'handbookItems';
             await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', collectionName, itemToDeleteId));
             document.getElementById('delete-modal').classList.add('hidden');
-            window.showToast("Erased");
+            window.showToast("Record Erased");
             itemToDeleteId = null;
         };
 
         window.addTableEntry = async (archId = null) => {
-            const data = { 
-                title: "NEW PROGRESSION", 
-                parentClass: currentFeatureClass, 
-                archetypeId: archId,
-                headers: ["Level", "Prof.", "Features"], 
-                rows: JSON.stringify([["1st", "+2", "..."]]), 
-                createdAt: Date.now(),
-                order: Date.now()
-            };
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookTables'), data);
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookTables'), { 
+                title: "NEW PROGRESSION", parentClass: currentFeatureClass, archetypeId: archId,
+                headers: ["Level", "Prof.", "Features"], rows: JSON.stringify([["1st", "+2", "..."]]), 
+                createdAt: Date.now(), order: Date.now()
+            });
         };
 
         window.addArchetypeEntry = async () => {
-            const data = { name: "NEW ARCHETYPE", parentClass: currentFeatureClass, createdAt: Date.now(), order: Date.now() };
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookArchetypes'), data);
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookArchetypes'), { name: "NEW ARCHETYPE", parentClass: currentFeatureClass, createdAt: Date.now(), order: Date.now() });
         };
 
         window.addFeatureEntry = async (archId = null) => {
-            const data = { title: "NEW FEATURE", content: "Description of the move...", type: "Feature Move", className: currentFeatureClass, archetypeId: archId, createdAt: Date.now(), order: Date.now() };
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookFeatures'), data);
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookFeatures'), { title: "NEW FEATURE", content: "...", type: "Feature Move", className: currentFeatureClass, archetypeId: archId, createdAt: Date.now(), order: Date.now() });
         };
 
         window.addScriptEntry = async (lvl = null, archId = null) => {
-            const data = { 
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookScripts'), { 
                 title: "NEW SCRIPT", content: "...", school: "Dominion", classification: "", 
                 activationTime: "1 Action", range: "30 feet", components: "V, S", duration: "Instant", 
                 higherLevels: "...", scriptLists: currentFeatureClass, className: currentFeatureClass, 
                 level: lvl || currentLevel, archetypeId: archId, createdAt: Date.now(), order: Date.now() 
-            };
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookScripts'), data);
+            });
         };
         
         window.addSessionEntry = async () => {
-            const data = { title: "SESSION #", date: new Date().toLocaleDateString(), startingPoint: "...", lastSessionSummary: "...", scene1: "...", scene2: "...", scene3: "...", scene4: "...", scene5: "...", dmGoals: "...", dmRunningNotes: "...", dmAftermath: "...", createdAt: Date.now() };
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookSessions'), data);
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookSessions'), { title: "SESSION #", date: new Date().toLocaleDateString(), startingPoint: "...", lastSessionSummary: "...", scene1: "...", scene2: "...", scene3: "...", scene4: "...", scene5: "...", dmGoals: "...", createdAt: Date.now() });
         };
 
         window.addItemEntry = async () => {
-            const data = { title: "NEW ITEM", content: "Description of the gear...", category: currentItemCategory === "All" ? "Adventuring Gear" : currentItemCategory, type: "Gear", rarity: "Common", weight: "1 lb", cost: "-", properties: "None", imageUrl: "", createdAt: Date.now() };
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookItems'), data);
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookItems'), { title: "NEW ITEM", content: "...", category: currentItemCategory === "All" ? "Adventuring Gear" : currentItemCategory, type: "Gear", rarity: "Common", weight: "1 lb", cost: "-", properties: "None", imageUrl: "", createdAt: Date.now() });
         };
 
         const sortFn = (a, b) => (a.order ?? a.createdAt) - (b.order ?? b.createdAt);
@@ -1194,42 +1039,34 @@
             if (role) activeRole = role;
             
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookTables'), (snap) => {
-                tables = snap.docs.map(d => {
-                    const data = d.data();
-                    return {
-                        id: d.id,
-                        ...data,
-                        rows: typeof data.rows === 'string' ? JSON.parse(data.rows) : (data.rows || [])
-                    };
-                }).sort(sortFn);
+                tables = snap.docs.map(d => { const data = d.data(); return { id: d.id, ...data, rows: typeof data.rows === 'string' ? JSON.parse(data.rows) : (data.rows || []) }; }).sort(sortFn);
                 renderLists();
-            }, (err) => console.error("Table fetch failed:", err));
+            });
 
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookArchetypes'), (snap) => {
                 archetypes = snap.docs.map(d => ({id: d.id, ...d.data()})).sort(sortFn);
                 renderLists();
-            }, (err) => console.error("Archetype fetch failed:", err));
+            });
 
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookFeatures'), (snap) => {
                 features = snap.docs.map(d => ({id: d.id, ...d.data()})).sort(sortFn);
                 renderLists();
-            }, (err) => console.error("Feature fetch failed:", err));
+            });
 
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookScripts'), (snap) => {
                 scripts = snap.docs.map(d => ({id: d.id, ...d.data()})).sort(sortFn);
                 renderLists();
-            }, (err) => console.error("Script fetch failed:", err));
+            });
 
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookSessions'), (snap) => {
                 sessions = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => b.createdAt - a.createdAt);
                 renderLists();
-            }, (err) => console.error("Session fetch failed:", err));
+            });
 
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookItems'), (snap) => {
                 items = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => a.createdAt - b.createdAt);
-                renderLists();
-                renderNavs();
-            }, (err) => console.error("Item fetch failed:", err));
+                renderLists(); renderNavs();
+            });
 
             window.updateRoleUI();
         };
