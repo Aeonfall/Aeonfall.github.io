@@ -26,15 +26,39 @@
             min-height: 100vh;
             overflow-x: hidden;
             margin: 0;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        #cinematic-overlay {
-            position: fixed; inset: 0; background: #000; z-index: 20000;
-            display: flex; align-items: center; justify-content: center;
-            opacity: 0; pointer-events: none; transition: opacity 0.5s ease;
+        /* Responsive Sidebar Toggle */
+        #nav-toggle-btn {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 2000;
+            background: var(--arch-burgundy);
+            color: white;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            cursor: pointer;
+            border: 2px solid var(--arch-gold);
         }
-        #cinematic-overlay.active { opacity: 1; pointer-events: auto; }
-        .loading-text { font-family: 'Cinzel', serif; color: var(--arch-gold); font-size: 12px; letter-spacing: 4px; text-transform: uppercase; font-weight: 900; animation: pulse 1.5s infinite; }
+
+        #nav-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        #nav-overlay.active { opacity: 1; pointer-events: auto; }
 
         .parchment-container {
             max-width: 1400px; margin: 0 auto; background: var(--arch-parchment);
@@ -53,7 +77,13 @@
         .sidebar-footer { padding: 20px 20px 0 20px; flex-shrink: 0; border-top: 1px solid rgba(0,0,0,0.05); margin-top: auto; }
         #nav-list { flex-grow: 1; overflow-y: auto; padding: 20px; scrollbar-width: thin; scrollbar-color: var(--arch-burgundy) transparent; }
 
-        @media (max-width: 1024px) { .manual-nav { position: fixed; left: 0; top: 0; bottom: 0; transform: translateX(-100%); background: var(--arch-parchment); box-shadow: 10px 0 30px rgba(0,0,0,0.2); } .manual-nav.open { transform: translateX(0); } }
+        @media (max-width: 1024px) { 
+            #nav-toggle-btn { display: flex; }
+            .manual-nav { position: fixed; left: 0; top: 0; bottom: 0; transform: translateX(-100%); background: var(--arch-parchment); box-shadow: 10px 0 30px rgba(0,0,0,0.2); } 
+            .manual-nav.open { transform: translateX(0); } 
+            .manual-body { padding: 80px 20px 100px 20px !important; }
+            .manual-section-unit { width: 100% !important; margin-left: 0 !important; margin-right: 0 !important; }
+        }
 
         .shelf-item { 
             font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; text-transform: uppercase; 
@@ -68,112 +98,73 @@
         
         #manual-sections-container { display: flex; flex-direction: row; flex-wrap: wrap; align-items: flex-start; width: 100%; gap: 15px; }
 
-        /* Drag Feedbacks */
-        .drop-zone-left { border-left: 8px solid var(--arch-gold) !important; padding-left: 10px; }
-        .drop-zone-right { border-right: 8px solid var(--arch-gold) !important; padding-right: 10px; }
-        .drop-zone-top { border-top: 5px solid var(--arch-gold) !important; }
-        .drop-zone-bottom { border-bottom: 5px solid var(--arch-gold) !important; }
-        .unit-dragging { opacity: 0.3 !important; transform: scale(0.98); border: 2px dashed var(--arch-burgundy) !important; background: rgba(0,0,0,0.02); }
-
         #dm-global-controls { 
             position: sticky; bottom: 20px; margin-left: auto; margin-right: 20px;
             z-index: 10000; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); 
             padding: 10px 20px; border-radius: 50px; border: 1.5px solid rgba(122, 29, 29, 0.3); 
-            box-shadow: 0 15px 45px rgba(0,0,0,0.3); display: none; gap: 10px; width: fit-content; align-items: center;
+            box-shadow: 0 15px 45px rgba(0,0,0,0.3); display: none; gap: 8px; width: fit-content; align-items: center;
+            max-width: 90vw; overflow-x: auto;
         }
         #dm-global-controls.active-dm { display: flex; }
 
-        .manual-h1 { font-family: 'Cinzel', serif; font-weight: 900; font-size: clamp(2rem, 5vw, 3.5rem); color: var(--arch-burgundy); text-transform: uppercase; margin-bottom: 10px; width: 100%; letter-spacing: 2px; text-align: left; }
-        .manual-main-subtitle { font-family: 'Special Elite', cursive; font-size: 12px; color: #5d4037; opacity: 0.8; margin-bottom: 40px; letter-spacing: 2px; }
-        .manual-h2 { font-family: 'Cinzel', serif; font-weight: 900; font-size: clamp(1.4rem, 4vw, 2.2rem); border-bottom: 4px double var(--arch-burgundy); padding-bottom: 8px; text-transform: uppercase; margin-bottom: 25px; width: 100%; letter-spacing: 2px; }
-        .manual-h3 { font-family: 'Cinzel', serif; font-weight: 700; font-size: clamp(1.1rem, 3vw, 1.4rem); border-bottom: 1px solid rgba(93, 64, 55, 0.4); padding-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; width: 100%; }
+        .manual-h1 { font-family: 'Cinzel', serif; font-weight: 900; font-size: clamp(1.8rem, 5vw, 3.5rem); color: var(--arch-burgundy); text-transform: uppercase; margin-bottom: 10px; width: 100%; letter-spacing: 2px; text-align: left; }
+        .manual-main-subtitle { font-family: 'Special Elite', cursive; font-size: 11px; color: #5d4037; opacity: 0.8; margin-bottom: 30px; letter-spacing: 1px; }
+        .manual-h2 { font-family: 'Cinzel', serif; font-weight: 900; font-size: clamp(1.2rem, 4vw, 2.2rem); border-bottom: 4px double var(--arch-burgundy); padding-bottom: 8px; text-transform: uppercase; margin-bottom: 25px; width: 100%; letter-spacing: 2px; }
+        .manual-h3 { font-family: 'Cinzel', serif; font-weight: 700; font-size: clamp(1rem, 3vw, 1.4rem); border-bottom: 1px solid rgba(93, 64, 55, 0.4); padding-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; width: 100%; }
 
-        .tuner-panel { font-size: 8px; gap: 12px; padding: 10px 15px; flex-wrap: wrap; display: flex; align-items: center; background: white; border: 1px solid var(--arch-gold); border-radius: 30px; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .tuner-label { font-weight: 900; color: var(--arch-burgundy); text-transform: uppercase; font-size: 7px; letter-spacing: 1px; margin-bottom: 2px; }
-        .tuner-slider { accent-color: var(--arch-burgundy); width: 60px; height: 12px; }
-        .align-btn { width: 22px; height: 22px; border: 1px solid #ddd; background: #f9f9f9; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #555; transition: 0.2s; cursor: pointer; }
-        .align-btn.active { background: var(--arch-burgundy); color: white; border-color: var(--arch-burgundy); }
-        .purge-btn { border-color: #fecaca; color: #ef4444; }
-        .purge-btn:hover { background: #ef4444; color: white; border-color: #ef4444; }
+        .tuner-panel { font-size: 8px; gap: 8px; padding: 8px 12px; flex-wrap: wrap; display: flex; align-items: center; background: white; border: 1px solid var(--arch-gold); border-radius: 20px; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
-        .arch-btn { font-family: 'Cinzel', serif; font-size: 8px; font-weight: 900; text-transform: uppercase; padding: 8px 14px; border-radius: 25px; cursor: pointer; border: 1px solid var(--arch-burgundy); transition: 0.2s; display: inline-flex; align-items: center; gap: 4px; background: var(--arch-burgundy); color: white; white-space: nowrap; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .arch-btn { font-family: 'Cinzel', serif; font-size: 8px; font-weight: 900; text-transform: uppercase; padding: 8px 12px; border-radius: 25px; cursor: pointer; border: 1px solid var(--arch-burgundy); transition: 0.2s; display: inline-flex; align-items: center; gap: 4px; background: var(--arch-burgundy); color: white; white-space: nowrap; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         
-        /* NOTE & INFO BOXES - FRAMED WITH SHADOW */
         .manual-note-box, .manual-info-box { 
             background: #ffffff !important; 
             border-radius: 20px !important; 
-            padding: clamp(20px, 5vw, 40px) !important; 
+            padding: clamp(16px, 4vw, 40px) !important; 
             box-shadow: 0 15px 45px rgba(0,0,0,0.15) !important; 
             border: 2px solid var(--arch-gold) !important;
             width: 100%; 
-            margin-bottom: 3.5rem; 
+            margin-bottom: 2rem; 
             position: relative; 
             color: var(--charcoal-pencil); 
         }
         .manual-note-box { background: var(--sage-note-bg) !important; }
 
-        /* STRICT GRAPHITE COLOR protocol */
-        .dm-editable, .dm-editable *, [contenteditable], [contenteditable] *, .manual-p, .manual-h2, .manual-h3 { color: #262626 !important; }
-        body.dm-mode-active .dm-editable { border-bottom: 1px dashed rgba(122, 29, 29, 0.2); }
-        .drag-handle-anchor { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; color: var(--arch-burgundy); font-size: 18px; cursor: grab; opacity: 0.6; transition: 0.2s; margin-right: 10px; user-select: none; }
-        .drag-handle-anchor:hover { opacity: 1; transform: scale(1.1); }
-
-        /* TABLE STYLES - FRAMED WITH SHADOW */
         .table-wrap {
             width: 100%;
             border: 2px solid var(--arch-gold);
             box-shadow: 0 15px 45px rgba(0,0,0,0.15);
             border-radius: 8px;
-            overflow: hidden;
-            margin-bottom: 3rem;
+            overflow-x: auto;
+            margin-bottom: 2.5rem;
             background: white;
         }
-        .manual-table { width: 100%; border-collapse: collapse; text-align: left; }
-        .manual-table th { padding: 12px; background: rgba(0,0,0,0.1); border-bottom: 2px solid var(--arch-burgundy); font-family: 'Cinzel'; font-size: 11px; }
-        .manual-table td { padding: 12px; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 14px; }
-        .manual-table tbody tr:nth-child(even) { background-color: var(--sage-note-bg) !important; }
+        .manual-table { width: 100%; min-width: 400px; border-collapse: collapse; text-align: left; }
+        .manual-table th { padding: 10px; background: rgba(0,0,0,0.1); border-bottom: 2px solid var(--arch-burgundy); font-family: 'Cinzel'; font-size: 10px; }
+        .manual-table td { padding: 10px; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 13px; }
 
-        /* IMAGE SLIDER */
-        .slider-bubble { background: #ffffff !important; border: 2px solid var(--arch-gold) !important; border-radius: 40px !important; padding: 40px !important; box-shadow: 0 25px 60px rgba(0,0,0,0.18) !important; width: 100%; margin-bottom: 3.5rem; position: relative; overflow: hidden; }
-        .slider-viewport { width: 100%; position: relative; display: flex; align-items: center; justify-content: center; min-height: 250px; }
-        .slide-container { display: none; width: 100%; flex-direction: column; align-items: center; }
-        .slide-container.active { display: flex; animation: fadeIn 0.5s ease; }
-        .slide-asset { max-width: 100%; height: auto; border-radius: 4px; cursor: zoom-in; }
-        .slider-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; background: var(--arch-burgundy); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; opacity: 0.8; }
-        .arrow-left { left: 10px; } .arrow-right { right: 10px; }
+        .slider-bubble { background: #ffffff !important; border: 2px solid var(--arch-gold) !important; border-radius: 20px !important; padding: 20px !important; box-shadow: 0 25px 60px rgba(0,0,0,0.18) !important; width: 100%; margin-bottom: 2.5rem; position: relative; overflow: hidden; }
 
-        /* Footnote Styling - Center, Small, Italic, Bordered Image */
-        .inline-img-wrapper { margin: 2.5rem 0; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; position: relative; }
-        .inline-arch-asset { 
-            max-width: 100%; 
-            height: auto; 
-            border-radius: 4px; 
-            display: block; 
-            margin: 0 auto; 
-            border: 2px solid var(--arch-gold);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
-            cursor: zoom-in; 
-            transition: transform 0.3s ease;
-        }
-        .inline-arch-asset:hover { transform: scale(1.01); }
-
-        .embed-purge-btn { position: absolute; top: -12px; right: -12px; width: 28px; height: 28px; background: #ef4444; color: white; border-radius: 50%; border: 3px solid white; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 900; cursor: pointer; z-index: 100; transition: 0.2s; }
-        .media-footnote { color: #262626; font-size: 0.7rem; font-style: italic; margin-top: 10px; opacity: 0.7; text-align: center; font-family: 'Special Elite', cursive; width: 100%; display: block; }
-
-        .role-pill { background: rgba(0,0,0,0.05); border-radius: 99px; padding: 4px; display: inline-flex; gap: 4px; border: 1px solid rgba(0,0,0,0.1); margin: 20px auto 0 auto; }
-        .role-tab { padding: 8px 24px; font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; border-radius: 99px; transition: 0.3s; color: #5d4037; text-transform: uppercase; cursor: pointer; user-select: none; }
+        .role-pill { background: rgba(0,0,0,0.05); border-radius: 99px; padding: 4px; display: inline-flex; gap: 4px; border: 1px solid rgba(0,0,0,0.1); margin: 10px auto 0 auto; }
+        .role-tab { padding: 6px 18px; font-family: 'Cinzel', serif; font-size: 9px; font-weight: 900; border-radius: 99px; transition: 0.3s; color: #5d4037; text-transform: uppercase; cursor: pointer; user-select: none; }
         .role-tab.active { background: var(--arch-burgundy) !important; color: white !important; }
 
-        .hidden { display: none !important; }
-        .toast { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); background: #1a0f0a; color: #f4edd8; padding: 12px 32px; border-radius: 40px; z-index: 2000000; opacity: 0; transition: 0.3s; font-family: 'Cinzel'; font-size: 11px; font-weight: 900; border: 1px solid var(--arch-burgundy); pointer-events: none; }
+        .toast { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); background: #1a0f0a; color: #f4edd8; padding: 10px 24px; border-radius: 40px; z-index: 2000000; opacity: 0; transition: opacity 0.3s; font-family: 'Cinzel'; font-size: 10px; font-weight: 900; border: 1px solid var(--arch-burgundy); pointer-events: none; }
     </style>
 </head>
 <body class="dm-mode-active" onclick="window.closeAllDropdowns()">
 
     <div id="toast" class="toast">Manual Synchronized</div>
 
+    <!-- Navigation Toggle (Mobile) -->
+    <div id="nav-toggle-btn" onclick="window.toggleNav(); event.stopPropagation();">
+        <span>☰</span>
+    </div>
+
+    <!-- Backdrop (Mobile) -->
+    <div id="nav-overlay" onclick="window.toggleNav()"></div>
+
     <div id="pass-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[110000] hidden p-4 text-black">
-        <div class="bg-gray-800 p-10 rounded-2xl w-full max-w-sm border-2 border-amber-600 text-white text-center shadow-2xl" onclick="event.stopPropagation()">
+        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border-2 border-amber-600 text-white text-center shadow-2xl" onclick="event.stopPropagation()">
             <h3 class="text-xl font-serif text-amber-500 font-bold mb-4 uppercase">Archive Authority</h3>
             <input type="password" id="dm-pass" class="w-full bg-gray-900 text-center text-2xl rounded-lg p-3 mb-8 border border-gray-700 text-amber-500 outline-none">
             <button onclick="window.authDm()" class="w-full bg-amber-600 hover:bg-amber-500 text-white py-4 rounded-xl font-bold uppercase text-xs">Verify Access</button>
@@ -182,7 +173,7 @@
     </div>
 
     <div id="lightbox-modal" class="hidden fixed inset-0 z-[120000] bg-black/90 flex items-center justify-center" onclick="this.classList.add('hidden')">
-        <div id="lightbox-content" class="p-10 flex items-center justify-center"></div>
+        <div id="lightbox-content" class="p-4 flex items-center justify-center w-full h-full"></div>
     </div>
 
     <div class="parchment-container">
@@ -206,9 +197,9 @@
             <div id="manual-sections-container"></div>
             <div id="dm-global-controls">
                 <button onclick="window.addManualSection('heading')" class="arch-btn">🔗 Group</button>
-                <button onclick="window.addManualSection('subheading')" class="arch-btn">📑 Subhead</button>
+                <button onclick="window.addManualSection('subheading')" class="arch-btn">📑 Sub</button>
                 <button onclick="window.addManualSection('text')" class="arch-btn">+ Text</button>
-                <button onclick="window.addManualSection('table')" class="arch-btn">+ Table</button>
+                <button onclick="window.addManualSection('table')" class="arch-btn">+ Tbl</button>
                 <button onclick="window.addManualSection('note')" class="arch-btn">📑 Note</button>
                 <button onclick="window.addManualSection('info')" class="arch-btn">📊 Info</button>
                 <button onclick="window.addManualSection('media')" class="arch-btn">🖼 Carousel</button>
@@ -218,8 +209,8 @@
 
     <div id="del-modal" class="fixed inset-0 z-[110000] flex items-center justify-center p-4 hidden text-black">
         <div class="absolute inset-0 bg-black/90" onclick="document.getElementById('del-modal').classList.add('hidden')"></div>
-        <div class="bg-white p-10 rounded-2xl w-full max-w-sm text-center relative z-10 shadow-2xl">
-            <h3 class="text-2xl font-serif font-black text-red-700 uppercase mb-4">Purge Record</h3>
+        <div class="bg-white p-8 rounded-2xl w-full max-w-sm text-center relative z-10 shadow-2xl">
+            <h3 class="text-xl font-serif font-black text-red-700 uppercase mb-4">Purge Record</h3>
             <p id="del-modal-text" class="text-xs text-slate-500 mb-8 italic">This entry will be lost.</p>
             <button id="confirm-del-btn" class="w-full bg-red-700 text-white py-4 rounded-xl font-black text-xs uppercase shadow-lg">Confirm erasure</button>
             <button onclick="document.getElementById('del-modal').classList.add('hidden')" class="w-full bg-gray-100 text-gray-400 py-3 rounded-xl font-bold uppercase text-[10px] mt-2">Cancel</button>
@@ -231,27 +222,27 @@
         import { getFirestore, collection, doc, updateDoc, setDoc, onSnapshot, addDoc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // GLOBAL STUBS
         window.closeAllDropdowns = () => {};
         window.showToast = (m) => { 
             const t = document.getElementById('toast'); 
             if(t) { t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 3000); } 
         };
 
-        // EXPLICIT GLOBAL STATE
         window.aeonState = {
             manualSections: [],
             manualHeader: { title: "Operations Guide", subtitle: "Archival sync." },
             activeRole: localStorage.getItem('aeonfall_role') || 'player',
             activeEditId: null,
-            userAuth: null,
             saveTimer: null,
             draggedId: null,
             dropSide: null,
             deleteCallback: null
         };
 
-        window.toggleNav = () => { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('nav-overlay').classList.toggle('active'); };
+        window.toggleNav = () => { 
+            document.getElementById('sidebar').classList.toggle('open'); 
+            document.getElementById('nav-overlay').classList.toggle('active'); 
+        };
         
         window.openDelModal = (text, callback) => {
             const txt = document.getElementById('del-modal-text');
@@ -268,27 +259,16 @@
             if (!modal || !content) return;
             const isVideo = url.toLowerCase().endsWith('.mp4');
             content.innerHTML = isVideo 
-                ? `<video src="${url}" class="max-w-[95vw] max-h-[85vh] object-contain border-4 border-white shadow-2xl" autoplay loop muted playsinline></video>`
-                : `<img src="${url}" class="max-w-[95vw] max-h-[85vh] object-contain border-4 border-white shadow-2xl">`;
+                ? `<video src="${url}" class="max-w-[95vw] max-h-[85vh] object-contain border-2 border-white shadow-2xl" autoplay loop muted playsinline></video>`
+                : `<img src="${url}" class="max-w-[95vw] max-h-[85vh] object-contain border-2 border-white shadow-2xl">`;
             modal.classList.remove('hidden'); 
         };
-
-        window.addEventListener('paste', function(e) {
-            if (e.target.hasAttribute('contenteditable') || e.target.closest('[contenteditable="true"]')) {
-                e.preventDefault();
-                const text = (e.originalEvent || e).clipboardData.getData('text/plain');
-                document.execCommand('insertText', false, text);
-            }
-        });
 
         const firebaseConfig = { apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI", authDomain: "aeonfall-523c1.firebaseapp.com", projectId: "aeonfall-523c1", storageBucket: "aeonfall-523c1.firebasestorage.app", messagingSenderId: "716207733913", appId: "1:716207733913:web:7aac43906a70e2b5f50c08" };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'aeonfall-manager-v2';
-
-        window.setEditing = (id) => { window.aeonState.activeEditId = id; };
-        window.clearEditing = () => { window.aeonState.activeEditId = null; };
 
         window.setRole = (r) => { if(r === 'dm') document.getElementById('pass-modal')?.classList.remove('hidden'); else { window.aeonState.activeRole = 'player'; localStorage.setItem('aeonfall_role', 'player'); window.updateRoleUI(); } };
         window.authDm = () => { if(document.getElementById('dm-pass')?.value === 'Rew4994') { window.aeonState.activeRole='dm'; localStorage.setItem('aeonfall_role', 'dm'); document.getElementById('pass-modal')?.classList.add('hidden'); window.updateRoleUI(); } else { window.showToast("Authority Refused"); } };
@@ -300,10 +280,6 @@
             document.getElementById('role-player')?.classList.toggle('active', !isDM); 
             window.renderManual(); 
         };
-
-        window.handleHandleDown = (e, id) => { const section = document.getElementById(`section-${id}`); if (section) section.setAttribute('draggable', 'true'); };
-        window.handleHandleUp = (e, id) => { const section = document.getElementById(`section-${id}`); if (section) section.setAttribute('draggable', 'false'); };
-        window.handleDragLeave = (e) => { e.currentTarget.classList.remove('drop-zone-left', 'drop-zone-right', 'drop-zone-top', 'drop-zone-bottom'); };
 
         window.handleDragStart = function(e, id) { if (window.aeonState.activeRole !== 'dm') return; window.aeonState.draggedId = id; e.currentTarget.classList.add('unit-dragging'); e.dataTransfer.setData('text/plain', id); };
         window.handleDragOver = function(e) { 
@@ -323,6 +299,7 @@
 
             const getGroup = (id) => {
                 const idx = window.aeonState.manualSections.findIndex(s => s.id === id);
+                if (idx === -1) return [];
                 if (window.aeonState.manualSections[idx].type !== 'heading') return [window.aeonState.manualSections[idx]];
                 const group = [window.aeonState.manualSections[idx]];
                 for (let i = idx + 1; i < window.aeonState.manualSections.length; i++) {
@@ -347,7 +324,7 @@
             }
             remaining.splice(targetIdx, 0, ...movedGroup);
             remaining.forEach((sec, i) => { batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', sec.id), { order: i }); }); 
-            await batch.commit(); draggedId = null; window.showToast("Manual Re-anchored");
+            await batch.commit(); window.aeonState.draggedId = null; window.showToast("Manual Re-anchored");
         };
 
         window.dbUpdateSection = (id, field, val) => { if(window.aeonState.saveTimer) clearTimeout(window.aeonState.saveTimer); window.aeonState.saveTimer = setTimeout(async () => { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { [field]: val }); window.showToast("Data Sync"); }, 800); };
@@ -402,22 +379,21 @@
             const isDM = window.aeonState.activeRole === 'dm';
             const container = document.getElementById('manual-sections-container'); if(!container) return;
             const headerEl = document.getElementById('manual-header');
-            if (headerEl) headerEl.innerHTML = `<h1 class="manual-h1 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='h1'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateHeader('title', this.innerText)">${window.aeonState.activeEditId === 'h1' ? window.aeonState.manualHeader.title : window.aeonState.manualHeader.title}</h1><p class="manual-main-subtitle dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='h2'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateHeader('subtitle', this.innerText)">${window.aeonState.activeEditId === 'h2' ? window.aeonState.manualHeader.subtitle : window.aeonState.manualHeader.subtitle}</p>`;
-            document.getElementById('nav-list').innerHTML = window.aeonState.manualSections.filter(s => s.type === 'heading').map(s => `<div class="shelf-item" onclick="document.getElementById('section-${s.id}').scrollIntoView({behavior:'smooth'});">${s.title}</div>`).join('');
+            if (headerEl) headerEl.innerHTML = `<h1 class="manual-h1 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='h1'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateHeader('title', this.innerText)">${window.aeonState.manualHeader.title}</h1><p class="manual-main-subtitle dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='h2'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateHeader('subtitle', this.innerText)">${window.aeonState.manualHeader.subtitle}</p>`;
+            document.getElementById('nav-list').innerHTML = window.aeonState.manualSections.filter(s => s.type === 'heading').map(s => `<div class="shelf-item" onclick="document.getElementById('section-${s.id}').scrollIntoView({behavior:'smooth'}); if(window.innerWidth < 1024) window.toggleNav();">${s.title}</div>`).join('');
 
             container.innerHTML = window.aeonState.manualSections.map(s => {
                 const style = `width: calc(${s.width ?? 100}% - 15px); margin-top: ${s.ySpacing ?? 0}px; text-align: ${s.align || 'left'};`;
                 return `<section id="section-${s.id}" class="manual-section-unit group relative" style="${style}" draggable="false" ondragstart="window.handleDragStart(event, '${s.id}')" ondragover="window.handleDragOver(event)" ondragleave="window.handleDragLeave(event)" ondrop="window.handleDrop(event, '${s.id}')">
                     ${isDM ? `<div class="tuner-panel">
-                        <div class="drag-handle-anchor cursor-grab" onmousedown="window.handleHandleDown(event, '${s.id}')" onmouseup="window.handleHandleUp(event, '${s.id}')" onmouseleave="window.handleHandleUp(event, '${s.id}')">⠿</div>
-                        <div class="tuner-group"><span>Width</span><input type="range" class="tuner-slider" min="10" max="100" value="${s.width ?? 100}" oninput="window.dbUpdateSection('${s.id}', 'width', parseInt(this.value))"></div>
-                        <div class="tuner-group"><span>V-Space</span><input type="range" class="tuner-slider" min="0" max="150" value="${s.ySpacing ?? 0}" oninput="window.dbUpdateSection('${s.id}', 'ySpacing', parseInt(this.value))"></div>
-                        <div class="tuner-group"><span>Align</span><div class="flex gap-1"><button class="align-btn ${s.align==='left'?'active':''}" onclick="window.dbUpdateSection('${s.id}', 'align', 'left')">L</button><button class="align-btn ${s.align==='center'?'active':''}" onclick="window.dbUpdateSection('${s.id}', 'align', 'center')">C</button><button class="align-btn ${s.align==='right'?'active':''}" onclick="window.dbUpdateSection('${s.id}', 'align', 'right')">R</button></div></div>
-                        <div class="tuner-group"><span>Images</span><button class="align-btn purge-btn" onclick="window.purgeAllEmbeds('${s.id}')">✕</button></div>
+                        <div class="drag-handle-anchor cursor-grab" onmousedown="document.getElementById('section-${s.id}').setAttribute('draggable', 'true')" onmouseup="document.getElementById('section-${s.id}').setAttribute('draggable', 'false')">⠿</div>
+                        <div class="tuner-group"><span>W</span><input type="range" class="tuner-slider" min="10" max="100" value="${s.width ?? 100}" oninput="window.dbUpdateSection('${s.id}', 'width', parseInt(this.value))"></div>
+                        <div class="tuner-group"><span>V</span><input type="range" class="tuner-slider" min="0" max="150" value="${s.ySpacing ?? 0}" oninput="window.dbUpdateSection('${s.id}', 'ySpacing', parseInt(this.value))"></div>
+                        <div class="flex gap-1"><button class="align-btn ${s.align==='left'?'active':''}" onclick="window.dbUpdateSection('${s.id}', 'align', 'left')">L</button><button class="align-btn ${s.align==='center'?'active':''}" onclick="window.dbUpdateSection('${s.id}', 'align', 'center')">C</button><button class="align-btn ${s.align==='right'?'active':''}" onclick="window.dbUpdateSection('${s.id}', 'align', 'right')">R</button></div>
                         <button onclick="window.triggerDelete('${s.id}')" class="ml-auto text-red-700 font-black text-lg">✕</button>
                     </div>` : ''}
-                    ${s.type==='heading'?`<h2 class="manual-h2 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-t'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','title',this.innerText)">${window.aeonState.activeEditId === '${s.id}-t' ? s.title : s.title}</h2>`:''}
-                    ${s.type==='subheading'?`<h3 class="manual-h3 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-t'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','title',this.innerText)">${window.aeonState.activeEditId === '${s.id}-t' ? s.title : s.title}</h3>`:''}
+                    ${s.type==='heading'?`<h2 class="manual-h2 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-t'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','title',this.innerText)">${s.title}</h2>`:''}
+                    ${s.type==='subheading'?`<h3 class="manual-h3 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-t'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','title',this.innerText)">${s.title}</h3>`:''}
                     ${s.type==='text'?`<div class="manual-p dm-editable leading-relaxed" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-c'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','content',this.innerHTML)">${window.aeonState.activeEditId === '${s.id}-c' ? s.content : window.parseAeonfallContent(s.content, false, s.id)}</div>`:''}
                     ${s.type==='note'?`<div class="manual-note-box"><div class="font-bold uppercase text-[9px] mb-2 opacity-50 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-t'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">📑 ${s.title}</div><div class="manual-p dm-editable italic" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-c'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${window.aeonState.activeEditId === '${s.id}-c' ? s.content : window.parseAeonfallContent(s.content, false, s.id)}</div></div>`:''}
                     ${s.type==='info'?`<div class="manual-info-box"><div class="font-bold uppercase text-[9px] mb-2 opacity-50 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-t'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">📊 ${s.title}</div><div class="manual-p dm-editable leading-relaxed" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-c'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${window.aeonState.activeEditId === '${s.id}-c' ? s.content : window.parseAeonfallContent(s.content, false, s.id)}</div></div>`:''}
@@ -428,6 +404,7 @@
         };
 
         onAuthStateChanged(auth, u => { 
+            if (!u) return;
             onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'header'), d => { if (d.exists()) { window.aeonState.manualHeader = d.data(); window.renderManual(); } }); 
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'manualSections'), snap => { window.aeonState.manualSections = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (a.order ?? 0) - (b.order ?? 0)); window.renderManual(); }); 
             window.updateRoleUI(); 
