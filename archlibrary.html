@@ -91,7 +91,9 @@
         .shelf-item.manuscript { background: #dcd1b2; color: #1a0f0a; border-left-color: #7a1d1d; }
         .shelf-item.newspaper { background: #fff; color: #1a0f0a; border-left-color: #000; border-top: 1px solid #ddd; }
         .shelf-item.parchment { background: #e0d1af; color: #5d4037; border-left-color: #8d7a5d; border-radius: 0 20px 20px 0; }
-        .shelf-item.textbook { background: #709fbc; border-left-color: #d2ad32; color: #1a0f0a; }
+        
+        /* Updated Textbook Styling - Structured Dark Purple */
+        .shelf-item.textbook { background: #2e1a47; border-left-color: #6d28d9; color: #f4edd8; }
         
         .shelf-item:hover { transform: translateX(10px); filter: brightness(1.2); }
         .shelf-item.active { transform: translateX(15px); box-shadow: -8px 8px 25px rgba(122, 29, 29, 0.5); z-index: 10; }
@@ -335,6 +337,10 @@
         const auth = getAuth(app);
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'aeonfall-manager-v2';
 
+        // UNIQUE DATA STREAMS FOR THIS SPECIFIC ARCHIVE
+        const SECTIONS_COLLECTION = 'scholarArchiveSections';
+        const HEADER_CONFIG_DOC = 'scholarArchiveHeader';
+
         let manualSections = [], seenDocs = [], allUsers = [], targetSectionForUID = null;
         let manualHeader = { title: "Archival History", subtitle: "Verifying civilizations past." };
         let activeRole = localStorage.getItem('aeonfall_role') || 'player'; 
@@ -442,11 +448,11 @@
             const [moved] = newSections.splice(sourceIdx, 1); 
             let insertIdx = newSections.findIndex(s => s.id === targetId);
             const batch = writeBatch(db);
-            if (dropSide === 'left' || dropSide === 'right') { batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', moved.id), { width: 48 }); batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', targetBlock.id), { width: 48 }); if (dropSide === 'right') insertIdx += 1; } 
+            if (dropSide === 'left' || dropSide === 'right') { batch.update(doc(db, 'artifacts', appId, 'public', 'data', SECTIONS_COLLECTION, moved.id), { width: 48 }); batch.update(doc(db, 'artifacts', appId, 'public', 'data', SECTIONS_COLLECTION, targetBlock.id), { width: 48 }); if (dropSide === 'right') insertIdx += 1; } 
             else if (dropSide === 'top') {} else if (dropSide === 'bottom') { insertIdx += 1; } 
             else { if (insertIdx > sourceIdx) insertIdx += 0; }
             newSections.splice(insertIdx, 0, moved); 
-            newSections.forEach((sec, i) => { batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', sec.id), { order: i }); }); 
+            newSections.forEach((sec, i) => { batch.update(doc(db, 'artifacts', appId, 'public', 'data', SECTIONS_COLLECTION, sec.id), { order: i }); }); 
             await batch.commit(); draggedId = null; 
             window.showToast("Archive Records Reordered");
         };
@@ -584,7 +590,7 @@
 
         window.assignUIDToSection = async (uid) => { 
             if(!targetSectionForUID) return; 
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', targetSectionForUID), { 
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', SECTIONS_COLLECTION, targetSectionForUID), { 
                 sharedWith: [uid],
                 visibility: 'personal'
             }); 
@@ -594,7 +600,7 @@
 
         window.unbindUIDFromSection = async (sectionId) => {
             try {
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', sectionId), { 
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', SECTIONS_COLLECTION, sectionId), { 
                     sharedWith: [],
                     visibility: 'secret'
                 });
@@ -606,7 +612,7 @@
             const uidInput = document.getElementById('manual-uid-input'); 
             const uid = uidInput ? uidInput.value.trim() : ''; 
             if(!uid || !targetSectionForUID) return; 
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', targetSectionForUID), { 
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', SECTIONS_COLLECTION, targetSectionForUID), { 
                 sharedWith: [uid],
                 visibility: 'personal'
             }); 
@@ -629,17 +635,17 @@
         window.scrollToSection = (id) => { const el = document.getElementById(`section-${id}`); if (el) el.scrollIntoView({ behavior: 'smooth' }); };
         window.openReturnToLoreSequence = function() { const overlay = document.getElementById('cinematic-overlay'); overlay?.classList.add('active'); setTimeout(() => { window.location.href = 'lore.html'; }, 2000); };
 
-        window.dbUpdateSection = (id, field, val) => { if(saveTimer) clearTimeout(saveTimer); saveTimer = setTimeout(async () => { try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', id), { [field]: val }); window.showToast("Archive Synchronized"); } catch(e) {} }, 800); };
-        window.dbUpdateHeader = (field, val) => { if(saveTimer) clearTimeout(saveTimer); saveTimer = setTimeout(async () => { try { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'libraryHeader'), { [field]: val }, { merge: true }); window.showToast("Signature Sync Complete"); } catch(e) {} }, 800); };
+        window.dbUpdateSection = (id, field, val) => { if(saveTimer) clearTimeout(saveTimer); saveTimer = setTimeout(async () => { try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', SECTIONS_COLLECTION, id), { [field]: val }); window.showToast("Archive Synchronized"); } catch(e) {} }, 800); };
+        window.dbUpdateHeader = (field, val) => { if(saveTimer) clearTimeout(saveTimer); saveTimer = setTimeout(async () => { try { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', HEADER_CONFIG_DOC), { [field]: val }, { merge: true }); window.showToast("Signature Sync Complete"); } catch(e) {} }, 800); };
 
         window.addManualSection = async (type, docType = 'book') => {
             if(!userAuth) return;
             const data = { title: type === 'subheading' ? `NEW VOLUME` : (type === 'inner-subheading' ? "NEW CHAPTER" : type === 'divider' ? "" : "NEW SEGMENT"), content: type === 'divider' ? "" : "Inscribe teachings here...", type, docType, order: manualSections.length, createdAt: Date.now(), width: 100, fontSize: 14, ySpacing: 0, visibility: 'public', sharedWith: [] };
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'librarySections'), data);
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', SECTIONS_COLLECTION), data);
             window.showToast("Archival Entry Added");
         };
 
-        window.triggerDelete = (id) => { window.openDelModal("Expunge record?", async () => { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'librarySections', id)); }); };
+        window.triggerDelete = (id) => { window.openDelModal("Expunge record?", async () => { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', SECTIONS_COLLECTION, id)); }); };
 
         window.parseAeonfallContent = function(text, isDM) {
             if (!text) return ''; if (isDM && activeEditId !== null) return text;
@@ -714,7 +720,7 @@
                     </div>`;
                 
                 if(s.type === 'text') html += `<div id="${cId}" class="manual-p dm-editable leading-relaxed" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div>`;
-                else if(s.type === 'textbook') html += `<div class="manual-textbook-box bg-[#f0f9ff] p-8 border-t-8 border-[#5d4037] rounded shadow-lg relative my-6"><div class="absolute -top-3 left-6 bg-[#5d4037] text-[#f4edd8] px-3 py-1 text-[8px] font-black uppercase tracking-widest">Scholar's Teaching</div><div id="${cId}" class="manual-p dm-editable leading-relaxed text-[#2c1810]" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
+                else if(s.type === 'textbook') html += `<div class="manual-textbook-box bg-[#f5f0fa] p-8 border-t-8 border-[#2e1a47] rounded shadow-lg relative my-6"><div class="absolute -top-3 left-6 bg-[#2e1a47] text-[#f4edd8] px-3 py-1 text-[8px] font-black uppercase tracking-widest">Scholar's Teaching</div><div id="${cId}" class="manual-p dm-editable leading-relaxed text-[#2c1810]" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
                 else if(s.type === 'note') html += `<div class="manual-note-box bg-slate-50 p-5 border-l-4 border-amber-800 rounded shadow-inner"><div id="${cId}" class="manual-p dm-editable italic" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${activeEditId === cId ? s.content : window.parseAeonfallContent(s.content, false)}</div></div>`;
                 else if(s.type === 'divider') html += `<div class="manual-divider"></div>`;
                 
@@ -726,8 +732,8 @@
         onAuthStateChanged(auth, async (u) => { 
             userAuth = u; 
             if (u) {
-                onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'libraryHeader'), d => { if (d.exists()) { manualHeader = d.data(); window.renderManual(); } });
-                onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'librarySections'), snap => { manualSections = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (a.order ?? 0) - (b.order ?? 0)); window.renderManual(); });
+                onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', HEADER_CONFIG_DOC), d => { if (d.exists()) { manualHeader = d.data(); window.renderManual(); } });
+                onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', SECTIONS_COLLECTION), snap => { manualSections = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (a.order ?? 0) - (b.order ?? 0)); window.renderManual(); });
                 onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'users'), snap => { 
                     allUsers = snap.docs.map(d => ({uid: d.id, ...d.data()})); 
                     window.updateIdentityUI();
@@ -742,4 +748,3 @@
     </script>
 </body>
 </html>
-
