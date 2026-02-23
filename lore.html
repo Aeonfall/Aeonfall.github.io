@@ -86,9 +86,8 @@
 
         .manual-h1 { font-family: 'Cinzel', serif; font-weight: 900; font-size: clamp(2rem, 5vw, 3.5rem); color: var(--arch-burgundy); text-transform: uppercase; margin-bottom: 10px; width: 100%; letter-spacing: 2px; text-align: left; }
         .manual-main-subtitle { font-family: 'Special Elite', cursive; font-size: 12px; color: #5d4037; opacity: 0.8; margin-bottom: 40px; letter-spacing: 2px; }
-        .manual-h2 { font-family: 'Cinzel', serif; font-weight: 900; font-size: clamp(1.4rem, 4vw, 2.2rem); color: var(--charcoal-pencil); border-bottom: 4px double var(--arch-burgundy); padding-bottom: 8px; text-transform: uppercase; margin-bottom: 25px; width: 100%; letter-spacing: 2px; }
-        .manual-h3 { font-family: 'Cinzel', serif; font-weight: 700; font-size: clamp(1.1rem, 3vw, 1.4rem); color: var(--charcoal-pencil); border-bottom: 1px solid rgba(93, 64, 55, 0.4); padding-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; width: 100%; }
-        .manual-p { color: var(--charcoal-pencil) !important; line-height: 1.8; font-size: 1.08rem; margin-bottom: 1rem; font-weight: 400; }
+        .manual-h2 { font-family: 'Cinzel', serif; font-weight: 900; font-size: clamp(1.4rem, 4vw, 2.2rem); border-bottom: 4px double var(--arch-burgundy); padding-bottom: 8px; text-transform: uppercase; margin-bottom: 25px; width: 100%; letter-spacing: 2px; }
+        .manual-h3 { font-family: 'Cinzel', serif; font-weight: 700; font-size: clamp(1.1rem, 3vw, 1.4rem); border-bottom: 1px solid rgba(93, 64, 55, 0.4); padding-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; width: 100%; }
 
         .tuner-panel { font-size: 8px; gap: 12px; padding: 10px 15px; flex-wrap: wrap; display: flex; align-items: center; background: white; border: 1px solid var(--arch-gold); border-radius: 30px; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         .tuner-label { font-weight: 900; color: var(--arch-burgundy); text-transform: uppercase; font-size: 7px; letter-spacing: 1px; margin-bottom: 2px; }
@@ -98,7 +97,7 @@
         .purge-btn { border-color: #fecaca; color: #ef4444; }
         .purge-btn:hover { background: #ef4444; color: white; border-color: #ef4444; }
 
-        .arch-btn { font-family: 'Cinzel', serif; font-size: 8px; font-weight: 900; text-transform: uppercase; padding: 8px 14px; border-radius: 25px; cursor: pointer; border: 1px solid var(--arch-burgundy); transition: 0.2s; display: inline-flex; align-items: center; gap: 4px; background: var(--arch-burgundy); color: white; white-space: nowrap; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .arch-btn { font-family: 'Cinzel', serif; font-size: 8px; font-weight: 900; text-transform: uppercase; padding: 10px 18px; border-radius: 25px; cursor: pointer; border: 1px solid var(--arch-burgundy); transition: 0.2s; display: inline-flex; align-items: center; gap: 4px; background: var(--arch-burgundy); color: white; white-space: nowrap; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .arch-btn:hover { background: #000; border-color: #000; transform: translateY(-2px); }
 
         .manual-note-box, .manual-info-box { background: #ffffff !important; border-radius: 30px !important; padding: clamp(20px, 5vw, 40px) !important; box-shadow: 0 25px 60px rgba(0,0,0,0.05) !important; width: 100%; margin-bottom: 3.5rem; position: relative; }
@@ -110,22 +109,20 @@
         .drag-handle-anchor { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; color: var(--arch-burgundy); font-size: 18px; cursor: grab; opacity: 0.6; transition: 0.2s; margin-right: 10px; user-select: none; }
         .drag-handle-anchor:hover { opacity: 1; background: rgba(122, 29, 29, 0.05); transform: scale(1.1); }
 
+        /* FOOTNOTES */
+        .media-footnote { color: #262626; font-size: 0.7rem; font-style: italic; margin-top: 8px; opacity: 0.7; text-align: center; font-family: 'Special Elite', cursive; width: 100%; }
+
         .role-pill { background: rgba(0,0,0,0.05); border-radius: 99px; padding: 4px; display: inline-flex; gap: 4px; border: 1px solid rgba(0,0,0,0.1); margin: 20px auto 0 auto; }
         .role-tab { padding: 8px 24px; font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; border-radius: 99px; transition: 0.3s; color: #5d4037; text-transform: uppercase; cursor: pointer; user-select: none; }
         .role-tab.active { background: var(--arch-burgundy) !important; color: white !important; }
 
-        /* EMBEDDED FOOTNOTES */
-        .inline-img-wrapper { margin: 2.5rem 0; display: flex; flex-direction: column; align-items: center; width: 100%; position: relative; }
-        .inline-arch-asset { max-width: 100%; height: auto; border-radius: 12px; display: block; border: 1.5px solid rgba(187, 166, 131, 0.4); box-shadow: 0 10px 30px rgba(0,0,0,0.12); cursor: zoom-in; }
-        .embed-purge-btn { position: absolute; top: -12px; right: -12px; width: 28px; height: 28px; background: #ef4444; color: white; border-radius: 50%; border: 3px solid white; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 900; cursor: pointer; z-index: 100; transition: 0.2s; }
-        .media-footnote { color: var(--charcoal-pencil); font-size: 0.7rem; font-style: italic; margin-top: 8px; opacity: 0.7; text-align: center; font-family: 'Special Elite', cursive; width: 100%; }
-
         .hidden { display: none !important; }
+        .toast { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); background: #1a0f0a; color: #f4edd8; padding: 12px 32px; border-radius: 40px; z-index: 2000000; opacity: 0; transition: 0.3s; font-family: 'Cinzel'; font-size: 11px; font-weight: 900; border: 1px solid var(--arch-burgundy); pointer-events: none; }
     </style>
 </head>
 <body class="dm-mode-active" onclick="window.closeAllDropdowns()">
 
-    <div id="toast" class="toast fixed bottom-10 left-1/2 -translate-x-1/2 bg-black text-white px-8 py-3 rounded-full opacity-0 pointer-events-none transition-opacity duration-300 z-[2000000] font-serif uppercase font-bold text-xs border border-[#7a1d1d]">Lore Data Synchronized</div>
+    <div id="toast" class="toast">Lore Data Synchronized</div>
 
     <div id="nav-toggle" class="fixed top-4 left-4 z-[1500] bg-[#7a1d1d] text-white p-2 rounded lg:hidden" onclick="window.toggleNav()">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
@@ -135,7 +132,7 @@
     <div id="cinematic-overlay" class="fixed inset-0 bg-black z-[100000] flex items-center justify-center pointer-events-none opacity-0 transition-opacity duration-500"><div class="loading-text">Manifesting Archival Records...</div></div>
 
     <div id="pass-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[110000] hidden p-4">
-        <div class="bg-gray-800 p-10 rounded-2xl w-full max-w-sm border-2 border-amber-600 text-white text-center shadow-2xl">
+        <div class="bg-gray-800 p-10 rounded-2xl w-full max-w-sm border-2 border-amber-600 text-white text-center shadow-2xl" onclick="event.stopPropagation()">
             <h3 class="text-xl font-serif text-amber-500 font-bold mb-4 uppercase">Archive Authority</h3>
             <input type="password" id="dm-pass" class="w-full bg-gray-900 text-center text-2xl rounded-lg p-3 mb-8 border border-gray-700 text-amber-500 outline-none">
             <button onclick="window.authDm()" class="w-full bg-amber-600 hover:bg-amber-500 text-white py-4 rounded-xl font-bold uppercase text-xs">Verify Access</button>
@@ -160,7 +157,8 @@
             <div id="nav-list"></div>
             <div class="sidebar-footer">
                 <div class="pb-10 text-black text-center">
-                    <div onclick="window.openArchiveSequence('library.html')" class="block font-serif uppercase font-black text-[11px] !text-[#7a1d1d] hover:underline mb-4 cursor-pointer">Custodian's Public Archive</div>
+                    <div onclick="window.openArchiveSequence('library.html')" class="block font-serif uppercase font-black text-[11px] !text-[#7a1d1d] hover:underline mb-4 cursor-pointer">Custodian's Archive</div>
+                    <div onclick="window.openArchiveSequence('archlibrary.html')" class="block font-serif uppercase font-black text-[11px] !text-[#7a1d1d] hover:underline mb-4 cursor-pointer">Archivist Public Library</div>
                     <a href="playershandbook.html" class="block text-center font-serif uppercase font-black text-[11px] no-underline !text-[#7a1d1d] hover:underline">← System Hub</a>
                 </div>
             </div>
@@ -196,7 +194,7 @@
         import { getFirestore, collection, doc, updateDoc, setDoc, onSnapshot, addDoc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // BOOTSTRAP STUB FUNCTIONS TO PREVENT TYPEERRORS
+        // GLOBAL STUBS
         window.closeAllDropdowns = () => {};
         window.showToast = (m) => { 
             const t = document.getElementById('toast'); 
@@ -225,6 +223,24 @@
             document.getElementById('del-modal')?.classList.remove('hidden');
         };
 
+        window.openZoom = (e, url) => { 
+            if (e) e.stopPropagation();
+            if (!url) return;
+            const modal = document.getElementById('lightbox-modal'); 
+            const content = document.getElementById('lightbox-content'); 
+            if (!modal || !content) return;
+            const isVideo = url.toLowerCase().endsWith('.mp4');
+            content.innerHTML = isVideo 
+                ? `<video src="${url}" class="max-w-[95vw] max-h-[85vh] object-contain border-4 border-white shadow-2xl" autoplay loop muted playsinline></video>`
+                : `<img src="${url}" class="max-w-[95vw] max-h-[85vh] object-contain border-4 border-white shadow-2xl">`;
+            modal.classList.remove('hidden'); 
+        };
+
+        window.openArchiveSequence = (url) => {
+            document.getElementById('cinematic-overlay')?.classList.add('active');
+            setTimeout(() => { window.location.href = url; }, 800);
+        };
+
         window.addEventListener('paste', function(e) {
             if (e.target.hasAttribute('contenteditable') || e.target.closest('[contenteditable="true"]')) {
                 e.preventDefault();
@@ -244,7 +260,14 @@
 
         window.setRole = (r) => { if(r === 'dm') document.getElementById('pass-modal')?.classList.remove('hidden'); else { window.aeonState.activeRole = 'player'; localStorage.setItem('aeonfall_role', 'player'); window.updateRoleUI(); } };
         window.authDm = () => { if(document.getElementById('dm-pass')?.value === 'Rew4994') { window.aeonState.activeRole='dm'; localStorage.setItem('aeonfall_role', 'dm'); document.getElementById('pass-modal')?.classList.add('hidden'); window.updateRoleUI(); } else { window.showToast("Authority Refused"); } };
-        window.updateRoleUI = () => { const isDM = window.aeonState.activeRole === 'dm'; document.body.classList.toggle('dm-mode-active', isDM); document.getElementById('dm-global-controls')?.classList.toggle('active-dm', isDM); document.getElementById('role-dm')?.classList.toggle('active', isDM); document.getElementById('role-player')?.classList.toggle('active', !isDM); window.renderManual(); };
+        window.updateRoleUI = () => { 
+            const isDM = window.aeonState.activeRole === 'dm'; 
+            document.body.classList.toggle('dm-mode-active', isDM); 
+            document.getElementById('dm-global-controls')?.classList.toggle('active-dm', isDM); 
+            document.getElementById('role-dm')?.classList.toggle('active', isDM); 
+            document.getElementById('role-player')?.classList.toggle('active', !isDM); 
+            window.renderManual(); 
+        };
 
         window.handleHandleDown = (e, id) => { const section = document.getElementById(`section-${id}`); if (section) section.setAttribute('draggable', 'true'); };
         window.handleHandleUp = (e, id) => { const section = document.getElementById(`section-${id}`); if (section) section.setAttribute('draggable', 'false'); };
@@ -262,9 +285,10 @@
             el.classList.remove('drop-zone-left', 'drop-zone-right', 'drop-zone-top', 'drop-zone-bottom');
             if (relY < rect.height / 4) { window.aeonState.dropSide = 'top'; el.classList.add('drop-zone-top'); }
             else if (relY > rect.height * 0.75) { window.aeonState.dropSide = 'bottom'; el.classList.add('drop-zone-bottom'); }
-            else if (relX < rect.width / 2) { window.aeonState.dropSide = 'left'; el.classList.add('drop-zone-left'); }
-            else { window.aeonState.dropSide = 'right'; el.classList.add('drop-zone-right'); }
+            else if (relX < rect.width / 3) { window.aeonState.dropSide = 'left'; el.classList.add('drop-zone-left'); }
+            else if (relX > rect.width * 2 / 3) { window.aeonState.dropSide = 'right'; el.classList.add('drop-zone-right'); }
         };
+
         window.handleDragLeave = (e) => { e.currentTarget.classList.remove('drop-zone-left', 'drop-zone-right', 'drop-zone-top', 'drop-zone-bottom'); };
         
         window.handleDrop = async function(e, targetId) { 
@@ -303,14 +327,14 @@
         window.dbUpdateSection = (id, field, val) => { if(window.aeonState.saveTimer) clearTimeout(window.aeonState.saveTimer); window.aeonState.saveTimer = setTimeout(async () => { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id), { [field]: val }); window.showToast("Data Sync"); }, 800); };
         window.dbUpdateHeader = (field, val) => { if(window.aeonState.saveTimer) clearTimeout(window.aeonState.saveTimer); window.aeonState.saveTimer = setTimeout(async () => { try { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'loreHeader'), { [field]: val }, { merge: true }); window.showToast("Header Sync"); } catch(e) {} }, 800); };
         window.updateTableCell = (id, type, rIdx, val, cIdx = null) => { if(window.aeonState.saveTimer) clearTimeout(window.aeonState.saveTimer); window.aeonState.saveTimer = setTimeout(async () => { const s = window.aeonState.manualSections.find(x => x.id === id); if(!s) return; if(type === 'headers') { const h = [...s.tableHeaders]; h[rIdx] = val; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id), { tableHeaders: h }); } else { const r = JSON.parse(s.tableRows); r[rIdx][cIdx] = val; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id), { tableRows: JSON.stringify(r) }); } }, 800); };
-        
+
         window.addManualSection = async (type) => { const data = { title: type==='heading'?"NEW SUBJECT GROUP": "NEW ENTRY", content: type==='table'?"[]":"Inscribe details...", type, order: window.aeonState.manualSections.length, createdAt: Date.now(), width: 100, fontSize: 14, ySpacing: 0, align: 'left', tableHeaders: type==='table'?["Key","Val"]:null, tableRows: type==='table'?JSON.stringify([["Detail","Detail"]]):null, mediaUrl: "", mediaDescription: "" }; await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'loreSections'), data); };
         window.triggerDelete = (id) => { window.openDelModal("Purge archival segment?", async () => { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id)); }); };
         
         window.purgeAllEmbeds = async (id) => {
             const s = window.aeonState.manualSections.find(x => x.id === id);
             if (!s || !s.content) return;
-            window.openDelModal("Purge all images from this block?", async () => {
+            window.openDelModal("Purge all embedded images from this block?", async () => {
                 const newC = s.content.replace(/\{\{[^}]+\}\}/g, '');
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id), { content: newC });
                 window.showToast("Assets Purged");
@@ -319,7 +343,7 @@
 
         window.purgeSpecificEmbed = async (id, tag) => {
             const s = window.aeonState.manualSections.find(x => x.id === id); if(!s) return;
-            window.openDelModal("Purge asset?", async () => {
+            window.openDelModal("Purge specific asset?", async () => {
                 const newC = s.content.replace(tag, '');
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id), { content: newC });
             });
@@ -329,9 +353,9 @@
             if (!text) return ''; if (isDM && window.aeonState.activeEditId !== null) return text;
             let parsed = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*(?!\*)([^\*]+?)\*(?!\*)/g, '<i>$1</i>');
             return parsed.replace(/\{\{([^}|]+)(?:\|([^}]+))?\}\}/g, (m, url, desc) => {
-                const trimmedUrl = url.trim(); const isVideo = trimmedUrl.toLowerCase().endsWith('.mp4');
+                const trimmedUrl = url.trim();
                 const escapedTag = m.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-                return `<div class="inline-img-wrapper">${isDM ? `<div class="embed-purge-btn" onclick="window.purgeSpecificEmbed('${sectionId}', '${escapedTag}')">✕</div>` : ''}${isVideo ? `<video src="${trimmedUrl}" class="inline-arch-asset" onclick="window.openZoom(event, '${trimmedUrl}')" autoplay loop muted playsinline></video>` : `<img src="${trimmedUrl}" class="inline-arch-asset" onclick="window.openZoom(event, '${trimmedUrl}')">`}${desc ? `<div class="media-footnote">${desc.trim()}</div>` : ''}</div>`;
+                return `<div class="inline-img-wrapper">${isDM ? `<div class="embed-purge-btn" onclick="window.purgeSpecificEmbed('${sectionId}', '${escapedTag}')">✕</div>` : ''}<img src="${trimmedUrl}" class="inline-arch-asset" onclick="window.openZoom(event, '${trimmedUrl}')">${desc ? `<div class="media-footnote">${desc.trim()}</div>` : ''}</div>`;
             });
         };
 
@@ -344,7 +368,7 @@
 
             container.innerHTML = window.aeonState.manualSections.map(s => {
                 const style = `width: calc(${s.width ?? 100}% - 15px); margin-top: ${s.ySpacing ?? 0}px; text-align: ${s.align || 'left'};`;
-                return `<section id="section-${s.id}" class="manual-section-unit group relative" style="${style}" ondragover="window.handleDragOver(event)" ondragleave="window.handleDragLeave(event)" ondrop="window.handleDrop(event, '${s.id}')">
+                return `<section id="section-${s.id}" class="manual-section-unit group relative" style="${style}" draggable="false" ondragstart="window.handleDragStart(event, '${s.id}')" ondragover="window.handleDragOver(event)" ondragleave="window.handleDragLeave(event)" ondrop="window.handleDrop(event, '${s.id}')">
                     ${isDM ? `<div class="tuner-panel">
                         <div class="drag-handle-anchor cursor-grab" onmousedown="window.handleHandleDown(event, '${s.id}')" onmouseup="window.handleHandleUp(event, '${s.id}')" onmouseleave="window.handleHandleUp(event, '${s.id}')">⠿</div>
                         <div class="tuner-group"><span>Width</span><input type="range" class="tuner-slider" min="10" max="100" value="${s.width ?? 100}" oninput="window.dbUpdateSection('${s.id}', 'width', parseInt(this.value))"></div>
@@ -353,9 +377,10 @@
                         <div class="tuner-group"><span>Images</span><button class="align-btn purge-btn" onclick="window.purgeAllEmbeds('${s.id}')">✕</button></div>
                         <button onclick="window.triggerDelete('${s.id}')" class="ml-auto text-red-700 font-black text-lg">✕</button>
                     </div>` : ''}
-                    ${s.type==='heading'?`<h2 class="manual-h2 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-t'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','title',this.innerText)">${s.title}</h2>`:''}
-                    ${s.type==='subheading'?`<h3 class="manual-h3 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-t'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','title',this.innerText)">${s.title}</h3>`:''}
-                    ${s.type==='text'?`<div class="manual-p dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-c'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','content',this.innerHTML)">${window.aeonState.activeEditId==='${s.id}-c'?s.content:window.parseAeonfallContent(s.content, false, s.id)}</div>`:''}
+                    ${s.type==='heading'?`<h2 class="manual-h2 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-t'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','title',this.innerText)">${window.aeonState.activeEditId === s.id + '-t' ? s.title : s.title}</h2>`:''}
+                    ${s.type==='subheading'?`<h3 class="manual-h3 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-t'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','title',this.innerText)">${window.aeonState.activeEditId === s.id + '-t' ? s.title : s.title}</h3>`:''}
+                    ${s.type==='text'?`<div class="manual-p dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-c'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','content',this.innerHTML)">${window.aeonState.activeEditId === s.id + '-c' ? s.content : window.parseAeonfallContent(s.content, false, s.id)}</div>`:''}
+                    ${s.type==='note'?`<div class="manual-note-box"><div class="font-bold uppercase text-[9px] mb-2 opacity-50 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-t'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">📑 ${s.title}</div><div class="manual-p dm-editable italic" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-c'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${window.aeonState.activeEditId === s.id + '-c' ? s.content : window.parseAeonfallContent(s.content, false, s.id)}</div></div>`:''}
                 </section>`;
             }).join('');
         };
@@ -368,7 +393,6 @@
         
         const confirmBtn = document.getElementById('confirm-del-btn');
         if (confirmBtn) { confirmBtn.onclick = async () => { if (window.aeonState.deleteCallback) await window.aeonState.deleteCallback(); document.getElementById('del-modal')?.classList.add('hidden'); }; }
-        
         signInAnonymously(auth);
     </script>
 </body>
