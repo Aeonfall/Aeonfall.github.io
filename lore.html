@@ -66,8 +66,7 @@
 
         .manual-body { flex-grow: 1; padding: 60px 40px 100px 80px; height: 100vh; overflow-y: auto; scroll-behavior: smooth; position: relative; }
         
-        /* Flex Container for Side-by-Side Tiling */
-        #manual-sections-container { display: flex; flex-direction: row; flex-wrap: wrap; align-items: flex-start; width: 100%; gap: 15px; }
+        #manual-sections-container { display: flex; flex-direction: row; flex-wrap: wrap; align-items: flex-start; width: 100%; gap: 10px; }
 
         /* Drag Feedbacks */
         .drop-zone-left { border-left: 8px solid var(--arch-gold) !important; padding-left: 10px; }
@@ -100,7 +99,18 @@
         .arch-btn { font-family: 'Cinzel', serif; font-size: 8px; font-weight: 900; text-transform: uppercase; padding: 10px 18px; border-radius: 25px; cursor: pointer; border: 1px solid var(--arch-burgundy); transition: 0.2s; display: inline-flex; align-items: center; gap: 4px; background: var(--arch-burgundy); color: white; white-space: nowrap; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .arch-btn:hover { background: #000; border-color: #000; transform: translateY(-2px); }
 
-        .manual-note-box, .manual-info-box { background: #ffffff !important; border-radius: 30px !important; padding: clamp(20px, 5vw, 40px) !important; box-shadow: 0 25px 60px rgba(0,0,0,0.05) !important; width: 100%; margin-bottom: 3.5rem; position: relative; }
+        /* NOTE & INFO BOXES - FRAMED WITH SHADOW */
+        .manual-note-box, .manual-info-box { 
+            background: #ffffff !important; 
+            border-radius: 20px !important; 
+            padding: clamp(20px, 5vw, 40px) !important; 
+            box-shadow: 0 15px 45px rgba(0,0,0,0.15) !important; 
+            border: 2px solid var(--arch-gold) !important;
+            width: 100%; 
+            margin-bottom: 3.5rem; 
+            position: relative; 
+            color: var(--charcoal-pencil);
+        }
         .manual-note-box { background: var(--sage-note-bg) !important; }
 
         /* STRICT GRAPHITE COLOR Protocol */
@@ -109,9 +119,45 @@
         .drag-handle-anchor { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; color: var(--arch-burgundy); font-size: 18px; cursor: grab; opacity: 0.6; transition: 0.2s; margin-right: 10px; user-select: none; }
         .drag-handle-anchor:hover { opacity: 1; background: rgba(122, 29, 29, 0.05); transform: scale(1.1); }
 
-        /* EMBEDDED FOOTNOTES - CENTERED, SMALL, ITALIC */
+        /* TABLE STYLES - FRAMED WITH SHADOW */
+        .table-wrap {
+            width: 100%;
+            border: 2px solid var(--arch-gold);
+            box-shadow: 0 15px 45px rgba(0,0,0,0.15);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 3rem;
+            background: white;
+        }
+        .manual-table { width: 100%; border-collapse: collapse; text-align: left; }
+        .manual-table th { padding: 12px; background: rgba(0,0,0,0.1); border-bottom: 2px solid var(--arch-burgundy); font-family: 'Cinzel'; font-size: 11px; }
+        .manual-table td { padding: 12px; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 14px; }
+        .manual-table tbody tr:nth-child(even) { background-color: var(--sage-note-bg) !important; }
+
+        /* IMAGE SLIDER */
+        .slider-bubble { background: #ffffff !important; border: 2px solid var(--arch-gold) !important; border-radius: 40px !important; padding: 40px !important; box-shadow: 0 25px 60px rgba(0,0,0,0.18) !important; width: 100%; margin-bottom: 3.5rem; position: relative; overflow: hidden; }
+        .slider-viewport { width: 100%; position: relative; display: flex; align-items: center; justify-content: center; min-height: 250px; }
+        .slide-container { display: none; width: 100%; flex-direction: column; align-items: center; }
+        .slide-container.active { display: flex; animation: fadeIn 0.5s ease; }
+        .slide-asset { max-width: 100%; height: auto; border-radius: 4px; cursor: zoom-in; }
+        .slider-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; background: var(--arch-burgundy); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; opacity: 0.8; }
+        .arrow-left { left: 10px; } .arrow-right { right: 10px; }
+
+        /* Footnote Styling - Center, Small, Italic, Bordered Image */
         .inline-img-wrapper { margin: 2.5rem 0; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; position: relative; }
-        .inline-arch-asset { max-width: 100%; height: auto; border-radius: 12px; display: block; margin: 0 auto; border: 1.5px solid rgba(187, 166, 131, 0.4); box-shadow: 0 10px 30px rgba(0,0,0,0.12); cursor: zoom-in; }
+        .inline-arch-asset { 
+            max-width: 100%; 
+            height: auto; 
+            border-radius: 4px; 
+            display: block; 
+            margin: 0 auto; 
+            border: 2px solid var(--arch-gold);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            cursor: zoom-in; 
+            transition: transform 0.3s ease;
+        }
+        .inline-arch-asset:hover { transform: scale(1.01); }
+
         .embed-purge-btn { position: absolute; top: -12px; right: -12px; width: 28px; height: 28px; background: #ef4444; color: white; border-radius: 50%; border: 3px solid white; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 900; cursor: pointer; z-index: 100; transition: 0.2s; }
         .media-footnote { color: #262626; font-size: 0.7rem; font-style: italic; margin-top: 10px; opacity: 0.7; text-align: center; font-family: 'Special Elite', cursive; width: 100%; display: block; }
 
@@ -197,7 +243,7 @@
         import { getFirestore, collection, doc, updateDoc, setDoc, onSnapshot, addDoc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // BOOTSTRAP STUBS
+        // GLOBAL STUBS
         window.closeAllDropdowns = () => {};
         window.showToast = (m) => { 
             const t = document.getElementById('toast'); 
@@ -323,23 +369,27 @@
             }
             remaining.splice(targetIdx, 0, ...movedGroup);
             remaining.forEach((sec, i) => { batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', sec.id), { order: i }); }); 
-            await batch.commit(); window.aeonState.draggedId = null; window.showToast("Lore Anchored");
+            await batch.commit(); draggedId = null; window.showToast("Lore Anchored");
         };
 
         window.dbUpdateSection = (id, field, val) => { if(window.aeonState.saveTimer) clearTimeout(window.aeonState.saveTimer); window.aeonState.saveTimer = setTimeout(async () => { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id), { [field]: val }); window.showToast("Data Sync"); }, 800); };
         window.dbUpdateHeader = (field, val) => { if(window.aeonState.saveTimer) clearTimeout(window.aeonState.saveTimer); window.aeonState.saveTimer = setTimeout(async () => { try { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'loreHeader'), { [field]: val }, { merge: true }); window.showToast("Header Sync"); } catch(e) {} }, 800); };
         window.updateTableCell = (id, type, rIdx, val, cIdx = null) => { if(window.aeonState.saveTimer) clearTimeout(window.aeonState.saveTimer); window.aeonState.saveTimer = setTimeout(async () => { const s = window.aeonState.manualSections.find(x => x.id === id); if(!s) return; if(type === 'headers') { const h = [...s.tableHeaders]; h[rIdx] = val; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id), { tableHeaders: h }); } else { const r = JSON.parse(s.tableRows); r[rIdx][cIdx] = val; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id), { tableRows: JSON.stringify(r) }); } }, 800); };
-
+        
         window.addManualSection = async (type) => { const data = { title: type==='heading'?"NEW SUBJECT GROUP": "NEW ENTRY", content: type==='table'?"[]":"Inscribe details...", type, order: window.aeonState.manualSections.length, createdAt: Date.now(), width: 100, fontSize: 14, ySpacing: 0, align: 'left', tableHeaders: type==='table'?["Key","Val"]:null, tableRows: type==='table'?JSON.stringify([["Detail","Detail"]]):null, mediaUrl: "", mediaDescription: "" }; await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'loreSections'), data); };
         window.triggerDelete = (id) => { window.openDelModal("Purge archival segment?", async () => { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id)); }); };
-        
+        window.addRow = async (id) => { const s = window.aeonState.manualSections.find(x => x.id === id); if(!s) return; const r = JSON.parse(s.tableRows || '[]'); r.push(new Array((s.tableHeaders || ["Key", "Val"]).length).fill("...")); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id), { tableRows: JSON.stringify(r) }); };
+        window.remRow = async (id) => { const s = window.aeonState.manualSections.find(x => x.id === id); if(!s) return; const r = JSON.parse(s.tableRows || '[]'); if(r.length <= 1) return; r.pop(); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id), { tableRows: JSON.stringify(r) }); };
+        window.addCol = async (id) => { const s = window.aeonState.manualSections.find(x => x.id === id); if(!s) return; const h = [...(s.tableHeaders || ["Key", "Val"]), "New Col"]; const r = JSON.parse(s.tableRows || '[]').map(row => [...row, "..."]); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id), { tableHeaders: h, tableRows: JSON.stringify(r) }); };
+        window.remCol = async (id) => { const s = window.aeonState.manualSections.find(x => x.id === id); if(!s) return; const h = (s.tableHeaders || ["Key", "Val"]); if(h.length <= 1) return; const newH = h.slice(0, -1); const r = JSON.parse(s.tableRows || '[]').map(row => row.slice(0, -1)); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id), { tableHeaders: newH, tableRows: JSON.stringify(r) }); };
+
         window.purgeAllEmbeds = async (id) => {
             const s = window.aeonState.manualSections.find(x => x.id === id);
             if (!s || !s.content) return;
             window.openDelModal("Purge all embedded images from this block?", async () => {
                 const newC = s.content.replace(/\{\{[^}]+\}\}/g, '');
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id), { content: newC });
-                window.showToast("Embedded Assets Purged");
+                window.showToast("Assets Purged");
             });
         };
 
@@ -365,7 +415,7 @@
             const isDM = window.aeonState.activeRole === 'dm';
             const container = document.getElementById('manual-sections-container'); if(!container) return;
             const headerEl = document.getElementById('manual-header');
-            if (headerEl) headerEl.innerHTML = `<h1 class="manual-h1 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='h1'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateHeader('title', this.innerText)">${window.aeonState.activeEditId === 'h1' ? window.aeonState.manualHeader.title : window.aeonState.manualHeader.title}</h1><p class="manual-main-subtitle dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='h2'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateHeader('subtitle', this.innerText)">${window.aeonState.activeEditId === 'h2' ? window.aeonState.manualHeader.subtitle : window.aeonState.manualHeader.subtitle}</p>`;
+            if (headerEl) headerEl.innerHTML = `<h1 class="manual-h1 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='h1'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateHeader('title', this.innerText)">${window.aeonState.activeEditId === 'h1' ? window.aeonState.manualHeader.title : window.parseAeonfallContent(window.aeonState.manualHeader.title, false, 'h1')}</h1><p class="manual-main-subtitle dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='h2'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateHeader('subtitle', this.innerText)">${window.aeonState.activeEditId === 'h2' ? window.aeonState.manualHeader.subtitle : window.parseAeonfallContent(window.aeonState.manualHeader.subtitle, false, 'h2')}</p>`;
             document.getElementById('nav-list').innerHTML = window.aeonState.manualSections.filter(s => s.type === 'heading').map(s => `<div class="shelf-item" onclick="document.getElementById('section-${s.id}').scrollIntoView({behavior:'smooth'});">${s.title}</div>`).join('');
 
             container.innerHTML = window.aeonState.manualSections.map(s => {
@@ -381,8 +431,10 @@
                     </div>` : ''}
                     ${s.type==='heading'?`<h2 class="manual-h2 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-t'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','title',this.innerText)">${window.aeonState.activeEditId === '${s.id}-t' ? s.title : window.parseAeonfallContent(s.title, false, s.id)}</h2>`:''}
                     ${s.type==='subheading'?`<h3 class="manual-h3 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-t'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','title',this.innerText)">${window.aeonState.activeEditId === '${s.id}-t' ? s.title : window.parseAeonfallContent(s.title, false, s.id)}</h3>`:''}
-                    ${s.type==='text'?`<div class="manual-p dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-c'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','content',this.innerHTML)">${window.aeonState.activeEditId === '${s.id}-c' ? s.content : window.parseAeonfallContent(s.content, false, s.id)}</div>`:''}
+                    ${s.type==='text'?`<div class="manual-p dm-editable leading-relaxed" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-c'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','content',this.innerHTML)">${window.aeonState.activeEditId === '${s.id}-c' ? s.content : window.parseAeonfallContent(s.content, false, s.id)}</div>`:''}
                     ${s.type==='note'?`<div class="manual-note-box"><div class="font-bold uppercase text-[9px] mb-2 opacity-50 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-t'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">📑 ${s.title}</div><div class="manual-p dm-editable italic" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-c'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${window.aeonState.activeEditId === '${s.id}-c' ? s.content : window.parseAeonfallContent(s.content, false, s.id)}</div></div>`:''}
+                    ${s.type==='info'?`<div class="manual-info-box"><div class="font-bold uppercase text-[9px] mb-2 opacity-50 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-t'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">📊 ${s.title}</div><div class="manual-p dm-editable leading-relaxed" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-c'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${window.aeonState.activeEditId === '${s.id}-c' ? s.content : window.parseAeonfallContent(s.content, false, s.id)}</div></div>`:''}
+                    ${s.type==='table'?`<div class="table-wrap">${isDM?`<div class="flex gap-2 p-2 border-b bg-white/50"><button onclick="window.addRow('${s.id}')" class="arch-btn arch-btn-tool !py-1 !px-3">+R</button><button onclick="window.remRow('${s.id}')" class="arch-btn arch-btn-tool !py-1 !px-3">-R</button><button onclick="window.addCol('${s.id}')" class="arch-btn arch-btn-tool !py-1 !px-3">+C</button><button onclick="window.remCol('${s.id}')" class="arch-btn arch-btn-tool !py-1 !px-3">-C</button></div>`:''}<table class="manual-table"><thead><tr>${(s.tableHeaders||["Key","Val"]).map((h,i)=>`<th contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}','headers',${i},this.innerText)">${h}</th>`).join('')}</tr></thead><tbody>${JSON.parse(s.tableRows||'[]').map((row,rIdx)=>`<tr>${row.map((c,cIdx)=>`<td contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}','rows',${rIdx},this.innerText,${cIdx})">${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`:''}
                 </section>`;
             }).join('');
         };
