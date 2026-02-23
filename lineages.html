@@ -13,42 +13,41 @@
             background-image: url('https://www.transparenttextures.com/patterns/dark-wood.png');
             color: #1a0f0a; 
             min-height: 100vh;
-            padding: 15px;
+            padding: 10px;
             overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* THE MASTER PARCHMENT - FLATTENED TOP TO PREVENT CUTOFF */
+        /* THE MASTER PARCHMENT - RESPONSIVE PADDING & CLIP */
         .parchment-container {
             max-width: 1300px;
-            margin: 20px auto;
+            margin: 10px auto;
             background: #f4edd8;
             background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
             box-shadow: 0 50px 100px rgba(0,0,0,0.8), inset 0 0 100px rgba(0,0,0,0.1);
             border-radius: 4px;
             position: relative;
-            /* Increased top padding to 60px to clear the clip-path */
-            padding: 60px 50px 100px 50px; 
+            padding: clamp(40px, 6vw, 60px) clamp(15px, 5vw, 50px);
             border: 1px solid #dcd1b2;
-            /* Flattened the top of the polygon (0% 0%) to ensure navigation isn't cut */
-            clip-path: polygon(0% 0%, 100% 0%, 100% 2%, 99% 50%, 100% 98%, 98% 100%, 2% 99%, 0% 97%, 1% 50%, 0% 2%);
+            /* Adaptive clip-path: simplified for mobile */
+            clip-path: polygon(0% 0%, 100% 0%, 100% 1%, 99% 50%, 100% 99%, 99% 100%, 1% 99%, 0% 98%, 1% 50%, 0% 1%);
             perspective: 2000px;
-            /* Removed overflow:hidden to let nav elements breathe */
         }
 
         /* HEADER & BRANDING */
-        .brand-title { font-family: 'Cinzel', serif; font-weight: 900; color: #7a1d1d; font-size: 2rem; line-height: 1; }
-        .brand-sub { font-family: 'Cinzel', serif; font-size: 8px; color: #5d4037; letter-spacing: 0.2em; text-transform: uppercase; font-weight: bold; }
+        .brand-title { font-family: 'Cinzel', serif; font-weight: 900; color: #7a1d1d; font-size: clamp(1.5rem, 4vw, 2.2rem); line-height: 1; }
+        .brand-sub { font-family: 'Cinzel', serif; font-size: 8px; color: #5d4037; letter-spacing: 0.15em; text-transform: uppercase; font-weight: bold; }
         
         .role-pill { background: rgba(0,0,0,0.05); border-radius: 99px; padding: 3px; display: flex; gap: 4px; border: 1px solid rgba(0,0,0,0.1); position: relative; z-index: 100; }
-        .role-tab { padding: 4px 14px; font-family: 'Cinzel', serif; font-size: 9px; font-weight: 900; border-radius: 99px; transition: 0.3s; color: #5d4037; text-transform: uppercase; cursor: pointer; }
+        .role-tab { padding: 4px 12px; font-family: 'Cinzel', serif; font-size: 8px; font-weight: 900; border-radius: 99px; transition: 0.3s; color: #5d4037; text-transform: uppercase; cursor: pointer; white-space: nowrap; }
         .role-tab.active { background: #7a1d1d; color: white; box-shadow: 0 4px 10px rgba(122, 29, 29, 0.3); }
 
         /* DASHBOARD GRID */
         .grid-container { 
             display: grid; 
-            grid-template-cols: repeat(auto-fill, minmax(380px, 1fr)); 
-            gap: 25px; 
-            padding: 25px 0; 
+            grid-template-cols: repeat(auto-fill, minmax(min(100%, 360px), 1fr)); 
+            gap: 20px; 
+            padding: 20px 0; 
         }
 
         .race-card {
@@ -65,56 +64,43 @@
         }
         .race-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
         
-        .card-bg-image {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 55%;
-            height: 100%;
-            z-index: 1;
-        }
-        .card-bg-image img, .card-bg-image video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: sepia(0.1) contrast(1.1);
-        }
+        .card-bg-image { position: absolute; top: 0; right: 0; width: 55%; height: 100%; z-index: 1; }
+        .card-bg-image img, .card-bg-image video { width: 100%; height: 100%; object-fit: cover; filter: sepia(0.1) contrast(1.1); }
 
         .card-text-panel {
             position: relative;
             z-index: 2;
-            width: 65%;
+            width: 75%;
             height: 100%;
-            background: linear-gradient(to right, white 85%, rgba(255,255,255,0));
-            padding: 25px;
+            background: linear-gradient(to right, white 80%, rgba(255,255,255,0));
+            padding: 20px;
             display: flex;
             flex-direction: column;
         }
 
-        .card-name { font-family: 'Cinzel', serif; font-size: 24px; font-weight: 900; color: #1a1a1a; margin-bottom: 2px; }
-        .card-subtitle { font-family: 'Cinzel', serif; font-size: 10px; font-style: italic; color: #888; margin-bottom: 15px; }
-        .card-desc { font-size: 13px; color: #444; line-height: 1.5; margin-bottom: 15px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-        .card-traits-label { font-family: 'Cinzel', serif; font-size: 11px; font-weight: 900; color: #1a1a1a; margin-bottom: 4px; }
-        .card-traits-list { font-size: 12px; color: #555; line-height: 1.4; flex-grow: 1; }
+        .card-name { font-family: 'Cinzel', serif; font-size: 20px; font-weight: 900; color: #1a1a1a; margin-bottom: 2px; }
+        .card-subtitle { font-family: 'Cinzel', serif; font-size: 9px; font-style: italic; color: #888; margin-bottom: 10px; }
+        .card-desc { font-size: 11px; color: #444; line-height: 1.4; margin-bottom: 12px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .card-traits-label { font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; color: #1a1a1a; margin-bottom: 4px; }
+        .card-traits-list { font-size: 10px; color: #555; line-height: 1.4; flex-grow: 1; }
 
         .view-btn {
             background: #f59e0b;
             color: white;
             font-family: 'Cinzel', serif;
             font-weight: 900;
-            font-size: 11px;
+            font-size: 10px;
             text-transform: uppercase;
-            padding: 12px;
+            padding: 10px;
             border-radius: 4px;
             text-align: center;
-            width: 220px;
-            margin: 0 auto 15px 0;
+            width: 100%;
+            max-width: 180px;
+            margin-top: auto;
             box-shadow: 0 4px 0 #d97706;
-            transition: 0.1s;
             position: relative;
             z-index: 5;
         }
-        .view-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #d97706; }
 
         /* 3D FLIP CONTAINER */
         .flip-wrapper {
@@ -129,81 +115,58 @@
         .side-back { position: absolute; top: 0; left: 0; transform: rotateY(180deg); }
         .flipped .side-front { visibility: hidden; } 
 
-        /* TOOLTIP STYLES */
+        /* DM STICKY NOTE - RESPONSIVE */
+        .dm-sticky-note {
+            position: absolute; width: 180px; min-height: 120px; background: #fff;
+            padding: 20px 15px; box-shadow: 5px 10px 30px rgba(0,0,0,0.25); z-index: 500; font-family: 'Homemade Apple', cursive; font-size: 12px;
+            color: #2c1810; transform: rotate(2deg); cursor: grab; user-select: none;
+        }
+        @media (max-width: 1024px) { .dm-sticky-note { position: relative !important; left: 0 !important; top: 0 !important; width: 100%; margin-bottom: 20px; transform: none; } }
+
+        /* TABLES & LEDGERS */
+        .mech-box { background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.1); padding: 15px; margin-top: 20px; border-radius: 4px; }
+        .prog-table { width: 100%; border-collapse: collapse; font-family: 'Special Elite', cursive; font-size: 12px; margin: 15px 0; }
+        .prog-table th { font-family: 'Cinzel', serif; font-size: 9px; color: #7a1d1d; border-bottom: 2px solid #7a1d1d; padding: 8px 4px; text-align: left; }
+        .prog-table td { padding: 6px 4px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        
+        .culture-ledger { display: grid; grid-template-cols: 1fr; gap: 30px; margin-top: 20px; }
+        @media (min-width: 1024px) { .culture-ledger { grid-template-cols: 1.5fr 1fr; gap: 40px; } }
+
+        .record-header { display: grid; grid-template-cols: 1fr; gap: 30px; margin-bottom: 30px; align-items: start; }
+        @media (min-width: 1024px) { .record-header { grid-template-cols: 1fr 1.2fr; gap: 60px; } }
+
+        .record-title { font-family: 'Pirata One', cursive; font-size: clamp(2.2rem, 7vw, 4.5rem); color: #1a0f0a; line-height: 0.9; margin-bottom: 5px; text-transform: uppercase; word-wrap: break-word; }
+        .record-label { font-family: 'Cinzel', serif; font-size: clamp(8px, 1.8vw, 10px); font-weight: 900; color: #7a1d1d; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 8px; display: inline-block; margin-bottom: 20px; }
+
+        .research-findings { font-family: 'Special Elite', cursive; font-size: clamp(14px, 2.5vw, 16px); line-height: 1.6; color: #1a0f0a; padding: 20px; border: 1px dashed rgba(0,0,0,0.2); background: rgba(0,0,0,0.02); margin: 30px 0; }
+        .drop-cap { float: left; font-family: 'Pirata One', cursive; font-size: clamp(60px, 10vw, 80px); line-height: clamp(50px, 8vw, 60px); padding-top: 4px; padding-right: 8px; color: #7a1d1d; }
+
+        .back-nav { display: inline-flex; align-items: center; gap: 8px; color: #7a1d1d; font-weight: 900; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; cursor: pointer; position: relative; z-index: 100; }
+
+        .ornate-corner { position: absolute; width: 25px; height: 25px; opacity: 0.12; color: #7a1d1d; pointer-events: none; }
+        .tl { top: 10px; left: 10px; }
+        .br { bottom: 10px; right: 10px; transform: rotate(180deg); }
+
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1a0f0a; color: #f4edd8; padding: 10px 24px; border-radius: 40px; z-index: 10000; font-family: 'Cinzel'; font-size: 10px; font-weight: 900; border: 1px solid #7a1d1d; pointer-events: none; opacity: 0; transition: 0.3s; }
+
         .term-hover { position: relative; border-bottom: 1px dotted #7a1d1d; cursor: help; display: inline; }
         .tooltip-content {
-            visibility: hidden; width: 220px; background-color: #fdfaf3; color: #2c1810;
-            text-align: left; border: 2px solid #7a1d1d; border-radius: 6px; padding: 10px;
-            position: absolute; z-index: 1000; bottom: 125%; left: 50%; margin-left: -110px;
+            visibility: hidden; width: 200px; background-color: #fdfaf3; color: #2c1810;
+            text-align: left; border: 2px solid #7a1d1d; border-radius: 6px; padding: 8px;
+            position: absolute; z-index: 1000; bottom: 125%; left: 50%; transform: translateX(-50%);
             opacity: 0; transition: opacity 0.3s; font-size: 11px; line-height: 1.4;
             font-family: 'Roboto Slab', serif; box-shadow: 0 5px 15px rgba(0,0,0,0.3); pointer-events: none; font-style: normal;
         }
         .term-hover:hover .tooltip-content { visibility: visible; opacity: 1; }
-        .def-term { color: #7a1d1d; font-weight: 900; border-bottom: 1px dashed #7a1d1d; }
-
-        /* DM STICKY NOTE */
-        .dm-sticky-note {
-            position: absolute; width: 210px; min-height: 140px; background: #fff; background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
-            padding: 25px 20px; box-shadow: 5px 10px 30px rgba(0,0,0,0.25); z-index: 500; font-family: 'Homemade Apple', cursive; font-size: 13px; line-height: 1.6;
-            color: #2c1810; border: 1px solid rgba(0,0,0,0.05); clip-path: polygon(1% 0%, 99% 1%, 100% 94%, 94% 100%, 6% 98%, 0% 92%); transform: rotate(2deg); cursor: grab; user-select: none; box-sizing: border-box;
-        }
-        .dm-sticky-note:active { cursor: grabbing; }
-        .dm-sticky-note::before { content: "DM Observations"; display: block; font-family: 'Cinzel', serif; font-size: 8px; font-weight: 900; text-transform: uppercase; color: #7a1d1d; margin-bottom: 10px; border-bottom: 1px solid rgba(122, 29, 29, 0.1); padding-bottom: 4px; }
-        .btn-trash-note { position: absolute; top: 8px; right: 12px; color: #ef4444; opacity: 0.5; font-size: 18px; cursor: pointer; font-weight: bold; }
-
-        .dm-sticky-note-tape {
-            position: absolute; top: -12px; left: 50%; transform: translateX(-50%); width: 60px; height: 20px; background: rgba(212, 175, 55, 0.3); z-index: 501;
-        }
-
-        /* LEDGERS & TABLES */
-        .mech-box { background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.1); padding: 25px; margin-top: 25px; border-radius: 4px; }
-        .mech-box h4 { font-family: 'Cinzel', serif; font-weight: 900; font-size: 14px; text-transform: uppercase; color: #7a1d1d; border-bottom: 2px solid #7a1d1d; margin-bottom: 15px; padding-bottom: 5px; }
-
-        .prog-table { width: 100%; border-collapse: collapse; font-family: 'Special Elite', cursive; font-size: 13px; margin: 20px 0; }
-        .prog-table th { font-family: 'Cinzel', serif; text-transform: uppercase; font-size: 10px; color: #7a1d1d; border-bottom: 2px solid #7a1d1d; padding: 10px 5px; text-align: left; }
-        .prog-table td { padding: 8px 5px; border-bottom: 1px solid rgba(0,0,0,0.05); }
-
-        .culture-ledger { display: grid; grid-template-cols: 1.5fr 1fr; gap: 40px; margin-top: 30px; }
-        .ledger-list { list-style: none; padding: 0; }
-        .ledger-list li { margin-bottom: 12px; border-bottom: 1px dashed rgba(0,0,0,0.1); padding-bottom: 4px; display: flex; flex-direction: column; }
-        .ledger-list b { font-family: 'Cinzel', serif; font-size: 11px; text-transform: uppercase; color: #7a1d1d; letter-spacing: 1px; }
-        .ledger-list span { font-family: 'Special Elite', cursive; font-size: 15px; color: #3e2723; }
-
-        .record-header { display: grid; grid-template-cols: 1fr 1.2fr; gap: 60px; margin-bottom: 40px; align-items: start; }
-        .record-illustration { position: relative; border: 2px solid #1a0f0a; background: rgba(0,0,0,0.02); padding: 10px; box-shadow: 5px 10px 20px rgba(0,0,0,0.1); cursor: zoom-in; }
-        .record-illustration img, .record-illustration video { width: 100%; max-height: 550px; object-fit: contain; filter: sepia(0.2); mix-blend-mode: multiply; }
         
-        .sigil-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40%; height: 40%; opacity: 0.04; background: url('https://www.transparenttextures.com/patterns/sacred-geometry.png') no-repeat center; background-size: contain; pointer-events: none; }
-
-        .record-title { font-family: 'Pirata One', cursive; font-size: 4.5rem; color: #1a0f0a; line-height: 0.9; margin-bottom: 5px; text-transform: uppercase; }
-        .record-label { font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; color: #7a1d1d; text-transform: uppercase; letter-spacing: 3px; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 10px; display: inline-block; margin-bottom: 30px; }
-
-        .research-findings { font-family: 'Special Elite', cursive; font-size: 16px; line-height: 1.8; color: #1a0f0a; padding: 30px; border: 1px dashed rgba(0,0,0,0.2); background: rgba(0,0,0,0.02); margin: 40px 0; }
-        .heritage-block { margin-bottom: 40px; padding-left: 20px; border-left: 3px solid #7a1d1d; }
-        .heritage-block h3 { font-family: 'Cinzel', serif; font-size: 20px; font-weight: 900; color: #7a1d1d; margin-bottom: 12px; }
-
-        .dm-active-edit .dm-editable { background: rgba(122, 29, 29, 0.05); outline: 1px dashed #7a1d1d; border-radius: 4px; padding: 4px; }
-        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #1a0f0a; color: #f4edd8; padding: 12px 32px; border-radius: 4px; z-index: 10000; opacity: 0; transition: 0.3s; font-family: 'Cinzel'; font-size: 12px; }
-        
-        .hidden { display: none !important; }
-        .back-nav { display: inline-flex; align-items: center; gap: 10px; color: #7a1d1d; font-weight: 900; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 30px; cursor: pointer; border-bottom: 1px solid transparent; position: relative; z-index: 100; }
-        .back-nav:hover { border-bottom-color: #7a1d1d; }
-
-        /* DECORATIONS */
-        .ornate-corner { position: absolute; width: 35px; height: 35px; opacity: 0.12; color: #7a1d1d; pointer-events: none; }
-        .tl { top: 10px; left: 10px; }
-        .br { bottom: 10px; right: 10px; transform: rotate(180deg); }
-
-        .drop-cap { float: left; font-family: 'Pirata One', cursive; font-size: 80px; line-height: 60px; padding-top: 4px; padding-right: 8px; color: #7a1d1d; }
-        .arch-btn { font-size: 9px; font-weight: 900; text-transform: uppercase; padding: 4px 10px; border-radius: 2px; cursor: pointer; border: 1px solid rgba(0,0,0,0.1); transition: 0.2s; }
-        .arch-btn-add { background: #7a1d1d; color: white; border-color: #7a1d1d; }
-        .arch-btn-del { background: rgba(122,29,29,0.1); color: #7a1d1d; }
-
-        .placement-active { cursor: crosshair !important; }
-
-        /* LIGHTBOX STYLING */
-        .lightbox-overlay { background: rgba(0,0,0,0.95); backdrop-filter: blur(10px); }
-        .lightbox-img { max-width: 90vw; max-height: 80vh; object-fit: contain; border: 4px solid #f4edd8; border-radius: 4px; box-shadow: 0 0 50px rgba(0,0,0,1); }
+        /* Mobile Overrides */
+        @media (max-width: 640px) {
+            .parchment-container { margin: 5px auto; clip-path: none; border-radius: 8px; }
+            .side-back { position: relative; transform: none; top: auto; left: auto; }
+            .flip-wrapper.flipped { transform: none; }
+            #btn-flip { display: none; } 
+            .ledger-list li { flex-direction: column; gap: 2px; }
+        }
     </style>
 </head>
 <body>
@@ -211,49 +174,46 @@
     <div id="toast" class="toast">DM Message</div>
 
     <div class="parchment-container" id="parchment">
-        <!-- Decoration -->
         <div class="ornate-corner tl"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2"><path d="M10,10 Q30,10 30,40 T60,60 T90,90 M10,10 Q10,30 40,30 T60,60"/></svg></div>
         <div class="ornate-corner br"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2"><path d="M10,10 Q30,10 30,40 T60,60 T90,90 M10,10 Q10,30 40,30 T60,60"/></svg></div>
 
         <!-- HEADER -->
-        <header class="flex flex-col md:flex-row justify-between items-center gap-6 relative z-[200] mb-6 pb-6 border-b border-black/10">
+        <header class="flex flex-col md:flex-row justify-between items-center gap-4 relative z-[200] mb-6 pb-4 border-b border-black/10">
             <div class="flex flex-col items-center md:items-start text-center md:text-left">
                 <h1 class="brand-title">Aeonfall</h1>
-                <p class="brand-sub">Archival Heritage Biometry</p>
+                <p class="brand-sub">Heritage Archives</p>
             </div>
 
-            <div class="flex items-center gap-8">
+            <div class="flex flex-wrap justify-center items-center gap-4 md:gap-8">
                 <div class="role-pill">
                     <div id="role-player" onclick="window.setRole('player')" class="role-tab active">Player</div>
                     <div id="role-dm" onclick="window.setRole('dm')" class="role-tab">DM</div>
                 </div>
-                <a href="playershandbook.html" class="text-[10px] font-black uppercase tracking-widest text-[#7a1d1d] hover:text-black transition-colors relative z-[201]">← Back to Hub</a>
+                <a href="playershandbook.html" class="text-[9px] font-black uppercase tracking-widest text-[#7a1d1d] hover:text-black transition-colors">← Hub</a>
             </div>
         </header>
 
         <!-- DASHBOARD VIEW -->
         <div id="view-grid">
-            <div class="flex flex-col md:flex-row justify-between items-center md:items-end mb-4 gap-4">
-                <div>
-                    <h2 class="font-serif text-xl font-black uppercase text-[#1a0f0a]">Biological Stacks</h2>
-                    <p class="text-[8px] text-[#5d4037] tracking-[0.3em] uppercase font-bold">Authorized Bio-Data Record</p>
+            <div class="flex flex-col sm:flex-row justify-between items-center sm:items-end mb-4 gap-4">
+                <div class="text-center sm:text-left">
+                    <h2 class="font-serif text-lg md:text-xl font-black uppercase text-[#1a0f0a]">Biological Stacks</h2>
+                    <p class="text-[7px] md:text-[8px] text-[#5d4037] tracking-[0.2em] uppercase font-bold">Bio-Data Records</p>
                 </div>
-                <button id="add-record-btn" onclick="window.addRecord()" class="hidden bg-[#7a1d1d] hover:bg-[#1a0f0a] text-[#f4edd8] px-3 py-1.5 rounded-sm font-black text-[7px] uppercase shadow-lg transition-all active:scale-95">+ Add Bio-Record</button>
+                <button id="add-record-btn" onclick="window.addRecord()" class="hidden bg-[#7a1d1d] text-[#f4edd8] px-3 py-1.5 rounded-sm font-black text-[7px] uppercase shadow-lg">+ Add Record</button>
             </div>
             
-            <div id="stack-grid" class="grid-container">
-                <!-- Record Cards -->
-            </div>
+            <div id="stack-grid" class="grid-container"></div>
         </div>
 
         <!-- DETAIL VIEW -->
         <div id="view-details" class="hidden">
-            <div class="flex justify-between items-start mb-4">
-                <div onclick="window.setView('grid')" class="back-nav">← Return to Bio-Stacks</div>
-                <div class="flex gap-2">
-                    <button onclick="window.flipPage()" id="btn-flip" class="bg-[#1a0f0a] text-[#f4edd8] px-4 py-2 rounded-sm font-black text-[9px] uppercase hover:bg-black transition-colors shadow-sm">📜 Flip Page</button>
-                    <div id="dm-controls" class="hidden flex gap-2">
-                        <button onclick="window.enterPinMode()" id="btn-pin-note" class="bg-amber-600 border border-amber-800 text-white px-4 py-2 rounded-sm font-black text-[9px] uppercase hover:bg-amber-700 transition-colors shadow-sm">📌 Place DM Note</button>
+            <div class="flex flex-col sm:flex-row justify-between items-start mb-6 gap-4">
+                <div onclick="window.setView('grid')" class="back-nav">← Return to Stacks</div>
+                <div class="flex flex-wrap gap-2 w-full sm:w-auto">
+                    <button onclick="window.flipPage()" id="btn-flip" class="flex-grow sm:flex-grow-0 bg-[#1a0f0a] text-[#f4edd8] px-4 py-2 rounded-sm font-black text-[8px] uppercase">📜 Flip Page</button>
+                    <div id="dm-controls" class="hidden flex gap-2 w-full sm:w-auto">
+                        <button onclick="window.enterPinMode()" id="btn-pin-note" class="flex-grow sm:flex-grow-0 bg-amber-600 text-white px-4 py-2 rounded-sm font-black text-[8px] uppercase">📌 Pin Note</button>
                     </div>
                 </div>
             </div>
@@ -263,9 +223,9 @@
                 <div class="side-back" id="details-back"></div>
             </div>
 
-            <div id="dm-bottom-controls" class="hidden flex gap-4 mt-12 pt-8 border-t border-black/10">
-                <button onclick="window.addSection()" class="bg-[#1a0f0a] text-[#f4edd8] px-6 py-2 rounded-sm font-black uppercase text-[10px] tracking-widest hover:bg-black transition-colors">Append Research Chapter</button>
-                <button onclick="window.triggerDel()" class="bg-red-700/10 border border-red-700/30 text-red-700 px-6 py-2 rounded-sm font-black uppercase text-[10px] tracking-widest hover:bg-red-700/20 transition-all">Expunge Bio-Record</button>
+            <div id="dm-bottom-controls" class="hidden flex flex-col sm:flex-row gap-3 mt-10 pt-6 border-t border-black/10">
+                <button onclick="window.addSection()" class="bg-[#1a0f0a] text-[#f4edd8] px-4 py-2 rounded-sm font-black uppercase text-[9px] tracking-wider">Append Chapter</button>
+                <button onclick="window.triggerDel()" class="bg-red-700/10 border border-red-700/30 text-red-700 px-4 py-2 rounded-sm font-black uppercase text-[9px] tracking-wider">Expunge Record</button>
             </div>
         </div>
     </div>
@@ -273,44 +233,40 @@
     <!-- LIGHTBOX MODAL -->
     <div id="lightbox-modal" class="fixed inset-0 z-[10000] flex flex-col items-center justify-center p-4 hidden">
         <div class="absolute inset-0 lightbox-overlay" onclick="window.closeLightbox()"></div>
-        <div id="lightbox-content" class="relative z-10">
-            <!-- Content Injected Here -->
-        </div>
-        <button onclick="window.closeLightbox()" class="relative z-10 mt-8 bg-[#7a1d1d] text-white px-8 py-3 rounded-full font-black text-[11px] uppercase tracking-widest shadow-2xl border-2 border-white/20 active:scale-95 transition-transform">Close Optical Feed</button>
+        <div id="lightbox-content" class="relative z-10 w-full flex justify-center"></div>
+        <button onclick="window.closeLightbox()" class="relative z-10 mt-6 bg-[#7a1d1d] text-white px-6 py-2 rounded-full font-black text-[10px] uppercase tracking-widest shadow-2xl border-2 border-white/20">Close Optical Feed</button>
     </div>
 
     <!-- Modals -->
     <div id="pass-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[5000] hidden p-4">
-        <div class="bg-gray-800 p-10 rounded-2xl w-full max-sm border-2 border-amber-600 text-white text-center shadow-2xl relative">
-            <h3 class="text-xl font-serif text-amber-500 font-bold mb-4 uppercase">DM Access</h3>
-            <input type="password" id="dm-pass" class="w-full bg-gray-900 text-center text-2xl rounded-lg p-3 mb-8 border border-gray-700 text-amber-500 focus:outline-none focus:border-amber-500">
-            <div class="flex flex-col gap-4">
-                <button onclick="window.authDm()" class="w-full bg-amber-600 hover:bg-amber-500 text-white py-4 rounded-xl font-bold uppercase text-xs tracking-widest">Authorize Access</button>
-                <button onclick="document.getElementById('pass-modal').classList.add('hidden')" class="text-[10px] text-gray-500 uppercase font-black tracking-widest">Cancel</button>
+        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-xs border-2 border-amber-600 text-white text-center shadow-2xl">
+            <h3 class="text-lg font-serif text-amber-500 font-bold mb-4 uppercase">DM Access</h3>
+            <input type="password" id="dm-pass" class="w-full bg-gray-900 text-center text-xl rounded-lg p-3 mb-6 border border-gray-700 text-amber-500 outline-none">
+            <div class="flex flex-col gap-3">
+                <button onclick="window.authDm()" class="w-full bg-amber-600 text-white py-3 rounded-xl font-bold uppercase text-[10px]">Authorize</button>
+                <button onclick="document.getElementById('pass-modal').classList.add('hidden')" class="text-[9px] text-gray-500 uppercase font-black">Cancel</button>
             </div>
         </div>
     </div>
 
     <div id="del-modal" class="fixed inset-0 z-[6000] flex items-center justify-center p-4 hidden">
         <div class="absolute inset-0 bg-black/90" onclick="document.getElementById('del-modal').classList.add('hidden')"></div>
-        <div class="bg-white p-10 rounded-2xl w-full max-w-sm text-center relative z-10 shadow-2xl text-black">
-            <h3 class="text-2xl font-serif font-black text-red-700 uppercase mb-4">Purge Bio-Record</h3>
-            <p class="text-sm text-gray-500 mb-10 italic">This biological entry will be permanently expunged.</p>
-            <div class="flex flex-col gap-4">
-                <button id="confirm-del-btn" class="w-full bg-red-700 text-white py-4 rounded-xl font-black text-xs uppercase shadow-lg">Confirm Purge</button>
-                <button onclick="document.getElementById('del-modal').classList.add('hidden')" class="w-full bg-gray-100 text-gray-400 py-3 rounded-xl font-bold uppercase text-[10px]">Decline</button>
+        <div class="bg-white p-8 rounded-2xl w-full max-w-xs text-center relative z-10 shadow-2xl">
+            <h3 class="text-xl font-serif font-black text-red-700 uppercase mb-4">Purge Record</h3>
+            <div class="flex flex-col gap-3">
+                <button id="confirm-del-btn" class="w-full bg-red-700 text-white py-3 rounded-xl font-black text-[10px] uppercase">Confirm Purge</button>
+                <button onclick="document.getElementById('del-modal').classList.add('hidden')" class="w-full bg-gray-100 text-gray-400 py-2 rounded-xl font-bold uppercase text-[9px]">Cancel</button>
             </div>
         </div>
     </div>
 
     <div id="note-del-modal" class="fixed inset-0 z-[7000] flex items-center justify-center p-4 hidden">
         <div class="absolute inset-0 bg-black/90" onclick="document.getElementById('note-del-modal').classList.add('hidden')"></div>
-        <div class="bg-white p-8 rounded-2xl w-full max-w-sm text-center relative z-10 shadow-2xl text-black">
-            <h3 class="text-2xl font-serif font-black text-amber-900 uppercase mb-4">Shred Note</h3>
-            <p class="text-sm text-gray-500 mb-8 italic">This observation will be permanently shredded.</p>
-            <div class="flex flex-col gap-3">
-                <button onclick="window.confirmRemoveNote()" class="w-full bg-red-700 text-white py-4 rounded-xl font-black text-xs uppercase shadow-lg">Shred Permanently</button>
-                <button onclick="document.getElementById('note-del-modal').classList.add('hidden')" class="w-full bg-gray-100 text-gray-400 py-2 rounded-xl font-bold uppercase text-[10px]">Keep Observation</button>
+        <div class="bg-white p-8 rounded-2xl w-full max-w-xs text-center relative z-10 shadow-2xl">
+            <h3 class="text-xl font-serif font-black text-amber-900 uppercase mb-4">Shred Note</h3>
+            <div class="flex flex-col gap-2">
+                <button onclick="window.confirmRemoveNote()" class="w-full bg-red-700 text-white py-3 rounded-xl font-black text-[10px] uppercase">Shred</button>
+                <button onclick="document.getElementById('note-del-modal').classList.add('hidden')" class="w-full bg-gray-100 text-gray-400 py-2 rounded-xl font-bold uppercase text-[9px]">Keep</button>
             </div>
         </div>
     </div>
@@ -340,7 +296,7 @@
         let pinMode = false, isFlipped = false;
         window.activeRaceId = null; 
 
-        window.showToast = (m) => { const t = document.getElementById('toast'); t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 3000); };
+        window.showToast = (m) => { const t = document.getElementById('toast'); if(t) { t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 3000); } };
         window.setRole = (r) => { if(r === 'dm') document.getElementById('pass-modal').classList.remove('hidden'); else { activeRole = 'player'; updateRoleUI(); } };
         window.authDm = () => { if(document.getElementById('dm-pass').value === 'Rew4994'){ activeRole='dm'; document.getElementById('pass-modal').classList.add('hidden'); document.getElementById('dm-pass').value = ''; updateRoleUI(); } else { window.showToast("Failed Verification"); } };
 
@@ -349,10 +305,8 @@
             document.getElementById('role-player').classList.toggle('active', !isDM);
             document.getElementById('role-dm').classList.toggle('active', isDM);
             document.getElementById('add-record-btn').classList.toggle('hidden', !isDM);
-            const ctrl = document.getElementById('dm-controls');
-            if (ctrl) ctrl.classList.toggle('hidden', !isDM);
-            const bCtrl = document.getElementById('dm-bottom-controls');
-            if (bCtrl) bCtrl.classList.toggle('hidden', !isDM);
+            const ctrl = document.getElementById('dm-controls'); if (ctrl) ctrl.classList.toggle('hidden', !isDM);
+            const bCtrl = document.getElementById('dm-bottom-controls'); if (bCtrl) bCtrl.classList.toggle('hidden', !isDM);
             if(currentView === 'grid') renderGrid(); else renderDetails();
         }
 
@@ -375,16 +329,11 @@
             if (!url) return;
             const modal = document.getElementById('lightbox-modal');
             const content = document.getElementById('lightbox-content');
-            content.innerHTML = url.includes('.mp4') ? 
-                `<video src="${url}" autoplay loop muted class="lightbox-img"></video>` : 
-                `<img src="${url}" class="lightbox-img">`;
+            content.innerHTML = url.includes('.mp4') ? `<video src="${url}" autoplay loop muted class="lightbox-img"></video>` : `<img src="${url}" class="lightbox-img">`;
             modal.classList.remove('hidden');
         };
 
-        window.closeLightbox = () => {
-            document.getElementById('lightbox-modal').classList.add('hidden');
-            document.getElementById('lightbox-content').innerHTML = '';
-        };
+        window.closeLightbox = () => { document.getElementById('lightbox-modal').classList.add('hidden'); };
 
         window.flipPage = () => {
             isFlipped = !isFlipped;
@@ -397,7 +346,7 @@
             document.getElementById('view-grid').classList.toggle('hidden', v !== 'grid');
             document.getElementById('view-details').classList.toggle('hidden', v !== 'details');
             pinMode = false; isFlipped = false;
-            document.getElementById('flip-container').classList.remove('flipped');
+            document.getElementById('flip-container')?.classList.remove('flipped');
             if(v === 'grid') renderGrid(); else renderDetails();
         };
 
@@ -406,22 +355,18 @@
             const grid = document.getElementById('stack-grid');
             grid.innerHTML = lineages.map(race => `
                 <div class="race-card" onclick="window.setView('details', '${race.id}')">
-                    <div class="card-bg-image">
-                        ${race.gridUrl ? 
-                            (race.gridUrl.includes('.mp4') ? `<video src="${race.gridUrl}" autoplay loop muted></video>` : `<img src="${race.gridUrl}">`) 
-                            : '<div class="w-full h-full bg-[#e0d5ba] flex items-center justify-center text-[10px] text-gray-500 italic">SCANNING...</div>'}
-                    </div>
+                    <div class="card-bg-image">${race.gridUrl ? (race.gridUrl.includes('.mp4') ? `<video src="${race.gridUrl}" autoplay loop muted></video>` : `<img src="${race.gridUrl}">`) : '<div class="w-full h-full bg-[#e0d5ba] flex items-center justify-center text-[10px] text-gray-500 italic">SCANNING...</div>'}</div>
                     <div class="card-text-panel">
                         <h3 class="card-name">${race.name}</h3>
                         <p class="card-subtitle">Archival Biometry</p>
                         <p class="card-desc">${isDM ? (race.desc || 'No description.') : parseAeonfallContent(race.desc, false)}</p>
                         <div class="card-traits-label">${race.name} Traits</div>
-                        <div class="card-traits-list">${isDM ? (race.traits || 'None.') : parseAeonfallContent(race.traits, false)}</div>
+                        <div class="card-traits-list truncate">${isDM ? (race.traits || 'None.') : parseAeonfallContent(race.traits, false)}</div>
                         <button class="view-btn">Consult Bio-Record</button>
                     </div>
                 </div>
             `).join('');
-            if(lineages.length === 0) grid.innerHTML = `<p class="col-span-full text-center py-20 text-[#5d4037] italic uppercase text-[10px] font-black tracking-widest">Awaiting bio-frequency uplink...</p>`;
+            if(!lineages.length) grid.innerHTML = `<p class="col-span-full text-center py-20 text-[#5d4037] italic uppercase text-[10px] font-black tracking-widest">Awaiting uplink...</p>`;
         };
 
         window.renderDetails = () => {
@@ -429,267 +374,71 @@
             const race = lineages.find(r => r.id === window.activeRaceId);
             if (!race) return;
 
-            // SIDE A: FRONT
             document.getElementById('details-front').innerHTML = `
                 <div class="${isDM ? 'dm-active-edit' : ''}">
-                    ${(isDM && race.showNote) ? `
-                        <div id="sticky-note" class="dm-sticky-note" style="left: ${race.noteX || 800}px; top: ${race.noteY || 20}px;" onmousedown="window.initNoteDrag(event)">
-                            <div class="dm-sticky-note-tape"></div>
-                            <span class="btn-trash-note" onclick="window.removeNote(event)">✕</span>
-                            <div class="dm-editable" contenteditable="true" oninput="window.dbUp('${race.id}', 'dmNotes', this.innerText)">${race.dmNotes || 'New secret observation...'}</div>
-                        </div>
-                    ` : ''}
+                    ${(isDM && race.showNote) ? `<div id="sticky-note" class="dm-sticky-note" style="left: ${race.noteX || 0}px; top: ${race.noteY || 0}px;" onmousedown="window.initNoteDrag(event)"><span class="btn-trash-note" onclick="window.removeNote(event)">✕</span><div class="dm-editable" contenteditable="true" oninput="window.dbUp('${race.id}', 'dmNotes', this.innerText)">${race.dmNotes || 'Note...'}</div></div>` : ''}
                     <div class="record-header">
                         <div class="flex flex-col">
                             <h2 class="record-title dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}', 'name', this.innerText)">${race.name}</h2>
-                            <p class="record-label">Genetic Signature Verified • Custodian #<span class="dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}', 'custodianId', this.innerText)">${race.custodianId || '994'}</span></p>
-                            <div class="bg-black/5 border-l-4 border-[#7a1d1d] p-6 rounded-sm">
-                                <h4 class="font-black uppercase text-[11px] tracking-[0.2em] text-[#7a1d1d] mb-4">Innate Parameters</h4>
-                                <div class="dm-editable text-sm italic leading-relaxed text-[#3e2723]" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','traits',this.innerText)">${isDM ? (race.traits || 'Ancestral trait markers...') : parseAeonfallContent(race.traits, false)}</div>
+                            <p class="record-label">Genetic Signature • #<span class="dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}', 'custodianId', this.innerText)">${race.custodianId || '994'}</span></p>
+                            <div class="bg-black/5 border-l-4 border-[#7a1d1d] p-4 md:p-6 rounded-sm">
+                                <h4 class="font-black uppercase text-[10px] tracking-widest text-[#7a1d1d] mb-4">Innate Parameters</h4>
+                                <div class="dm-editable text-sm italic leading-relaxed" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','traits',this.innerText)">${isDM ? (race.traits || 'Ancestral traits...') : parseAeonfallContent(race.traits, false)}</div>
                             </div>
                         </div>
-                        <div class="record-illustration" onclick="window.zoomMedia('${race.detailUrl}')">
-                            <div class="sigil-overlay"></div>
-                            ${race.detailUrl ? (race.detailUrl.includes('.mp4') ? `<video src="${race.detailUrl}" autoplay loop muted></video>` : `<img src="${race.detailUrl}">`) : '<div class="h-96 flex items-center justify-center italic text-[#5d4037]">Visual uplink lost</div>'}
-                        </div>
+                        <div class="record-illustration" onclick="window.zoomMedia('${race.detailUrl}')">${race.detailUrl ? (race.detailUrl.includes('.mp4') ? `<video src="${race.detailUrl}" autoplay loop muted></video>` : `<img src="${race.detailUrl}">`) : '<div class="h-64 flex items-center justify-center italic text-[#5d4037]">Visual lost</div>'}</div>
                     </div>
-                    ${isDM ? `<div class="bg-black/5 p-4 rounded mb-8 grid grid-cols-2 gap-4"><div><label class="text-[9px] font-black text-amber-900">Grid Visual</label><input type="text" class="w-full p-2 text-[10px]" value="${race.gridUrl||''}" oninput="window.dbUp('${race.id}', 'gridUrl', this.value)"></div><div><label class="text-[9px] font-black text-amber-900">Detail Visual</label><input type="text" class="w-full p-2 text-[10px]" value="${race.detailUrl||''}" oninput="window.dbUp('${race.id}', 'detailUrl', this.value)"></div></div>` : ''}
-                    <div class="research-findings dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}', 'desc', this.innerText)">
-                        <span class="drop-cap">${(race.desc||"O").charAt(0)}</span>${isDM ? ((race.desc||"nce, in a world not yet broken...").slice(1)) : parseAeonfallContent((race.desc||"nce, in a world not yet broken...").slice(1), false)}
-                    </div>
-                    <div id="additional-logs">${(race.intros || []).map((intro, idx) => `<div class="heritage-block relative"><h3 class="dm-editable" contenteditable="${isDM}" oninput="window.dbUpIntro('${race.id}', ${idx}, 'leftTitle', this.innerText)">${intro.leftTitle || 'Research Chapter'}</h3><div class="dm-editable text-[#3e2723] font-serif leading-loose" contenteditable="${isDM}" oninput="window.dbUpIntro('${race.id}', ${idx}, 'leftText', this.innerText)">${isDM ? (intro.leftText || 'Handwritten details...') : parseAeonfallContent(intro.leftText, false)}</div>${isDM ? `<button onclick="window.removeSection('${race.id}', ${idx})" class="absolute top-0 right-0 text-[#7a1d1d] opacity-30 hover:opacity-100 text-[9px] uppercase font-black">Expunge Section</button>` : ''}</div>`).join('')}</div>
+                    ${isDM ? `<div class="bg-black/5 p-4 rounded mb-8 grid grid-cols-1 sm:grid-cols-2 gap-4"><div><label class="text-[9px] font-black text-amber-900">Grid Media</label><input type="text" class="w-full p-2 text-[10px]" value="${race.gridUrl||''}" oninput="window.dbUp('${race.id}', 'gridUrl', this.value)"></div><div><label class="text-[9px] font-black text-amber-900">Detail Media</label><input type="text" class="w-full p-2 text-[10px]" value="${race.detailUrl||''}" oninput="window.dbUp('${race.id}', 'detailUrl', this.value)"></div></div>` : ''}
+                    <div class="research-findings dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}', 'desc', this.innerText)"><span class="drop-cap">${(race.desc||"O").charAt(0)}</span>${isDM ? ((race.desc||"nce...").slice(1)) : parseAeonfallContent((race.desc||"nce...").slice(1), false)}</div>
+                    <div id="additional-logs">${(race.intros || []).map((intro, idx) => `<div class="heritage-block relative"><h3 class="dm-editable" contenteditable="${isDM}" oninput="window.dbUpIntro('${race.id}', ${idx}, 'leftTitle', this.innerText)">${intro.leftTitle || 'Chapter'}</h3><div class="dm-editable font-serif leading-loose" contenteditable="${isDM}" oninput="window.dbUpIntro('${race.id}', ${idx}, 'leftText', this.innerText)">${isDM ? (intro.leftText || 'Details...') : parseAeonfallContent(intro.leftText, false)}</div>${isDM ? `<button onclick="window.removeSection('${race.id}', ${idx})" class="absolute top-0 right-0 text-red-800 text-[8px] uppercase font-black">Expunge</button>` : ''}</div>`).join('')}</div>
                 </div>
             `;
 
-            // SIDE B: BACK
             const tables = race.mechTables ? JSON.parse(race.mechTables) : [];
             document.getElementById('details-back').innerHTML = `
                 <div class="${isDM ? 'dm-active-edit' : ''}">
                     <h2 class="record-title mb-6">Cultural Heritage</h2>
                     <div class="culture-ledger">
-                        <ul class="ledger-list">
-                            ${['cultureName', 'majorityPop', 'coreValues', 'government', 'belief', 'culturalPractices', 'attitudes'].map(f => {
-                                const label = f === 'cultureName' ? "Lineage's Name" : f.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-                                return `
-                                <li><b>${label}:</b> 
-                                <span class="dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','${f}',this.innerText)">${isDM ? (race[f] || '...') : parseAeonfallContent(race[f], false)}</span></li>
-                                `;
-                            }).join('')}
-                        </ul>
-                        <div class="flex flex-col gap-4">
-                            <div class="record-illustration" style="height: 250px;" onclick="window.zoomMedia('${race.backMediaUrl}')">
-                                ${race.backMediaUrl ? (race.backMediaUrl.includes('.mp4') ? `<video src="${race.backMediaUrl}" autoplay loop muted class="w-full h-full object-cover"></video>` : `<img src="${race.backMediaUrl}" class="w-full h-full object-cover">`) : '<div class="h-full flex items-center justify-center italic opacity-30">Cultural Visual missing</div>'}
-                            </div>
-                            ${isDM ? `<input type="text" class="w-full p-2 text-[10px] bg-white/50 border border-black/10" value="${race.backMediaUrl||''}" placeholder="Culture Media Link" oninput="window.dbUp('${race.id}', 'backMediaUrl', this.value)">` : ''}
-                        </div>
+                        <ul class="ledger-list">${['cultureName', 'majorityPop', 'coreValues', 'government', 'belief', 'culturalPractices', 'attitudes'].map(f => `<li><b>${f.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','${f}',this.innerText)">${isDM ? (race[f] || '...') : parseAeonfallContent(race[f], false)}</span></li>`).join('')}</ul>
+                        <div class="record-illustration h-64" onclick="window.zoomMedia('${race.backMediaUrl}')">${race.backMediaUrl ? (race.backMediaUrl.includes('.mp4') ? `<video src="${race.backMediaUrl}" autoplay loop muted class="w-full h-full object-cover"></video>` : `<img src="${race.backMediaUrl}" class="w-full h-full object-cover">`) : '<div class="h-full flex items-center justify-center italic opacity-30">Visual lost</div>'}</div>
                     </div>
-
-                    <div class="mech-box mt-10">
-                        <div class="flex justify-between items-center border-b-2 border-[#7a1d1d] mb-6 pb-2">
-                            <h4 class="m-0 border-0">Mechanical Options & Traits</h4>
-                            ${isDM ? `<button onclick="window.addMechTable()" class="arch-btn arch-btn-add">+ Add Table</button>` : ''}
+                    ${isDM ? `<input type="text" class="w-full p-2 text-[10px] bg-white/50 border mt-4" value="${race.backMediaUrl||''}" placeholder="Culture Media Link" oninput="window.dbUp('${race.id}', 'backMediaUrl', this.value)">` : ''}
+                    <div class="mech-box mt-8">
+                        <div class="flex flex-wrap justify-between items-center border-b-2 border-[#7a1d1d] mb-6 pb-2 gap-2"><h4 class="m-0 border-0">Mechanical Traits</h4>${isDM ? `<button onclick="window.addMechTable()" class="arch-btn arch-btn-add">+ Add Table</button>` : ''}</div>
+                        <div class="grid grid-cols-1 gap-6">
+                            <div><b class="text-[9px] uppercase text-[#7a1d1d] block mb-2 tracking-widest">Mechanical Traits</b><div class="dm-editable min-h-[40px] p-4 bg-black/5 italic text-sm" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','mechTraits',this.innerText)">${isDM ? (race.mechTraits || '...') : parseAeonfallContent(race.mechTraits, false)}</div></div>
+                            <div><b class="text-[9px] uppercase text-[#7a1d1d] block mb-2 tracking-widest">Rules Box</b><div class="dm-editable min-h-[40px] p-4 bg-black/5 italic text-sm" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','mechDescription',this.innerText)">${isDM ? (race.mechDescription || '...') : parseAeonfallContent(race.mechDescription, false)}</div></div>
+                            <div class="space-y-4">${['mechBackgrounds', 'mechLanguages', 'mechFeats', 'mechEquipment'].map(f => `<p><b>• ${f.replace('mech', '').replace(/([A-Z])/g, ' $1').trim()}:</b> <span class="dm-editable italic text-sm" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','${f}',this.innerText)">${isDM ? (race[f] || '...') : parseAeonfallContent(race[f], false)}</span></p>`).join('')}</div>
                         </div>
-                        <div class="grid grid-cols-1 gap-8">
-                            <div>
-                                <b class="text-[10px] uppercase text-[#7a1d1d] block mb-2 tracking-widest">Mechanical Traits</b>
-                                <div class="dm-editable min-h-[60px] p-4 bg-black/5 rounded italic text-sm" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','mechTraits',this.innerText)">${isDM ? (race.mechTraits || 'Trait data pending...') : parseAeonfallContent(race.mechTraits, false)}</div>
-                            </div>
-                            <div>
-                                <b class="text-[10px] uppercase text-[#7a1d1d] block mb-2 tracking-widest">Rules Description Box</b>
-                                <div class="dm-editable min-h-[100px] p-4 bg-black/5 rounded italic text-sm leading-relaxed" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','mechDescription',this.innerText)">${isDM ? (race.mechDescription || 'Mechanical overview...') : parseAeonfallContent(race.mechDescription, false)}</div>
-                            </div>
-                            <div class="space-y-4">
-                                ${['mechBackgrounds', 'mechLanguages', 'mechFeats', 'mechEquipment'].map(f => `
-                                    <p><b>• ${f.replace('mech', '').replace(/([A-Z])/g, ' $1').trim()}:</b> <span class="dm-editable italic text-sm" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','${f}',this.innerText)">${isDM ? (race[f] || '...') : parseAeonfallContent(race[f], false)}</span></p>
-                                `).join('')}
-                            </div>
-                        </div>
-
-                        <div id="mech-tables-root">
-                            ${tables.map((table, tIdx) => `
-                                <div class="mt-8 relative group">
-                                    <div class="flex justify-between items-center mb-2">
-                                        <b class="text-[10px] uppercase text-[#7a1d1d] dm-editable" contenteditable="${isDM}" oninput="window.updateMechTableField(${tIdx}, 'title', this.innerText)">${table.title}</b>
-                                        ${isDM ? `
-                                            <div class="flex gap-1 opacity-20 group-hover:opacity-100 transition-opacity">
-                                                <button onclick="window.addTableRow(${tIdx})" class="arch-btn arch-btn-add">+ Row</button>
-                                                <button onclick="window.remTableRow(${tIdx})" class="arch-btn arch-btn-del">- Row</button>
-                                                <button onclick="window.addTableCol(${tIdx})" class="arch-btn arch-btn-add">+ Col</button>
-                                                <button onclick="window.remTableCol(${tIdx})" class="arch-btn arch-btn-del">- Col</button>
-                                                <button onclick="window.delMechTable(${tIdx})" class="arch-btn arch-btn-del">Delete</button>
-                                            </div>
-                                        ` : ''}
-                                    </div>
-                                    <table class="prog-table">
-                                        <thead><tr>${table.headers.map((h, hIdx) => `<th contenteditable="${isDM}" oninput="window.updateMechTableField(${tIdx}, 'headers', this.innerText, ${hIdx})">${h}</th>`).join('')}</tr></thead>
-                                        <tbody>${table.rows.map((row, rIdx) => `<tr>${row.map((cell, cIdx) => `<td contenteditable="${isDM}" oninput="window.updateMechTableField(${tIdx}, 'rows', this.innerText, ${rIdx}, ${cIdx})">${isDM ? cell : parseAeonfallContent(cell, false)}</td>`).join('')}</tr>`).join('')}</tbody>
-                                    </table>
-                                </div>
-                            `).join('')}
-                        </div>
+                        <div id="mech-tables-root">${tables.map((table, tIdx) => `<div class="mt-8 overflow-x-auto"><div class="flex justify-between items-center mb-2"><b class="text-[10px] uppercase text-[#7a1d1d] dm-editable" contenteditable="${isDM}" oninput="window.updateMechTableField(${tIdx}, 'title', this.innerText)">${table.title}</b>${isDM ? `<div class="flex gap-1"><button onclick="window.addTableRow(${tIdx})" class="arch-btn">+R</button><button onclick="window.addTableCol(${tIdx})" class="arch-btn">+C</button><button onclick="window.delMechTable(${tIdx})" class="arch-btn arch-btn-del">X</button></div>` : ''}</div><table class="prog-table"><thead><tr>${table.headers.map((h, hIdx) => `<th contenteditable="${isDM}" oninput="window.updateMechTableField(${tIdx}, 'headers', this.innerText, hIdx)">${h}</th>`).join('')}</tr></thead><tbody>${table.rows.map((row, rIdx) => `<tr>${row.map((cell, cIdx) => `<td contenteditable="${isDM}" oninput="window.updateMechTableField(${tIdx}, 'rows', this.innerText, rIdx, cIdx)">${isDM ? cell : parseAeonfallContent(cell, false)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`).join('')}</div>
                     </div>
                 </div>
             `;
         };
 
-        window.enterPinMode = () => {
-            pinMode = true; document.getElementById('parchment').classList.add('placement-active');
-            window.showToast("Pin Mode: Click Parchment to drop note");
-            const placeClick = (e) => {
-                if (!pinMode) return;
-                const rect = document.getElementById('parchment').getBoundingClientRect();
-                window.placeNote(e.clientX - rect.left, e.clientY - rect.top);
-                document.getElementById('parchment').removeEventListener('click', placeClick);
-            };
-            document.getElementById('parchment').addEventListener('click', placeClick);
-        };
-
-        window.placeNote = async (x, y) => {
-            pinMode = false; document.getElementById('parchment').classList.remove('placement-active');
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { showNote: true, noteX: x, noteY: y });
-            window.showToast("Note Pinned");
-        };
-
+        window.enterPinMode = () => { pinMode = true; document.getElementById('parchment').classList.add('placement-active'); window.showToast("Click parchment to place note"); const placeClick = (e) => { if (!pinMode) return; const rect = document.getElementById('parchment').getBoundingClientRect(); window.placeNote(e.clientX - rect.left, e.clientY - rect.top); document.getElementById('parchment').removeEventListener('click', placeClick); }; document.getElementById('parchment').addEventListener('click', placeClick); };
+        window.placeNote = async (x, y) => { pinMode = false; document.getElementById('parchment').classList.remove('placement-active'); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { showNote: true, noteX: x, noteY: y }); window.showToast("Note Pinned"); };
         let noteDrag = null;
-        window.initNoteDrag = (e) => {
-            if (activeRole !== 'dm') return;
-            if (e.target.classList.contains('btn-trash-note') || e.target.contentEditable === 'true') return;
-            const note = e.currentTarget; const rect = note.getBoundingClientRect();
-            noteDrag = { el: note, offsetX: e.clientX - rect.left, offsetY: e.clientY - rect.top };
-            document.addEventListener('mousemove', window.handleNoteDrag); document.addEventListener('mouseup', window.stopNoteDrag);
-        };
-
-        window.handleNoteDrag = (e) => {
-            if (!noteDrag) return; const container = document.getElementById('parchment').getBoundingClientRect();
-            let x = Math.max(0, Math.min(e.clientX - container.left - noteDrag.offsetX, container.width - 220));
-            let y = Math.max(0, Math.min(e.clientY - container.top - noteDrag.offsetY, container.height - 140));
-            noteDrag.el.style.left = `${x}px`; noteDrag.el.style.top = `${y}px`;
-        };
-
-        window.stopNoteDrag = async () => {
-            if (!noteDrag) return;
-            const x = parseInt(noteDrag.el.style.left); const y = parseInt(noteDrag.el.style.top);
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { noteX: x, noteY: y });
-            noteDrag = null; document.removeEventListener('mousemove', window.handleNoteDrag); document.removeEventListener('mouseup', window.stopNoteDrag);
-        };
-
+        window.initNoteDrag = (e) => { if (activeRole !== 'dm' || e.target.classList.contains('btn-trash-note') || e.target.contentEditable === 'true') return; const note = e.currentTarget; const rect = note.getBoundingClientRect(); noteDrag = { el: note, offsetX: e.clientX - rect.left, offsetY: e.clientY - rect.top }; document.addEventListener('mousemove', window.handleNoteDrag); document.addEventListener('mouseup', window.stopNoteDrag); };
+        window.handleNoteDrag = (e) => { if (!noteDrag) return; const container = document.getElementById('parchment').getBoundingClientRect(); let x = Math.max(0, Math.min(e.clientX - container.left - noteDrag.offsetX, container.width - 200)); let y = Math.max(0, Math.min(e.clientY - container.top - noteDrag.offsetY, container.height - 120)); noteDrag.el.style.left = `${x}px`; noteDrag.el.style.top = `${y}px`; };
+        window.stopNoteDrag = async () => { if (!noteDrag) return; const x = parseInt(noteDrag.el.style.left), y = parseInt(noteDrag.el.style.top); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { noteX: x, noteY: y }); noteDrag = null; document.removeEventListener('mousemove', window.handleNoteDrag); document.removeEventListener('mouseup', window.stopNoteDrag); };
         window.removeNote = (e) => { e.stopPropagation(); document.getElementById('note-del-modal').classList.remove('hidden'); };
-        window.confirmRemoveNote = async () => {
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { showNote: false, dmNotes: "" });
-            document.getElementById('note-del-modal').classList.add('hidden'); window.showToast("Note Shredded");
-        };
+        window.confirmRemoveNote = async () => { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { showNote: false, dmNotes: "" }); document.getElementById('note-del-modal').classList.add('hidden'); window.showToast("Note Shredded"); };
 
-        window.dbUp = (id, field, val) => {
-            if (saveTimer) clearTimeout(saveTimer);
-            saveTimer = setTimeout(() => updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', id), { [field]: val }), 1000);
-        };
+        window.dbUp = (id, field, val) => { if (saveTimer) clearTimeout(saveTimer); saveTimer = setTimeout(() => updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', id), { [field]: val }), 1000); };
+        window.dbUpIntro = (id, idx, field, val) => { if (saveTimer) clearTimeout(saveTimer); saveTimer = setTimeout(() => { const r = lineages.find(x => x.id === id); if (r && r.intros) { r.intros[idx][field] = val; updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', id), { intros: r.intros }); } }, 1000); };
 
-        window.dbUpIntro = (id, idx, field, val) => {
-            if (saveTimer) clearTimeout(saveTimer);
-            saveTimer = setTimeout(() => {
-                const r = lineages.find(x => x.id === id);
-                if (r && r.intros) { r.intros[idx][field] = val; updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', id), { intros: r.intros }); }
-            }, 1000);
-        };
+        window.addMechTable = async () => { const r = lineages.find(x => x.id === window.activeRaceId); const t = r.mechTables ? JSON.parse(r.mechTables) : []; t.push({ title: "NEW TABLE", headers: ["Col 1", "Col 2"], rows: [["...", "..."]] }); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(t) }); };
+        window.updateMechTableField = (tIdx, field, val, rOrC = null, cIdx = null) => { if (saveTimer) clearTimeout(saveTimer); saveTimer = setTimeout(async () => { const r = lineages.find(x => x.id === window.activeRaceId); const t = JSON.parse(r.mechTables); if (field === 'title') t[tIdx].title = val; else if (field === 'headers') t[tIdx].headers[rOrC] = val; else if (field === 'rows') t[tIdx].rows[rOrC][cIdx] = val; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(t) }); }, 1000); };
+        window.addTableRow = async (tIdx) => { const r = lineages.find(x => x.id === window.activeRaceId); const t = JSON.parse(r.mechTables); t[tIdx].rows.push(new Array(t[tIdx].headers.length).fill("...")); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(t) }); };
+        window.addTableCol = async (tIdx) => { const r = lineages.find(x => x.id === window.activeRaceId); const t = JSON.parse(r.mechTables); t[tIdx].headers.push("Col"); t[tIdx].rows = t[tIdx].rows.map(row => [...row, "..."]); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(t) }); };
+        window.delMechTable = async (tIdx) => { const r = lineages.find(x => x.id === window.activeRaceId); const t = JSON.parse(r.mechTables); t.splice(tIdx, 1); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(t) }); };
 
-        window.addMechTable = async () => {
-            const r = lineages.find(x => x.id === window.activeRaceId);
-            const tables = r.mechTables ? JSON.parse(r.mechTables) : [];
-            tables.push({ title: "NEW TABLE", headers: ["Header 1", "Header 2"], rows: [["...", "..."]] });
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(tables) });
-        };
-
-        window.updateMechTableField = (tIdx, field, val, rowOrCol = null, colIdx = null) => {
-            if (saveTimer) clearTimeout(saveTimer);
-            saveTimer = setTimeout(async () => {
-                const r = lineages.find(x => x.id === window.activeRaceId);
-                const tables = JSON.parse(r.mechTables);
-                if (field === 'title') tables[tIdx].title = val;
-                else if (field === 'headers') tables[tIdx].headers[rowOrCol] = val;
-                else if (field === 'rows') tables[tIdx].rows[rowOrCol][colIdx] = val;
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(tables) });
-            }, 1000);
-        };
-
-        window.addTableRow = async (tIdx) => {
-            const r = lineages.find(x => x.id === window.activeRaceId);
-            const tables = JSON.parse(r.mechTables);
-            tables[tIdx].rows.push(new Array(tables[tIdx].headers.length).fill("..."));
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(tables) });
-        };
-
-        window.remTableRow = async (tIdx) => {
-            const r = lineages.find(x => x.id === window.activeRaceId);
-            const tables = JSON.parse(r.mechTables);
-            if (tables[tIdx].rows.length > 1) {
-                tables[tIdx].rows.pop();
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(tables) });
-            }
-        };
-
-        window.addTableCol = async (tIdx) => {
-            const r = lineages.find(x => x.id === window.activeRaceId);
-            const tables = JSON.parse(r.mechTables);
-            tables[tIdx].headers.push("Header");
-            tables[tIdx].rows = tables[tIdx].rows.map(row => [...row, "..."]);
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(tables) });
-        };
-
-        window.remTableCol = async (tIdx) => {
-            const r = lineages.find(x => x.id === window.activeRaceId);
-            const tables = JSON.parse(r.mechTables);
-            if (tables[tIdx].headers.length > 1) {
-                tables[tIdx].headers.pop();
-                tables[tIdx].rows = tables[tIdx].rows.map(row => row.slice(0, -1));
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(tables) });
-            }
-        };
-
-        window.delMechTable = async (tIdx) => {
-            const r = lineages.find(x => x.id === window.activeRaceId);
-            const tables = JSON.parse(r.mechTables);
-            tables.splice(tIdx, 1);
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(tables) });
-        };
-
-        window.addRecord = async () => {
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookLineages'), { 
-                name: "NEW SUBJECT", gridUrl: "", detailUrl: "", backMediaUrl: "", custodianId: "994", speed: "30", size: "M", languages: "Com", 
-                desc: "Discovery log pending field observation...", traits: "Standard ancestral signatures...", dmNotes: "", noteX: 0, noteY: 0, showNote: false, intros: [],
-                cultureName: "", majorityPop: "", coreValues: "", government: "", belief: "", culturalPractices: "", attitudes: "",
-                mechTraits: "", mechDescription: "", mechBackgrounds: "", mechLanguages: "", mechFeats: "", mechEquipment: "", mechTables: "[]",
-                createdAt: Date.now(), order: Date.now() 
-            });
-            window.showToast("Bio-Record Initialized");
-        };
-
-        window.addSection = async () => {
-            const r = lineages.find(x => x.id === window.activeRaceId);
-            if (!r) return;
-            const intros = r.intros || [];
-            intros.push({ leftTitle: "Research Findings", leftText: "Technical observations..." });
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', r.id), { intros: intros });
-            window.showToast("Chapter Appended");
-        };
-
-        window.removeSection = async (id, idx) => {
-            const r = lineages.find(x => x.id === id);
-            r.intros.splice(idx, 1);
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', id), { intros: r.intros });
-            window.showToast("Section Expunged");
-        };
-
-        window.triggerDel = (id = null) => { 
-            targetDelId = id || window.activeRaceId; 
-            document.getElementById('del-modal').classList.remove('hidden'); 
-        };
-        document.getElementById('confirm-del-btn').onclick = async () => {
-            if (!targetDelId) return;
-            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', targetDelId));
-            document.getElementById('del-modal').classList.add('hidden'); 
-            window.setView('grid');
-            window.showToast("Record Purged");
-        };
+        window.addRecord = async () => { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookLineages'), { name: "NEW SUBJECT", gridUrl: "", detailUrl: "", backMediaUrl: "", custodianId: "994", desc: "ince...", traits: "traits...", intros: [], mechTables: "[]", createdAt: Date.now(), order: Date.now() }); };
+        window.addSection = async () => { const r = lineages.find(x => x.id === window.activeRaceId); if (!r) return; const i = r.intros || []; i.push({ leftTitle: "Chapter", leftText: "Details..." }); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', r.id), { intros: i }); };
+        window.removeSection = async (id, idx) => { const r = lineages.find(x => x.id === id); r.intros.splice(idx, 1); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', id), { intros: r.intros }); };
+        window.triggerDel = (id = null) => { targetDelId = id || window.activeRaceId; document.getElementById('del-modal').classList.remove('hidden'); };
+        document.getElementById('confirm-del-btn').onclick = async () => { if (!targetDelId) return; await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', targetDelId)); document.getElementById('del-modal').classList.add('hidden'); window.setView('grid'); };
 
         const init = async () => {
             await signInAnonymously(auth);
