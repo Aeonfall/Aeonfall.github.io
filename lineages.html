@@ -104,14 +104,33 @@
             padding: 12px;
             border-radius: 4px;
             text-align: center;
-            width: 220px;
-            margin: 0 auto 15px 0;
+            width: 100%;
+            margin-top: auto;
             box-shadow: 0 4px 0 #d97706;
             transition: 0.1s;
             position: relative;
             z-index: 5;
         }
         .view-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #d97706; }
+        
+        .purge-btn-overlay {
+            background: #7a1d1d;
+            color: white;
+            font-family: 'Cinzel', serif;
+            font-weight: 900;
+            font-size: 10px;
+            text-transform: uppercase;
+            padding: 8px;
+            border-radius: 4px;
+            text-align: center;
+            width: 100%;
+            margin-top: 8px;
+            box-shadow: 0 4px 0 #4a0000;
+            transition: 0.1s;
+            position: relative;
+            z-index: 6;
+        }
+        .purge-btn-overlay:active { transform: translateY(2px); box-shadow: 0 2px 0 #4a0000; }
 
         /* 3D FLIP CONTAINER - REWORKED FOR DYNAMIC HEIGHT */
         .flip-wrapper {
@@ -225,7 +244,7 @@
                     <div id="role-player" onclick="window.setRole('player')" class="role-tab active">Player</div>
                     <div id="role-dm" onclick="window.setRole('dm')" class="role-tab">DM</div>
                 </div>
-                <a href="hub.html" class="text-[10px] font-black uppercase tracking-widest text-[#7a1d1d] hover:text-black transition-colors relative z-[201]">← Back to Hub</a>
+                <a href="playershandbook.html" class="text-[10px] font-black uppercase tracking-widest text-[#7a1d1d] hover:text-black transition-colors relative z-[201]">← Back to Hub</a>
             </div>
         </header>
 
@@ -236,7 +255,10 @@
                     <h2 class="font-serif text-xl font-black uppercase text-[#1a0f0a]">Biological Stacks</h2>
                     <p class="text-[8px] text-[#5d4037] tracking-[0.3em] uppercase font-bold">Authorized Bio-Data Record</p>
                 </div>
-                <button id="add-record-btn" onclick="window.addRecord()" class="hidden bg-[#7a1d1d] hover:bg-[#1a0f0a] text-[#f4edd8] px-3 py-1.5 rounded-sm font-black text-[7px] uppercase shadow-lg transition-all active:scale-95">+ Add Bio-Record</button>
+                <div class="flex gap-2">
+                    <button id="add-record-btn" onclick="window.addRecord()" class="hidden bg-[#7a1d1d] hover:bg-[#1a0f0a] text-[#f4edd8] px-3 py-1.5 rounded-sm font-black text-[7px] uppercase shadow-lg transition-all active:scale-95">+ Add Bio-Record</button>
+                    <button id="remove-record-btn" onclick="window.togglePurgeMode()" class="hidden bg-gray-200 border border-black/10 text-gray-600 hover:text-red-700 hover:bg-red-50 px-3 py-1.5 rounded-sm font-black text-[7px] uppercase shadow-lg transition-all active:scale-95">Remove Bio-Record</button>
+                </div>
             </div>
             
             <div id="stack-grid" class="grid-container">
@@ -327,11 +349,11 @@
 
         let lineages = [];
         let activeRole = 'player', currentView = 'grid', saveTimer = null, targetDelId = null;
-        let isFlipped = false, currentUser = null;
+        let isFlipped = false, currentUser = null, isPurgeMode = false;
         window.activeRaceId = null; 
 
         window.showToast = (m) => { const t = document.getElementById('toast'); t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 3000); };
-        window.setRole = (r) => { if(r === 'dm') document.getElementById('pass-modal').classList.remove('hidden'); else { activeRole = 'player'; updateRoleUI(); } };
+        window.setRole = (r) => { if(r === 'dm') document.getElementById('pass-modal').classList.remove('hidden'); else { activeRole = 'player'; isPurgeMode = false; updateRoleUI(); } };
         window.authDm = () => { if(document.getElementById('dm-pass').value === 'Rew4994'){ activeRole='dm'; document.getElementById('pass-modal').classList.add('hidden'); document.getElementById('dm-pass').value = ''; updateRoleUI(); } else { window.showToast("Failed Verification"); } };
 
         function updateRoleUI() {
@@ -339,10 +361,19 @@
             document.getElementById('role-player').classList.toggle('active', !isDM);
             document.getElementById('role-dm').classList.toggle('active', isDM);
             document.getElementById('add-record-btn').classList.toggle('hidden', !isDM);
+            document.getElementById('remove-record-btn').classList.toggle('hidden', !isDM);
             const bCtrl = document.getElementById('dm-bottom-controls');
             if (bCtrl) bCtrl.classList.toggle('hidden', !isDM);
             if(currentView === 'grid') renderGrid(); else renderDetails();
         }
+
+        window.togglePurgeMode = () => {
+            isPurgeMode = !isPurgeMode;
+            document.getElementById('remove-record-btn').classList.toggle('bg-red-700', isPurgeMode);
+            document.getElementById('remove-record-btn').classList.toggle('text-white', isPurgeMode);
+            window.showToast(isPurgeMode ? "Purge Mode Enabled" : "Purge Mode Disabled");
+            renderGrid();
+        };
 
         function parseAeonfallContent(text, isDM) {
             if (!text) return '';
@@ -404,7 +435,7 @@
             const isDM = activeRole === 'dm';
             const grid = document.getElementById('stack-grid');
             grid.innerHTML = lineages.map(race => `
-                <div class="race-card" onclick="window.setView('details', '${race.id}')">
+                <div class="race-card" onclick="!isPurgeMode && window.setView('details', '${race.id}')">
                     <div class="card-bg-image">
                         ${race.gridUrl ? 
                             (race.gridUrl.includes('.mp4') ? `<video src="${race.gridUrl}" autoplay loop muted></video>` : `<img src="${race.gridUrl}">`) 
@@ -416,7 +447,11 @@
                         <p class="card-desc">${isDM ? (race.desc || 'No description.') : parseAeonfallContent(race.desc, false)}</p>
                         <div class="card-traits-label">${race.name} Traits</div>
                         <div class="card-traits-list">${isDM ? (race.traits || 'None.') : parseAeonfallContent(race.traits, false)}</div>
-                        <button class="view-btn">Consult Bio-Record</button>
+                        ${isPurgeMode ? `
+                            <button onclick="event.stopPropagation(); window.triggerDel('${race.id}')" class="purge-btn-overlay">Purge Record</button>
+                        ` : `
+                            <button class="view-btn">Consult Bio-Record</button>
+                        `}
                     </div>
                 </div>
             `).join('');
