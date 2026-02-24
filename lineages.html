@@ -3,318 +3,247 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aeonfall - Lineages & Heritage Archives</title>
+    <title>Aeonfall - Handmade Journal of Lineages</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Roboto+Slab:wght@300;400;700&family=Special+Elite&family=MedievalSharp&family=Homemade+Apple&family=Pirata+One&display=swap" rel="stylesheet">
     <style>
         body { 
             font-family: 'Roboto Slab', serif; 
-            background-color: #0c0c0c; 
-            background-image: url('https://www.transparenttextures.com/patterns/dark-wood.png');
-            color: #1a0f0a; 
+            background-color: #dcc89f; 
+            background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+            color: #2c1810; 
             min-height: 100vh;
-            padding: 15px;
+            padding: 20px;
             overflow-x: hidden;
         }
 
-        /* THE MASTER PARCHMENT */
-        .parchment-container {
-            max-width: 1300px;
+        /* THE LEATHER-BOUND JOURNAL CONTAINER */
+        .journal-cover {
+            max-width: 1350px;
             margin: 20px auto;
-            background: #f4edd8;
-            background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
-            box-shadow: 0 50px 100px rgba(0,0,0,0.8), inset 0 0 100px rgba(0,0,0,0.1);
-            border-radius: 4px;
+            background: #8d6e63; /* Lighter Cognac Leather */
+            background-image: url('https://www.transparenttextures.com/patterns/dark-leather.png');
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 40px 80px rgba(62, 39, 35, 0.4);
             position: relative;
-            padding: 60px 50px 100px 50px; 
-            border: 1px solid #dcd1b2;
-            clip-path: polygon(0% 0%, 100% 0%, 100% 2%, 99% 50%, 100% 98%, 98% 100%, 2% 99%, 0% 97%, 1% 50%, 0% 2%);
-            perspective: 2000px;
+            border: 1px solid #5d4037;
+        }
+
+        /* STITCHING EFFECT */
+        .journal-cover::after {
+            content: '';
+            position: absolute;
+            inset: 8px;
+            border: 1.5px dashed rgba(255,255,255,0.12);
+            pointer-events: none;
+            border-radius: 6px;
+        }
+
+        .parchment-container {
+            background: #fdfaf3; /* Light Archival Vellum */
+            background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+            min-height: 800px;
+            padding: 70px 60px 100px 90px; 
+            position: relative;
+            box-shadow: inset 0 0 100px rgba(141, 110, 99, 0.1);
+            border-left: 18px solid #5d4037; /* Journal Spine */
+            /* Deckled/Hand-torn edge effect */
+            clip-path: polygon(0% 0%, 100% 0.5%, 99.4% 50%, 100% 99.5%, 0% 100%, 0.6% 50%);
         }
 
         /* HEADER & BRANDING */
-        .brand-title { font-family: 'Cinzel', serif; font-weight: 900; color: #7a1d1d; font-size: 2.5rem; line-height: 1; letter-spacing: -1px; }
-        .brand-sub { font-family: 'Cinzel', serif; font-size: 9px; color: #5d4037; letter-spacing: 0.3em; text-transform: uppercase; font-weight: bold; }
+        .brand-title { font-family: 'Pirata One', cursive; font-weight: 400; color: #3e2723; font-size: 3.2rem; line-height: 1; margin-bottom: 5px; }
+        .brand-sub { font-family: 'Cinzel', serif; font-size: 9px; color: #8d6e63; letter-spacing: 0.5em; text-transform: uppercase; font-weight: bold; }
         
-        .role-pill { background: rgba(0,0,0,0.05); border-radius: 99px; padding: 3px; display: flex; gap: 4px; border: 1px solid rgba(0,0,0,0.1); position: relative; z-index: 100; }
-        .role-tab { padding: 4px 16px; font-family: 'Cinzel', serif; font-size: 9px; font-weight: 900; border-radius: 99px; transition: 0.3s; color: #5d4037; text-transform: uppercase; cursor: pointer; }
-        .role-tab.active { background: #7a1d1d; color: white; box-shadow: 0 4px 12px rgba(122, 29, 29, 0.4); }
+        .role-pill { background: rgba(93, 64, 55, 0.08); border-radius: 99px; padding: 3px; display: flex; border: 1px solid #d7ccc8; }
+        .role-tab { padding: 4px 18px; font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; border-radius: 99px; transition: 0.3s; color: #5d4037; text-transform: uppercase; cursor: pointer; }
+        .role-tab.active { background: #5d4037; color: #fdfaf3; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
 
         /* DASHBOARD GRID */
-        .grid-container { 
-            display: grid; 
-            grid-template-cols: repeat(auto-fill, minmax(400px, 1fr)); 
-            gap: 30px; 
-            padding: 25px 0; 
-        }
+        .grid-container { display: grid; grid-template-cols: repeat(auto-fill, minmax(400px, 1fr)); gap: 35px; padding: 25px 0; }
 
         .race-card {
-            background: #fff;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            background: #fdfaf3;
+            background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+            box-shadow: 4px 6px 15px rgba(0,0,0,0.08);
             position: relative;
             display: flex;
             flex-direction: column;
-            height: 380px;
+            height: 410px;
             overflow: hidden;
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
             cursor: pointer;
-            border: 1px solid rgba(0,0,0,0.05);
+            border: 1px solid #e0d7c6;
         }
-        .race-card:hover { transform: translateY(-8px); box-shadow: 0 20px 45px rgba(0,0,0,0.25); }
+        .race-card:hover { transform: rotate(0.5deg) translateY(-8px); box-shadow: 12px 20px 40px rgba(93, 64, 55, 0.15); }
         
-        .card-bg-image {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 55%;
-            height: 100%;
-            z-index: 1;
-        }
-        .card-bg-image::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(to right, white, transparent 30%), linear-gradient(to top, rgba(0,0,0,0.1), transparent 40%);
-            z-index: 2;
-        }
-        .card-bg-image img, .card-bg-image video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: sepia(0.2) contrast(1.1);
-        }
+        .card-bg-image { position: absolute; top: 0; right: 0; width: 50%; height: 100%; z-index: 1; filter: sepia(0.3) contrast(1.1); }
+        .card-bg-image::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to right, #fdfaf3 10%, transparent 80%); z-index: 2; }
+        .card-bg-image img, .card-bg-image video { width: 100%; height: 100%; object-fit: cover; }
 
-        .card-text-panel {
-            position: relative;
-            z-index: 3;
-            width: 65%;
-            height: 100%;
-            background: linear-gradient(to right, white 88%, rgba(255,255,255,0));
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-        }
+        .card-text-panel { position: relative; z-index: 3; width: 68%; height: 100%; padding: 35px; display: flex; flex-direction: column; background: linear-gradient(to right, #fdfaf3 90%, transparent); }
 
-        .card-name { font-family: 'Cinzel', serif; font-size: 28px; font-weight: 900; color: #1a1a1a; margin-bottom: 2px; line-height: 1; }
-        .card-subtitle { font-family: 'Cinzel', serif; font-size: 10px; font-style: italic; color: #7a1d1d; margin-bottom: 18px; font-weight: 700; letter-spacing: 1px; }
-        .card-desc { font-size: 13px; color: #444; line-height: 1.6; margin-bottom: 18px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-weight: 300; }
-        .card-traits-label { font-family: 'Cinzel', serif; font-size: 11px; font-weight: 900; color: #1a1a1a; margin-bottom: 6px; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 4px; display: inline-block; }
-        .card-traits-list { font-size: 12px; color: #555; line-height: 1.5; flex-grow: 1; font-style: italic; }
-
+        .card-name { font-family: 'MedievalSharp', cursive; font-size: 28px; color: #2c1810; margin-bottom: 2px; }
+        .card-subtitle { font-family: 'Homemade Apple', cursive; font-size: 10px; color: #8d6e63; margin-bottom: 20px; }
+        .card-desc { font-family: 'Special Elite', cursive; font-size: 12px; color: #5d4037; line-height: 1.6; margin-bottom: 15px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        
         .view-btn {
-            background: #1a0f0a;
-            color: #f4edd8;
-            font-family: 'Cinzel', serif;
-            font-weight: 900;
-            font-size: 11px;
-            text-transform: uppercase;
-            padding: 14px;
-            border-radius: 4px;
-            text-align: center;
-            width: 100%;
-            margin-top: auto;
-            transition: 0.2s;
-            position: relative;
-            z-index: 5;
-            letter-spacing: 2px;
-        }
-        .view-btn:hover { background: #7a1d1d; color: white; }
-        
-        .purge-mode-active {
-            outline: 4px solid #7a1d1d;
-            background: rgba(122, 29, 29, 0.05);
+            background: #5d4037; color: #fdfaf3; font-family: 'Cinzel', serif; font-weight: 900; font-size: 10px; text-transform: uppercase;
+            padding: 13px; border-radius: 4px; text-align: center; width: 100%; margin-top: auto; letter-spacing: 2px; border: 1px solid rgba(255,255,255,0.05);
         }
 
-        .purge-btn-overlay {
-            background: #7a1d1d;
-            color: white;
-            font-family: 'Cinzel', serif;
-            font-weight: 900;
-            font-size: 10px;
-            text-transform: uppercase;
-            padding: 10px;
-            border-radius: 4px;
-            text-align: center;
-            width: 100%;
-            margin-top: 10px;
-            box-shadow: 0 4px 0 #4a0000;
-            transition: 0.1s;
-            position: relative;
-            z-index: 6;
-            letter-spacing: 1px;
-        }
-        .purge-btn-overlay:active { transform: translateY(2px); box-shadow: 0 2px 0 #4a0000; }
-
-        /* ARCHIVAL CALIPERS (REORDER) */
+        /* REORDER ARROWS - WROUGHT IRON FITTINGS */
         .reorder-controls {
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            z-index: 20;
-            background: #1a0f0a;
-            padding: 4px;
-            border-radius: 0 6px 6px 0;
-            box-shadow: 4px 0 15px rgba(0,0,0,0.3);
-            border: 1px solid rgba(244, 237, 216, 0.2);
-            border-left: 0;
+            position: absolute; left: 0; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 3px; z-index: 20; background: #3e2723; padding: 6px 3px; border-radius: 0 4px 4px 0;
         }
-        .reorder-btn {
-            width: 32px;
-            height: 38px;
-            color: #f4edd8;
-            font-size: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-            cursor: pointer;
-            border-radius: 2px;
-        }
-        .reorder-btn:hover:not(:disabled) { background: #7a1d1d; color: white; }
+        .reorder-btn { width: 30px; height: 34px; color: #dcc89f; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        .reorder-btn:hover:not(:disabled) { color: #b8860b; transform: scale(1.1); }
         .reorder-btn:disabled { opacity: 0.1; cursor: not-allowed; }
 
-        /* DECORATIONS - SHRUNKEN */
-        .ornate-corner { position: absolute; width: 22px; height: 22px; opacity: 0.15; color: #7a1d1d; pointer-events: none; }
-        .tl { top: 12px; left: 12px; }
-        .br { bottom: 12px; right: 12px; transform: rotate(180deg); }
-
-        .sigil-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 20%; height: 20%; opacity: 0.04; background: url('https://www.transparenttextures.com/patterns/sacred-geometry.png') no-repeat center; background-size: contain; pointer-events: none; }
-
-        /* 3D FLIP CONTAINER */
-        .flip-wrapper {
-            position: relative;
-            width: 100%;
-            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            transform-style: preserve-3d;
-            min-height: 600px;
+        /* BIOLOGY FLIP STYLES */
+        .discovery-log-box {
+            font-family: 'Special Elite', cursive; font-size: 16px; line-height: 1.8; color: #3e2723; padding: 45px;
+            border: 1.5px solid #c5b3a3; background: #faf5eb; margin: 40px 0; position: relative;
+            box-shadow: 10px 10px 0 rgba(141, 110, 99, 0.05);
         }
+        .discovery-log-box::before {
+            content: "FIELD OBSERVATION LOG"; position: absolute; top: -14px; left: 25px; background: #5d4037; color: #fdfaf3;
+            font-family: 'Special Elite', cursive; font-size: 11px; padding: 4px 18px; letter-spacing: 2px; border-radius: 2px;
+        }
+
+        .finding-stamp { margin-bottom: 50px; padding-left: 30px; border-left: 3px solid #b8860b; background: rgba(184, 134, 11, 0.01); padding-top: 20px; padding-bottom: 20px; }
+        .finding-header { font-family: 'Special Elite', cursive; font-size: 14px; font-weight: 900; color: #fdfaf3; background: #3e2723; display: inline-block; padding: 6px 20px; margin-bottom: 18px; text-transform: uppercase; letter-spacing: 2px; border-radius: 2px; box-shadow: 3px 3px 0 #b8860b; }
+
+        /* CULTURE FLIP STYLES */
+        .record-title-culture { font-family: 'Cinzel', serif; font-size: 2.6rem; font-weight: 900; color: #3e2723; letter-spacing: 6px; text-transform: uppercase; border-bottom: 4px double #b8860b; display: inline-block; margin-bottom: 35px; }
+        
+        .leather-tile {
+            background: #5d4037; background-image: url('https://www.transparenttextures.com/patterns/dark-leather.png'); color: #fdfaf3;
+            padding: 25px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.05); border-top: 4px solid #b8860b; box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        .leather-tile-label { font-family: 'Cinzel', serif; font-size: 10px; color: #b8860b; display: block; margin-bottom: 12px; letter-spacing: 2.5px; text-transform: uppercase; border-bottom: 1px solid rgba(184, 134, 11, 0.2); padding-bottom: 6px; }
+        .leather-tile-value { font-family: 'Special Elite', cursive; font-size: 14px; opacity: 0.95; }
+
+        /* DECORATIONS - SHRUNKEN */
+        .ornate-corner { position: absolute; width: 16px; height: 16px; opacity: 0.25; color: #5d4037; pointer-events: none; }
+        .tl { top: 18px; left: 18px; }
+        .br { bottom: 18px; right: 18px; transform: rotate(180deg); }
+
+        .sigil-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 15%; height: 15%; opacity: 0.035; background: url('https://www.transparenttextures.com/patterns/sacred-geometry.png') no-repeat center; background-size: contain; pointer-events: none; }
+
+        /* 3D FLIP */
+        .flip-wrapper { position: relative; width: 100%; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; min-height: 800px; }
         .flip-wrapper.flipped { transform: rotateY(180deg); }
         .side-front, .side-back { width: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
         .side-front { position: relative; z-index: 2; }
         .side-back { position: absolute; top: 0; left: 0; transform: rotateY(180deg); z-index: 1; }
-        .flipped .side-front { position: absolute; top: 0; left: 0; z-index: 1; pointer-events: none; }
-        .flipped .side-back { position: relative; z-index: 2; pointer-events: auto; }
+        .flipped .side-front { position: absolute; opacity: 0; pointer-events: none; visibility: hidden; }
+        .flipped .side-back { position: relative; opacity: 1; pointer-events: auto; visibility: visible; }
 
-        /* TABLES */
         .prog-table { width: 100%; border-collapse: collapse; font-family: 'Special Elite', cursive; font-size: 13px; margin: 25px 0; overflow-x: auto; display: block; }
-        .prog-table th { font-family: 'Cinzel', serif; text-transform: uppercase; font-size: 10px; color: #7a1d1d; border-bottom: 2px solid #7a1d1d; padding: 12px 8px; text-align: left; min-width: 100px; font-weight: 900; }
-        .prog-table td { padding: 10px 8px; border-bottom: 1px solid rgba(0,0,0,0.08); }
-
-        .culture-ledger { display: grid; grid-template-cols: 1.5fr 1fr; gap: 50px; margin-top: 40px; }
-        @media (max-width: 850px) { .culture-ledger { grid-template-cols: 1fr; } }
+        .prog-table th { font-family: 'Cinzel', serif; text-transform: uppercase; font-size: 10px; color: #3e2723; border-bottom: 2px solid #3e2723; padding: 12px 8px; text-align: left; min-width: 120px; font-weight: 900; }
+        .prog-table td { padding: 10px 8px; border-bottom: 1px solid rgba(141, 110, 99, 0.1); }
 
         .ledger-list { list-style: none; padding: 0; }
-        .ledger-list li { margin-bottom: 15px; border-bottom: 1px dashed rgba(0,0,0,0.15); padding-bottom: 6px; display: flex; flex-direction: column; }
-        .ledger-list b { font-family: 'Cinzel', serif; font-size: 11px; text-transform: uppercase; color: #7a1d1d; letter-spacing: 1.5px; margin-bottom: 2px; }
-        .ledger-list span { font-family: 'Special Elite', cursive; font-size: 15px; color: #3e2723; }
+        .ledger-list li { margin-bottom: 15px; border-bottom: 1px dashed #d7ccc8; padding-bottom: 8px; display: flex; flex-direction: column; }
+        .ledger-list b { font-family: 'Cinzel', serif; font-size: 11px; text-transform: uppercase; color: #3e2723; letter-spacing: 2px; font-weight: 900; }
+        .ledger-list span { font-family: 'Special Elite', cursive; font-size: 15px; color: #5d4037; margin-top: 4px; }
 
-        .record-header { display: grid; grid-template-cols: 1fr 1.2fr; gap: 60px; margin-bottom: 50px; align-items: start; }
-        @media (max-width: 1100px) { .record-header { grid-template-cols: 1fr; gap: 40px; } }
+        .back-nav { font-family: 'Cinzel', serif; font-weight: 900; font-size: 11px; color: #5d4037; cursor: pointer; text-transform: uppercase; letter-spacing: 3px; }
+        .back-nav:hover { color: #b8860b; }
 
-        .record-illustration { position: relative; border: 3px solid #1a0f0a; background: rgba(0,0,0,0.03); padding: 12px; box-shadow: 10px 15px 35px rgba(0,0,0,0.15); cursor: zoom-in; overflow: hidden; }
-        .record-illustration::before { content: ''; position: absolute; inset: 0; box-shadow: inset 0 0 40px rgba(0,0,0,0.1); pointer-events: none; }
-        
-        .record-title { font-family: 'Pirata One', cursive; font-size: 5rem; color: #1a0f0a; line-height: 0.85; margin-bottom: 5px; text-transform: uppercase; }
-        @media (max-width: 640px) { .record-title { font-size: 3.5rem; } }
-
-        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #1a0f0a; color: #f4edd8; padding: 14px 36px; border-radius: 4px; z-index: 10000; opacity: 0; transition: 0.3s; font-family: 'Cinzel'; font-size: 13px; font-weight: 900; border: 1px solid #7a1d1d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); pointer-events: none; }
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #3e2723; color: #fdfaf3; padding: 14px 36px; border-radius: 4px; z-index: 10000; opacity: 0; transition: 0.3s; font-family: 'Cinzel'; font-size: 13px; font-weight: 900; border: 1px solid #b8860b; box-shadow: 0 10px 30px rgba(0,0,0,0.3); pointer-events: none; }
     </style>
 </head>
 <body>
 
-    <div id="toast" class="toast">DM Message</div>
+    <div id="toast" class="toast">Journal Synchronized</div>
 
-    <div class="parchment-container" id="parchment">
-        <div class="ornate-corner tl"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2"><path d="M10,10 Q30,10 30,40 T60,60 T90,90 M10,10 Q10,30 40,30 T60,60"/></svg></div>
-        <div class="ornate-corner br"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2"><path d="M10,10 Q30,10 30,40 T60,60 T90,90 M10,10 Q10,30 40,30 T60,60"/></svg></div>
+    <div class="journal-cover">
+        <div class="parchment-container" id="parchment">
+            <div class="ornate-corner tl"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2"><path d="M10,10 Q30,10 30,40 T60,60 T90,90 M10,10 Q10,30 40,30 T60,60"/></svg></div>
+            <div class="ornate-corner br"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2"><path d="M10,10 Q30,10 30,40 T60,60 T90,90 M10,10 Q10,30 40,30 T60,60"/></svg></div>
 
-        <!-- HEADER -->
-        <header class="flex flex-col md:flex-row justify-between items-center gap-6 relative z-[200] mb-8 pb-8 border-b border-black/10">
-            <div class="flex flex-col items-center md:items-start text-center md:text-left">
-                <h1 class="brand-title">Aeonfall</h1>
-                <p class="brand-sub">Archival Heritage Biometry</p>
-            </div>
-
-            <div class="flex items-center gap-10">
-                <div class="role-pill">
-                    <div id="role-player" onclick="window.setRole('player')" class="role-tab active">Player</div>
-                    <div id="role-dm" onclick="window.setRole('dm')" class="role-tab">DM</div>
+            <!-- HEADER -->
+            <header class="flex flex-col md:flex-row justify-between items-center gap-6 relative z-[200] mb-12 pb-8 border-b border-brown-200/20">
+                <div class="flex flex-col items-center md:items-start text-center md:text-left">
+                    <h1 class="brand-title">Aeonfall</h1>
+                    <p class="brand-sub">Hand-Inscribed Journal of Lineages</p>
                 </div>
-                <a href="playershandbook.html" class="text-[10px] font-black uppercase tracking-[0.3em] text-[#7a1d1d] hover:text-black transition-colors relative z-[201]">← Back to Hub</a>
-            </div>
-        </header>
 
-        <!-- DASHBOARD VIEW -->
-        <div id="view-grid">
-            <div class="flex flex-col md:flex-row justify-between items-center md:items-end mb-6 gap-4">
-                <div>
-                    <h2 class="font-serif text-2xl font-black uppercase text-[#1a0f0a] tracking-tight">Biological Stacks</h2>
-                    <p class="text-[9px] text-[#5d4037] tracking-[0.4em] uppercase font-bold opacity-70">Authorized Bio-Data Record • Field Research v4.5</p>
+                <div class="flex items-center gap-10">
+                    <div class="role-pill">
+                        <div id="role-player" onclick="window.setRole('player')" class="role-tab active">Player</div>
+                        <div id="role-dm" onclick="window.setRole('dm')" class="role-tab">DM</div>
+                    </div>
+                    <a href="playershandbook.html" class="text-[11px] font-black uppercase tracking-[0.3em] text-[#3e2723] hover:text-[#b8860b] transition-colors relative z-[201]">← Close Journal</a>
                 </div>
-                <div class="flex gap-3">
-                    <button id="add-record-btn" onclick="window.addRecord()" class="hidden bg-[#7a1d1d] hover:bg-[#1a0f0a] text-[#f4edd8] px-4 py-2 rounded-sm font-black text-[9px] uppercase shadow-xl transition-all active:scale-95">+ Add Bio-Record</button>
-                    <button id="remove-record-btn" onclick="window.togglePurgeMode()" class="hidden bg-gray-200 border border-black/10 text-gray-700 hover:text-red-700 hover:bg-red-50 px-4 py-2 rounded-sm font-black text-[9px] uppercase shadow-md transition-all active:scale-95">Purge Archives</button>
-                </div>
-            </div>
-            
-            <div id="stack-grid" class="grid-container">
-                <!-- Record Cards -->
-            </div>
-        </div>
+            </header>
 
-        <!-- DETAIL VIEW -->
-        <div id="view-details" class="hidden">
-            <div class="flex justify-between items-start mb-6">
-                <div onclick="window.setView('grid')" class="back-nav">← Return to Bio-Stacks</div>
-                <div class="flex gap-2">
-                    <button onclick="window.flipPage()" id="btn-flip" class="bg-[#1a0f0a] text-[#f4edd8] px-5 py-2.5 rounded-sm font-black text-[10px] uppercase hover:bg-black transition-colors shadow-lg">📜 Flip Page</button>
+            <!-- DASHBOARD VIEW -->
+            <div id="view-grid">
+                <div class="flex flex-col md:flex-row justify-between items-center md:items-end mb-10 gap-4">
+                    <div>
+                        <h2 class="font-serif text-2xl font-black uppercase text-[#3e2723] tracking-tight">Biological Stacks</h2>
+                        <p class="font-serif italic text-xs text-[#8d6e63]">Hand-Inscribed dossiers of the known world • v5.7</p>
+                    </div>
+                    <div class="flex gap-3">
+                        <button id="add-record-btn" onclick="window.addRecord()" class="hidden bg-[#5d4037] hover:bg-[#3e2723] text-[#fdfaf3] px-6 py-2.5 rounded-sm font-black text-[10px] uppercase shadow-lg transition-all active:scale-95 border border-white/5">+ Ink New Entry</button>
+                        <button id="remove-record-btn" onclick="window.togglePurgeMode()" class="hidden bg-[#d7ccc8] border border-brown-200 text-[#3e2723] hover:bg-[#bcaaa4] px-6 py-2.5 rounded-sm font-black text-[10px] uppercase shadow-md transition-all active:scale-95">Purge Archives</button>
+                    </div>
+                </div>
+                
+                <div id="stack-grid" class="grid-container">
+                    <!-- Cards -->
                 </div>
             </div>
 
-            <div id="flip-container" class="flip-wrapper">
-                <div class="side-front" id="details-front"></div>
-                <div class="side-back" id="details-back"></div>
-            </div>
+            <!-- DETAIL VIEW -->
+            <div id="view-details" class="hidden">
+                <div class="flex justify-between items-start mb-10">
+                    <div onclick="window.setView('grid')" class="back-nav">← Close Log</div>
+                    <button onclick="window.flipPage()" id="btn-flip" class="bg-[#5d4037] text-[#fdfaf3] px-8 py-3 rounded-sm font-black text-[11px] uppercase hover:bg-[#3e2723] transition-all shadow-xl border border-white/5">📜 Turn Page</button>
+                </div>
 
-            <div id="dm-bottom-controls" class="hidden flex gap-4 mt-16 pt-10 border-t border-black/10">
-                <button onclick="window.addSection()" class="bg-[#1a0f0a] text-[#f4edd8] px-8 py-3 rounded-sm font-black uppercase text-[11px] tracking-widest hover:bg-black transition-colors">Append Research Chapter</button>
-                <button onclick="window.triggerDel()" class="bg-red-700/10 border border-red-700/30 text-red-700 px-8 py-3 rounded-sm font-black uppercase text-[11px] tracking-widest hover:bg-red-700/20 transition-all">Expunge Bio-Record</button>
+                <div id="flip-container" class="flip-wrapper">
+                    <div class="side-front" id="details-front"></div>
+                    <div class="side-back" id="details-back"></div>
+                </div>
+
+                <div id="dm-bottom-controls" class="hidden flex gap-4 mt-16 pt-10 border-t border-brown-200/20">
+                    <button onclick="window.addSection()" class="bg-[#5d4037] text-[#fdfaf3] px-10 py-4 rounded-sm font-black uppercase text-[11px] tracking-widest hover:bg-[#3e2723] transition-all">Append Journal Note</button>
+                    <button onclick="window.triggerDel()" class="bg-red-900/10 border border-red-900/30 text-red-900 px-10 py-4 rounded-sm font-black uppercase text-[11px] tracking-widest hover:bg-red-900/20 transition-all">Shred Dossier</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- LIGHTBOX MODAL -->
+    <!-- LIGHTBOX -->
     <div id="lightbox-modal" class="fixed inset-0 z-[10000] flex flex-col items-center justify-center p-4 hidden">
-        <div class="absolute inset-0 lightbox-overlay" onclick="window.closeLightbox()"></div>
+        <div class="absolute inset-0 bg-black/95 backdrop-blur-md" onclick="window.closeLightbox()"></div>
         <div id="lightbox-content" class="relative z-10"></div>
-        <button onclick="window.closeLightbox()" class="relative z-10 mt-8 bg-[#7a1d1d] text-white px-10 py-4 rounded-full font-black text-[12px] uppercase tracking-widest shadow-2xl border-2 border-white/20 active:scale-95 transition-transform">Close Optical Feed</button>
+        <button onclick="window.closeLightbox()" class="relative z-10 mt-8 bg-[#3e2723] text-[#fdfaf3] px-12 py-4 rounded-full font-black text-[13px] uppercase tracking-widest shadow-2xl">Close Viewport</button>
     </div>
 
-    <!-- Modals -->
+    <!-- AUTH -->
     <div id="pass-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[5000] hidden p-4">
-        <div class="bg-gray-800 p-12 rounded-2xl w-full max-w-sm border-2 border-amber-600 text-white text-center shadow-2xl relative">
-            <h3 class="text-2xl font-serif text-amber-500 font-bold mb-6 uppercase tracking-tighter">Archival Clearance</h3>
-            <input type="password" id="dm-pass" onkeydown="if(event.key==='Enter') window.authDm()" class="w-full bg-gray-900 text-center text-3xl rounded-lg p-4 mb-8 border border-gray-700 text-amber-500 focus:outline-none focus:border-amber-500" placeholder="••••">
-            <div class="flex flex-col gap-4">
-                <button onclick="window.authDm()" class="w-full bg-amber-600 hover:bg-amber-500 text-white py-5 rounded-xl font-black uppercase text-sm tracking-widest transition-all">Authorize Access</button>
-                <button onclick="document.getElementById('pass-modal').classList.add('hidden')" class="text-[11px] text-gray-500 uppercase font-black tracking-widest opacity-70 hover:opacity-100">Abort Protocol</button>
-            </div>
+        <div class="bg-[#2c1810] p-12 rounded-2xl w-full max-w-sm border-2 border-[#b8860b] text-[#fdfaf3] text-center shadow-2xl relative">
+            <h3 class="text-2xl font-serif text-[#b8860b] font-bold mb-6 uppercase">Master Key</h3>
+            <input type="password" id="dm-pass" onkeydown="if(event.key==='Enter') window.authDm()" class="w-full bg-[#1a0f0a] text-center text-3xl rounded-lg p-4 mb-8 border border-[#5d4037] text-[#d4a373] focus:outline-none focus:border-[#d4a373]" placeholder="••••">
+            <button onclick="window.authDm()" class="w-full bg-[#5d4037] hover:bg-[#8d6e63] text-white py-5 rounded-xl font-black uppercase text-sm tracking-widest transition-all mb-4">Authorize</button>
+            <button onclick="document.getElementById('pass-modal').classList.add('hidden')" class="text-[11px] text-[#8d6e63] uppercase font-black tracking-widest">Cancel</button>
         </div>
     </div>
 
+    <!-- PURGE -->
     <div id="del-modal" class="fixed inset-0 z-[6000] flex items-center justify-center p-4 hidden">
         <div class="absolute inset-0 bg-black/90" onclick="document.getElementById('del-modal').classList.add('hidden')"></div>
-        <div class="bg-white p-12 rounded-2xl w-full max-w-sm text-center relative z-10 shadow-2xl text-black">
-            <h3 class="text-3xl font-serif font-black text-red-700 uppercase mb-4 tracking-tighter">Purge Record</h3>
-            <p class="text-sm text-gray-500 mb-10 italic">This biological entry will be permanently expunged from the archives.</p>
-            <div class="flex flex-col gap-4">
-                <button id="confirm-del-btn" class="w-full bg-red-700 text-white py-5 rounded-xl font-black text-xs uppercase shadow-lg hover:bg-red-800 transition-all">Confirm Purge</button>
-                <button onclick="document.getElementById('del-modal').classList.add('hidden')" class="w-full bg-gray-100 text-gray-400 py-3 rounded-xl font-bold uppercase text-[10px] hover:text-black transition-all">Decline</button>
-            </div>
+        <div class="bg-[#fdfaf3] p-12 rounded-2xl w-full max-w-sm text-center relative z-10 shadow-2xl border-4 border-red-900/20">
+            <h3 class="text-3xl font-serif font-black text-red-900 uppercase mb-4">Purge Record</h3>
+            <p class="text-sm text-[#5d4037] mb-10 italic">This journal entry will be permanently shredded.</p>
+            <button id="confirm-del-btn" class="w-full bg-red-900 text-white py-5 rounded-xl font-black text-xs uppercase shadow-lg mb-4">Confirm Shred</button>
+            <button onclick="document.getElementById('del-modal').classList.add('hidden')" class="w-full bg-white/50 text-[#8d6e63] py-3 rounded-xl font-bold uppercase text-[10px]">Abort</button>
         </div>
     </div>
 
@@ -323,7 +252,6 @@
         import { getFirestore, collection, doc, updateDoc, onSnapshot, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // APP CONFIG & INITIALIZATION
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
             apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI",
             authDomain: "aeonfall-523c1.firebaseapp.com",
@@ -339,17 +267,18 @@
         const auth = getAuth(app);
 
         const TOOLTIPS = {
-            "Activation Time": "The amount of time required to initialize this script and push it to reality.",
-            "Mechanum": "Technomagic Protocol: This script utilizes specialized hardware and digital distortion to warp reality through code.",
-            "Concord": "Ritual Protocol: This script can be initialized through ritualistic focus, conserving internal energy reserves.",
-            "Dominion": "Governs will and influence, shaping thoughts, emotions, and behavior through directed intent.",
-            "Ruin": "Governs raw energy and destruction, unleashing force to damage or overwhelm.",
-            "Aegis": "Governs protection, prevention, and resistance, creating wards that block or negate harm."
+            "Activation Time": "Initialization window.",
+            "Mechanum": "Technomagic manipulation via code.",
+            "Concord": "Ritualistic energy conservation.",
+            "Dominion": "Will-shaping protocols.",
+            "Ruin": "Destructive output.",
+            "Aegis": "Ward-craft and negation."
         };
 
         let lineages = [];
         let activeRole = 'player', currentView = 'grid', saveTimer = null, targetDelId = null;
-        let isFlipped = false, currentUser = null, isPurgeMode = false;
+        let isFlipped = false, currentUser = null;
+        window.isPurgeMode = false;
         window.activeRaceId = null; 
 
         window.showToast = (m) => { const t = document.getElementById('toast'); t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 3000); };
@@ -358,24 +287,15 @@
             if(r === 'dm') {
                 document.getElementById('pass-modal').classList.remove('hidden'); 
                 setTimeout(() => document.getElementById('dm-pass').focus(), 100);
-            } else { 
-                activeRole = 'player'; 
-                isPurgeMode = false; 
-                updateRoleUI(); 
-            } 
+            } else { activeRole = 'player'; window.isPurgeMode = false; updateRoleUI(); } 
         };
 
         window.authDm = () => { 
             const passInput = document.getElementById('dm-pass');
             if(passInput.value.trim() === 'Rew4994'){ 
-                activeRole='dm'; 
-                document.getElementById('pass-modal').classList.add('hidden'); 
-                passInput.value = ''; 
-                updateRoleUI(); 
-                window.showToast("Verification Verified");
-            } else { 
-                window.showToast("Failed Verification"); 
-            } 
+                activeRole='dm'; document.getElementById('pass-modal').classList.add('hidden'); 
+                passInput.value = ''; updateRoleUI(); window.showToast("Dossier Unlocked");
+            } else { window.showToast("Denied"); } 
         };
 
         function updateRoleUI() {
@@ -390,10 +310,10 @@
         }
 
         window.togglePurgeMode = () => {
-            isPurgeMode = !isPurgeMode;
-            document.getElementById('remove-record-btn').classList.toggle('bg-red-700', isPurgeMode);
-            document.getElementById('remove-record-btn').classList.toggle('text-white', isPurgeMode);
-            window.showToast(isPurgeMode ? "Purge Mode Enabled" : "Purge Mode Disabled");
+            window.isPurgeMode = !window.isPurgeMode;
+            document.getElementById('remove-record-btn').classList.toggle('bg-red-900', window.isPurgeMode);
+            document.getElementById('remove-record-btn').classList.toggle('text-white', window.isPurgeMode);
+            window.showToast(window.isPurgeMode ? "Purge Protocol Active" : "Purge Protocol Disabled");
             renderGrid();
         };
 
@@ -403,8 +323,8 @@
             let html = text.replace(/&&([^&]+)&&/g, (match, content) => {
                 const parts = content.split('|');
                 const term = parts[0].trim();
-                const definition = parts.length > 1 ? parts[1].trim() : (TOOLTIPS[term] || "No technical record found.");
-                return `<span class="term-hover def-term">${term}<span class="tooltip-content">${definition}</span></span>`;
+                const definition = parts.length > 1 ? parts[1].trim() : (TOOLTIPS[term] || "Data missing.");
+                return `<span class="term-hover def-term" style="color: #3e2723; font-weight: 900; border-bottom: 1px dashed #b8860b;">${term}<span class="tooltip-content">${definition}</span></span>`;
             });
             html = html.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
             html = html.replace(/\*(.*?)\*/g, '<i>$1</i>');
@@ -413,43 +333,31 @@
         }
 
         const safeJSONParse = (data, fallback = []) => {
-            try {
-                if (!data) return fallback;
-                if (typeof data === 'object') return data;
-                return JSON.parse(data);
-            } catch (e) {
-                console.warn("JSON Parse Error", e);
-                return fallback;
-            }
+            try { if (!data) return fallback; if (typeof data === 'object') return data; return JSON.parse(data);
+            } catch (e) { return fallback; }
         };
 
         window.zoomMedia = (url) => {
             if (!url) return;
             const modal = document.getElementById('lightbox-modal');
             const content = document.getElementById('lightbox-content');
-            content.innerHTML = url.includes('.mp4') ? 
-                `<video src="${url}" autoplay loop muted class="lightbox-img"></video>` : 
-                `<img src="${url}" class="lightbox-img">`;
+            content.innerHTML = url.includes('.mp4') ? `<video src="${url}" autoplay loop muted class="max-w-full max-h-[85vh] border-8 border-[#3e2723] rounded"></video>` : `<img src="${url}" class="max-w-full max-h-[85vh] border-8 border-[#3e2723] rounded">`;
             modal.classList.remove('hidden');
         };
 
-        window.closeLightbox = () => {
-            document.getElementById('lightbox-modal').classList.add('hidden');
-            document.getElementById('lightbox-content').innerHTML = '';
-        };
+        window.closeLightbox = () => { document.getElementById('lightbox-modal').classList.add('hidden'); document.getElementById('lightbox-content').innerHTML = ''; };
 
         window.flipPage = () => {
             isFlipped = !isFlipped;
             document.getElementById('flip-container').classList.toggle('flipped', isFlipped);
-            document.getElementById('btn-flip').innerText = isFlipped ? "📜 Flip to Biology" : "📜 Flip to Culture";
+            document.getElementById('btn-flip').innerText = isFlipped ? "📜 Return to Bio-Notes" : "📜 Heritage Ledger";
         };
 
         window.setView = (v, id = null) => {
             currentView = v; window.activeRaceId = id;
             document.getElementById('view-grid').classList.toggle('hidden', v !== 'grid');
             document.getElementById('view-details').classList.toggle('hidden', v !== 'details');
-            isFlipped = false;
-            document.getElementById('flip-container').classList.remove('flipped');
+            isFlipped = false; document.getElementById('flip-container').classList.remove('flipped');
             if(v === 'grid') renderGrid(); else renderDetails();
         };
 
@@ -457,35 +365,22 @@
             const isDM = activeRole === 'dm';
             const grid = document.getElementById('stack-grid');
             grid.innerHTML = lineages.map((race, idx) => `
-                <div class="race-card ${isPurgeMode ? 'purge-mode-active' : ''}" onclick="!isPurgeMode && window.setView('details', '${race.id}')">
+                <div class="race-card" onclick="!window.isPurgeMode && window.setView('details', '${race.id}')">
                     <div class="card-bg-image">
-                        ${race.gridUrl ? 
-                            (race.gridUrl.includes('.mp4') ? `<video src="${race.gridUrl}" autoplay loop muted></video>` : `<img src="${race.gridUrl}">`) 
-                            : '<div class="w-full h-full bg-[#e0d5ba] flex items-center justify-center text-[10px] text-gray-500 italic">SCANNING...</div>'}
+                        ${race.gridUrl ? (race.gridUrl.includes('.mp4') ? `<video src="${race.gridUrl}" autoplay loop muted></video>` : `<img src="${race.gridUrl}">`) : '<div class="w-full h-full bg-[#d7ccc8] flex items-center justify-center text-[10px] text-brown-600 italic uppercase">Log Empty</div>'}
                     </div>
                     <div class="card-text-panel">
                         <h3 class="card-name">${race.name}</h3>
-                        <p class="card-subtitle">Archival Biometry</p>
-                        <p class="card-desc">${isDM ? (race.desc || 'No description.') : parseAeonfallContent(race.desc, false)}</p>
-                        <div class="card-traits-label">${race.name} Traits</div>
-                        <div class="card-traits-list">${isDM ? (race.traits || 'None.') : parseAeonfallContent(race.traits, false)}</div>
-                        
-                        ${isDM ? `
-                            <div class="reorder-controls">
-                                <button onclick="event.stopPropagation(); window.moveRecord('${race.id}', -1)" class="reorder-btn" title="Shift Sequence Up" ${idx === 0 ? 'disabled' : ''}>↑</button>
-                                <button onclick="event.stopPropagation(); window.moveRecord('${race.id}', 1)" class="reorder-btn" title="Shift Sequence Down" ${idx === lineages.length - 1 ? 'disabled' : ''}>↓</button>
-                            </div>
-                        ` : ''}
-
-                        ${isPurgeMode ? `
-                            <button onclick="event.stopPropagation(); window.triggerDel('${race.id}')" class="purge-btn-overlay">Purge Record</button>
-                        ` : `
-                            <button class="view-btn">Consult Record</button>
-                        `}
+                        <p class="card-subtitle">Archival Dossier</p>
+                        <p class="card-desc">${isDM ? (race.desc || 'No profile data.') : parseAeonfallContent(race.desc, false)}</p>
+                        <div class="card-traits-label">${race.name} Indications</div>
+                        <div class="card-traits-list">${isDM ? (race.traits || 'Standard.') : parseAeonfallContent(race.traits, false)}</div>
+                        ${isDM ? `<div class="reorder-controls"><button onclick="event.stopPropagation(); window.moveRecord('${race.id}', -1)" class="reorder-btn" ${idx === 0 ? 'disabled' : ''}>↑</button><button onclick="event.stopPropagation(); window.moveRecord('${race.id}', 1)" class="reorder-btn" ${idx === lineages.length - 1 ? 'disabled' : ''}>↓</button></div>` : ''}
+                        ${window.isPurgeMode ? `<button onclick="event.stopPropagation(); window.triggerDel('${race.id}')" class="purge-btn-overlay">Shred Record</button>` : `<button class="view-btn">Inspect Log</button>`}
                     </div>
                 </div>
             `).join('');
-            if(lineages.length === 0) grid.innerHTML = `<p class="col-span-full text-center py-20 text-[#5d4037] italic uppercase text-[10px] font-black tracking-widest">Awaiting bio-frequency uplink...</p>`;
+            if(lineages.length === 0) grid.innerHTML = `<p class="col-span-full text-center py-20 text-[#8d6e63] italic uppercase text-[10px] font-black tracking-widest">Awaiting field uplink...</p>`;
         };
 
         window.moveRecord = async (id, direction) => {
@@ -493,25 +388,15 @@
             const index = lineages.findIndex(r => r.id === id);
             const targetIndex = index + direction;
             if (targetIndex < 0 || targetIndex >= lineages.length) return;
-
-            const currentDoc = lineages[index];
-            const targetDoc = lineages[targetIndex];
-
-            // Sequence swap strategy: Update both concurrently with forced sequence numbers
-            // We use the current target's order value for the source, and source's for target
-            const curOrder = currentDoc.order ?? (currentDoc.createdAt || Date.now());
-            const tarOrder = targetDoc.order ?? (targetDoc.createdAt || Date.now());
-
+            const cur = lineages[index]; const tar = lineages[targetIndex];
+            const curO = cur.order ?? (cur.createdAt || Date.now());
+            const tarO = tar.order ?? (tar.createdAt || Date.now());
             try {
                 await Promise.all([
-                    updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', currentDoc.id), { order: tarOrder }),
-                    updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', targetDoc.id), { order: curOrder })
+                    updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', cur.id), { order: tarO }),
+                    updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', tar.id), { order: curO })
                 ]);
-                window.showToast("Archive Sequence Shifted");
-            } catch (err) {
-                console.error("Shift error:", err);
-                window.showToast("Archive Uplink Failed");
-            }
+            } catch (err) { window.showToast("Error"); }
         };
 
         window.renderDetails = () => {
@@ -520,96 +405,86 @@
             const race = lineages.find(r => r.id === window.activeRaceId);
             if (!race) return;
 
-            // SIDE A: FRONT
+            // SIDE A: BIOLOGY
             document.getElementById('details-front').innerHTML = `
                 <div class="${isDM ? 'dm-active-edit' : ''}">
                     <div class="record-header">
                         <div class="flex flex-col">
-                            <h2 class="record-title dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}', 'name', this.innerText)">${race.name}</h2>
-                            <p class="record-label text-[10px] font-black uppercase text-[#7a1d1d] tracking-widest border-b border-black/10 pb-2 mb-6">Signature Verified • Custodian #<span class="dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}', 'custodianId', this.innerText)">${race.custodianId || '994'}</span></p>
-                            <div class="bg-black/5 border-l-4 border-[#7a1d1d] p-6 rounded-sm">
-                                <h4 class="font-black uppercase text-[11px] tracking-[0.2em] text-[#7a1d1d] mb-4">Innate Parameters</h4>
-                                <div class="dm-editable text-sm italic leading-relaxed text-[#3e2723]" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','traits',this.innerText)">${isDM ? (race.traits || 'Ancestral trait markers...') : parseAeonfallContent(race.traits, false)}</div>
+                            <h2 class="card-name text-6xl dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}', 'name', this.innerText)">${race.name}</h2>
+                            <p class="record-label text-[10px] font-black uppercase text-[#8d6e63] tracking-widest border-b border-brown-200/20 pb-2 mb-6">Subject Verified • ID #<span class="dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}', 'custodianId', this.innerText)">${race.custodianId || '994'}</span></p>
+                            <div class="bg-brown-50/50 border-l-4 border-[#3e2723] p-6 rounded-sm">
+                                <h4 class="font-black uppercase text-[11px] tracking-[0.2em] text-[#3e2723] mb-4">Innate Parameters</h4>
+                                <div class="dm-editable text-sm italic leading-relaxed text-[#5d4037]" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','traits',this.innerText)">${isDM ? (race.traits || 'Trait markers...') : parseAeonfallContent(race.traits, false)}</div>
                             </div>
                         </div>
                         <div class="record-illustration" onclick="window.zoomMedia('${race.detailUrl}')">
                             <div class="sigil-overlay"></div>
-                            ${race.detailUrl ? (race.detailUrl.includes('.mp4') ? `<video src="${race.detailUrl}" autoplay loop muted></video>` : `<img src="${race.detailUrl}">`) : '<div class="h-96 flex items-center justify-center italic text-[#5d4037]">Visual uplink lost</div>'}
+                            ${race.detailUrl ? (race.detailUrl.includes('.mp4') ? `<video src="${race.detailUrl}" autoplay loop muted></video>` : `<img src="${race.detailUrl}">`) : '<div class="h-96 flex items-center justify-center italic text-[#a1887f]">Visual lost</div>'}
                         </div>
                     </div>
-                    ${isDM ? `<div class="bg-black/5 p-4 rounded mb-8 grid grid-cols-2 gap-4"><div><label class="text-[9px] font-black text-amber-900 uppercase">Grid Visual Link</label><input type="text" class="w-full p-2 text-[11px] bg-white border border-black/10 mt-1" value="${race.gridUrl||''}" oninput="window.dbUp('${race.id}', 'gridUrl', this.value)"></div><div><label class="text-[9px] font-black text-amber-900 uppercase">Detail Visual Link</label><input type="text" class="w-full p-2 text-[11px] bg-white border border-black/10 mt-1" value="${race.detailUrl||''}" oninput="window.dbUp('${race.id}', 'detailUrl', this.value)"></div></div>` : ''}
-                    <div class="research-findings dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}', 'desc', this.innerText)">
-                        <span class="drop-cap">${(race.desc||"O").charAt(0)}</span>${isDM ? ((race.desc||"nce, in a world not yet broken...").slice(1)) : parseAeonfallContent((race.desc||"nce, in a world not yet broken...").slice(1), false)}
+                    ${isDM ? `<div class="bg-brown-100/20 p-4 rounded mb-8 grid grid-cols-2 gap-4"><div><label class="text-[9px] font-black text-[#5d4037] uppercase">Grid Profile</label><input type="text" class="w-full p-2 text-[11px] bg-white border border-brown-200 mt-1" value="${race.gridUrl||''}" oninput="window.dbUp('${race.id}', 'gridUrl', this.value)"></div><div><label class="text-[9px] font-black text-[#5d4037] uppercase">Detail View</label><input type="text" class="w-full p-2 text-[11px] bg-white border border-brown-200 mt-1" value="${race.detailUrl||''}" oninput="window.dbUp('${race.id}', 'detailUrl', this.value)"></div></div>` : ''}
+                    <div class="discovery-log-box dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}', 'desc', this.innerText)">
+                        <span class="drop-cap" style="float: left; font-family: 'Pirata One', cursive; font-size: 80px; line-height: 60px; padding-top: 4px; padding-right: 12px; color: #3e2723;">${(race.desc||"O").charAt(0)}</span>${isDM ? ((race.desc||"nce, dossiers were empty...").slice(1)) : parseAeonfallContent((race.desc||"nce, dossiers were empty...").slice(1), false)}
                     </div>
-                    <div id="additional-logs">${(race.intros || []).map((intro, idx) => `<div class="heritage-block relative"><h3 class="dm-editable" contenteditable="${isDM}" oninput="window.dbUpIntro('${race.id}', ${idx}, 'leftTitle', this.innerText)">${intro.leftTitle || 'Research Chapter'}</h3><div class="dm-editable text-[#3e2723] font-serif leading-loose" contenteditable="${isDM}" oninput="window.dbUpIntro('${race.id}', ${idx}, 'leftText', this.innerText)">${isDM ? (intro.leftText || 'Handwritten details...') : parseAeonfallContent(intro.leftText, false)}</div>${isDM ? `<button onclick="window.removeSection('${race.id}', ${idx})" class="absolute top-0 right-0 text-[#7a1d1d] opacity-30 hover:opacity-100 text-[9px] uppercase font-black">Expunge Section</button>` : ''}</div>`).join('')}</div>
+                    <div id="additional-logs">${(race.intros || []).map((intro, idx) => `<div class="finding-stamp relative"><h3 class="finding-header dm-editable" contenteditable="${isDM}" oninput="window.dbUpIntro('${race.id}', ${idx}, 'leftTitle', this.innerText)">${intro.leftTitle || 'ARCHIVAL STAMP'}</h3><div class="dm-editable text-[#5d4037] font-serif leading-loose" contenteditable="${isDM}" oninput="window.dbUpIntro('${race.id}', ${idx}, 'leftText', this.innerText)">${isDM ? (intro.leftText || 'Recorded data...') : parseAeonfallContent(intro.leftText, false)}</div>${isDM ? `<button onclick="window.removeSection('${race.id}', ${idx})" class="absolute top-0 right-0 text-red-900 opacity-30 hover:opacity-100 text-[9px] uppercase font-black">Shred</button>` : ''}</div>`).join('')}</div>
                 </div>
             `;
 
-            // SIDE B: BACK
+            // SIDE B: HERITAGE
             const tables = safeJSONParse(race.mechTables);
             document.getElementById('details-back').innerHTML = `
                 <div class="${isDM ? 'dm-active-edit' : ''}">
-                    <h2 class="record-title mb-6">Cultural Heritage</h2>
+                    <h2 class="record-title-culture">Archival Heritage</h2>
                     <div class="culture-ledger">
                         <ul class="ledger-list">
-                            ${['cultureName', 'majorityPop', 'coreValues', 'government', 'belief', 'culturalPractices', 'attitudes'].map(f => {
-                                const label = f === 'cultureName' ? "Lineage's Name" : f.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-                                return `
-                                <li><b>${label}:</b> 
-                                <span class="dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','${f}',this.innerText)">${isDM ? (race[f] || '...') : parseAeonfallContent(race[f], false)}</span></li>
-                                `;
-                            }).join('')}
+                            ${[
+                                { f: 'cultureName', l: 'Archival Identity' },
+                                { f: 'majorityPop', l: 'Majority Pop' },
+                                { f: 'coreValues', l: 'Core Values' },
+                                { f: 'government', l: 'Government' },
+                                { f: 'belief', l: 'Belief' },
+                                { f: 'culturalPractices', l: 'Cultural Practices' },
+                                { f: 'attitudes', l: 'Attitudes' }
+                            ].map(item => `<li><b>${item.l}:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','${item.f}',this.innerText)">${isDM ? (race[item.f] || '...') : parseAeonfallContent(race[item.f], false)}</span></li>`).join('')}
                         </ul>
                         <div class="flex flex-col gap-4">
-                            <div class="record-illustration" style="height: 280px;" onclick="window.zoomMedia('${race.backMediaUrl}')">
-                                ${race.backMediaUrl ? (race.backMediaUrl.includes('.mp4') ? `<video src="${race.backMediaUrl}" autoplay loop muted class="w-full h-full object-cover"></video>` : `<img src="${race.backMediaUrl}" class="w-full h-full object-cover">`) : '<div class="h-full flex items-center justify-center italic opacity-30">Cultural Visual missing</div>'}
+                            <div class="record-illustration" style="height: 300px;" onclick="window.zoomMedia('${race.backMediaUrl}')">
+                                ${race.backMediaUrl ? (race.backMediaUrl.includes('.mp4') ? `<video src="${race.backMediaUrl}" autoplay loop muted class="w-full h-full object-cover"></video>` : `<img src="${race.backMediaUrl}" class="w-full h-full object-cover">`) : '<div class="h-full flex items-center justify-center italic opacity-30">Visual missing</div>'}
                             </div>
-                            ${isDM ? `<input type="text" class="w-full p-2 text-[10px] bg-white/50 border border-black/10" value="${race.backMediaUrl||''}" placeholder="Culture Media Link" oninput="window.dbUp('${race.id}', 'backMediaUrl', this.value)">` : ''}
+                            ${isDM ? `<input type="text" class="w-full p-2 text-[10px] bg-white border border-brown-200" value="${race.backMediaUrl||''}" placeholder="Heritage Vis Link" oninput="window.dbUp('${race.id}', 'backMediaUrl', this.value)">` : ''}
                         </div>
                     </div>
 
-                    <div class="mech-box mt-10">
-                        <div class="flex justify-between items-center border-b-2 border-[#7a1d1d] mb-6 pb-2">
-                            <h4 class="m-0 border-0">Mechanical Options & Traits</h4>
-                            ${isDM ? `<button onclick="window.addMechTable()" class="arch-btn arch-btn-add">+ Add Table</button>` : ''}
+                    <div class="mech-box mt-12 bg-white/40 border-2 border-[#8d6e63]/20 p-10 rounded-sm">
+                        <div class="flex justify-between items-center border-b-2 border-[#3e2723] mb-8 pb-3">
+                            <h4 class="m-0 border-0 font-black text-[#3e2723] uppercase tracking-widest text-sm">Systemic Readout</h4>
+                            ${isDM ? `<button onclick="window.addMechTable()" class="bg-[#3e2723] text-[#fdfaf3] px-4 py-1.5 text-[9px] uppercase font-black rounded-sm">+ Add Ledger</button>` : ''}
                         </div>
-                        <div class="grid grid-cols-1 gap-8">
-                            <div>
-                                <b class="text-[10px] uppercase text-[#7a1d1d] block mb-2 tracking-widest">Mechanical Traits</b>
-                                <div class="dm-editable min-h-[60px] p-4 bg-black/5 rounded italic text-sm" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','mechTraits',this.innerText)">${isDM ? (race.mechTraits || 'Trait data pending...') : parseAeonfallContent(race.mechTraits, false)}</div>
+                        <div class="space-y-10">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div><b class="text-[10px] uppercase text-[#3e2723] block mb-3 tracking-widest font-black">Innate Capabilities</b><div class="dm-editable min-h-[80px] p-5 bg-white/50 rounded italic text-sm border border-brown-200" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','mechTraits',this.innerText)">${isDM ? (race.mechTraits || 'Trait data...') : parseAeonfallContent(race.mechTraits, false)}</div></div>
+                                <div><b class="text-[10px] uppercase text-[#3e2723] block mb-3 tracking-widest font-black">Core Matrix</b><div class="dm-editable min-h-[80px] p-5 bg-white/50 rounded italic text-sm border border-brown-200" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','mechDescription',this.innerText)">${isDM ? (race.mechDescription || 'Core readout...') : parseAeonfallContent(race.mechDescription, false)}</div></div>
                             </div>
-                            <div>
-                                <b class="text-[10px] uppercase text-[#7a1d1d] block mb-2 tracking-widest">Rules Description Box</b>
-                                <div class="dm-editable min-h-[100px] p-4 bg-black/5 rounded italic text-sm leading-relaxed" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','mechDescription',this.innerText)">${isDM ? (race.mechDescription || 'Mechanical overview...') : parseAeonfallContent(race.mechDescription, false)}</div>
-                            </div>
-                            <div class="space-y-4">
-                                ${['mechBackgrounds', 'mechLanguages', 'mechFeats', 'mechEquipment'].map(f => `
-                                    <p><b>• ${f.replace('mech', '').replace(/([A-Z])/g, ' $1').trim()}:</b> <span class="dm-editable italic text-sm" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','${f}',this.innerText)">${isDM ? (race[f] || '...') : parseAeonfallContent(race[f], false)}</span></p>
+                            <div class="leather-case-grid">
+                                ${[{ f: 'mechBackgrounds', l: 'Backgrounds' }, { f: 'mechLanguages', l: 'Languages' }, { f: 'mechFeats', l: 'Feats' }, { f: 'mechEquipment', l: 'Equipment' }].map(item => `
+                                    <div class="leather-tile">
+                                        <span class="leather-tile-label">${item.l}</span>
+                                        <div class="leather-tile-value dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','${item.f}',this.innerText)">${isDM ? (race[item.f] || 'Pending...') : parseAeonfallContent(race[item.f], false)}</div>
+                                    </div>
                                 `).join('')}
                             </div>
                         </div>
-
                         <div id="mech-tables-root">
                             ${tables.map((table, tIdx) => `
-                                <div class="mt-8 relative group">
-                                    <div class="flex justify-between items-center mb-2">
-                                        <b class="text-[11px] uppercase text-[#7a1d1d] dm-editable font-black tracking-widest" contenteditable="${isDM}" oninput="window.updateMechTableField(${tIdx}, 'title', this.innerText)">${table.title}</b>
-                                        ${isDM ? `
-                                            <div class="flex gap-1 opacity-20 group-hover:opacity-100 transition-opacity">
-                                                <button onclick="window.addTableRow(${tIdx})" class="arch-btn arch-btn-add">+ Row</button>
-                                                <button onclick="window.remTableRow(${tIdx})" class="arch-btn arch-btn-del">- Row</button>
-                                                <button onclick="window.addTableCol(${tIdx})" class="arch-btn arch-btn-add">+ Col</button>
-                                                <button onclick="window.remTableCol(${tIdx})" class="arch-btn arch-btn-del">- Col</button>
-                                                <button onclick="window.delMechTable(${tIdx})" class="arch-btn arch-btn-del">Delete</button>
-                                            </div>
-                                        ` : ''}
+                                <div class="mt-12 relative group bg-white/40 p-8 rounded-sm border border-brown-100/30">
+                                    <div class="flex justify-between items-center mb-4">
+                                        <b class="text-[11px] uppercase text-[#3e2723] dm-editable font-black tracking-widest" contenteditable="${isDM}" oninput="window.updateMechTableField(${tIdx}, 'title', this.innerText)">${table.title}</b>
+                                        ${isDM ? `<div class="flex gap-1 opacity-20 group-hover:opacity-100 transition-opacity"><button onclick="window.addTableRow(${tIdx})" class="bg-[#3e2723] text-white px-2 py-1 text-[8px] font-black uppercase">+ Row</button><button onclick="window.remTableRow(${tIdx})" class="bg-[#3e2723] text-white px-2 py-1 text-[8px] font-black uppercase">- Row</button><button onclick="window.delMechTable(${tIdx})" class="bg-red-900 text-white px-2 py-1 text-[8px] font-black uppercase">Del</button></div>` : ''}
                                     </div>
-                                    <div class="overflow-x-auto w-full">
-                                        <table class="prog-table w-full">
-                                            <thead><tr>${table.headers.map((h, hIdx) => `<th contenteditable="${isDM}" oninput="window.updateMechTableField(${tIdx}, 'headers', this.innerText, ${hIdx})">${h}</th>`).join('')}</tr></thead>
-                                            <tbody>${table.rows.map((row, rIdx) => `<tr>${row.map((cell, cIdx) => `<td contenteditable="${isDM}" oninput="window.updateMechTableField(${tIdx}, 'rows', this.innerText, rIdx, cIdx)">${isDM ? cell : parseAeonfallContent(cell, false)}</td>`).join('')}</tr>`).join('')}</tbody>
-                                        </table>
-                                    </div>
+                                    <table class="prog-table w-full">
+                                        <thead><tr>${table.headers.map((h, hIdx) => `<th contenteditable="${isDM}" oninput="window.updateMechTableField(${tIdx}, 'headers', this.innerText, ${hIdx})">${h}</th>`).join('')}</tr></thead>
+                                        <tbody>${table.rows.map((row, rIdx) => `<tr>${row.map((cell, cIdx) => `<td contenteditable="${isDM}" oninput="window.updateMechTableField(${tIdx}, 'rows', this.innerText, rIdx, cIdx)">${isDM ? cell : parseAeonfallContent(cell, false)}</td>`).join('')}</tr>`).join('')}</tbody>
+                                    </table>
                                 </div>
                             `).join('')}
                         </div>
@@ -637,7 +512,7 @@
             if (!currentUser) return;
             const r = lineages.find(x => x.id === window.activeRaceId);
             const tables = safeJSONParse(r.mechTables);
-            tables.push({ title: "NEW ARCHIVAL DATA", headers: ["Parameter", "Significance"], rows: [["...", "..."]] });
+            tables.push({ title: "ARCHIVAL PARAMETERS", headers: ["ID", "Significance"], rows: [["...", "..."]] });
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(tables) });
         };
 
@@ -676,28 +551,6 @@
             }
         };
 
-        window.addTableCol = async (tIdx) => {
-            if (!currentUser) return;
-            const r = lineages.find(x => x.id === window.activeRaceId);
-            const tables = safeJSONParse(r.mechTables);
-            if (tables[tIdx]) {
-                tables[tIdx].headers.push("New Header");
-                tables[tIdx].rows = tables[tIdx].rows.map(row => [...row, "..."]);
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(tables) });
-            }
-        };
-
-        window.remTableCol = async (tIdx) => {
-            if (!currentUser) return;
-            const r = lineages.find(x => x.id === window.activeRaceId);
-            const tables = safeJSONParse(r.mechTables);
-            if (tables[tIdx] && tables[tIdx].headers.length > 1) {
-                tables[tIdx].headers.pop();
-                tables[tIdx].rows = tables[tIdx].rows.map(row => row.slice(0, -1));
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(tables) });
-            }
-        };
-
         window.delMechTable = async (tIdx) => {
             if (!currentUser) return;
             const r = lineages.find(x => x.id === window.activeRaceId);
@@ -711,12 +564,12 @@
             const maxOrder = lineages.length > 0 ? Math.max(...lineages.map(l => l.order || l.createdAt || 0)) : Date.now();
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookLineages'), { 
                 name: "NEW SUBJECT", gridUrl: "", detailUrl: "", backMediaUrl: "", custodianId: "994", speed: "30", size: "M", languages: "Com", 
-                desc: "Discovery log pending field observation...", traits: "Standard ancestral signatures...", intros: [],
+                desc: "Discovery log pending...", traits: "Standard ancestral signatures...", intros: [],
                 cultureName: "", majorityPop: "", coreValues: "", government: "", belief: "", culturalPractices: "", attitudes: "",
                 mechTraits: "", mechDescription: "", mechBackgrounds: "", mechLanguages: "", mechFeats: "", mechEquipment: "", mechTables: "[]",
                 createdAt: Date.now(), order: maxOrder + 1000 
             });
-            window.showToast("Record Initialized");
+            window.showToast("Inked");
         };
 
         window.addSection = async () => {
@@ -724,9 +577,9 @@
             const r = lineages.find(x => x.id === window.activeRaceId);
             if (!r) return;
             const intros = r.intros || [];
-            intros.push({ leftTitle: "Research Findings", leftText: "Technical observations..." });
+            intros.push({ leftTitle: "LOG ENTRY", leftText: "Data recorded..." });
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', r.id), { intros: intros });
-            window.showToast("Chapter Appended");
+            window.showToast("Inscribed");
         };
 
         window.removeSection = async (id, idx) => {
@@ -734,49 +587,35 @@
             const r = lineages.find(x => x.id === id);
             r.intros.splice(idx, 1);
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', id), { intros: r.intros });
-            window.showToast("Section Expunged");
+            window.showToast("Redacted");
         };
 
-        window.triggerDel = (id = null) => { 
-            targetDelId = id || window.activeRaceId; 
-            document.getElementById('del-modal').classList.remove('hidden'); 
-        };
+        window.triggerDel = (id = null) => { targetDelId = id || window.activeRaceId; document.getElementById('del-modal').classList.remove('hidden'); };
         document.getElementById('confirm-del-btn').onclick = async () => {
             if (!targetDelId || !currentUser) return;
             await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', targetDelId));
-            document.getElementById('del-modal').classList.add('hidden'); 
-            window.setView('grid');
-            window.showToast("Archive Purged");
+            document.getElementById('del-modal').classList.add('hidden'); window.setView('grid'); window.showToast("Shredded");
         };
 
-        // FIREBASE AUTH & SYNC
         const init = async () => {
             const initAuth = async () => {
                 try {
                     if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                         await signInWithCustomToken(auth, __initial_auth_token);
-                    } else {
-                        await signInAnonymously(auth);
-                    }
-                } catch (e) {
-                    await signInAnonymously(auth);
-                }
+                    } else { await signInAnonymously(auth); }
+                } catch (e) { await signInAnonymously(auth); }
             };
-            
             await initAuth();
-
             onAuthStateChanged(auth, (user) => {
                 currentUser = user;
                 if (user) {
                     onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookLineages'), (snap) => {
                         lineages = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => {
-                            const aOrder = a.order ?? (a.createdAt || 0);
-                            const bOrder = b.order ?? (b.createdAt || 0);
-                            return aOrder - bOrder;
+                            const aO = a.order ?? (a.createdAt || 0);
+                            const bO = b.order ?? (b.createdAt || 0);
+                            return aO - bO;
                         });
                         if(currentView === 'grid') renderGrid(); else renderDetails();
-                    }, (err) => {
-                        console.error("Archival sync error:", err);
                     });
                 }
                 updateRoleUI();
