@@ -98,7 +98,7 @@
         .reorder-btn:hover:not(:disabled) { color: #b8860b; transform: scale(1.1); }
         .reorder-btn:disabled { opacity: 0.1; cursor: not-allowed; }
 
-        /* 3D BOOKBOOK SYSTEM - STABILIZED */
+        /* 3D BOOK SYSTEM - STABILIZED */
         .dossier-stack { position: relative; width: 100%; min-height: 900px; transform-style: preserve-3d; }
         .dossier-leaf { 
             position: absolute; 
@@ -128,24 +128,19 @@
         .dossier-leaf.flipped .leaf-front { opacity: 0; visibility: hidden; }
         .dossier-leaf.flipped .leaf-back { opacity: 1; visibility: visible; }
 
-        /* RICH TEXT BOXES */
+        /* MANUSCRIPT BOXES */
         .discovery-log-box {
             font-family: 'Special Elite', cursive; font-size: 16px; line-height: 1.8; color: #3e2723; 
-            padding: 65px 45px 45px; /* Increased padding to prevent overlap */
+            padding: 45px; /* Fixed: Removed label ::before and adjusted padding */
             border: 1.5px solid #c5b3a3; background: #faf5eb; margin: 40px 0; position: relative;
             box-shadow: 10px 10px 0 rgba(141, 110, 99, 0.08);
-        }
-        .discovery-log-box::before {
-            content: "FIELD RESEARCH LOG"; position: absolute; top: -14px; left: 25px; background: #5d4037; color: #fdfaf3;
-            font-family: 'Special Elite', cursive; font-size: 11px; padding: 4px 18px; letter-spacing: 2px; border-radius: 2px;
-            z-index: 10;
         }
 
         .finding-stamp { margin-bottom: 50px; padding-left: 30px; border-left: 3px solid #b8860b; background: rgba(184, 134, 11, 0.01); padding-top: 20px; padding-bottom: 20px; }
         .finding-header { 
             font-family: 'Special Elite', cursive; font-size: 14px; font-weight: 900; color: #fdfaf3; 
             background: #3e2723 !important; 
-            display: inline-block; padding: 6px 20px; margin-bottom: 18px; text-transform: uppercase; letter-spacing: 2px; border-radius: 2px; box-shadow: 3px 3px 0 #b8860b; 
+            display: inline-block; padding: 8px 25px; margin-bottom: 18px; text-transform: uppercase; letter-spacing: 2px; border-radius: 2px; box-shadow: 3px 3px 0 #b8860b; 
         }
 
         .leather-tile {
@@ -155,7 +150,7 @@
         .leather-tile-label { font-family: 'Cinzel', serif; font-size: 10px; color: #b8860b; display: block; margin-bottom: 10px; letter-spacing: 2px; text-transform: uppercase; border-bottom: 1px solid rgba(184, 134, 11, 0.2); padding-bottom: 6px; }
         .leather-tile-value { font-family: 'Special Elite', cursive; font-size: 14px; opacity: 0.95; }
 
-        /* THEMED TABLE STYLES - ALTERNATING ROWS */
+        /* THEMED TABLE STYLES - ZEBRA STRIPING & BACKGROUND */
         .prog-table { 
             width: 100%; 
             border-collapse: separate; 
@@ -182,24 +177,15 @@
             min-width: 110px; 
             font-weight: 900; 
         }
-        .prog-table th:last-child { border-right: none; }
-        .prog-table td { 
-            padding: 10px; 
-            border-bottom: 1px solid #efebe9; 
-            border-right: 1px solid #efebe9;
-            color: #5d4037;
-        }
-        .prog-table td:last-child { border-right: none; }
-        /* Zebra-Striping */
-        .prog-table tr:nth-child(even) td {
-            background-color: rgba(141, 110, 99, 0.04);
-        }
+        .prog-table td { padding: 10px; border-bottom: 1px solid #efebe9; border-right: 1px solid #efebe9; color: #5d4037; }
+        .prog-table tr:nth-child(even) td { background-color: rgba(141, 110, 99, 0.04); }
+        .prog-table th:last-child, .prog-table td:last-child { border-right: none; }
         .prog-table tr:last-child td { border-bottom: none; }
 
-        /* SCRIPTS LOG BOX (SINGLE CONTENT) */
+        /* SCRIPTS LOG BOX */
         .scripts-log-box {
             font-family: 'Special Elite', cursive; font-size: 15px; line-height: 1.8; color: #2c1810; 
-            padding: 55px 45px 45px; /* Increased padding */
+            padding: 95px 45px 45px; /* Buffering to prevent stamp overlap */
             border: 2px double #3e2723; background: #fff; margin: 50px 0 30px; position: relative;
             box-shadow: 8px 8px 25px rgba(62, 39, 35, 0.1);
         }
@@ -236,9 +222,9 @@
             min-width: 200px;
         }
 
+        .dm-active-edit .dm-editable { background: rgba(93, 64, 55, 0.05); outline: 1px dashed #8d6e63; border-radius: 4px; padding: 2px; }
         .purge-mode-active { outline: 4px solid #7a1d1d; background: rgba(122, 29, 29, 0.05); }
         .purge-btn-overlay { background: #7a1d1d; color: white; font-family: 'Cinzel', serif; font-weight: 900; font-size: 10px; text-transform: uppercase; padding: 12px; border-radius: 4px; text-align: center; width: 100%; margin-top: 10px; box-shadow: 0 4px 0 #4a0000; transition: 0.1s; }
-        .dm-active-edit .dm-editable { background: rgba(93, 64, 55, 0.05); outline: 1px dashed #8d6e63; border-radius: 4px; padding: 2px; }
     </style>
 </head>
 <body>
@@ -247,15 +233,11 @@
 
     <div class="journal-cover">
         <div class="parchment-container" id="parchment">
-            <div class="ornate-corner tl"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2"><path d="M10,10 Q30,10 30,40 T60,60 T90,90 M10,10 Q10,30 40,30 T60,60"/></svg></div>
-            <div class="ornate-corner br"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2"><path d="M10,10 Q30,10 30,40 T60,60 T90,90 M10,10 Q10,30 40,30 T60,60"/></svg></div>
-
             <header class="flex flex-col md:flex-row justify-between items-center gap-6 relative z-[200] mb-12 pb-8 border-b border-brown-200/20">
                 <div class="flex flex-col items-center md:items-start text-center md:text-left">
                     <h1 class="brand-title">Aeonfall</h1>
                     <p class="brand-sub">Hand-Inscribed Journal of Vocations</p>
                 </div>
-
                 <div class="flex items-center gap-10">
                     <div class="role-pill">
                         <div id="role-player" onclick="window.setRole('player')" class="role-tab active">Player</div>
@@ -270,7 +252,7 @@
                 <div class="flex flex-col md:flex-row justify-between items-center md:items-end mb-10 gap-4">
                     <div>
                         <h2 class="font-serif text-2xl font-black uppercase text-[#3e2723] tracking-tight">Vocation Stacks</h2>
-                        <p class="font-serif italic text-xs text-[#8d6e63]">Hand-Inscribed dossiers of the known paths • v6.3</p>
+                        <p class="font-serif italic text-xs text-[#8d6e63]">Hand-Inscribed dossiers of the known paths • v6.9</p>
                     </div>
                     <div class="flex gap-3">
                         <button id="add-record-btn" onclick="window.addVocation()" class="hidden bg-[#5d4037] hover:bg-[#3e2723] text-[#fdfaf3] px-6 py-2.5 rounded-sm font-black text-[10px] uppercase shadow-lg transition-all active:scale-95 border border-white/5">+ Register Vocation</button>
@@ -280,11 +262,10 @@
                 <div id="vocation-grid" class="grid-container"></div>
             </div>
 
-            <!-- DETAIL VIEW -->
             <div id="view-details" class="hidden">
                 <div class="flex justify-between items-start mb-10 relative z-[2000]">
                     <div onclick="window.setView('grid')" class="back-nav">← Close Vocation Log</div>
-                    <button onclick="window.flipPage()" id="btn-flip" class="bg-[#5d4037] text-[#fdfaf3] px-8 py-3 rounded-sm font-black text-[11px] uppercase hover:bg-[#3e2723] transition-all shadow-xl border border-white/5">📜 Turn Page</button>
+                    <button onclick="window.flipPage()" id="btn-flip" class="bg-[#5d4037] text-[#fdfaf3] px-8 py-3 rounded-sm font-black text-[11px] uppercase hover:bg-[#3e2723] transition-all shadow-xl">📜 Turn Page</button>
                 </div>
 
                 <div id="dossier-book" class="dossier-stack">
@@ -367,13 +348,12 @@
         let vocations = [];
         let activeRole = 'player', currentView = 'grid', currentPage = 0, activeVocId = null;
         let currentUser = null, saveTimer = null, targetDelId = null;
-        window.isPurgeMode = false;
 
         window.showToast = (m) => { const t = document.getElementById('toast'); if(t){t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 2000);}};
         
         window.setRole = (r) => { 
             if(r === 'dm') document.getElementById('pass-modal').classList.remove('hidden'); 
-            else { activeRole = 'player'; window.isPurgeMode = false; updateRoleUI(); } 
+            else { activeRole = 'player'; updateRoleUI(); } 
         };
 
         window.authDm = () => { 
@@ -468,8 +448,10 @@
             saveTimer = setTimeout(async () => {
                 const v = vocations.find(x => x.id === activeVocId);
                 const items = JSON.parse(v[collField] || '[]');
-                items[idx][field] = val;
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { [collField]: JSON.stringify(items) });
+                if(items[idx]) {
+                    items[idx][field] = val;
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { [collField]: JSON.stringify(items) });
+                }
             }, 800);
         };
 
@@ -527,7 +509,7 @@
             if(!v) return;
             const isDM = activeRole === 'dm';
 
-            // Side A: Profile
+            // Side A
             const lore = JSON.parse(v.loreBlocks || '[]');
             document.getElementById('content-intro').innerHTML = `
                 <h2 class="card-name text-6xl dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${v.id}', 'name', this.innerText)">${v.name}</h2>
@@ -552,7 +534,7 @@
                 </div>
             `;
 
-            // Side B: Capabilities
+            // Side B
             const feats = JSON.parse(v.featureBlocks || '[]');
             const tbs = JSON.parse(v.tables || '[]');
             document.getElementById('content-features').innerHTML = `
@@ -572,7 +554,7 @@
                     </div>
                 </div>
                 <div class="bg-brown-50/30 p-8 rounded border border-brown-200 mb-12">
-                    <b class="text-[10px] uppercase font-black text-[#3e2723] block mb-3 border-b border-brown-300">Vocation Evolution & Systemic Features</b>
+                    <b class="text-[10px] uppercase font-black text-[#3e2723] block mb-3 border-b border-brown-300">Vocation Features Overview</b>
                     <div class="dm-editable text-sm leading-relaxed" contenteditable="${isDM}" oninput="window.dbUp('${v.id}', 'classFeaturesOverview', this.innerText)">
                         ${window.parseAeonfallContent(v.classFeaturesOverview, false)}
                     </div>
@@ -589,7 +571,7 @@
                 </div>
             `;
 
-            // Side C: Evolution
+            // Side C
             const archs = JSON.parse(v.archetypes || '[]');
             document.getElementById('content-archetypes').innerHTML = `
                 <h2 class="record-title-culture dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${v.id}', 'headerEvolution', this.innerText)">${v.headerEvolution || 'Evolutionary Paths'}</h2>
@@ -606,10 +588,10 @@
                 </div>
             `;
 
-            // Side D: Scripts
+            // Side D
             const scriptTiers = JSON.parse(v.scriptTiers || '[]');
             document.getElementById('content-scripts').innerHTML = `
-                <h2 class="editable-header-stamp dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${v.id}', 'headerScripts', this.innerText)">${v.headerScripts || 'Terminal Scripts'}</h2>
+                <h2 class="record-title-culture dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${v.id}', 'headerScripts', this.innerText)">${v.headerScripts || 'Terminal Scripts'}</h2>
                 <div class="space-y-14 mt-8">
                     ${scriptTiers.map((tier, idx) => `
                         <div class="scripts-log-box relative">
@@ -637,16 +619,20 @@
                 const v = vocations.find(x => x.id === activeVocId);
                 if(aIdx !== null) {
                     const archs = JSON.parse(v.archetypes || '[]');
-                    if(field === 'title') archs[aIdx].tables[tIdx].title = val;
-                    else if(field === 'headers') archs[aIdx].tables[tIdx].headers[idx1] = val;
-                    else if(field === 'rows') archs[aIdx].tables[tIdx].rows[idx1][idx2] = val;
-                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { archetypes: JSON.stringify(archs) });
+                    if(archs[aIdx] && archs[aIdx].tables[tIdx]) {
+                        if(field === 'title') archs[aIdx].tables[tIdx].title = val;
+                        else if(field === 'headers') archs[aIdx].tables[tIdx].headers[idx1] = val;
+                        else if(field === 'rows') archs[aIdx].tables[tIdx].rows[idx1][idx2] = val;
+                        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { archetypes: JSON.stringify(archs) });
+                    }
                 } else {
                     const tbs = JSON.parse(v.tables || '[]');
-                    if(field === 'title') tbs[tIdx].title = val;
-                    else if(field === 'headers') tbs[tIdx].headers[idx1] = val;
-                    else if(field === 'rows') tbs[tIdx].rows[idx1][idx2] = val;
-                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { tables: JSON.stringify(tbs) });
+                    if(tbs[tIdx]) {
+                        if(field === 'title') tbs[tIdx].title = val;
+                        else if(field === 'headers') tbs[tIdx].headers[idx1] = val;
+                        else if(field === 'rows') tbs[tIdx].rows[idx1][idx2] = val;
+                        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { tables: JSON.stringify(tbs) });
+                    }
                 }
             }, 800);
         };
@@ -765,7 +751,7 @@
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookVocations'), { 
                 name: "NEW SUBJECT", artUrl: "", detailArtUrl: "", tagline: "Entry Summary", desc: "Short overview...", intro: "Hand-inked details...",
                 hitDie: "d8", primaryAbility: "Str", saves: "Str", armor: "None", weapons: "None", skills: "None",
-                quickBuild: "Initial setup details...", classFeaturesOverview: "Mechanics summary...",
+                quickBuild: "Initial setup...", classFeaturesOverview: "Mechanics summary...",
                 headerCore: "Core Systemic Readout", headerEvolution: "Evolutionary Paths", headerScripts: "Terminal Scripts",
                 loreBlocks: "[]", featureBlocks: "[]", archetypes: "[]", scriptTiers: "[]", tables: "[]",
                 createdAt: Date.now(), order: maxOrder + 1000 
@@ -797,7 +783,7 @@
         window.addScriptTier = () => {
             const v = vocations.find(x => x.id === activeVocId);
             const items = JSON.parse(v.scriptTiers || '[]');
-            items.push({ title: "NEW SCRIPT MODULE", list: "Description of script protocols..." });
+            items.push({ title: "NEW SCRIPT MODULE", list: "Inscribe protocols..." });
             window.dbUp(activeVocId, 'scriptTiers', JSON.stringify(items));
         };
 
@@ -806,29 +792,6 @@
             const items = JSON.parse(v[collField] || '[]');
             items.splice(idx, 1);
             window.dbUp(activeVocId, collField, JSON.stringify(items));
-        };
-
-        window.zoomMedia = (url) => {
-            if (!url) return;
-            const modal = document.getElementById('lightbox-modal');
-            const content = document.getElementById('lightbox-content');
-            if(!modal || !content) return;
-            content.innerHTML = url.includes('.mp4') ? 
-                `<video src="${url}" autoplay loop muted class="max-w-full max-h-[85vh] border-8 border-[#3e2723] rounded shadow-2xl"></video>` : 
-                `<img src="${url}" class="max-w-full max-h-[85vh] border-8 border-[#3e2723] rounded shadow-2xl">`;
-            modal.classList.remove('hidden');
-        };
-
-        window.closeLightbox = () => { document.getElementById('lightbox-modal')?.classList.add('hidden'); };
-
-        window.triggerDel = (id = null) => { 
-            const tid = id || activeVocId;
-            if(tid) { targetDelId = tid; document.getElementById('del-modal')?.classList.remove('hidden'); }
-        };
-        document.getElementById('confirm-del-btn').onclick = async () => {
-            if (!targetDelId || !currentUser) return;
-            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', targetDelId));
-            document.getElementById('del-modal')?.classList.add('hidden'); window.setView('grid'); window.showToast("Purged");
         };
 
         const init = async () => {
@@ -846,7 +809,7 @@
                     onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookVocations'), (snap) => {
                         vocations = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (a.order ?? a.createdAt) - (b.order ?? b.createdAt));
                         if(currentView === 'grid') renderGrid(); else renderDetails();
-                    });
+                    }, (err) => window.showToast("Archival Stream Error"));
                 }
                 updateRoleUI();
             });
