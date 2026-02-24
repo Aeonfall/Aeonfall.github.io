@@ -33,34 +33,34 @@
         }
 
         /* HEADER & BRANDING */
-        .brand-title { font-family: 'Cinzel', serif; font-weight: 900; color: #7a1d1d; font-size: 2rem; line-height: 1; }
-        .brand-sub { font-family: 'Cinzel', serif; font-size: 8px; color: #5d4037; letter-spacing: 0.2em; text-transform: uppercase; font-weight: bold; }
+        .brand-title { font-family: 'Cinzel', serif; font-weight: 900; color: #7a1d1d; font-size: 2.5rem; line-height: 1; letter-spacing: -1px; }
+        .brand-sub { font-family: 'Cinzel', serif; font-size: 9px; color: #5d4037; letter-spacing: 0.3em; text-transform: uppercase; font-weight: bold; }
         
         .role-pill { background: rgba(0,0,0,0.05); border-radius: 99px; padding: 3px; display: flex; gap: 4px; border: 1px solid rgba(0,0,0,0.1); position: relative; z-index: 100; }
-        .role-tab { padding: 4px 14px; font-family: 'Cinzel', serif; font-size: 9px; font-weight: 900; border-radius: 99px; transition: 0.3s; color: #5d4037; text-transform: uppercase; cursor: pointer; }
-        .role-tab.active { background: #7a1d1d; color: white; box-shadow: 0 4px 10px rgba(122, 29, 29, 0.3); }
+        .role-tab { padding: 4px 16px; font-family: 'Cinzel', serif; font-size: 9px; font-weight: 900; border-radius: 99px; transition: 0.3s; color: #5d4037; text-transform: uppercase; cursor: pointer; }
+        .role-tab.active { background: #7a1d1d; color: white; box-shadow: 0 4px 12px rgba(122, 29, 29, 0.4); }
 
         /* DASHBOARD GRID */
         .grid-container { 
             display: grid; 
-            grid-template-cols: repeat(auto-fill, minmax(380px, 1fr)); 
-            gap: 25px; 
+            grid-template-cols: repeat(auto-fill, minmax(400px, 1fr)); 
+            gap: 30px; 
             padding: 25px 0; 
         }
 
         .race-card {
             background: #fff;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             position: relative;
             display: flex;
             flex-direction: column;
-            height: 340px;
+            height: 380px;
             overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
             cursor: pointer;
             border: 1px solid rgba(0,0,0,0.05);
         }
-        .race-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
+        .race-card:hover { transform: translateY(-8px); box-shadow: 0 20px 45px rgba(0,0,0,0.25); }
         
         .card-bg-image {
             position: absolute;
@@ -70,49 +70,61 @@
             height: 100%;
             z-index: 1;
         }
+        .card-bg-image::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to right, white, transparent 30%), linear-gradient(to top, rgba(0,0,0,0.1), transparent 40%);
+            z-index: 2;
+        }
         .card-bg-image img, .card-bg-image video {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: sepia(0.1) contrast(1.1);
+            filter: sepia(0.2) contrast(1.1);
         }
 
         .card-text-panel {
             position: relative;
-            z-index: 2;
+            z-index: 3;
             width: 65%;
             height: 100%;
-            background: linear-gradient(to right, white 85%, rgba(255,255,255,0));
-            padding: 25px;
+            background: linear-gradient(to right, white 88%, rgba(255,255,255,0));
+            padding: 30px;
             display: flex;
             flex-direction: column;
         }
 
-        .card-name { font-family: 'Cinzel', serif; font-size: 24px; font-weight: 900; color: #1a1a1a; margin-bottom: 2px; }
-        .card-subtitle { font-family: 'Cinzel', serif; font-size: 10px; font-style: italic; color: #888; margin-bottom: 15px; }
-        .card-desc { font-size: 13px; color: #444; line-height: 1.5; margin-bottom: 15px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-        .card-traits-label { font-family: 'Cinzel', serif; font-size: 11px; font-weight: 900; color: #1a1a1a; margin-bottom: 4px; }
-        .card-traits-list { font-size: 12px; color: #555; line-height: 1.4; flex-grow: 1; }
+        .card-name { font-family: 'Cinzel', serif; font-size: 28px; font-weight: 900; color: #1a1a1a; margin-bottom: 2px; line-height: 1; }
+        .card-subtitle { font-family: 'Cinzel', serif; font-size: 10px; font-style: italic; color: #7a1d1d; margin-bottom: 18px; font-weight: 700; letter-spacing: 1px; }
+        .card-desc { font-size: 13px; color: #444; line-height: 1.6; margin-bottom: 18px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-weight: 300; }
+        .card-traits-label { font-family: 'Cinzel', serif; font-size: 11px; font-weight: 900; color: #1a1a1a; margin-bottom: 6px; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 4px; display: inline-block; }
+        .card-traits-list { font-size: 12px; color: #555; line-height: 1.5; flex-grow: 1; font-style: italic; }
 
         .view-btn {
-            background: #f59e0b;
-            color: white;
+            background: #1a0f0a;
+            color: #f4edd8;
             font-family: 'Cinzel', serif;
             font-weight: 900;
             font-size: 11px;
             text-transform: uppercase;
-            padding: 12px;
+            padding: 14px;
             border-radius: 4px;
             text-align: center;
             width: 100%;
             margin-top: auto;
-            box-shadow: 0 4px 0 #d97706;
-            transition: 0.1s;
+            transition: 0.2s;
             position: relative;
             z-index: 5;
+            letter-spacing: 2px;
         }
-        .view-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #d97706; }
+        .view-btn:hover { background: #7a1d1d; color: white; }
         
+        .purge-mode-active {
+            outline: 4px solid #7a1d1d;
+            background: rgba(122, 29, 29, 0.05);
+        }
+
         .purge-btn-overlay {
             background: #7a1d1d;
             color: white;
@@ -120,42 +132,59 @@
             font-weight: 900;
             font-size: 10px;
             text-transform: uppercase;
-            padding: 8px;
+            padding: 10px;
             border-radius: 4px;
             text-align: center;
             width: 100%;
-            margin-top: 8px;
+            margin-top: 10px;
             box-shadow: 0 4px 0 #4a0000;
             transition: 0.1s;
             position: relative;
             z-index: 6;
+            letter-spacing: 1px;
         }
         .purge-btn-overlay:active { transform: translateY(2px); box-shadow: 0 2px 0 #4a0000; }
 
-        /* REORDER CONTROLS - UPDATED TO UP/DOWN SYMBOLS */
+        /* ARCHIVAL CALIPERS (REORDER) */
         .reorder-controls {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
             display: flex;
-            gap: 10px;
-            margin-top: 10px;
-            position: relative;
-            z-index: 10;
+            flex-direction: column;
+            gap: 2px;
+            z-index: 20;
+            background: #1a0f0a;
+            padding: 4px;
+            border-radius: 0 6px 6px 0;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.3);
+            border: 1px solid rgba(244, 237, 216, 0.2);
+            border-left: 0;
         }
         .reorder-btn {
-            flex: 1;
-            background: #1a0f0a;
+            width: 32px;
+            height: 38px;
             color: #f4edd8;
-            font-family: 'Cinzel', serif;
-            font-size: 14px;
-            padding: 4px;
-            border-radius: 4px;
-            text-align: center;
-            transition: 0.2s;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
             cursor: pointer;
+            border-radius: 2px;
         }
-        .reorder-btn:hover { background: #333; }
-        .reorder-btn:disabled { opacity: 0.1; cursor: not-allowed; border-color: transparent; }
+        .reorder-btn:hover:not(:disabled) { background: #7a1d1d; color: white; }
+        .reorder-btn:disabled { opacity: 0.1; cursor: not-allowed; }
 
-        /* 3D FLIP CONTAINER - REWORKED FOR DYNAMIC HEIGHT */
+        /* DECORATIONS - SHRUNKEN */
+        .ornate-corner { position: absolute; width: 22px; height: 22px; opacity: 0.15; color: #7a1d1d; pointer-events: none; }
+        .tl { top: 12px; left: 12px; }
+        .br { bottom: 12px; right: 12px; transform: rotate(180deg); }
+
+        .sigil-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 20%; height: 20%; opacity: 0.04; background: url('https://www.transparenttextures.com/patterns/sacred-geometry.png') no-repeat center; background-size: contain; pointer-events: none; }
+
+        /* 3D FLIP CONTAINER */
         .flip-wrapper {
             position: relative;
             width: 100%;
@@ -164,86 +193,35 @@
             min-height: 600px;
         }
         .flip-wrapper.flipped { transform: rotateY(180deg); }
-        
-        .side-front, .side-back { 
-            width: 100%; 
-            backface-visibility: hidden; 
-            -webkit-backface-visibility: hidden; 
-        }
-
+        .side-front, .side-back { width: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
         .side-front { position: relative; z-index: 2; }
         .side-back { position: absolute; top: 0; left: 0; transform: rotateY(180deg); z-index: 1; }
-
         .flipped .side-front { position: absolute; top: 0; left: 0; z-index: 1; pointer-events: none; }
         .flipped .side-back { position: relative; z-index: 2; pointer-events: auto; }
 
-        /* TOOLTIP STYLES */
-        .term-hover { position: relative; border-bottom: 1px dotted #7a1d1d; cursor: help; display: inline; }
-        .tooltip-content {
-            visibility: hidden; width: 220px; background-color: #fdfaf3; color: #2c1810;
-            text-align: left; border: 2px solid #7a1d1d; border-radius: 6px; padding: 10px;
-            position: absolute; z-index: 1000; bottom: 125%; left: 50%; margin-left: -110px;
-            opacity: 0; transition: opacity 0.3s; font-size: 11px; line-height: 1.4;
-            font-family: 'Roboto Slab', serif; box-shadow: 0 5px 15px rgba(0,0,0,0.3); pointer-events: none; font-style: normal;
-        }
-        .term-hover:hover .tooltip-content { visibility: visible; opacity: 1; }
-        .def-term { color: #7a1d1d; font-weight: 900; border-bottom: 1px dashed #7a1d1d; }
+        /* TABLES */
+        .prog-table { width: 100%; border-collapse: collapse; font-family: 'Special Elite', cursive; font-size: 13px; margin: 25px 0; overflow-x: auto; display: block; }
+        .prog-table th { font-family: 'Cinzel', serif; text-transform: uppercase; font-size: 10px; color: #7a1d1d; border-bottom: 2px solid #7a1d1d; padding: 12px 8px; text-align: left; min-width: 100px; font-weight: 900; }
+        .prog-table td { padding: 10px 8px; border-bottom: 1px solid rgba(0,0,0,0.08); }
 
-        /* LEDGERS & TABLES */
-        .mech-box { background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.1); padding: 25px; margin-top: 25px; border-radius: 4px; }
-        .mech-box h4 { font-family: 'Cinzel', serif; font-weight: 900; font-size: 14px; text-transform: uppercase; color: #7a1d1d; border-bottom: 2px solid #7a1d1d; margin-bottom: 15px; padding-bottom: 5px; }
-
-        .prog-table { width: 100%; border-collapse: collapse; font-family: 'Special Elite', cursive; font-size: 13px; margin: 20px 0; overflow-x: auto; display: block; }
-        .prog-table th { font-family: 'Cinzel', serif; text-transform: uppercase; font-size: 10px; color: #7a1d1d; border-bottom: 2px solid #7a1d1d; padding: 10px 5px; text-align: left; min-width: 80px; }
-        .prog-table td { padding: 8px 5px; border-bottom: 1px solid rgba(0,0,0,0.05); }
-
-        .culture-ledger { display: grid; grid-template-cols: 1.5fr 1fr; gap: 40px; margin-top: 30px; }
-        @media (max-width: 768px) { .culture-ledger { grid-template-cols: 1fr; } }
+        .culture-ledger { display: grid; grid-template-cols: 1.5fr 1fr; gap: 50px; margin-top: 40px; }
+        @media (max-width: 850px) { .culture-ledger { grid-template-cols: 1fr; } }
 
         .ledger-list { list-style: none; padding: 0; }
-        .ledger-list li { margin-bottom: 12px; border-bottom: 1px dashed rgba(0,0,0,0.1); padding-bottom: 4px; display: flex; flex-direction: column; }
-        .ledger-list b { font-family: 'Cinzel', serif; font-size: 11px; text-transform: uppercase; color: #7a1d1d; letter-spacing: 1px; }
+        .ledger-list li { margin-bottom: 15px; border-bottom: 1px dashed rgba(0,0,0,0.15); padding-bottom: 6px; display: flex; flex-direction: column; }
+        .ledger-list b { font-family: 'Cinzel', serif; font-size: 11px; text-transform: uppercase; color: #7a1d1d; letter-spacing: 1.5px; margin-bottom: 2px; }
         .ledger-list span { font-family: 'Special Elite', cursive; font-size: 15px; color: #3e2723; }
 
-        .record-header { display: grid; grid-template-cols: 1fr 1.2fr; gap: 60px; margin-bottom: 40px; align-items: start; }
-        @media (max-width: 1024px) { .record-header { grid-template-cols: 1fr; gap: 30px; } }
+        .record-header { display: grid; grid-template-cols: 1fr 1.2fr; gap: 60px; margin-bottom: 50px; align-items: start; }
+        @media (max-width: 1100px) { .record-header { grid-template-cols: 1fr; gap: 40px; } }
 
-        .record-illustration { position: relative; border: 2px solid #1a0f0a; background: rgba(0,0,0,0.02); padding: 10px; box-shadow: 5px 10px 20px rgba(0,0,0,0.1); cursor: zoom-in; }
-        .record-illustration img, .record-illustration video { width: 100%; max-height: 550px; object-fit: contain; filter: sepia(0.2); mix-blend-mode: multiply; }
+        .record-illustration { position: relative; border: 3px solid #1a0f0a; background: rgba(0,0,0,0.03); padding: 12px; box-shadow: 10px 15px 35px rgba(0,0,0,0.15); cursor: zoom-in; overflow: hidden; }
+        .record-illustration::before { content: ''; position: absolute; inset: 0; box-shadow: inset 0 0 40px rgba(0,0,0,0.1); pointer-events: none; }
         
-        .sigil-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40%; height: 40%; opacity: 0.04; background: url('https://www.transparenttextures.com/patterns/sacred-geometry.png') no-repeat center; background-size: contain; pointer-events: none; }
+        .record-title { font-family: 'Pirata One', cursive; font-size: 5rem; color: #1a0f0a; line-height: 0.85; margin-bottom: 5px; text-transform: uppercase; }
+        @media (max-width: 640px) { .record-title { font-size: 3.5rem; } }
 
-        .record-title { font-family: 'Pirata One', cursive; font-size: 4.5rem; color: #1a0f0a; line-height: 0.9; margin-bottom: 5px; text-transform: uppercase; }
-        @media (max-width: 640px) { .record-title { font-size: 3rem; } }
-
-        .record-label { font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; color: #7a1d1d; text-transform: uppercase; letter-spacing: 3px; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 10px; display: inline-block; margin-bottom: 30px; }
-
-        .research-findings { font-family: 'Special Elite', cursive; font-size: 16px; line-height: 1.8; color: #1a0f0a; padding: 30px; border: 1px dashed rgba(0,0,0,0.2); background: rgba(0,0,0,0.02); margin: 40px 0; }
-        .heritage-block { margin-bottom: 40px; padding-left: 20px; border-left: 3px solid #7a1d1d; }
-        .heritage-block h3 { font-family: 'Cinzel', serif; font-size: 20px; font-weight: 900; color: #7a1d1d; margin-bottom: 12px; }
-
-        .dm-active-edit .dm-editable { background: rgba(122, 29, 29, 0.05); outline: 1px dashed #7a1d1d; border-radius: 4px; padding: 4px; }
-        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #1a0f0a; color: #f4edd8; padding: 12px 32px; border-radius: 4px; z-index: 10000; opacity: 0; transition: 0.3s; font-family: 'Cinzel'; font-size: 12px; }
-        
-        .hidden { display: none !important; }
-        .back-nav { display: inline-flex; align-items: center; gap: 10px; color: #7a1d1d; font-weight: 900; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 30px; cursor: pointer; border-bottom: 1px solid transparent; position: relative; z-index: 100; }
-        .back-nav:hover { border-bottom-color: #7a1d1d; }
-
-        /* DECORATIONS */
-        .ornate-corner { position: absolute; width: 35px; height: 35px; opacity: 0.12; color: #7a1d1d; pointer-events: none; }
-        .tl { top: 10px; left: 10px; }
-        .br { bottom: 10px; right: 10px; transform: rotate(180deg); }
-
-        .drop-cap { float: left; font-family: 'Pirata One', cursive; font-size: 80px; line-height: 60px; padding-top: 4px; padding-right: 8px; color: #7a1d1d; }
-        .arch-btn { font-size: 9px; font-weight: 900; text-transform: uppercase; padding: 4px 10px; border-radius: 2px; cursor: pointer; border: 1px solid rgba(0,0,0,0.1); transition: 0.2s; }
-        .arch-btn-add { background: #7a1d1d; color: white; border-color: #7a1d1d; }
-        .arch-btn-del { background: rgba(122,29,29,0.1); color: #7a1d1d; }
-
-        .placement-active { cursor: crosshair !important; }
-
-        /* LIGHTBOX STYLING */
-        .lightbox-overlay { background: rgba(0,0,0,0.95); backdrop-filter: blur(10px); }
-        .lightbox-img { max-width: 90vw; max-height: 80vh; object-fit: contain; border: 4px solid #f4edd8; border-radius: 4px; box-shadow: 0 0 50px rgba(0,0,0,1); }
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #1a0f0a; color: #f4edd8; padding: 14px 36px; border-radius: 4px; z-index: 10000; opacity: 0; transition: 0.3s; font-family: 'Cinzel'; font-size: 13px; font-weight: 900; border: 1px solid #7a1d1d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); pointer-events: none; }
     </style>
 </head>
 <body>
@@ -251,36 +229,35 @@
     <div id="toast" class="toast">DM Message</div>
 
     <div class="parchment-container" id="parchment">
-        <!-- Decoration -->
         <div class="ornate-corner tl"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2"><path d="M10,10 Q30,10 30,40 T60,60 T90,90 M10,10 Q10,30 40,30 T60,60"/></svg></div>
         <div class="ornate-corner br"><svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2"><path d="M10,10 Q30,10 30,40 T60,60 T90,90 M10,10 Q10,30 40,30 T60,60"/></svg></div>
 
         <!-- HEADER -->
-        <header class="flex flex-col md:flex-row justify-between items-center gap-6 relative z-[200] mb-6 pb-6 border-b border-black/10">
+        <header class="flex flex-col md:flex-row justify-between items-center gap-6 relative z-[200] mb-8 pb-8 border-b border-black/10">
             <div class="flex flex-col items-center md:items-start text-center md:text-left">
                 <h1 class="brand-title">Aeonfall</h1>
                 <p class="brand-sub">Archival Heritage Biometry</p>
             </div>
 
-            <div class="flex items-center gap-8">
+            <div class="flex items-center gap-10">
                 <div class="role-pill">
                     <div id="role-player" onclick="window.setRole('player')" class="role-tab active">Player</div>
                     <div id="role-dm" onclick="window.setRole('dm')" class="role-tab">DM</div>
                 </div>
-                <a href="playershandbook.html" class="text-[10px] font-black uppercase tracking-widest text-[#7a1d1d] hover:text-black transition-colors relative z-[201]">← Back to Hub</a>
+                <a href="playershandbook.html" class="text-[10px] font-black uppercase tracking-[0.3em] text-[#7a1d1d] hover:text-black transition-colors relative z-[201]">← Back to Hub</a>
             </div>
         </header>
 
         <!-- DASHBOARD VIEW -->
         <div id="view-grid">
-            <div class="flex flex-col md:flex-row justify-between items-center md:items-end mb-4 gap-4">
+            <div class="flex flex-col md:flex-row justify-between items-center md:items-end mb-6 gap-4">
                 <div>
-                    <h2 class="font-serif text-xl font-black uppercase text-[#1a0f0a]">Biological Stacks</h2>
-                    <p class="text-[8px] text-[#5d4037] tracking-[0.3em] uppercase font-bold">Authorized Bio-Data Record</p>
+                    <h2 class="font-serif text-2xl font-black uppercase text-[#1a0f0a] tracking-tight">Biological Stacks</h2>
+                    <p class="text-[9px] text-[#5d4037] tracking-[0.4em] uppercase font-bold opacity-70">Authorized Bio-Data Record • Field Research v4.5</p>
                 </div>
-                <div class="flex gap-2">
-                    <button id="add-record-btn" onclick="window.addRecord()" class="hidden bg-[#7a1d1d] hover:bg-[#1a0f0a] text-[#f4edd8] px-3 py-1.5 rounded-sm font-black text-[7px] uppercase shadow-lg transition-all active:scale-95">+ Add Bio-Record</button>
-                    <button id="remove-record-btn" onclick="window.togglePurgeMode()" class="hidden bg-gray-200 border border-black/10 text-gray-600 hover:text-red-700 hover:bg-red-50 px-3 py-1.5 rounded-sm font-black text-[7px] uppercase shadow-lg transition-all active:scale-95">Remove Bio-Record</button>
+                <div class="flex gap-3">
+                    <button id="add-record-btn" onclick="window.addRecord()" class="hidden bg-[#7a1d1d] hover:bg-[#1a0f0a] text-[#f4edd8] px-4 py-2 rounded-sm font-black text-[9px] uppercase shadow-xl transition-all active:scale-95">+ Add Bio-Record</button>
+                    <button id="remove-record-btn" onclick="window.togglePurgeMode()" class="hidden bg-gray-200 border border-black/10 text-gray-700 hover:text-red-700 hover:bg-red-50 px-4 py-2 rounded-sm font-black text-[9px] uppercase shadow-md transition-all active:scale-95">Purge Archives</button>
                 </div>
             </div>
             
@@ -291,10 +268,10 @@
 
         <!-- DETAIL VIEW -->
         <div id="view-details" class="hidden">
-            <div class="flex justify-between items-start mb-4">
+            <div class="flex justify-between items-start mb-6">
                 <div onclick="window.setView('grid')" class="back-nav">← Return to Bio-Stacks</div>
                 <div class="flex gap-2">
-                    <button onclick="window.flipPage()" id="btn-flip" class="bg-[#1a0f0a] text-[#f4edd8] px-4 py-2 rounded-sm font-black text-[9px] uppercase hover:bg-black transition-colors shadow-sm">📜 Flip Page</button>
+                    <button onclick="window.flipPage()" id="btn-flip" class="bg-[#1a0f0a] text-[#f4edd8] px-5 py-2.5 rounded-sm font-black text-[10px] uppercase hover:bg-black transition-colors shadow-lg">📜 Flip Page</button>
                 </div>
             </div>
 
@@ -303,9 +280,9 @@
                 <div class="side-back" id="details-back"></div>
             </div>
 
-            <div id="dm-bottom-controls" class="hidden flex gap-4 mt-12 pt-8 border-t border-black/10">
-                <button onclick="window.addSection()" class="bg-[#1a0f0a] text-[#f4edd8] px-6 py-2 rounded-sm font-black uppercase text-[10px] tracking-widest hover:bg-black transition-colors">Append Research Chapter</button>
-                <button onclick="window.triggerDel()" class="bg-red-700/10 border border-red-700/30 text-red-700 px-6 py-2 rounded-sm font-black uppercase text-[10px] tracking-widest hover:bg-red-700/20 transition-all">Expunge Bio-Record</button>
+            <div id="dm-bottom-controls" class="hidden flex gap-4 mt-16 pt-10 border-t border-black/10">
+                <button onclick="window.addSection()" class="bg-[#1a0f0a] text-[#f4edd8] px-8 py-3 rounded-sm font-black uppercase text-[11px] tracking-widest hover:bg-black transition-colors">Append Research Chapter</button>
+                <button onclick="window.triggerDel()" class="bg-red-700/10 border border-red-700/30 text-red-700 px-8 py-3 rounded-sm font-black uppercase text-[11px] tracking-widest hover:bg-red-700/20 transition-all">Expunge Bio-Record</button>
             </div>
         </div>
     </div>
@@ -314,29 +291,29 @@
     <div id="lightbox-modal" class="fixed inset-0 z-[10000] flex flex-col items-center justify-center p-4 hidden">
         <div class="absolute inset-0 lightbox-overlay" onclick="window.closeLightbox()"></div>
         <div id="lightbox-content" class="relative z-10"></div>
-        <button onclick="window.closeLightbox()" class="relative z-10 mt-8 bg-[#7a1d1d] text-white px-8 py-3 rounded-full font-black text-[11px] uppercase tracking-widest shadow-2xl border-2 border-white/20 active:scale-95 transition-transform">Close Optical Feed</button>
+        <button onclick="window.closeLightbox()" class="relative z-10 mt-8 bg-[#7a1d1d] text-white px-10 py-4 rounded-full font-black text-[12px] uppercase tracking-widest shadow-2xl border-2 border-white/20 active:scale-95 transition-transform">Close Optical Feed</button>
     </div>
 
     <!-- Modals -->
     <div id="pass-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[5000] hidden p-4">
-        <div class="bg-gray-800 p-10 rounded-2xl w-full max-sm border-2 border-amber-600 text-white text-center shadow-2xl relative">
-            <h3 class="text-xl font-serif text-amber-500 font-bold mb-4 uppercase">DM Access</h3>
-            <input type="password" id="dm-pass" onkeydown="if(event.key==='Enter') window.authDm()" class="w-full bg-gray-900 text-center text-2xl rounded-lg p-3 mb-8 border border-gray-700 text-amber-500 focus:outline-none focus:border-amber-500" placeholder="Verification Code">
+        <div class="bg-gray-800 p-12 rounded-2xl w-full max-w-sm border-2 border-amber-600 text-white text-center shadow-2xl relative">
+            <h3 class="text-2xl font-serif text-amber-500 font-bold mb-6 uppercase tracking-tighter">Archival Clearance</h3>
+            <input type="password" id="dm-pass" onkeydown="if(event.key==='Enter') window.authDm()" class="w-full bg-gray-900 text-center text-3xl rounded-lg p-4 mb-8 border border-gray-700 text-amber-500 focus:outline-none focus:border-amber-500" placeholder="••••">
             <div class="flex flex-col gap-4">
-                <button onclick="window.authDm()" class="w-full bg-amber-600 hover:bg-amber-500 text-white py-4 rounded-xl font-bold uppercase text-xs tracking-widest">Authorize Access</button>
-                <button onclick="document.getElementById('pass-modal').classList.add('hidden')" class="text-[10px] text-gray-500 uppercase font-black tracking-widest">Cancel</button>
+                <button onclick="window.authDm()" class="w-full bg-amber-600 hover:bg-amber-500 text-white py-5 rounded-xl font-black uppercase text-sm tracking-widest transition-all">Authorize Access</button>
+                <button onclick="document.getElementById('pass-modal').classList.add('hidden')" class="text-[11px] text-gray-500 uppercase font-black tracking-widest opacity-70 hover:opacity-100">Abort Protocol</button>
             </div>
         </div>
     </div>
 
     <div id="del-modal" class="fixed inset-0 z-[6000] flex items-center justify-center p-4 hidden">
         <div class="absolute inset-0 bg-black/90" onclick="document.getElementById('del-modal').classList.add('hidden')"></div>
-        <div class="bg-white p-10 rounded-2xl w-full max-w-sm text-center relative z-10 shadow-2xl text-black">
-            <h3 class="text-2xl font-serif font-black text-red-700 uppercase mb-4">Purge Bio-Record</h3>
-            <p class="text-sm text-gray-500 mb-10 italic">This biological entry will be permanently expunged.</p>
+        <div class="bg-white p-12 rounded-2xl w-full max-w-sm text-center relative z-10 shadow-2xl text-black">
+            <h3 class="text-3xl font-serif font-black text-red-700 uppercase mb-4 tracking-tighter">Purge Record</h3>
+            <p class="text-sm text-gray-500 mb-10 italic">This biological entry will be permanently expunged from the archives.</p>
             <div class="flex flex-col gap-4">
-                <button id="confirm-del-btn" class="w-full bg-red-700 text-white py-4 rounded-xl font-black text-xs uppercase shadow-lg">Confirm Purge</button>
-                <button onclick="document.getElementById('del-modal').classList.add('hidden')" class="w-full bg-gray-100 text-gray-400 py-3 rounded-xl font-bold uppercase text-[10px]">Decline</button>
+                <button id="confirm-del-btn" class="w-full bg-red-700 text-white py-5 rounded-xl font-black text-xs uppercase shadow-lg hover:bg-red-800 transition-all">Confirm Purge</button>
+                <button onclick="document.getElementById('del-modal').classList.add('hidden')" class="w-full bg-gray-100 text-gray-400 py-3 rounded-xl font-bold uppercase text-[10px] hover:text-black transition-all">Decline</button>
             </div>
         </div>
     </div>
@@ -480,7 +457,7 @@
             const isDM = activeRole === 'dm';
             const grid = document.getElementById('stack-grid');
             grid.innerHTML = lineages.map((race, idx) => `
-                <div class="race-card" onclick="!isPurgeMode && window.setView('details', '${race.id}')">
+                <div class="race-card ${isPurgeMode ? 'purge-mode-active' : ''}" onclick="!isPurgeMode && window.setView('details', '${race.id}')">
                     <div class="card-bg-image">
                         ${race.gridUrl ? 
                             (race.gridUrl.includes('.mp4') ? `<video src="${race.gridUrl}" autoplay loop muted></video>` : `<img src="${race.gridUrl}">`) 
@@ -495,15 +472,15 @@
                         
                         ${isDM ? `
                             <div class="reorder-controls">
-                                <button onclick="event.stopPropagation(); window.moveRecord('${race.id}', -1)" class="reorder-btn" ${idx === 0 ? 'disabled' : ''}>↑</button>
-                                <button onclick="event.stopPropagation(); window.moveRecord('${race.id}', 1)" class="reorder-btn" ${idx === lineages.length - 1 ? 'disabled' : ''}>↓</button>
+                                <button onclick="event.stopPropagation(); window.moveRecord('${race.id}', -1)" class="reorder-btn" title="Shift Sequence Up" ${idx === 0 ? 'disabled' : ''}>↑</button>
+                                <button onclick="event.stopPropagation(); window.moveRecord('${race.id}', 1)" class="reorder-btn" title="Shift Sequence Down" ${idx === lineages.length - 1 ? 'disabled' : ''}>↓</button>
                             </div>
                         ` : ''}
 
                         ${isPurgeMode ? `
                             <button onclick="event.stopPropagation(); window.triggerDel('${race.id}')" class="purge-btn-overlay">Purge Record</button>
                         ` : `
-                            <button class="view-btn">Consult Bio-Record</button>
+                            <button class="view-btn">Consult Record</button>
                         `}
                     </div>
                 </div>
@@ -517,16 +494,24 @@
             const targetIndex = index + direction;
             if (targetIndex < 0 || targetIndex >= lineages.length) return;
 
-            const current = lineages[index];
-            const target = lineages[targetIndex];
+            const currentDoc = lineages[index];
+            const targetDoc = lineages[targetIndex];
 
-            const currentOrder = current.order ?? (current.createdAt || Date.now());
-            const targetOrder = target.order ?? (target.createdAt || Date.now());
+            // Sequence swap strategy: Update both concurrently with forced sequence numbers
+            // We use the current target's order value for the source, and source's for target
+            const curOrder = currentDoc.order ?? (currentDoc.createdAt || Date.now());
+            const tarOrder = targetDoc.order ?? (targetDoc.createdAt || Date.now());
 
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', current.id), { order: targetOrder });
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', target.id), { order: currentOrder });
-            
-            window.showToast("Archive Sequence Shifted");
+            try {
+                await Promise.all([
+                    updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', currentDoc.id), { order: tarOrder }),
+                    updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', targetDoc.id), { order: curOrder })
+                ]);
+                window.showToast("Archive Sequence Shifted");
+            } catch (err) {
+                console.error("Shift error:", err);
+                window.showToast("Archive Uplink Failed");
+            }
         };
 
         window.renderDetails = () => {
@@ -541,7 +526,7 @@
                     <div class="record-header">
                         <div class="flex flex-col">
                             <h2 class="record-title dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}', 'name', this.innerText)">${race.name}</h2>
-                            <p class="record-label">Genetic Signature Verified • Custodian #<span class="dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}', 'custodianId', this.innerText)">${race.custodianId || '994'}</span></p>
+                            <p class="record-label text-[10px] font-black uppercase text-[#7a1d1d] tracking-widest border-b border-black/10 pb-2 mb-6">Signature Verified • Custodian #<span class="dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}', 'custodianId', this.innerText)">${race.custodianId || '994'}</span></p>
                             <div class="bg-black/5 border-l-4 border-[#7a1d1d] p-6 rounded-sm">
                                 <h4 class="font-black uppercase text-[11px] tracking-[0.2em] text-[#7a1d1d] mb-4">Innate Parameters</h4>
                                 <div class="dm-editable text-sm italic leading-relaxed text-[#3e2723]" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','traits',this.innerText)">${isDM ? (race.traits || 'Ancestral trait markers...') : parseAeonfallContent(race.traits, false)}</div>
@@ -552,7 +537,7 @@
                             ${race.detailUrl ? (race.detailUrl.includes('.mp4') ? `<video src="${race.detailUrl}" autoplay loop muted></video>` : `<img src="${race.detailUrl}">`) : '<div class="h-96 flex items-center justify-center italic text-[#5d4037]">Visual uplink lost</div>'}
                         </div>
                     </div>
-                    ${isDM ? `<div class="bg-black/5 p-4 rounded mb-8 grid grid-cols-2 gap-4"><div><label class="text-[9px] font-black text-amber-900">Grid Visual</label><input type="text" class="w-full p-2 text-[10px]" value="${race.gridUrl||''}" oninput="window.dbUp('${race.id}', 'gridUrl', this.value)"></div><div><label class="text-[9px] font-black text-amber-900">Detail Visual</label><input type="text" class="w-full p-2 text-[10px]" value="${race.detailUrl||''}" oninput="window.dbUp('${race.id}', 'detailUrl', this.value)"></div></div>` : ''}
+                    ${isDM ? `<div class="bg-black/5 p-4 rounded mb-8 grid grid-cols-2 gap-4"><div><label class="text-[9px] font-black text-amber-900 uppercase">Grid Visual Link</label><input type="text" class="w-full p-2 text-[11px] bg-white border border-black/10 mt-1" value="${race.gridUrl||''}" oninput="window.dbUp('${race.id}', 'gridUrl', this.value)"></div><div><label class="text-[9px] font-black text-amber-900 uppercase">Detail Visual Link</label><input type="text" class="w-full p-2 text-[11px] bg-white border border-black/10 mt-1" value="${race.detailUrl||''}" oninput="window.dbUp('${race.id}', 'detailUrl', this.value)"></div></div>` : ''}
                     <div class="research-findings dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}', 'desc', this.innerText)">
                         <span class="drop-cap">${(race.desc||"O").charAt(0)}</span>${isDM ? ((race.desc||"nce, in a world not yet broken...").slice(1)) : parseAeonfallContent((race.desc||"nce, in a world not yet broken...").slice(1), false)}
                     </div>
@@ -576,7 +561,7 @@
                             }).join('')}
                         </ul>
                         <div class="flex flex-col gap-4">
-                            <div class="record-illustration" style="height: 250px;" onclick="window.zoomMedia('${race.backMediaUrl}')">
+                            <div class="record-illustration" style="height: 280px;" onclick="window.zoomMedia('${race.backMediaUrl}')">
                                 ${race.backMediaUrl ? (race.backMediaUrl.includes('.mp4') ? `<video src="${race.backMediaUrl}" autoplay loop muted class="w-full h-full object-cover"></video>` : `<img src="${race.backMediaUrl}" class="w-full h-full object-cover">`) : '<div class="h-full flex items-center justify-center italic opacity-30">Cultural Visual missing</div>'}
                             </div>
                             ${isDM ? `<input type="text" class="w-full p-2 text-[10px] bg-white/50 border border-black/10" value="${race.backMediaUrl||''}" placeholder="Culture Media Link" oninput="window.dbUp('${race.id}', 'backMediaUrl', this.value)">` : ''}
@@ -608,7 +593,7 @@
                             ${tables.map((table, tIdx) => `
                                 <div class="mt-8 relative group">
                                     <div class="flex justify-between items-center mb-2">
-                                        <b class="text-[10px] uppercase text-[#7a1d1d] dm-editable" contenteditable="${isDM}" oninput="window.updateMechTableField(${tIdx}, 'title', this.innerText)">${table.title}</b>
+                                        <b class="text-[11px] uppercase text-[#7a1d1d] dm-editable font-black tracking-widest" contenteditable="${isDM}" oninput="window.updateMechTableField(${tIdx}, 'title', this.innerText)">${table.title}</b>
                                         ${isDM ? `
                                             <div class="flex gap-1 opacity-20 group-hover:opacity-100 transition-opacity">
                                                 <button onclick="window.addTableRow(${tIdx})" class="arch-btn arch-btn-add">+ Row</button>
@@ -652,7 +637,7 @@
             if (!currentUser) return;
             const r = lineages.find(x => x.id === window.activeRaceId);
             const tables = safeJSONParse(r.mechTables);
-            tables.push({ title: "NEW TABLE", headers: ["Header 1", "Header 2"], rows: [["...", "..."]] });
+            tables.push({ title: "NEW ARCHIVAL DATA", headers: ["Parameter", "Significance"], rows: [["...", "..."]] });
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(tables) });
         };
 
@@ -696,7 +681,7 @@
             const r = lineages.find(x => x.id === window.activeRaceId);
             const tables = safeJSONParse(r.mechTables);
             if (tables[tIdx]) {
-                tables[tIdx].headers.push("Header");
+                tables[tIdx].headers.push("New Header");
                 tables[tIdx].rows = tables[tIdx].rows.map(row => [...row, "..."]);
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(tables) });
             }
@@ -723,14 +708,15 @@
 
         window.addRecord = async () => {
             if (!currentUser) return;
+            const maxOrder = lineages.length > 0 ? Math.max(...lineages.map(l => l.order || l.createdAt || 0)) : Date.now();
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookLineages'), { 
                 name: "NEW SUBJECT", gridUrl: "", detailUrl: "", backMediaUrl: "", custodianId: "994", speed: "30", size: "M", languages: "Com", 
                 desc: "Discovery log pending field observation...", traits: "Standard ancestral signatures...", intros: [],
                 cultureName: "", majorityPop: "", coreValues: "", government: "", belief: "", culturalPractices: "", attitudes: "",
                 mechTraits: "", mechDescription: "", mechBackgrounds: "", mechLanguages: "", mechFeats: "", mechEquipment: "", mechTables: "[]",
-                createdAt: Date.now(), order: Date.now() 
+                createdAt: Date.now(), order: maxOrder + 1000 
             });
-            window.showToast("Bio-Record Initialized");
+            window.showToast("Record Initialized");
         };
 
         window.addSection = async () => {
@@ -760,7 +746,7 @@
             await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', targetDelId));
             document.getElementById('del-modal').classList.add('hidden'); 
             window.setView('grid');
-            window.showToast("Record Purged");
+            window.showToast("Archive Purged");
         };
 
         // FIREBASE AUTH & SYNC
@@ -783,10 +769,14 @@
                 currentUser = user;
                 if (user) {
                     onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookLineages'), (snap) => {
-                        lineages = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (a.order ?? a.createdAt) - (b.order ?? b.createdAt));
+                        lineages = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => {
+                            const aOrder = a.order ?? (a.createdAt || 0);
+                            const bOrder = b.order ?? (b.createdAt || 0);
+                            return aOrder - bOrder;
+                        });
                         if(currentView === 'grid') renderGrid(); else renderDetails();
                     }, (err) => {
-                        console.error("Snapshot synchronization error:", err);
+                        console.error("Archival sync error:", err);
                     });
                 }
                 updateRoleUI();
