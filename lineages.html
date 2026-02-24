@@ -17,7 +17,7 @@
             overflow-x: hidden;
         }
 
-        /* THE MASTER PARCHMENT - FLATTENED TOP TO PREVENT CUTOFF */
+        /* THE MASTER PARCHMENT */
         .parchment-container {
             max-width: 1300px;
             margin: 20px auto;
@@ -26,13 +26,10 @@
             box-shadow: 0 50px 100px rgba(0,0,0,0.8), inset 0 0 100px rgba(0,0,0,0.1);
             border-radius: 4px;
             position: relative;
-            /* Increased top padding to 60px to clear the clip-path */
             padding: 60px 50px 100px 50px; 
             border: 1px solid #dcd1b2;
-            /* Flattened the top of the polygon (0% 0%) to ensure navigation isn't cut */
             clip-path: polygon(0% 0%, 100% 0%, 100% 2%, 99% 50%, 100% 98%, 98% 100%, 2% 99%, 0% 97%, 1% 50%, 0% 2%);
             perspective: 2000px;
-            /* Removed overflow:hidden to let nav elements breathe */
         }
 
         /* HEADER & BRANDING */
@@ -116,7 +113,7 @@
         }
         .view-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #d97706; }
 
-        /* 3D FLIP CONTAINER */
+        /* 3D FLIP CONTAINER - REWORKED FOR DYNAMIC HEIGHT */
         .flip-wrapper {
             position: relative;
             width: 100%;
@@ -125,9 +122,18 @@
             min-height: 600px;
         }
         .flip-wrapper.flipped { transform: rotateY(180deg); }
-        .side-front, .side-back { width: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
-        .side-back { position: absolute; top: 0; left: 0; transform: rotateY(180deg); }
-        .flipped .side-front { visibility: hidden; } 
+        
+        .side-front, .side-back { 
+            width: 100%; 
+            backface-visibility: hidden; 
+            -webkit-backface-visibility: hidden; 
+        }
+
+        .side-front { position: relative; z-index: 2; }
+        .side-back { position: absolute; top: 0; left: 0; transform: rotateY(180deg); z-index: 1; }
+
+        .flipped .side-front { position: absolute; top: 0; left: 0; z-index: 1; pointer-events: none; }
+        .flipped .side-back { position: relative; z-index: 2; pointer-events: auto; }
 
         /* TOOLTIP STYLES */
         .term-hover { position: relative; border-bottom: 1px dotted #7a1d1d; cursor: help; display: inline; }
@@ -141,41 +147,33 @@
         .term-hover:hover .tooltip-content { visibility: visible; opacity: 1; }
         .def-term { color: #7a1d1d; font-weight: 900; border-bottom: 1px dashed #7a1d1d; }
 
-        /* DM STICKY NOTE */
-        .dm-sticky-note {
-            position: absolute; width: 210px; min-height: 140px; background: #fff; background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
-            padding: 25px 20px; box-shadow: 5px 10px 30px rgba(0,0,0,0.25); z-index: 500; font-family: 'Homemade Apple', cursive; font-size: 13px; line-height: 1.6;
-            color: #2c1810; border: 1px solid rgba(0,0,0,0.05); clip-path: polygon(1% 0%, 99% 1%, 100% 94%, 94% 100%, 6% 98%, 0% 92%); transform: rotate(2deg); cursor: grab; user-select: none; box-sizing: border-box;
-        }
-        .dm-sticky-note:active { cursor: grabbing; }
-        .dm-sticky-note::before { content: "DM Observations"; display: block; font-family: 'Cinzel', serif; font-size: 8px; font-weight: 900; text-transform: uppercase; color: #7a1d1d; margin-bottom: 10px; border-bottom: 1px solid rgba(122, 29, 29, 0.1); padding-bottom: 4px; }
-        .btn-trash-note { position: absolute; top: 8px; right: 12px; color: #ef4444; opacity: 0.5; font-size: 18px; cursor: pointer; font-weight: bold; }
-
-        .dm-sticky-note-tape {
-            position: absolute; top: -12px; left: 50%; transform: translateX(-50%); width: 60px; height: 20px; background: rgba(212, 175, 55, 0.3); z-index: 501;
-        }
-
         /* LEDGERS & TABLES */
         .mech-box { background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.1); padding: 25px; margin-top: 25px; border-radius: 4px; }
         .mech-box h4 { font-family: 'Cinzel', serif; font-weight: 900; font-size: 14px; text-transform: uppercase; color: #7a1d1d; border-bottom: 2px solid #7a1d1d; margin-bottom: 15px; padding-bottom: 5px; }
 
-        .prog-table { width: 100%; border-collapse: collapse; font-family: 'Special Elite', cursive; font-size: 13px; margin: 20px 0; }
-        .prog-table th { font-family: 'Cinzel', serif; text-transform: uppercase; font-size: 10px; color: #7a1d1d; border-bottom: 2px solid #7a1d1d; padding: 10px 5px; text-align: left; }
+        .prog-table { width: 100%; border-collapse: collapse; font-family: 'Special Elite', cursive; font-size: 13px; margin: 20px 0; overflow-x: auto; display: block; }
+        .prog-table th { font-family: 'Cinzel', serif; text-transform: uppercase; font-size: 10px; color: #7a1d1d; border-bottom: 2px solid #7a1d1d; padding: 10px 5px; text-align: left; min-width: 80px; }
         .prog-table td { padding: 8px 5px; border-bottom: 1px solid rgba(0,0,0,0.05); }
 
         .culture-ledger { display: grid; grid-template-cols: 1.5fr 1fr; gap: 40px; margin-top: 30px; }
+        @media (max-width: 768px) { .culture-ledger { grid-template-cols: 1fr; } }
+
         .ledger-list { list-style: none; padding: 0; }
         .ledger-list li { margin-bottom: 12px; border-bottom: 1px dashed rgba(0,0,0,0.1); padding-bottom: 4px; display: flex; flex-direction: column; }
         .ledger-list b { font-family: 'Cinzel', serif; font-size: 11px; text-transform: uppercase; color: #7a1d1d; letter-spacing: 1px; }
         .ledger-list span { font-family: 'Special Elite', cursive; font-size: 15px; color: #3e2723; }
 
         .record-header { display: grid; grid-template-cols: 1fr 1.2fr; gap: 60px; margin-bottom: 40px; align-items: start; }
+        @media (max-width: 1024px) { .record-header { grid-template-cols: 1fr; gap: 30px; } }
+
         .record-illustration { position: relative; border: 2px solid #1a0f0a; background: rgba(0,0,0,0.02); padding: 10px; box-shadow: 5px 10px 20px rgba(0,0,0,0.1); cursor: zoom-in; }
         .record-illustration img, .record-illustration video { width: 100%; max-height: 550px; object-fit: contain; filter: sepia(0.2); mix-blend-mode: multiply; }
         
         .sigil-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40%; height: 40%; opacity: 0.04; background: url('https://www.transparenttextures.com/patterns/sacred-geometry.png') no-repeat center; background-size: contain; pointer-events: none; }
 
         .record-title { font-family: 'Pirata One', cursive; font-size: 4.5rem; color: #1a0f0a; line-height: 0.9; margin-bottom: 5px; text-transform: uppercase; }
+        @media (max-width: 640px) { .record-title { font-size: 3rem; } }
+
         .record-label { font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; color: #7a1d1d; text-transform: uppercase; letter-spacing: 3px; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 10px; display: inline-block; margin-bottom: 30px; }
 
         .research-findings { font-family: 'Special Elite', cursive; font-size: 16px; line-height: 1.8; color: #1a0f0a; padding: 30px; border: 1px dashed rgba(0,0,0,0.2); background: rgba(0,0,0,0.02); margin: 40px 0; }
@@ -227,7 +225,7 @@
                     <div id="role-player" onclick="window.setRole('player')" class="role-tab active">Player</div>
                     <div id="role-dm" onclick="window.setRole('dm')" class="role-tab">DM</div>
                 </div>
-                <a href="playershandbook.html" class="text-[10px] font-black uppercase tracking-widest text-[#7a1d1d] hover:text-black transition-colors relative z-[201]">← Back to Hub</a>
+                <a href="hub.html" class="text-[10px] font-black uppercase tracking-widest text-[#7a1d1d] hover:text-black transition-colors relative z-[201]">← Back to Hub</a>
             </div>
         </header>
 
@@ -252,9 +250,6 @@
                 <div onclick="window.setView('grid')" class="back-nav">← Return to Bio-Stacks</div>
                 <div class="flex gap-2">
                     <button onclick="window.flipPage()" id="btn-flip" class="bg-[#1a0f0a] text-[#f4edd8] px-4 py-2 rounded-sm font-black text-[9px] uppercase hover:bg-black transition-colors shadow-sm">📜 Flip Page</button>
-                    <div id="dm-controls" class="hidden flex gap-2">
-                        <button onclick="window.enterPinMode()" id="btn-pin-note" class="bg-amber-600 border border-amber-800 text-white px-4 py-2 rounded-sm font-black text-[9px] uppercase hover:bg-amber-700 transition-colors shadow-sm">📌 Place DM Note</button>
-                    </div>
                 </div>
             </div>
 
@@ -273,9 +268,7 @@
     <!-- LIGHTBOX MODAL -->
     <div id="lightbox-modal" class="fixed inset-0 z-[10000] flex flex-col items-center justify-center p-4 hidden">
         <div class="absolute inset-0 lightbox-overlay" onclick="window.closeLightbox()"></div>
-        <div id="lightbox-content" class="relative z-10">
-            <!-- Content Injected Here -->
-        </div>
+        <div id="lightbox-content" class="relative z-10"></div>
         <button onclick="window.closeLightbox()" class="relative z-10 mt-8 bg-[#7a1d1d] text-white px-8 py-3 rounded-full font-black text-[11px] uppercase tracking-widest shadow-2xl border-2 border-white/20 active:scale-95 transition-transform">Close Optical Feed</button>
     </div>
 
@@ -303,25 +296,22 @@
         </div>
     </div>
 
-    <div id="note-del-modal" class="fixed inset-0 z-[7000] flex items-center justify-center p-4 hidden">
-        <div class="absolute inset-0 bg-black/90" onclick="document.getElementById('note-del-modal').classList.add('hidden')"></div>
-        <div class="bg-white p-8 rounded-2xl w-full max-w-sm text-center relative z-10 shadow-2xl text-black">
-            <h3 class="text-2xl font-serif font-black text-amber-900 uppercase mb-4">Shred Note</h3>
-            <p class="text-sm text-gray-500 mb-8 italic">This observation will be permanently shredded.</p>
-            <div class="flex flex-col gap-3">
-                <button onclick="window.confirmRemoveNote()" class="w-full bg-red-700 text-white py-4 rounded-xl font-black text-xs uppercase shadow-lg">Shred Permanently</button>
-                <button onclick="document.getElementById('note-del-modal').classList.add('hidden')" class="w-full bg-gray-100 text-gray-400 py-2 rounded-xl font-bold uppercase text-[10px]">Keep Observation</button>
-            </div>
-        </div>
-    </div>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, collection, doc, updateDoc, onSnapshot, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        const firebaseConfig = { apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI", authDomain: "aeonfall-523c1.firebaseapp.com", projectId: "aeonfall-523c1", storageBucket: "aeonfall-523c1.firebasestorage.app", messagingSenderId: "716207733913", appId: "1:716207733913:web:7aac43906a70e2b5f50c08" };
-        const appId = 'aeonfall-manager-v2';
+        // APP CONFIG & INITIALIZATION
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI",
+            authDomain: "aeonfall-523c1.firebaseapp.com",
+            projectId: "aeonfall-523c1",
+            storageBucket: "aeonfall-523c1.firebasestorage.app",
+            messagingSenderId: "716207733913",
+            appId: "1:716207733913:web:7aac43906a70e2b5f50c08"
+        };
+        
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'aeonfall-manager-v2';
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
@@ -337,7 +327,7 @@
 
         let lineages = [];
         let activeRole = 'player', currentView = 'grid', saveTimer = null, targetDelId = null;
-        let pinMode = false, isFlipped = false;
+        let isFlipped = false, currentUser = null;
         window.activeRaceId = null; 
 
         window.showToast = (m) => { const t = document.getElementById('toast'); t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 3000); };
@@ -349,8 +339,6 @@
             document.getElementById('role-player').classList.toggle('active', !isDM);
             document.getElementById('role-dm').classList.toggle('active', isDM);
             document.getElementById('add-record-btn').classList.toggle('hidden', !isDM);
-            const ctrl = document.getElementById('dm-controls');
-            if (ctrl) ctrl.classList.toggle('hidden', !isDM);
             const bCtrl = document.getElementById('dm-bottom-controls');
             if (bCtrl) bCtrl.classList.toggle('hidden', !isDM);
             if(currentView === 'grid') renderGrid(); else renderDetails();
@@ -370,6 +358,17 @@
             html = html.replace(/__(.*?)__/g, '<u>$1</u>');
             return html;
         }
+
+        const safeJSONParse = (data, fallback = []) => {
+            try {
+                if (!data) return fallback;
+                if (typeof data === 'object') return data;
+                return JSON.parse(data);
+            } catch (e) {
+                console.warn("JSON Parse Error", e);
+                return fallback;
+            }
+        };
 
         window.zoomMedia = (url) => {
             if (!url) return;
@@ -396,7 +395,7 @@
             currentView = v; window.activeRaceId = id;
             document.getElementById('view-grid').classList.toggle('hidden', v !== 'grid');
             document.getElementById('view-details').classList.toggle('hidden', v !== 'details');
-            pinMode = false; isFlipped = false;
+            isFlipped = false;
             document.getElementById('flip-container').classList.remove('flipped');
             if(v === 'grid') renderGrid(); else renderDetails();
         };
@@ -425,6 +424,7 @@
         };
 
         window.renderDetails = () => {
+            if (!currentUser) return;
             const isDM = activeRole === 'dm';
             const race = lineages.find(r => r.id === window.activeRaceId);
             if (!race) return;
@@ -432,13 +432,6 @@
             // SIDE A: FRONT
             document.getElementById('details-front').innerHTML = `
                 <div class="${isDM ? 'dm-active-edit' : ''}">
-                    ${(isDM && race.showNote) ? `
-                        <div id="sticky-note" class="dm-sticky-note" style="left: ${race.noteX || 800}px; top: ${race.noteY || 20}px;" onmousedown="window.initNoteDrag(event)">
-                            <div class="dm-sticky-note-tape"></div>
-                            <span class="btn-trash-note" onclick="window.removeNote(event)">✕</span>
-                            <div class="dm-editable" contenteditable="true" oninput="window.dbUp('${race.id}', 'dmNotes', this.innerText)">${race.dmNotes || 'New secret observation...'}</div>
-                        </div>
-                    ` : ''}
                     <div class="record-header">
                         <div class="flex flex-col">
                             <h2 class="record-title dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}', 'name', this.innerText)">${race.name}</h2>
@@ -462,7 +455,7 @@
             `;
 
             // SIDE B: BACK
-            const tables = race.mechTables ? JSON.parse(race.mechTables) : [];
+            const tables = safeJSONParse(race.mechTables);
             document.getElementById('details-back').innerHTML = `
                 <div class="${isDM ? 'dm-active-edit' : ''}">
                     <h2 class="record-title mb-6">Cultural Heritage</h2>
@@ -520,10 +513,12 @@
                                             </div>
                                         ` : ''}
                                     </div>
-                                    <table class="prog-table">
-                                        <thead><tr>${table.headers.map((h, hIdx) => `<th contenteditable="${isDM}" oninput="window.updateMechTableField(${tIdx}, 'headers', this.innerText, ${hIdx})">${h}</th>`).join('')}</tr></thead>
-                                        <tbody>${table.rows.map((row, rIdx) => `<tr>${row.map((cell, cIdx) => `<td contenteditable="${isDM}" oninput="window.updateMechTableField(${tIdx}, 'rows', this.innerText, ${rIdx}, ${cIdx})">${isDM ? cell : parseAeonfallContent(cell, false)}</td>`).join('')}</tr>`).join('')}</tbody>
-                                    </table>
+                                    <div class="overflow-x-auto w-full">
+                                        <table class="prog-table w-full">
+                                            <thead><tr>${table.headers.map((h, hIdx) => `<th contenteditable="${isDM}" oninput="window.updateMechTableField(${tIdx}, 'headers', this.innerText, ${hIdx})">${h}</th>`).join('')}</tr></thead>
+                                            <tbody>${table.rows.map((row, rIdx) => `<tr>${row.map((cell, cIdx) => `<td contenteditable="${isDM}" oninput="window.updateMechTableField(${tIdx}, 'rows', this.innerText, rIdx, cIdx)">${isDM ? cell : parseAeonfallContent(cell, false)}</td>`).join('')}</tr>`).join('')}</tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             `).join('')}
                         </div>
@@ -532,59 +527,14 @@
             `;
         };
 
-        window.enterPinMode = () => {
-            pinMode = true; document.getElementById('parchment').classList.add('placement-active');
-            window.showToast("Pin Mode: Click Parchment to drop note");
-            const placeClick = (e) => {
-                if (!pinMode) return;
-                const rect = document.getElementById('parchment').getBoundingClientRect();
-                window.placeNote(e.clientX - rect.left, e.clientY - rect.top);
-                document.getElementById('parchment').removeEventListener('click', placeClick);
-            };
-            document.getElementById('parchment').addEventListener('click', placeClick);
-        };
-
-        window.placeNote = async (x, y) => {
-            pinMode = false; document.getElementById('parchment').classList.remove('placement-active');
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { showNote: true, noteX: x, noteY: y });
-            window.showToast("Note Pinned");
-        };
-
-        let noteDrag = null;
-        window.initNoteDrag = (e) => {
-            if (activeRole !== 'dm') return;
-            if (e.target.classList.contains('btn-trash-note') || e.target.contentEditable === 'true') return;
-            const note = e.currentTarget; const rect = note.getBoundingClientRect();
-            noteDrag = { el: note, offsetX: e.clientX - rect.left, offsetY: e.clientY - rect.top };
-            document.addEventListener('mousemove', window.handleNoteDrag); document.addEventListener('mouseup', window.stopNoteDrag);
-        };
-
-        window.handleNoteDrag = (e) => {
-            if (!noteDrag) return; const container = document.getElementById('parchment').getBoundingClientRect();
-            let x = Math.max(0, Math.min(e.clientX - container.left - noteDrag.offsetX, container.width - 220));
-            let y = Math.max(0, Math.min(e.clientY - container.top - noteDrag.offsetY, container.height - 140));
-            noteDrag.el.style.left = `${x}px`; noteDrag.el.style.top = `${y}px`;
-        };
-
-        window.stopNoteDrag = async () => {
-            if (!noteDrag) return;
-            const x = parseInt(noteDrag.el.style.left); const y = parseInt(noteDrag.el.style.top);
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { noteX: x, noteY: y });
-            noteDrag = null; document.removeEventListener('mousemove', window.handleNoteDrag); document.removeEventListener('mouseup', window.stopNoteDrag);
-        };
-
-        window.removeNote = (e) => { e.stopPropagation(); document.getElementById('note-del-modal').classList.remove('hidden'); };
-        window.confirmRemoveNote = async () => {
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { showNote: false, dmNotes: "" });
-            document.getElementById('note-del-modal').classList.add('hidden'); window.showToast("Note Shredded");
-        };
-
         window.dbUp = (id, field, val) => {
+            if (!currentUser) return;
             if (saveTimer) clearTimeout(saveTimer);
             saveTimer = setTimeout(() => updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', id), { [field]: val }), 1000);
         };
 
         window.dbUpIntro = (id, idx, field, val) => {
+            if (!currentUser) return;
             if (saveTimer) clearTimeout(saveTimer);
             saveTimer = setTimeout(() => {
                 const r = lineages.find(x => x.id === id);
@@ -593,52 +543,64 @@
         };
 
         window.addMechTable = async () => {
+            if (!currentUser) return;
             const r = lineages.find(x => x.id === window.activeRaceId);
-            const tables = r.mechTables ? JSON.parse(r.mechTables) : [];
+            const tables = safeJSONParse(r.mechTables);
             tables.push({ title: "NEW TABLE", headers: ["Header 1", "Header 2"], rows: [["...", "..."]] });
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(tables) });
         };
 
         window.updateMechTableField = (tIdx, field, val, rowOrCol = null, colIdx = null) => {
+            if (!currentUser) return;
             if (saveTimer) clearTimeout(saveTimer);
             saveTimer = setTimeout(async () => {
                 const r = lineages.find(x => x.id === window.activeRaceId);
-                const tables = JSON.parse(r.mechTables);
-                if (field === 'title') tables[tIdx].title = val;
-                else if (field === 'headers') tables[tIdx].headers[rowOrCol] = val;
-                else if (field === 'rows') tables[tIdx].rows[rowOrCol][colIdx] = val;
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(tables) });
+                const tables = safeJSONParse(r.mechTables);
+                if (tables[tIdx]) {
+                    if (field === 'title') tables[tIdx].title = val;
+                    else if (field === 'headers') tables[tIdx].headers[rowOrCol] = val;
+                    else if (field === 'rows') tables[tIdx].rows[rowOrCol][colIdx] = val;
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(tables) });
+                }
             }, 1000);
         };
 
         window.addTableRow = async (tIdx) => {
+            if (!currentUser) return;
             const r = lineages.find(x => x.id === window.activeRaceId);
-            const tables = JSON.parse(r.mechTables);
-            tables[tIdx].rows.push(new Array(tables[tIdx].headers.length).fill("..."));
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(tables) });
+            const tables = safeJSONParse(r.mechTables);
+            if (tables[tIdx]) {
+                tables[tIdx].rows.push(new Array(tables[tIdx].headers.length).fill("..."));
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(tables) });
+            }
         };
 
         window.remTableRow = async (tIdx) => {
+            if (!currentUser) return;
             const r = lineages.find(x => x.id === window.activeRaceId);
-            const tables = JSON.parse(r.mechTables);
-            if (tables[tIdx].rows.length > 1) {
+            const tables = safeJSONParse(r.mechTables);
+            if (tables[tIdx] && tables[tIdx].rows.length > 1) {
                 tables[tIdx].rows.pop();
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(tables) });
             }
         };
 
         window.addTableCol = async (tIdx) => {
+            if (!currentUser) return;
             const r = lineages.find(x => x.id === window.activeRaceId);
-            const tables = JSON.parse(r.mechTables);
-            tables[tIdx].headers.push("Header");
-            tables[tIdx].rows = tables[tIdx].rows.map(row => [...row, "..."]);
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(tables) });
+            const tables = safeJSONParse(r.mechTables);
+            if (tables[tIdx]) {
+                tables[tIdx].headers.push("Header");
+                tables[tIdx].rows = tables[tIdx].rows.map(row => [...row, "..."]);
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(tables) });
+            }
         };
 
         window.remTableCol = async (tIdx) => {
+            if (!currentUser) return;
             const r = lineages.find(x => x.id === window.activeRaceId);
-            const tables = JSON.parse(r.mechTables);
-            if (tables[tIdx].headers.length > 1) {
+            const tables = safeJSONParse(r.mechTables);
+            if (tables[tIdx] && tables[tIdx].headers.length > 1) {
                 tables[tIdx].headers.pop();
                 tables[tIdx].rows = tables[tIdx].rows.map(row => row.slice(0, -1));
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(tables) });
@@ -646,16 +608,18 @@
         };
 
         window.delMechTable = async (tIdx) => {
+            if (!currentUser) return;
             const r = lineages.find(x => x.id === window.activeRaceId);
-            const tables = JSON.parse(r.mechTables);
+            const tables = safeJSONParse(r.mechTables);
             tables.splice(tIdx, 1);
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', window.activeRaceId), { mechTables: JSON.stringify(tables) });
         };
 
         window.addRecord = async () => {
+            if (!currentUser) return;
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookLineages'), { 
                 name: "NEW SUBJECT", gridUrl: "", detailUrl: "", backMediaUrl: "", custodianId: "994", speed: "30", size: "M", languages: "Com", 
-                desc: "Discovery log pending field observation...", traits: "Standard ancestral signatures...", dmNotes: "", noteX: 0, noteY: 0, showNote: false, intros: [],
+                desc: "Discovery log pending field observation...", traits: "Standard ancestral signatures...", intros: [],
                 cultureName: "", majorityPop: "", coreValues: "", government: "", belief: "", culturalPractices: "", attitudes: "",
                 mechTraits: "", mechDescription: "", mechBackgrounds: "", mechLanguages: "", mechFeats: "", mechEquipment: "", mechTables: "[]",
                 createdAt: Date.now(), order: Date.now() 
@@ -664,6 +628,7 @@
         };
 
         window.addSection = async () => {
+            if (!currentUser) return;
             const r = lineages.find(x => x.id === window.activeRaceId);
             if (!r) return;
             const intros = r.intros || [];
@@ -673,6 +638,7 @@
         };
 
         window.removeSection = async (id, idx) => {
+            if (!currentUser) return;
             const r = lineages.find(x => x.id === id);
             r.intros.splice(idx, 1);
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', id), { intros: r.intros });
@@ -684,20 +650,43 @@
             document.getElementById('del-modal').classList.remove('hidden'); 
         };
         document.getElementById('confirm-del-btn').onclick = async () => {
-            if (!targetDelId) return;
+            if (!targetDelId || !currentUser) return;
             await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', targetDelId));
             document.getElementById('del-modal').classList.add('hidden'); 
             window.setView('grid');
             window.showToast("Record Purged");
         };
 
+        // FIREBASE AUTH & SYNC
         const init = async () => {
-            await signInAnonymously(auth);
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookLineages'), (snap) => {
-                lineages = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (a.order ?? a.createdAt) - (b.order ?? b.createdAt));
-                if(currentView === 'grid') renderGrid(); else renderDetails();
+            const initAuth = async () => {
+                // RULE 3 - Auth Before Queries
+                try {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                } catch (e) {
+                    await signInAnonymously(auth);
+                }
+            };
+            
+            await initAuth();
+
+            onAuthStateChanged(auth, (user) => {
+                currentUser = user;
+                if (user) {
+                    // RULE 1 - Use strict collection paths
+                    onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookLineages'), (snap) => {
+                        lineages = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (a.order ?? a.createdAt) - (b.order ?? b.createdAt));
+                        if(currentView === 'grid') renderGrid(); else renderDetails();
+                    }, (err) => {
+                        console.error("Snapshot synchronization error:", err);
+                    });
+                }
+                updateRoleUI();
             });
-            updateRoleUI();
         };
         init();
     </script>
