@@ -13,40 +13,108 @@
             background-image: url('https://www.transparenttextures.com/patterns/dark-wood.png');
             color: #1a0f0a; 
             min-height: 100vh;
-            padding: 10px;
+            padding: 15px;
             overflow-x: hidden;
-            -webkit-tap-highlight-color: transparent;
         }
 
         /* THE MASTER PARCHMENT */
         .parchment-container {
             max-width: 1300px;
-            margin: 10px auto;
+            margin: 20px auto;
             background: #f4edd8;
             background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
             box-shadow: 0 50px 100px rgba(0,0,0,0.8), inset 0 0 100px rgba(0,0,0,0.1);
             border-radius: 4px;
             position: relative;
-            padding: clamp(40px, 6vw, 60px) clamp(15px, 5vw, 50px);
+            padding: 60px 50px 100px 50px; 
             border: 1px solid #dcd1b2;
-            clip-path: polygon(0% 0%, 100% 0%, 100% 1%, 99% 50%, 100% 99%, 99% 100%, 1% 99%, 0% 98%, 1% 50%, 0% 1%);
+            clip-path: polygon(0% 0%, 100% 0%, 100% 2%, 99% 50%, 100% 98%, 98% 100%, 2% 99%, 0% 97%, 1% 50%, 0% 2%);
             perspective: 3500px;
         }
 
         /* HEADER & BRANDING */
-        .brand-title { font-family: 'Cinzel', serif; font-weight: 900; color: #7a1d1d; font-size: clamp(1.5rem, 4vw, 2.2rem); line-height: 1; }
-        .brand-sub { font-family: 'Cinzel', serif; font-size: 8px; color: #5d4037; letter-spacing: 0.15em; text-transform: uppercase; font-weight: bold; }
+        .brand-title { font-family: 'Cinzel', serif; font-weight: 900; color: #7a1d1d; font-size: 2rem; line-height: 1; }
+        .brand-sub { font-family: 'Cinzel', serif; font-size: 8px; color: #5d4037; letter-spacing: 0.2em; text-transform: uppercase; font-weight: bold; }
         
-        .role-pill { background: rgba(0,0,0,0.05); border-radius: 99px; padding: 3px; display: flex; gap: 4px; border: 1px solid rgba(0,0,0,0.1); position: relative; z-index: 100; }
-        .role-tab { padding: 4px 14px; font-family: 'Cinzel', serif; font-size: 9px; font-weight: 900; border-radius: 99px; transition: 0.3s; color: #5d4037; text-transform: uppercase; cursor: pointer; white-space: nowrap; }
-        .role-tab.active { background: #7a1d1d !important; color: white !important; box-shadow: 0 4px 10px rgba(122, 29, 29, 0.3); }
+        .role-pill { background: rgba(0,0,0,0.05); border-radius: 99px; padding: 3px; display: flex; gap: 4px; border: 1px solid rgba(0,0,0,0.1); position: relative; z-index: 500; }
+        .role-tab { padding: 4px 14px; font-family: 'Cinzel', serif; font-size: 9px; font-weight: 900; border-radius: 99px; transition: 0.3s; color: #5d4037; text-transform: uppercase; cursor: pointer; }
+        .role-tab.active { background: #7a1d1d; color: white; box-shadow: 0 4px 10px rgba(122, 29, 29, 0.3); }
+
+        /* DEFINITION & TOOLTIP STYLES */
+        .term-hover {
+            position: relative;
+            border-bottom: 1px dotted #7a1d1d;
+            color: #7a1d1d;
+            font-weight: 900;
+            cursor: help;
+            display: inline-block;
+        }
+        .tooltip-content {
+            visibility: hidden;
+            width: 240px;
+            background-color: #1a0f0a;
+            color: #f4edd8;
+            text-align: left;
+            border-radius: 4px;
+            padding: 12px;
+            position: absolute;
+            z-index: 9999;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-family: 'Roboto Slab', serif;
+            font-size: 11px;
+            font-weight: 400;
+            line-height: 1.4;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            pointer-events: none;
+            border: 1px solid #7a1d1d;
+            text-transform: none;
+            letter-spacing: normal;
+        }
+        .tooltip-content::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #7a1d1d transparent transparent transparent;
+        }
+        .term-hover:hover .tooltip-content {
+            visibility: visible;
+            opacity: 1;
+        }
+        .indent-tab { display: inline-block; width: 40px; height: 1px; vertical-align: middle; pointer-events: none; }
+
+        /* BIO-RECORD / RESEARCH SEGMENTS */
+        .research-segment { margin-bottom: 25px; position: relative; }
+        .research-box {
+            border: 1px dashed #7a1d1d;
+            padding: 10px 15px;
+            background: rgba(122, 29, 29, 0.01);
+            position: relative;
+        }
+        .research-header-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .research-title { font-family: 'Cinzel', serif; font-weight: 900; color: #7a1d1d; font-size: 1.1rem; text-transform: uppercase; }
+        .research-expunge-btn { font-family: 'Cinzel', serif; font-size: 9px; font-weight: 900; color: rgba(122, 29, 29, 0.5); text-transform: uppercase; cursor: pointer; transition: 0.2s; }
+        .research-expunge-btn:hover { color: #7a1d1d; }
+        .research-content { font-size: 13px; line-height: 1.6; color: #3e2723; }
 
         /* DASHBOARD GRID */
         .grid-container { 
             display: grid; 
-            grid-template-cols: repeat(auto-fill, minmax(min(100%, 380px), 1fr)); 
-            gap: 20px; 
-            padding: 20px 0; 
+            grid-template-cols: repeat(auto-fill, minmax(400px, 1fr)); 
+            gap: 30px; 
+            padding: 25px 0; 
         }
 
         .vocation-card {
@@ -62,30 +130,39 @@
         }
         .vocation-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
         .card-art { position: absolute; top: 0; right: 0; width: 60%; height: 100%; z-index: 1; background-size: cover; background-position: center top; }
-        
-        .card-info-panel { 
-            position: relative; 
-            z-index: 2; 
-            width: 85%; 
-            height: 100%; 
-            background: linear-gradient(to right, white 75%, rgba(255,255,255,0)); 
-            padding: 20px; 
-            display: flex; 
-            flex-direction: column; 
-        }
-        @media (min-width: 768px) { .card-info-panel { width: 65%; padding: 30px; } }
-
+        .card-info-panel { position: relative; z-index: 2; width: 65%; height: 100%; background: linear-gradient(to right, white 85%, rgba(255,255,255,0)); padding: 30px; display: flex; flex-direction: column; }
         .card-header-row { display: flex; align-items: center; margin-bottom: 8px; }
-        .card-icon-box { width: 40px; height: 40px; background: #f8f4eb; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-right: 12px; flex-shrink: 0; }
-        .card-name { font-family: 'Cinzel', serif; font-size: clamp(1.2rem, 3vw, 1.8rem); font-weight: 900; color: #1a1a1a; line-height: 1; }
-        .card-tagline { font-family: 'Roboto Slab', serif; font-size: 13px; font-style: italic; color: #333; font-weight: 600; margin-bottom: 10px; }
-        .card-desc { font-size: 12px; color: #555; line-height: 1.4; margin-bottom: 15px; flex-grow: 1; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; }
+        .card-icon-box { width: 45px; height: 45px; background: #f8f4eb; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-right: 12px; }
+        .card-name { font-family: 'Cinzel', serif; font-size: 28px; font-weight: 900; color: #1a1a1a; line-height: 1; }
+        .card-tagline { font-family: 'Roboto Slab', serif; font-size: 14px; font-style: italic; color: #333; font-weight: 600; margin-bottom: 12px; }
+        .card-desc { font-size: 13px; color: #555; line-height: 1.5; margin-bottom: 20px; flex-grow: 1; overflow: hidden; }
+        .stat-line { font-size: 12px; margin-bottom: 3px; color: #222; }
+        .stat-line b { font-weight: 900; }
+        .orange-divider { height: 2px; background: #e67e22; width: 100%; margin-bottom: 15px; }
 
-        /* SEQUENTIAL DOSSIER */
+        .view-btn {
+            background: #e67e22;
+            color: white;
+            font-family: 'Cinzel', serif;
+            font-weight: 900;
+            font-size: 10px;
+            text-transform: uppercase;
+            padding: 12px;
+            border-radius: 4px;
+            text-align: center;
+            width: 100%;
+            margin-top: 15px;
+            box-shadow: 0 4px 0 #d35400;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .view-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #d35400; }
+
+        /* REFINED 3D SEQUENTIAL DOSSIER */
         .dossier-stack {
             position: relative;
             width: 100%;
-            min-height: 800px;
+            min-height: 900px;
             transform-style: preserve-3d;
             background: #ede4cc;
             border-radius: 4px;
@@ -111,18 +188,19 @@
             border-radius: 2px;
             box-shadow: inset 0 0 50px rgba(0,0,0,0.05);
             overflow-y: auto;
-            padding: clamp(20px, 5vw, 50px);
         }
 
-        .leaf-front { z-index: 2; }
+        .leaf-front { z-index: 2; padding: 30px 50px; }
         .leaf-back { 
             z-index: 1; 
             transform: rotateY(180deg); 
             background: #ede4cc; 
+            background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
+            padding: 40px;
         }
 
         #leaf-0 { z-index: 400; }
@@ -132,101 +210,113 @@
 
         .dossier-leaf.flipped { transform: rotateY(-180deg); z-index: 500 !important; }
 
-        /* TITLES & RICH TEXT */
-        .dossier-subject-title { font-family: 'Pirata One', cursive; font-size: clamp(3rem, 10vw, 6rem); color: #1a0f0a; line-height: 0.8; margin-bottom: 5px; text-transform: uppercase; word-wrap: break-word; }
-        .dossier-subtitle { font-family: 'Cinzel', serif; font-size: clamp(8px, 2vw, 11px); font-weight: 900; color: #7a1d1d; letter-spacing: 2px; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 8px; display: inline-block; margin-bottom: 20px; }
-        
-        .visual-box { width: 100%; height: clamp(250px, 40vh, 450px); border: 2px solid #1a0f0a; margin: 20px 0; background: rgba(0,0,0,0.02); background-size: cover; background-position: center; }
-        .drop-cap { float: left; font-family: 'Pirata One', cursive; font-size: clamp(60px, 12vw, 80px); line-height: clamp(50px, 10vw, 60px); padding-top: 4px; padding-right: 8px; color: #7a1d1d; }
+        /* RICH TEXT & HANDBOOK STYLING */
+        .research-body h3, .archetype-box h3, .feature-module h3, .script-module h3, .script-tier-heading { font-family: 'Cinzel', serif; font-weight: 900; color: #7a1d1d; font-size: 1.5rem; margin: 1.5rem 0 0.5rem; border-bottom: 2px solid rgba(122, 29, 29, 0.2); }
+        .research-body h4, .archetype-box h4, .feature-module h4, .script-module h4 { font-family: 'Cinzel', serif; font-weight: 900; color: #5d4037; font-size: 1.1rem; margin: 1.2rem 0 0.4rem; text-transform: uppercase; letter-spacing: 1px; }
+        .research-body b, .archetype-box b { font-weight: 900; color: #000; }
+        .research-body ul, .archetype-box ul { list-style-type: square; margin-left: 1.5rem; margin-bottom: 1rem; }
+        .research-body li, .archetype-box li { margin-bottom: 0.3rem; }
 
-        .record-header { display: grid; grid-template-cols: 1fr; gap: 30px; margin-bottom: 30px; align-items: start; }
-        @media (min-width: 1024px) { .record-header { grid-template-cols: 1fr 1.2fr; gap: 40px; } }
+        .dossier-subject-title { font-family: 'Pirata One', cursive; font-size: 6rem; color: #1a0f0a; line-height: 0.8; margin-bottom: 5px; text-transform: uppercase; }
+        .dossier-subtitle { font-family: 'Cinzel', serif; font-size: 11px; font-weight: 900; color: #7a1d1d; letter-spacing: 3px; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 10px; display: inline-block; margin-bottom: 30px; }
+        .innate-param-header { font-family: 'Cinzel', serif; font-weight: 900; font-size: 14px; color: #7a1d1d; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; border-left: 4px solid #7a1d1d; padding-left: 15px; }
+        .visual-box { width: 100%; height: 450px; border: 2px solid #1a0f0a; margin: 30px 0; background: rgba(0,0,0,0.02); display: flex; align-items: center; justify-content: center; background-size: cover; background-position: center; }
+        .drop-cap { float: left; font-family: 'Pirata One', cursive; font-size: 80px; line-height: 60px; padding-top: 4px; padding-right: 8px; color: #7a1d1d; }
 
-        .archetype-box { margin-top: 30px; background: #fff; border: 2px solid #bba683; padding: clamp(15px, 4vw, 30px); border-radius: 8px; }
-        .archetype-title { font-family: 'Pirata One', cursive; font-size: clamp(2.5rem, 8vw, 4rem); color: #7a1d1d; line-height: 0.8; }
+        /* ARCHEOTYPE BOX STYLING */
+        .archetype-box { 
+            margin-top: 50px; background: #fff; border: 2px solid #bba683; padding: 30px; position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05); border-radius: 8px;
+        }
+        .archetype-header { border-bottom: 2px solid #7a1d1d; margin-bottom: 20px; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: flex-start; }
+        .archetype-title { font-family: 'Pirata One', cursive; font-size: 4rem; color: #7a1d1d; line-height: 0.8; }
+        .archetype-tagline { font-family: 'Cinzel', serif; font-size: 12px; font-weight: 900; color: #5d4037; text-transform: uppercase; margin-top: 5px; letter-spacing: 1px; }
+
+        /* SCRIPT LIST STYLING */
+        .script-list-grid { display: grid; grid-template-cols: repeat(auto-fill, minmax(180px, 1fr)); gap: 4px 15px; }
+        .script-link-item { font-size: 13px; color: #7a1d1d; text-decoration: underline; text-decoration-style: dotted; cursor: pointer; transition: 0.2s; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .script-link-item:hover { color: #e67e22; }
+
+        /* TRAITS STYLING */
+        .trait-group { margin-bottom: 20px; }
+        .trait-label { font-family: 'Cinzel', serif; font-weight: 900; font-size: 11px; color: #7a1d1d; text-transform: uppercase; display: block; margin-bottom: 2px; }
+        .trait-value { font-family: 'Roboto Slab', serif; font-size: 14px; color: #1a0f0a; }
+
+        /* REORDERING & DRAG */
+        .draggable-module { transition: background 0.3s, opacity 0.2s; position: relative; border-radius: 8px; padding: 10px; margin-bottom: 20px; }
+        .draggable-module.is-dragging { opacity: 0.3; transform: scale(0.98); }
+        .draggable-module.drag-over { background: rgba(122, 29, 29, 0.05); outline: 2px dashed #7a1d1d; }
+        .drag-handle-internal { cursor: grab; opacity: 0.3; transition: opacity 0.2s; font-family: 'Cinzel', serif; font-size: 9px; font-weight: bold; padding: 4px; display: inline-block; margin-bottom: 5px; background: #7a1d1d; color: white; border-radius: 2px; }
 
         /* TABLES */
-        .table-wrap { overflow-x: auto; margin: 15px 0; border: 1px solid #bba683; border-radius: 4px; background: white; }
-        .prog-table { width: 100%; min-width: 350px; border-collapse: collapse; font-family: 'Special Elite', cursive; font-size: 12px; }
-        .prog-table th { font-family: 'Cinzel', serif; font-size: 9px; color: #7a1d1d; border-bottom: 2px solid #7a1d1d; padding: 8px 4px; text-align: left; }
-        .prog-table td { padding: 6px 4px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .prog-table { width: 100%; border-collapse: collapse; font-family: 'Special Elite', cursive; font-size: 13px; margin: 20px 0; }
+        .prog-table th { font-family: 'Cinzel', serif; text-transform: uppercase; font-size: 10px; color: #7a1d1d; border-bottom: 2px solid #7a1d1d; padding: 10px 5px; text-align: left; }
+        .prog-table td { padding: 8px 5px; border-bottom: 1px solid rgba(0,0,0,0.05); }
 
-        .trait-group { margin-bottom: 15px; }
-        .trait-label { font-family: 'Cinzel', serif; font-weight: 900; font-size: 10px; color: #7a1d1d; text-transform: uppercase; display: block; }
-        .trait-value { font-size: 13px; color: #1a0f0a; }
-
-        /* TOOLTIP */
-        .term-hover { border-bottom: 1px dotted #7a1d1d; color: #7a1d1d; font-weight: 900; cursor: help; position: relative; }
-        .tooltip-content {
-            visibility: hidden; width: 200px; background-color: #1a0f0a; color: #f4edd8;
-            padding: 10px; position: absolute; z-index: 9999; bottom: 125%; left: 50%; transform: translateX(-50%);
-            opacity: 0; transition: opacity 0.3s; font-size: 10px; line-height: 1.4; border: 1px solid #7a1d1d;
-        }
-        .term-hover:hover .tooltip-content { visibility: visible; opacity: 1; }
-
-        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #1a0f0a; color: white; padding: 10px 24px; border-radius: 40px; z-index: 10000; font-family: 'Cinzel'; font-size: 10px; opacity: 0; transition: 0.3s; pointer-events: none; }
-        
+        /* DM ACTIVE EDITING */
+        .dm-active-edit .dm-editable { border-radius: 4px; padding: 2px; }
+        .dm-active-edit .dm-editable:focus { outline: 2px solid #7a1d1d; background: rgba(122, 29, 29, 0.05); }
         .hidden { display: none !important; }
-        .view-btn { background: #e67e22; color: white; font-family: 'Cinzel', serif; font-weight: 900; font-size: 9px; text-transform: uppercase; padding: 10px; border-radius: 4px; text-align: center; width: 100%; max-width: 180px; margin-top: 15px; box-shadow: 0 4px 0 #d35400; }
-        
-        /* Mobile Specific Overrides - DISABLING FLIP */
-        @media (max-width: 768px) {
-            .parchment-container { margin: 5px auto; clip-path: none; border-radius: 8px; }
-            .dossier-stack { min-height: auto; height: auto; transform: none !important; }
-            .dossier-leaf.flipped { transform: none; position: relative; }
-            .dossier-leaf { position: relative; min-height: auto; height: auto; transform: none !important; }
-            .leaf-side { position: relative; height: auto; transform: none !important; box-shadow: none; border-bottom: 2px dashed #bba683; padding-bottom: 40px; }
-            .leaf-back, #btn-flip, .page-indicator { display: none; }
-            
-            /* Reading order stacking */
-            .dossier-leaf#leaf-0 { z-index: 10; }
-            .dossier-leaf#leaf-1 { z-index: 9; }
-            .dossier-leaf#leaf-2 { z-index: 8; }
-            .dossier-leaf#leaf-3 { z-index: 7; }
-        }
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #1a0f0a; color: white; padding: 12px 32px; border-radius: 4px; z-index: 10000; opacity: 0; transition: 0.3s; font-family: 'Cinzel'; font-size: 11px; pointer-events: none; }
+
+        /* ACTION BUTTONS */
+        .arch-btn { font-size: 9px; font-weight: 900; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; cursor: pointer; border: 1px solid rgba(0,0,0,0.1); transition: 0.2s; display: inline-flex; align-items: center; gap: 5px; }
+        .arch-btn-add { background: #7a1d1d; color: white; border-color: #7a1d1d; }
+        .arch-btn-del { background: rgba(122,29,29,0.1); color: #7a1d1d; }
+
+        .dossier-section-header { font-family: 'Cinzel', serif; font-weight: 900; font-size: 22px; color: #7a1d1d; text-transform: uppercase; margin-bottom: 15px; border-bottom: 2px solid #7a1d1d; padding-bottom: 5px; }
+        .page-indicator { font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; color: #7a1d1d; opacity: 0.5; margin-top: 40px; text-align: center; letter-spacing: 2px; }
+
+        /* DECORATIONS */
+        .ornate-corner { position: absolute; width: 30px; height: 30px; opacity: 0.08; color: #7a1d1d; pointer-events: none; }
+        .tl { top: 10px; left: 10px; }
+        .br { bottom: 10px; right: 10px; transform: rotate(180deg); }
     </style>
 </head>
 <body>
 
-    <div id="toast" class="toast">Data Sync Complete</div>
+    <div id="toast" class="toast">Archival Record Synchronized</div>
 
     <div class="parchment-container" id="parchment">
-        <!-- Decoration -->
-        <svg class="ornate-corner tl" width="30" height="30" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;top:10px;left:10px;opacity:0.1;color:#7a1d1d"><path d="M10,10 C30,10 20,40 50,40 C80,40 70,70 90,90" /></svg>
-        <svg class="ornate-corner br" width="30" height="30" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;bottom:10px;right:10px;opacity:0.1;color:#7a1d1d;transform:rotate(180deg)"><path d="M10,10 C30,10 20,40 50,40 C80,40 70,70 90,90" /></svg>
+        <svg class="ornate-corner tl" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2"><path d="M10,10 C30,10 20,40 50,40 C80,40 70,70 90,90" /></svg>
+        <svg class="ornate-corner br" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2"><path d="M10,10 C30,10 20,40 50,40 C80,40 70,70 90,90" /></svg>
 
-        <header class="flex flex-col md:flex-row justify-between items-center gap-4 relative z-[200] mb-8 pb-4 border-b border-black/10">
-            <div class="flex flex-col items-center md:items-start text-center md:text-left">
+        <header class="flex flex-col md:flex-row justify-between items-center gap-6 mb-12 pb-6 border-b border-black/10">
+            <div class="flex flex-col items-center md:items-start">
                 <h1 class="brand-title">Aeonfall</h1>
-                <p class="brand-sub">Class Registry archives</p>
+                <p class="brand-sub">ARCHIVAL Citizen's Vocations</p>
             </div>
-            <div class="flex flex-wrap justify-center items-center gap-4 md:gap-8">
+            <div class="flex items-center gap-8">
                 <div class="role-pill">
                     <div id="role-player" onclick="window.setRole('player')" class="role-tab active">Player</div>
                     <div id="role-dm" onclick="window.setRole('dm')" class="role-tab">DM</div>
                 </div>
-                <a href="playershandbook.html" class="text-[9px] font-black uppercase tracking-widest text-[#7a1d1d] hover:text-black transition-colors relative z-[210]">← Back to Hub</a>
+                <a href="playershandbook.html" class="text-[10px] font-black uppercase tracking-widest text-[#7a1d1d] hover:text-black transition-colors relative z-[210]">← Back to Hub</a>
             </div>
         </header>
 
         <div id="view-grid">
-            <div class="flex flex-col sm:flex-row justify-between items-center sm:items-end mb-4 gap-4">
-                <div class="text-center sm:text-left">
-                    <h2 class="font-serif text-lg md:text-xl font-black uppercase text-[#1a0f0a]">Authorized Vocations</h2>
-                    <p class="text-[7px] md:text-[8px] text-[#5d4037] tracking-[0.2em] uppercase font-bold">Class Database</p>
+            <div class="flex justify-between items-end mb-6">
+                <div>
+                    <h2 class="font-serif text-2xl font-black uppercase text-[#1a0f0a]">Authorized Vocations</h2>
+                    <p class="text-[9px] text-[#5d4037] tracking-[0.3em] uppercase font-bold">Class Registry & Archetypal Paths</p>
                 </div>
-                <button id="add-record-btn" onclick="window.addVocation()" class="hidden bg-[#7a1d1d] text-[#f4edd8] px-3 py-1.5 rounded-sm font-black text-[7px] uppercase shadow-lg">+ Register Vocation</button>
+                <button id="add-record-btn" onclick="window.addVocation()" class="hidden bg-[#7a1d1d] text-[#f4edd8] px-5 py-2 rounded-sm font-black text-[9px] uppercase shadow-lg hover:bg-black transition-all">+ Register Vocation</button>
             </div>
             <div id="vocation-grid" class="grid-container"></div>
         </div>
 
         <div id="view-details" class="hidden">
-            <div class="flex flex-col sm:flex-row justify-between items-start mb-6 gap-4 relative z-[3000]">
-                <div onclick="window.setView('grid')" class="flex items-center gap-2 text-[#7a1d1d] font-black text-[9px] uppercase cursor-pointer hover:underline tracking-widest">
-                    ← Return to Stacks
+            <div class="flex justify-between items-start mb-8 relative z-[3000]">
+                <div onclick="window.setView('grid')" class="flex items-center gap-2 text-[#7a1d1d] font-black text-[10px] uppercase cursor-pointer hover:underline tracking-widest">
+                    ← Return to Bio-Stacks
                 </div>
-                <button onclick="window.flipPage()" id="btn-flip" class="w-full sm:w-auto bg-[#1a0f0a] text-[#f4edd8] px-4 py-2 rounded-sm font-black text-[8px] uppercase">📜 Flip Page</button>
+                <div class="flex gap-2">
+                    <button onclick="window.flipPage()" id="btn-flip" class="bg-[#1a0f0a] text-[#f4edd8] px-4 py-2 rounded-sm font-black text-[9px] uppercase hover:bg-black transition-colors shadow-sm">📜 Flip Page</button>
+                </div>
             </div>
+
+            <div id="note-layer"></div>
 
             <div id="dossier-book" class="dossier-stack">
                 <div id="leaf-0" class="dossier-leaf">
@@ -247,32 +337,35 @@
                 </div>
             </div>
 
-            <div class="page-indicator mt-8 text-center font-black text-[9px] text-[#7a1d1d] opacity-50 uppercase tracking-widest" id="page-num">SEGMENT 01 / 04</div>
+            <div class="page-indicator" id="page-num">SEGMENT 01 / 04</div>
 
-            <div id="dm-bottom-controls" class="hidden flex flex-wrap gap-3 mt-10 pt-6 border-t border-black/10">
-                <button onclick="window.addLoreBlock()" class="arch-btn arch-btn-add">📑 Chapter</button>
-                <button onclick="window.addScriptTier()" class="arch-btn arch-btn-add">🧪 Scripts</button>
-                <button onclick="window.triggerDel()" class="arch-btn arch-btn-del">💀 Expunge</button>
+            <div id="dm-bottom-controls" class="hidden flex flex-wrap gap-4 mt-16 pt-8 border-t border-black/10">
+                <button onclick="window.addLoreBlock()" class="arch-btn arch-btn-add"><span>📑</span> Append Research chapter</button>
+                <button onclick="window.addScriptTier()" class="arch-btn arch-btn-add"><span>🧪</span> Append Script Tier</button>
+                <button onclick="window.triggerDel()" class="arch-btn arch-btn-del"><span>💀</span> Expunge Bio-Record</button>
             </div>
         </div>
     </div>
 
-    <!-- MODALS -->
-    <div id="pass-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[5000] hidden p-4">
-        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-xs border-2 border-amber-600 text-white text-center shadow-2xl">
-            <h3 class="text-lg font-serif text-amber-500 font-bold mb-4 uppercase">Authorize</h3>
-            <input type="password" id="dm-pass" class="w-full bg-gray-900 text-center text-xl rounded-lg p-3 mb-6 border border-gray-700 outline-none">
-            <button onclick="window.authDm()" class="w-full bg-amber-600 text-white py-3 rounded-xl font-bold uppercase text-[10px]">Verify</button>
-            <button onclick="document.getElementById('pass-modal').classList.add('hidden')" class="text-[9px] text-gray-500 uppercase font-black mt-4 block">Cancel</button>
+    <!-- MODAL FOR DELETE CONFIRMATION -->
+    <div id="del-modal" class="fixed inset-0 z-[11000] flex items-center justify-center p-4 hidden">
+        <div class="absolute inset-0 bg-black/90" onclick="document.getElementById('del-modal').classList.add('hidden')"></div>
+        <div class="bg-white p-10 rounded-2xl w-full max-w-sm text-center relative z-10 shadow-2xl text-black">
+            <h3 class="text-2xl font-serif font-black text-red-700 uppercase mb-4">Purge Record</h3>
+            <p id="del-modal-text" class="text-sm text-gray-500 mb-10 italic">This entry will be permanently expunged.</p>
+            <div class="flex flex-col gap-4">
+                <button id="confirm-del-btn" class="w-full bg-red-700 text-white py-4 rounded-xl font-black text-xs uppercase shadow-lg">Confirm Purge</button>
+                <button onclick="document.getElementById('del-modal').classList.add('hidden')" class="w-full bg-gray-100 text-gray-400 py-3 rounded-xl font-bold uppercase text-[10px]">Decline</button>
+            </div>
         </div>
     </div>
 
-    <div id="del-modal" class="fixed inset-0 z-[6000] flex items-center justify-center p-4 hidden">
-        <div class="absolute inset-0 bg-black/90" onclick="document.getElementById('del-modal').classList.add('hidden')"></div>
-        <div class="bg-white p-8 rounded-2xl w-full max-w-xs text-center relative z-10 shadow-2xl">
-            <h3 class="text-xl font-serif font-black text-red-700 uppercase mb-4">Confirm Purge</h3>
-            <button id="confirm-del-btn" class="w-full bg-red-700 text-white py-3 rounded-xl font-black text-[10px] uppercase shadow-lg mb-2">Expunge</button>
-            <button onclick="document.getElementById('del-modal').classList.add('hidden')" class="w-full bg-gray-100 text-gray-400 py-2 rounded-xl font-bold uppercase text-[9px]">Cancel</button>
+    <div id="pass-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[10000] hidden p-4">
+        <div class="bg-gray-800 p-10 rounded-2xl w-full max-sm border-2 border-amber-600 text-white text-center shadow-2xl">
+            <h3 class="text-xl font-serif text-amber-500 font-bold mb-4 uppercase">DM Authorization</h3>
+            <input type="password" id="dm-pass" class="w-full bg-gray-900 text-center text-2xl rounded-lg p-3 mb-8 border border-gray-700 text-amber-500 focus:outline-none">
+            <button onclick="window.authDm()" class="w-full bg-amber-600 hover:bg-amber-500 text-white py-4 rounded-xl font-bold uppercase text-xs tracking-widest">Unlock Archives</button>
+            <button onclick="document.getElementById('pass-modal').classList.add('hidden')" class="text-[10px] text-gray-500 uppercase font-black mt-6 block w-full text-center">Cancel</button>
         </div>
     </div>
 
@@ -281,7 +374,15 @@
         import { getFirestore, collection, doc, updateDoc, onSnapshot, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        const firebaseConfig = { apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI", authDomain: "aeonfall-523c1.firebaseapp.com", projectId: "aeonfall-523c1", storageBucket: "aeonfall-523c1.firebasestorage.app", messagingSenderId: "716207733913", appId: "1:716207733913:web:7aac43906a70e2b5f50c08" };
+        // FIREBASE SETUP
+        const firebaseConfig = {
+            apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI",
+            authDomain: "aeonfall-523c1.firebaseapp.com",
+            projectId: "aeonfall-523c1",
+            storageBucket: "aeonfall-523c1.firebasestorage.app",
+            messagingSenderId: "716207733913",
+            appId: "1:716207733913:web:7aac43906a70e2b5f50c08"
+        };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
@@ -289,38 +390,58 @@
 
         let vocations = [];
         let activeRole = 'player', currentView = 'grid', currentPage = 0, activeVocId = null;
-        let userAuth = null, saveTimer = null, deleteCallback = null, activeEditId = null;
+        let userAuth = null, saveTimer = null, internalDrag = null, deleteCallback = null;
+        let activeEditId = null;
 
-        window.setEditing = (id) => { activeEditId = id; };
-        window.clearEditing = () => { activeEditId = null; };
+        // --- HOISTED GLOBAL FUNCTIONS (window. assignment happens immediately) ---
+
+        window.setEditing = function(id) { activeEditId = id; };
+        window.clearEditing = function() { activeEditId = null; };
 
         window.parseAeonfallContent = function(text, isDM) {
             if (!text) return '';
             if (isDM && activeEditId !== null) return text; 
-            let html = text.replace(/&&([^&]+)&&/g, (match, content) => {
+
+            let html = text;
+            html = html.replace(/&&([^&]+)&&/g, (match, content) => {
                 const parts = content.split('|');
                 const term = parts[0].trim();
-                const definition = parts.length > 1 ? parts[1].trim() : "No technical record found.";
+                const definition = parts.length > 1 ? parts[1].trim() : "No technical record found in archives.";
                 return `<span class="term-hover def-term">${term}<span class="tooltip-content">${definition}</span></span>`;
             });
             html = html.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
             html = html.replace(/\*(?!\*)([^\*]+?)\*(?!\*)/g, '<i>$1</i>');
             html = html.replace(/__(.*?)__/g, '<u>$1</u>');
-            html = html.replace(/\\column/g, '<span class="inline-block w-8">&nbsp;</span>');
+            html = html.replace(/\\column/g, '<span class="indent-tab">&nbsp;</span>');
             return html;
         };
 
-        window.parseScriptList = function(text, isDM) {
-            if (!text) return isDM ? 'Input scripts...' : '';
-            if (isDM && activeEditId !== null) return text;
-            const lines = text.split('\n').filter(l => l.trim() !== '');
-            return `<div class="grid grid-cols-1 sm:grid-cols-2 gap-2">${lines.map(name => `<span class="text-xs font-bold text-[#7a1d1d] underline decoration-dotted cursor-pointer hover:text-amber-600 truncate">${name.trim()}</span>`).join('')}</div>`;
+        window.goToCodex = function(scriptName) {
+            window.location.href = `playershandbook.html?script=${encodeURIComponent(scriptName)}`;
         };
 
-        window.setRole = (r) => { if(r === 'dm') document.getElementById('pass-modal')?.classList.remove('hidden'); else { activeRole = 'player'; localStorage.setItem('aeonfall_role', 'player'); window.updateRoleUI(); } };
-        window.authDm = () => { if(document.getElementById('dm-pass').value === 'Rew4994') { activeRole='dm'; localStorage.setItem('aeonfall_role', 'dm'); document.getElementById('pass-modal')?.classList.add('hidden'); document.getElementById('dm-pass').value=''; window.updateRoleUI(); } else { window.showToast("Authority Refused"); } };
+        window.parseScriptList = function(text, isDM) {
+            if (!text) return isDM ? 'Input script names...' : '';
+            if (isDM && activeEditId !== null) return text;
+            
+            const lines = text.split('\n').filter(l => l.trim() !== '');
+            return `<div class="script-list-grid">
+                ${lines.map(name => `<span class="script-link-item" onclick="window.goToCodex('${name.trim().replace(/'/g, "\\'")}')">${name.trim()}</span>`).join('')}
+            </div>`;
+        };
 
-        window.updateRoleUI = () => {
+        window.setRole = function(r) { 
+            if(r === 'dm') document.getElementById('pass-modal')?.classList.remove('hidden'); 
+            else { activeRole = 'player'; localStorage.setItem('aeonfall_role', 'player'); window.updateRoleUI(); } 
+        };
+
+        window.authDm = function() { 
+            if(document.getElementById('dm-pass').value === 'Rew4994') { 
+                activeRole='dm'; localStorage.setItem('aeonfall_role', 'dm'); document.getElementById('pass-modal')?.classList.add('hidden'); document.getElementById('dm-pass').value=''; window.updateRoleUI(); 
+            } else { window.showToast("Key Mismatch"); } 
+        };
+
+        window.updateRoleUI = function() {
             const isDM = activeRole === 'dm';
             document.getElementById('role-player')?.classList.toggle('active', !isDM);
             document.getElementById('role-dm')?.classList.toggle('active', isDM);
@@ -330,40 +451,88 @@
             if(currentView === 'grid') window.renderGrid(); else window.renderDetails();
         };
 
-        window.setView = (v, id = null) => {
+        window.setView = function(v, id = null) {
             currentView = v; activeVocId = id; currentPage = 0;
             document.getElementById('view-grid')?.classList.toggle('hidden', v !== 'grid');
             document.getElementById('view-details')?.classList.toggle('hidden', v !== 'details');
+            [0, 1, 2, 3].forEach(i => document.getElementById(`leaf-${i}`)?.classList.remove('flipped'));
             if(v === 'grid') window.renderGrid(); else window.renderDetails();
             window.scrollTo(0,0);
         };
 
-        window.flipPage = () => {
+        window.flipPage = function() {
             currentPage = (currentPage + 1) % 4;
-            for(let i=0; i<4; i++) { document.getElementById(`leaf-${i}`)?.classList.toggle('flipped', i < currentPage); }
-            document.getElementById('page-num').innerText = `SEGMENT 0${currentPage + 1} / 04`;
+            for(let i=0; i<4; i++) {
+                const leaf = document.getElementById(`leaf-${i}`);
+                if(leaf) leaf.classList.toggle('flipped', i < currentPage);
+            }
+            const indicator = document.getElementById('page-num');
+            if (indicator) indicator.innerText = `SEGMENT 0${currentPage + 1} / 04`;
+            const flipLabels = ["📜 Flip to Features", "📜 Flip to Archetypes", "📜 Flip to Scripts", "📜 Flip to Vocation"];
+            const btn = document.getElementById('btn-flip');
+            if(btn) btn.innerText = flipLabels[currentPage];
             window.scrollTo(0,0);
         };
 
-        window.dbUp = (field, val) => {
+        window.dbUp = function(field, val) {
             if(!activeVocId || !userAuth) return;
             if(saveTimer) clearTimeout(saveTimer);
-            saveTimer = setTimeout(async () => { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { [field]: val }); window.showToast("Sync"); }, 1000);
+            saveTimer = setTimeout(async () => {
+                try {
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { [field]: val });
+                    window.showToast("Archival Sync Complete");
+                } catch(e) {}
+            }, 800);
         };
 
-        window.updateLoreField = (idx, field, val) => {
+        window.updateLoreField = function(idx, field, val) {
             if(saveTimer) clearTimeout(saveTimer);
             saveTimer = setTimeout(async () => {
-                const voc = vocations.find(x => x.id === activeVocId);
-                const blocks = JSON.parse(voc.loreBlocks || '[]');
+                if(!activeVocId || !userAuth) return;
+                const v = vocations.find(x => x.id === activeVocId);
+                const blocks = JSON.parse(v.loreBlocks || '[]');
                 blocks[idx][field] = val;
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { loreBlocks: JSON.stringify(blocks) });
-            }, 1000);
+            }, 800);
         };
 
-        window.updateTableField = (tIdx, field, val, aIdx = null, idx1 = null, idx2 = null) => {
+        window.updateFeatureField = function(idx, field, val) {
             if(saveTimer) clearTimeout(saveTimer);
             saveTimer = setTimeout(async () => {
+                if(!activeVocId || !userAuth) return;
+                const v = vocations.find(x => x.id === activeVocId);
+                const blocks = JSON.parse(v.featureBlocks || '[]');
+                blocks[idx][field] = val;
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { featureBlocks: JSON.stringify(blocks) });
+            }, 800);
+        };
+
+        window.updateArchetypeField = function(idx, field, val) {
+            if(saveTimer) clearTimeout(saveTimer);
+            saveTimer = setTimeout(async () => {
+                if(!activeVocId || !userAuth) return;
+                const v = vocations.find(x => x.id === activeVocId);
+                const archetypes = JSON.parse(v.archetypes || '[]');
+                archetypes[idx][field] = val;
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { archetypes: JSON.stringify(archetypes) });
+            }, 800);
+        };
+
+        window.updateScriptTierField = function(idx, field, val) {
+            if(saveTimer) clearTimeout(saveTimer);
+            saveTimer = setTimeout(async () => {
+                if(!activeVocId || !userAuth) return;
+                const v = vocations.find(x => x.id === activeVocId);
+                const blocks = JSON.parse(v.scriptTiers || '[]');
+                blocks[idx][field] = val;
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { scriptTiers: JSON.stringify(blocks) });
+            }, 800);
+        };
+
+        window.updateTableField = function(tIdx, field, val, aIdx = null, idx1 = null, idx2 = null) {
+            if(saveTimer) clearTimeout(saveTimer);
+            saveTimer = setTimeout(async () => {
+                if(!activeVocId || !userAuth) return;
                 const v = vocations.find(x => x.id === activeVocId);
                 if(aIdx !== null) {
                     const archs = JSON.parse(v.archetypes || '[]');
@@ -378,92 +547,482 @@
                     else if(field === 'rows') tbs[tIdx].rows[idx1][idx2] = val;
                     await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { tables: JSON.stringify(tbs) });
                 }
-            }, 1000);
+            }, 800);
         };
 
-        window.renderTableHtml = (table, tIdx, isDM, aIdx = null) => {
-            return `<div class="mt-6"><b class="text-[9px] uppercase text-[#7a1d1d] dm-editable" contenteditable="${isDM}" onblur="window.updateTableField(${tIdx}, 'title', this.innerText, ${aIdx})">${table.title}</b><div class="table-wrap"><table class="prog-table"><thead><tr>${table.headers.map((h, hi) => `<th contenteditable="${isDM}" onblur="window.updateTableField(${tIdx}, 'headers', this.innerText, ${aIdx}, ${hi})">${h}</th>`).join('')}</tr></thead><tbody>${table.rows.map((row, ri) => `<tr>${row.map((c, ci) => `<td contenteditable="${isDM}" onblur="window.updateTableField(${tIdx}, 'rows', this.innerText, ${aIdx}, ${ri}, ${ci})">${isDM ? c : window.parseAeonfallContent(c, false)}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`;
+        window.openDelModal = function(text, callback) {
+            const txt = document.getElementById('del-modal-text');
+            if (txt) txt.innerText = text;
+            deleteCallback = callback;
+            document.getElementById('del-modal')?.classList.remove('hidden');
         };
 
-        window.renderGrid = () => {
+        window.removeLoreBlock = function(idx) {
+            window.openDelModal("Expunge research segment permanently?", async () => {
+                const v = vocations.find(x => x.id === activeVocId);
+                const blocks = JSON.parse(v.loreBlocks || '[]');
+                blocks.splice(idx, 1);
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { loreBlocks: JSON.stringify(blocks) });
+            });
+        };
+
+        window.removeFeatureBlock = function(idx) {
+            window.openDelModal("Expunge class feature permanently?", async () => {
+                const v = vocations.find(x => x.id === activeVocId);
+                const blocks = JSON.parse(v.featureBlocks || '[]');
+                blocks.splice(idx, 1);
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { featureBlocks: JSON.stringify(blocks) });
+            });
+        };
+
+        window.removeScriptTier = function(idx) {
+            window.openDelModal("Expunge script tier permanently?", async () => {
+                const v = vocations.find(x => x.id === activeVocId);
+                const blocks = JSON.parse(v.scriptTiers || '[]');
+                blocks.splice(idx, 1);
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { scriptTiers: JSON.stringify(blocks) });
+            });
+        };
+
+        window.removeArchetype = function(idx) {
+            window.openDelModal("Expunge archetype permanently?", async () => {
+                const v = vocations.find(x => x.id === activeVocId);
+                const archs = JSON.parse(v.archetypes || '[]');
+                archs.splice(idx, 1);
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { archetypes: JSON.stringify(archs) });
+            });
+        };
+
+        window.delTable = function(tIdx, aIdx = null) {
+            window.openDelModal("Delete data table permanently?", async () => {
+                const v = vocations.find(x => x.id === activeVocId);
+                if(aIdx !== null) {
+                    const archs = JSON.parse(v.archetypes || '[]');
+                    archs[aIdx].tables.splice(tIdx, 1);
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { archetypes: JSON.stringify(archs) });
+                } else {
+                    const tbs = JSON.parse(v.tables || '[]');
+                    tbs.splice(tIdx, 1);
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { tables: JSON.stringify(tbs) });
+                }
+            });
+        };
+
+        window.triggerDel = function() {
+            window.openDelModal("Expunge bio-record permanently?", async () => {
+                if (activeVocId) {
+                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId));
+                    window.setView('grid');
+                }
+            });
+        };
+
+        window.addVocation = async function() {
+            if(!userAuth) return;
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookVocations'), {
+                name: "NEW SUBJECT", tagline: "Tagline...", desc: "Description...",
+                intro: "Intro...", quickBuild: "Build...", classFeatures: "Features...",
+                artUrl: "", detailArtUrl: "", primaryAbility: "Str", hitDie: "d8", saves: "Str",
+                icon: "🛡️", custodianId: "994",
+                skills: "...", weapons: "...", armor: "...", equipment: "...",
+                tables: "[]", archetypes: "[]", loreBlocks: "[]", featureBlocks: "[]", scriptTiers: "[]", createdAt: Date.now()
+            });
+        };
+
+        window.addLoreBlock = async function() {
+            if(!activeVocId) return;
+            const v = vocations.find(x => x.id === activeVocId);
+            const blocks = JSON.parse(v.loreBlocks || '[]');
+            blocks.push({ title: "RESEARCH FINDINGS", text: "Technical observations...", id: Date.now() });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { loreBlocks: JSON.stringify(blocks) });
+        };
+
+        window.addScriptTier = async function() {
+            if(!activeVocId) return;
+            const v = vocations.find(x => x.id === activeVocId);
+            const blocks = JSON.parse(v.scriptTiers || '[]');
+            blocks.push({ title: "1st Tier Scripts", list: "Absorb Elements\nAlarm", id: Date.now() });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { scriptTiers: JSON.stringify(blocks) });
+        };
+
+        window.addFeatureBlock = async function() {
+            if(!activeVocId) return;
+            const v = vocations.find(x => x.id === activeVocId);
+            const blocks = JSON.parse(v.featureBlocks || '[]');
+            blocks.push({ title: "NEW FEATURE", content: "Feature details...", id: Date.now() });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { featureBlocks: JSON.stringify(blocks) });
+        };
+
+        window.addArchetype = async function() {
+            if(!activeVocId) return;
+            const v = vocations.find(x => x.id === activeVocId);
+            const archs = JSON.parse(v.archetypes || '[]');
+            archs.push({ name: "NEW ARCHETYPE", tagline: "Subclass Tagline", desc: "Features...", tables: [] });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { archetypes: JSON.stringify(archs) });
+        };
+
+        window.addTable = async function() {
+            if(!activeVocId) return;
+            const v = vocations.find(x => x.id === activeVocId);
+            const tbs = JSON.parse(v.tables || '[]');
+            tbs.push({ title: "NEW TABLE", headers: ["Level", "Features"], rows: [["1st", "+2", "..."]] });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { tables: JSON.stringify(tbs) });
+        };
+
+        window.addArchetypeTable = async function(aIdx) {
+            if(!activeVocId) return;
+            const v = vocations.find(x => x.id === activeVocId);
+            const archs = JSON.parse(v.archetypes || '[]');
+            if (!archs[aIdx].tables) archs[aIdx].tables = [];
+            archs[aIdx].tables.push({ title: "ARCHETYPE TABLE", headers: ["Level", "Features"], rows: [["3rd", "..."]] });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { archetypes: JSON.stringify(archs) });
+        };
+
+        window.addTableRow = async function(tIdx, aIdx = null) {
+            if(!activeVocId) return;
+            const v = vocations.find(x => x.id === activeVocId);
+            if(aIdx !== null) {
+                const archs = JSON.parse(v.archetypes || '[]');
+                archs[aIdx].tables[tIdx].rows.push(new Array(archs[aIdx].tables[tIdx].headers.length).fill("..."));
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { archetypes: JSON.stringify(archs) });
+            } else {
+                const tbs = JSON.parse(v.tables || '[]');
+                tbs[tIdx].rows.push(new Array(tbs[tIdx].headers.length).fill("..."));
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { tables: JSON.stringify(tbs) });
+            }
+        };
+
+        window.addTableCol = async function(tIdx, aIdx = null) {
+            if(!activeVocId) return;
+            const v = vocations.find(x => x.id === activeVocId);
+            if(aIdx !== null) {
+                const archs = JSON.parse(v.archetypes || '[]');
+                archs[aIdx].tables[tIdx].headers.push("NEW COL");
+                archs[aIdx].tables[tIdx].rows = archs[aIdx].tables[tIdx].rows.map(r => [...r, "..."]);
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { archetypes: JSON.stringify(archs) });
+            } else {
+                const tbs = JSON.parse(v.tables || '[]');
+                tbs[tIdx].headers.push("NEW COL");
+                tbs[tIdx].rows = tbs[tIdx].rows.map(r => [...r, "..."]);
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { tables: JSON.stringify(tbs) });
+            }
+        };
+
+        window.remTableRow = async function(tIdx, aIdx = null) {
+            if(!activeVocId) return;
+            const v = vocations.find(x => x.id === activeVocId);
+            if(aIdx !== null) {
+                const archs = JSON.parse(v.archetypes || '[]');
+                if (archs[aIdx].tables[tIdx].rows.length > 1) {
+                    archs[aIdx].tables[tIdx].rows.pop();
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { archetypes: JSON.stringify(archs) });
+                }
+            } else {
+                const tbs = JSON.parse(v.tables || '[]');
+                if (tbs[tIdx].rows.length > 1) {
+                    tbs[tIdx].rows.pop();
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { tables: JSON.stringify(tbs) });
+                }
+            }
+        };
+
+        window.remTableCol = async function(tIdx, aIdx = null) {
+            if(!activeVocId) return;
+            const v = vocations.find(x => x.id === activeVocId);
+            if(aIdx !== null) {
+                const archs = JSON.parse(v.archetypes || '[]');
+                if (archs[aIdx].tables[tIdx].headers.length > 1) {
+                    archs[aIdx].tables[tIdx].headers.pop();
+                    archs[aIdx].tables[tIdx].rows = archs[aIdx].tables[tIdx].rows.map(r => r.slice(0, -1));
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { archetypes: JSON.stringify(archs) });
+                }
+            } else {
+                const tbs = JSON.parse(v.tables || '[]');
+                if (tbs[tIdx].headers.length > 1) {
+                    tbs[tIdx].headers.pop();
+                    tbs[tIdx].rows = tbs[tIdx].rows.map(r => r.slice(0, -1));
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { tables: JSON.stringify(tbs) });
+                }
+            }
+        };
+
+        window.showToast = function(m) {
+            const t = document.getElementById('toast');
+            if(t) { t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 2000); }
+        };
+
+        window.renderTableHtml = function(table, tIdx, isDM, aIdx = null) {
+            const tableId = `tbl-${aIdx !== null ? 'a-' + aIdx + '-' : ''}${tIdx}`;
+            return `
+                <div class="mt-8 relative group">
+                    <div class="flex justify-between items-center mb-2">
+                        <b id="${tableId}" class="text-[10px] uppercase text-[#7a1d1d] dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('${tableId}')" onblur="window.clearEditing(); window.renderDetails()" oninput="window.updateTableField(${tIdx}, 'title', this.innerText, ${aIdx})">
+                            ${activeEditId === tableId ? table.title : window.parseAeonfallContent(table.title, false)}
+                        </b>
+                        ${isDM ? `<div class="flex gap-1">
+                                <button onclick="window.addTableRow(${tIdx}, ${aIdx})" class="arch-btn arch-btn-add" title="Add Row">+R</button>
+                                <button onclick="window.remTableRow(${tIdx}, ${aIdx})" class="arch-btn arch-btn-del" title="Remove Row">-R</button>
+                                <button onclick="window.addTableCol(${tIdx}, ${aIdx})" class="arch-btn arch-btn-add" title="Add Column">+C</button>
+                                <button onclick="window.remTableCol(${tIdx}, ${aIdx})" class="arch-btn arch-btn-del" title="Remove Column">-C</button>
+                                <button onclick="window.delTable(${tIdx}, ${aIdx})" class="arch-btn arch-btn-del">✕</button>
+                            </div>` : ''}
+                    </div>
+                    <table class="prog-table">
+                        <thead><tr>${table.headers.map((h, hIdx) => {
+                            const hId = `tbl-h-${aIdx !== null ? 'a-' + aIdx + '-' : ''}${tIdx}-${hIdx}`;
+                            return `<th id="${hId}" contenteditable="${isDM}" onfocus="window.setEditing('${hId}')" onblur="window.clearEditing(); window.renderDetails()" oninput="window.updateTableField(${tIdx}, 'headers', this.innerText, ${aIdx}, ${hIdx})">
+                                ${activeEditId === hId ? h : window.parseAeonfallContent(h, false)}
+                            </th>`;
+                        }).join('')}</tr></thead>
+                        <tbody>${table.rows.map((row, rIdx) => `<tr>${row.map((cell, cIdx) => {
+                            const cId = `tbl-c-${aIdx !== null ? 'a-' + aIdx + '-' : ''}${tIdx}-${rIdx}-${cIdx}`;
+                            return `<td id="${cId}" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); window.renderDetails()" oninput="window.updateTableField(${tIdx}, 'rows', this.innerText, ${aIdx}, ${rIdx}, ${cIdx})">
+                                ${activeEditId === cId ? cell : window.parseAeonfallContent(cell, false)}
+                            </td>`;
+                        }).join('')}</tr>`).join('')}</tbody>
+                    </table>
+                </div>
+            `;
+        };
+
+        window.renderGrid = function() {
             const grid = document.getElementById('vocation-grid');
             if (!grid) return;
             grid.innerHTML = vocations.map(v => `
                 <div class="vocation-card" onclick="window.setView('details', '${v.id}')">
                     <div class="card-art" style="background-image: url('${v.artUrl || ''}')"></div>
                     <div class="card-info-panel">
-                        <div class="card-header-row"><div class="card-icon-box">${v.icon || '🛡️'}</div><div><h3 class="card-name">${v.name}</h3><span class="text-[8px] italic text-gray-400">Class Record</span></div></div>
-                        <div class="h-[2px] bg-amber-600 mb-4 w-full"></div>
+                        <div class="card-header-row">
+                            <div class="card-icon-box">${v.icon || '🛡️'}</div>
+                            <div>
+                                <h3 class="card-name">${v.name}</h3>
+                                <span class="text-[10px] italic text-gray-400">Player's Handbook</span>
+                            </div>
+                        </div>
+                        <div class="orange-divider"></div>
                         <div class="card-tagline">${v.tagline}</div>
                         <p class="card-desc">${v.desc}</p>
-                        <div class="text-[10px] space-y-1"><div><b>Primary:</b> ${v.primaryAbility}</div><div><b>Die:</b> ${v.hitDie}</div></div>
-                        <div class="view-btn">Consult Record</div>
+                        <div class="stat-line"><b>Primary Ability:</b> ${v.primaryAbility}</div>
+                        <div class="stat-line"><b>Hit Point Die:</b> ${v.hitDie}</div>
+                        <div class="stat-line"><b>Saves:</b> ${v.saves}</div>
+                        <div class="view-btn">Consult Bio-Record</div>
                     </div>
                 </div>
             `).join('');
         };
 
-        window.renderDetails = () => {
-            const v = vocations.find(x => x.id === activeVocId); if(!v) return;
+        window.renderDetails = function() {
+            const v = vocations.find(x => x.id === activeVocId);
+            if(!v) return;
             const isDM = activeRole === 'dm';
 
-            document.getElementById('content-intro').innerHTML = `
-                <h2 class="dossier-subject-title dm-editable" contenteditable="${isDM}" onblur="window.dbUp('name', this.innerText)">${v.name}</h2>
-                <div class="dossier-subtitle">Signature Verified • Custodian #<span class="dm-editable" contenteditable="${isDM}" onblur="window.dbUp('custodianId', this.innerText)">${v.custodianId || '994'}</span></div>
-                <div class="dm-editable italic text-xs text-[#3e2723] mb-4" contenteditable="${isDM}" onblur="window.dbUp('tagline', this.innerText)">${v.tagline}</div>
-                <div class="visual-box" style="background-image: url('${v.detailArtUrl || v.artUrl}')"></div>
-                ${isDM ? `<div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-6"><input type="text" class="p-2 border text-[9px]" value="${v.artUrl}" oninput="window.dbUp('artUrl', this.value)" placeholder="Grid Art"><input type="text" class="p-2 border text-[9px]" value="${v.detailArtUrl}" oninput="window.dbUp('detailArtUrl', this.value)" placeholder="Detail Art"></div>` : ''}
-                <div class="research-body text-sm leading-relaxed dm-editable" contenteditable="${isDM}" onblur="window.dbUp('intro', this.innerHTML)">${isDM ? v.intro : window.parseAeonfallContent(v.intro, false)}</div>
-                <div class="mt-8">${JSON.parse(v.loreBlocks || '[]').map((b, i) => `<div class="mb-6"><div class="flex justify-between items-center"><b class="text-sm font-serif uppercase dm-editable" contenteditable="${isDM}" onblur="window.updateLoreField(${i}, 'title', this.innerText)">${b.title}</b>${isDM ? `<button onclick="window.removeLoreBlock(${i})" class="text-red-700 text-[8px]">EXPUNGE</button>` : ''}</div><div class="research-findings text-sm dm-editable" contenteditable="${isDM}" onblur="window.updateLoreField(${i}, 'text', this.innerHTML)">${isDM ? b.text : window.parseAeonfallContent(b.text, false)}</div></div>`).join('')}</div>
-            `;
+            // PAGE 1: INTRO
+            const lore = v.loreBlocks ? JSON.parse(v.loreBlocks) : [];
+            const introContent = document.getElementById('content-intro');
+            if (introContent) {
+                introContent.innerHTML = `
+                    <div class="mb-10">
+                        <h2 id="field-name" class="dossier-subject-title dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('field-name')" onblur="window.clearEditing(); renderDetails()" oninput="window.dbUp('name', this.innerText)">${activeEditId === 'field-name' ? v.name : window.parseAeonfallContent(v.name, false)}</h2>
+                        <div class="dossier-subtitle">Genetic Signature Verified • Custodian #<span id="field-cust" class="dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('field-cust')" onblur="window.clearEditing(); renderDetails()" oninput="window.dbUp('custodianId', this.innerText)">${v.custodianId || '994'}</span></div>
+                    </div>
+                    <div class="innate-param-header">Innate Parameters</div>
+                    <div id="field-tagline" class="dm-editable italic text-sm text-[#3e2723] mb-6" contenteditable="${isDM}" onfocus="window.setEditing('field-tagline')" onblur="window.clearEditing(); renderDetails()" oninput="window.dbUp('tagline', this.innerText)">${activeEditId === 'field-tagline' ? v.tagline : window.parseAeonfallContent(v.tagline, false)}</div>
+                    <div class="visual-box" style="background-image: url('${v.detailArtUrl || v.artUrl}')"></div>
+                    ${isDM ? `<div class="grid grid-cols-2 gap-4 mb-8">
+                        <input type="text" class="p-2 bg-white/50 border text-[10px]" value="${v.artUrl}" oninput="window.dbUp('artUrl', this.value)" placeholder="Grid Art URL">
+                        <input type="text" class="p-2 bg-white/50 border text-[10px]" value="${v.detailArtUrl}" oninput="window.dbUp('detailArtUrl', this.value)" placeholder="Detail Art URL">
+                    </div>` : ''}
+                    <div id="field-intro" class="research-body dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('field-intro')" onblur="window.clearEditing(); renderDetails()" oninput="window.dbUp('intro', this.innerHTML)">
+                        ${activeEditId === 'field-intro' ? v.intro : window.parseAeonfallContent(v.intro, false)}
+                    </div>
+                    <div id="lore-container" class="mt-12">
+                        ${lore.map((block, lIdx) => {
+                            const tId = `lore-title-${lIdx}`;
+                            const bId = `lore-text-${lIdx}`;
+                            return `
+                            <div class="research-segment">
+                                <div class="research-box research-header-box">
+                                    <span id="${tId}" class="research-title dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('${tId}')" onblur="window.clearEditing(); renderDetails()" oninput="window.updateLoreField(${lIdx}, 'title', this.innerText)">
+                                        ${activeEditId === tId ? block.title : window.parseAeonfallContent(block.title, false)}
+                                    </span>
+                                    ${isDM ? `<span class="research-expunge-btn" onclick="window.removeLoreBlock(${lIdx})">EXPUNGE SECTION</span>` : ''}
+                                </div>
+                                <div id="${bId}" class="research-box research-content dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('${bId}')" onblur="window.clearEditing(); renderDetails()" oninput="window.updateLoreField(${lIdx}, 'text', this.innerHTML)">
+                                    ${activeEditId === bId ? block.text : window.parseAeonfallContent(block.text, false)}
+                                </div>
+                            </div>`;
+                        }).join('')}
+                    </div>
+                `;
+            }
 
-            document.getElementById('content-features').innerHTML = `
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div class="lg:col-span-1"><div class="dossier-section-header">Quick Build</div><div class="text-xs leading-relaxed dm-editable" contenteditable="${isDM}" onblur="window.dbUp('quickBuild', this.innerHTML)">${isDM ? v.quickBuild : window.parseAeonfallContent(v.quickBuild, false)}</div>${JSON.parse(v.tables || '[]').map((t, ti) => window.renderTableHtml(t, ti, isDM)).join('')}${isDM ? `<button onclick="window.addTable()" class="arch-btn arch-btn-add mt-4 w-full">+ Global Table</button>` : ''}</div>
-                    <div class="lg:col-span-2"><div class="dossier-section-header">Core Traits</div><div class="bg-black/5 p-4 rounded mb-6">${['primaryAbility', 'hitDie', 'saves', 'skills', 'weapons', 'armor', 'equipment'].map(f => `<div class="trait-group"><span class="trait-label">${f.toUpperCase()}</span><div class="trait-value dm-editable" contenteditable="${isDM}" onblur="window.dbUp('${f}', this.innerText)">${v[f] || '...'}</div></div>`).join('')}</div><div class="dossier-section-header">Class Features</div><div class="text-sm dm-editable" contenteditable="${isDM}" onblur="window.dbUp('classFeatures', this.innerHTML)">${isDM ? v.classFeatures : window.parseAeonfallContent(v.classFeatures, false)}</div><div class="mt-6">${JSON.parse(v.featureBlocks || '[]').map((f, i) => `<div class="mb-6"><div class="flex justify-between items-center"><b class="uppercase text-sm dm-editable" contenteditable="${isDM}" onblur="window.updateFeatureField(${i}, 'title', this.innerText)">${f.title}</b>${isDM ? `<button onclick="window.removeFeatureBlock(${i})" class="text-red-700 text-[8px]">EXPUNGE</button>` : ''}</div><div class="text-sm italic mt-2 dm-editable" contenteditable="${isDM}" onblur="window.updateFeatureField(${i}, 'content', this.innerHTML)">${isDM ? f.content : window.parseAeonfallContent(f.content, false)}</div></div>`).join('')}${isDM ? `<button onclick="window.addFeatureBlock()" class="arch-btn arch-btn-add">+ Block</button>` : ''}</div>
-                </div>
-            `;
+            // PAGE 2: FEATURES
+            const features = v.featureBlocks ? JSON.parse(v.featureBlocks) : [];
+            const tbs = v.tables ? JSON.parse(v.tables) : [];
+            const featContent = document.getElementById('content-features');
+            if (featContent) {
+                featContent.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                        <div class="col-span-1">
+                            <div class="dossier-section-header">Quick Build</div>
+                            <div id="field-qb" class="dm-editable text-sm leading-relaxed mb-10" contenteditable="${isDM}" onfocus="window.setEditing('field-qb')" onblur="window.clearEditing(); renderDetails()" oninput="window.dbUp('quickBuild', this.innerHTML)">
+                                ${activeEditId === 'field-qb' ? v.quickBuild : window.parseAeonfallContent(v.quickBuild, false)}
+                            </div>
+                            <div id="sidebar-tables">${tbs.map((t, idx) => window.renderTableHtml(t, idx, isDM)).join('')}</div>
+                            ${isDM ? `<button onclick="window.addTable()" class="arch-btn arch-btn-add mt-6 w-full">+ Add Global Table</button>` : ''}
+                        </div>
+                        <div class="col-span-2">
+                            <div class="dossier-section-header">Core Traits</div>
+                            <div class="bg-black/5 p-6 rounded mb-8">
+                                ${['primaryAbility', 'hitDie', 'saves', 'skills', 'weapons', 'armor', 'equipment'].map(f => {
+                                    const traitId = `trait-${f}`;
+                                    return `
+                                    <div class="trait-group">
+                                        <span class="trait-label">${f.replace(/([A-Z])/g, ' $1').toUpperCase()}</span>
+                                        <div id="${traitId}" class="trait-value dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('${traitId}')" onblur="window.clearEditing(); renderDetails()" oninput="window.dbUp('${f}', this.innerText)">
+                                            ${activeEditId === traitId ? v[f] : window.parseAeonfallContent(v[f], false)}
+                                        </div>
+                                    </div>`;
+                                }).join('')}
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div class="dossier-section-header">Class Features</div>
+                                ${isDM ? `<button onclick="window.addFeatureBlock()" class="arch-btn arch-btn-add">+ Add Feature Block</button>` : ''}
+                            </div>
+                            <div id="field-cf" class="dm-editable text-sm leading-loose whitespace-pre-wrap mb-10" contenteditable="${isDM}" onfocus="window.setEditing('field-cf')" onblur="window.clearEditing(); renderDetails()" oninput="window.dbUp('classFeatures', this.innerHTML)">
+                                ${activeEditId === 'field-cf' ? v.classFeatures : window.parseAeonfallContent(v.classFeatures, false)}
+                            </div>
+                            <div id="feat-container">
+                                ${features.map((feat, fIdx) => {
+                                    const ftId = `feat-title-${fIdx}`;
+                                    const fcId = `feat-text-${fIdx}`;
+                                    return `
+                                    <div class="feature-module mb-8 border-l-2 border-black/5 pl-4">
+                                        <h3 id="${ftId}" class="dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('${ftId}')" onblur="window.clearEditing(); renderDetails()" oninput="window.updateFeatureField(${fIdx}, 'title', this.innerText)">
+                                            ${activeEditId === ftId ? feat.title : window.parseAeonfallContent(feat.title, false)}
+                                        </h3>
+                                        <div id="${fcId}" class="dm-editable text-sm leading-relaxed" contenteditable="${isDM}" onfocus="window.setEditing('${fcId}')" onblur="window.clearEditing(); renderDetails()" oninput="window.updateFeatureField(${fIdx}, 'content', this.innerHTML)">
+                                            ${activeEditId === fcId ? feat.content : window.parseAeonfallContent(feat.content, false)}
+                                        </div>
+                                        ${isDM ? `<button onclick="window.removeFeatureBlock(${fIdx})" class="text-red-700 text-[9px] mt-2 font-bold uppercase">✕ Remove Segment</button>` : ''}
+                                    </div>`;
+                                }).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
 
-            document.getElementById('content-archetypes').innerHTML = `
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div class="lg:col-span-1">${JSON.parse(v.tables || '[]').map((t, ti) => window.renderTableHtml(t, ti, isDM)).join('')}</div>
-                    <div class="lg:col-span-2"><div class="flex justify-between items-center mb-6"><div class="dossier-section-header mb-0">Evolution</div>${isDM ? `<button onclick="window.addArchetype()" class="arch-btn arch-btn-add">+ Archetype</button>` : ''}</div>${JSON.parse(v.archetypes || '[]').map((a, i) => `<div class="archetype-box mb-8"><h3 class="archetype-title dm-editable" contenteditable="${isDM}" onblur="window.updateArchetypeField(${i}, 'name', this.innerText)">${a.name}</h3><div class="text-xs italic mb-4 dm-editable" contenteditable="${isDM}" onblur="window.updateArchetypeField(${i}, 'tagline', this.innerText)">${a.tagline || ''}</div><div class="text-sm dm-editable" contenteditable="${isDM}" onblur="window.updateArchetypeField(${i}, 'desc', this.innerHTML)">${isDM ? a.desc : window.parseAeonfallContent(a.desc, false)}</div>${isDM ? `<div class="flex gap-2 mt-4"><button onclick="window.addArchetypeTable(${i})" class="arch-btn">+ Tbl</button><button onclick="window.removeArchetype(${i})" class="arch-btn arch-btn-del">Delete</button></div>` : ''}${(a.tables || []).map((t, ti) => window.renderTableHtml(t, ti, isDM, i)).join('')}</div>`).join('')}</div>
-                </div>
-            `;
+            // PAGE 3: ARCHEOTYPES
+            const archs = v.archetypes ? JSON.parse(v.archetypes) : [];
+            const archContent = document.getElementById('content-archetypes');
+            if (archContent) {
+                archContent.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                        <div class="col-span-1">
+                            <div class="dossier-section-header">Reference Tables</div>
+                            <div id="sidebar-tables-archetypes">
+                                ${tbs.map((table, tIdx) => window.renderTableHtml(table, tIdx, isDM)).join('')}
+                            </div>
+                            ${isDM ? `<button onclick="window.addTable()" class="arch-btn arch-btn-add mt-6 w-full">+ Add Global Table</button>` : ''}
+                        </div>
+                        <div class="col-span-2">
+                            <div class="flex justify-between items-center mb-10">
+                                <div class="dossier-section-header mb-0">Archetypal Evolution</div>
+                                ${isDM ? `<button onclick="window.addArchetype()" class="arch-btn arch-btn-add">+ Add Archetype</button>` : ''}
+                            </div>
+                            ${archs.map((arch, aIdx) => {
+                                const anId = `arch-name-${aIdx}`;
+                                const atId = `arch-tag-${aIdx}`;
+                                const adId = `arch-desc-${aIdx}`;
+                                return `
+                                <div class="archetype-box">
+                                    <div class="archetype-header">
+                                        <div>
+                                            <h3 id="${anId}" class="archetype-title dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('${anId}')" onblur="window.clearEditing(); renderDetails()" oninput="window.updateArchetypeField(${aIdx}, 'name', this.innerText)">
+                                                ${activeEditId === anId ? arch.name : window.parseAeonfallContent(arch.name, false)}
+                                            </h3>
+                                            <div id="${atId}" class="archetype-tagline dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('${atId}')" onblur="window.clearEditing(); renderDetails()" oninput="window.updateArchetypeField(${aIdx}, 'tagline', this.innerText)">
+                                                ${activeEditId === atId ? arch.tagline : window.parseAeonfallContent(arch.tagline || '', false)}
+                                            </div>
+                                        </div>
+                                        ${isDM ? `<button onclick="window.removeArchetype(${aIdx})" class="arch-btn arch-btn-del">Expunge</button>` : ''}
+                                    </div>
+                                    <div id="${adId}" class="dm-editable text-sm leading-relaxed mb-6" contenteditable="${isDM}" onfocus="window.setEditing('${adId}')" onblur="window.clearEditing(); renderDetails()" oninput="window.updateArchetypeField(${aIdx}, 'desc', this.innerHTML)">
+                                        ${activeEditId === adId ? arch.desc : window.parseAeonfallContent(arch.desc, false)}
+                                    </div>
+                                    ${isDM ? `<button onclick="window.addArchetypeTable(${aIdx})" class="arch-btn arch-btn-add mb-4">+ Add Sub-Table</button>` : ''}
+                                    ${(arch.tables || []).map((table, tIdx) => window.renderTableHtml(table, tIdx, isDM, aIdx)).join('')}
+                                </div>`;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }
 
-            document.getElementById('content-scripts').innerHTML = `
-                <div class="flex justify-between items-center mb-6"><div class="dossier-section-header mb-0">Authorized Scripts</div>${isDM ? `<button onclick="window.addScriptTier()" class="arch-btn arch-btn-add">+ Tier</button>` : ''}</div>
-                ${JSON.parse(v.scriptTiers || '[]').map((t, i) => `<div class="mb-8"><div class="flex justify-between items-center border-b border-black/10 pb-2"><b class="text-lg font-serif dm-editable" contenteditable="${isDM}" onblur="window.updateScriptTierField(${i}, 'title', this.innerText)">${t.title}</b>${isDM ? `<button onclick="window.removeScriptTier(${i})" class="text-red-700 text-[8px]">EXPUNGE</button>` : ''}</div><div class="mt-4 dm-editable" contenteditable="${isDM}" onblur="window.updateScriptTierField(${i}, 'list', this.innerText)">${isDM ? t.list : window.parseScriptList(t.list, false)}</div></div>`).join('')}
-            `;
+            // PAGE 4: SCRIPTS
+            const scriptTiers = v.scriptTiers ? JSON.parse(v.scriptTiers) : [];
+            const scriptContent = document.getElementById('content-scripts');
+            if (scriptContent) {
+                scriptContent.innerHTML = `
+                    <div class="flex justify-between items-center mb-10">
+                        <div class="dossier-section-header mb-0">Authorized Script Tiers</div>
+                        ${isDM ? `<button onclick="window.addScriptTier()" class="arch-btn arch-btn-add">+ Add Script Tier</button>` : ''}
+                    </div>
+                    ${scriptTiers.map((tier, sIdx) => {
+                        const tId = `tier-title-${sIdx}`;
+                        const cId = `tier-content-${sIdx}`;
+                        return `
+                        <div class="research-segment">
+                            <div class="research-box research-header-box">
+                                <span id="${tId}" class="script-tier-heading dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('${tId}')" onblur="window.clearEditing(); renderDetails()" oninput="window.updateScriptTierField(${sIdx}, 'title', this.innerText)">
+                                    ${activeEditId === tId ? tier.title : window.parseAeonfallContent(tier.title, false)}
+                                </span>
+                                ${isDM ? `<span class="research-expunge-btn" onclick="window.removeScriptTier(${sIdx})">EXPUNGE TIER</span>` : ''}
+                            </div>
+                            <div id="${cId}" class="research-box research-content dm-editable" contenteditable="${isDM}" onfocus="window.setEditing('${cId}')" onblur="window.clearEditing(); renderDetails()" oninput="window.updateScriptTierField(${sIdx}, 'list', this.innerText)">
+                                ${activeEditId === cId ? tier.list : window.parseScriptList(tier.list, false)}
+                            </div>
+                        </div>`;
+                    }).join('')}
+                `;
+            }
         };
 
-        window.removeLoreBlock = async (idx) => { if(activeVocId) { const voc = vocations.find(x => x.id === activeVocId); const b = JSON.parse(voc.loreBlocks || '[]'); b.splice(idx, 1); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { loreBlocks: JSON.stringify(b) }); } };
-        window.removeFeatureBlock = async (idx) => { if(activeVocId) { const voc = vocations.find(x => x.id === activeVocId); const b = JSON.parse(voc.featureBlocks || '[]'); b.splice(idx, 1); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { featureBlocks: JSON.stringify(b) }); } };
-        window.removeArchetype = async (idx) => { if(activeVocId) { const voc = vocations.find(x => x.id === activeVocId); const a = JSON.parse(voc.archetypes || '[]'); a.splice(idx, 1); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { archetypes: JSON.stringify(a) }); } };
-        window.removeScriptTier = async (idx) => { if(activeVocId) { const voc = vocations.find(x => x.id === activeVocId); const t = JSON.parse(voc.scriptTiers || '[]'); t.splice(idx, 1); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { scriptTiers: JSON.stringify(t) }); } };
-
-        window.addVocation = async () => { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookVocations'), { name: "NEW SUBJECT", tagline: "Tagline...", desc: "Description...", artUrl: "", icon: "🛡️", createdAt: Date.now() }); };
-        window.addLoreBlock = async () => { if(activeVocId) { const voc = vocations.find(x => x.id === activeVocId); const b = JSON.parse(voc.loreBlocks || '[]'); b.push({title:"Research", text:"..."}); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { loreBlocks: JSON.stringify(b) }); } };
-        window.addFeatureBlock = async () => { if(activeVocId) { const voc = vocations.find(x => x.id === activeVocId); const b = JSON.parse(voc.featureBlocks || '[]'); b.push({title:"Feature", content:"..."}); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { featureBlocks: JSON.stringify(b) }); } };
-        window.addArchetype = async () => { if(activeVocId) { const voc = vocations.find(x => x.id === activeVocId); const a = JSON.parse(voc.archetypes || '[]'); a.push({name:"Archetype", tagline:"", desc:"", tables:[]}); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { archetypes: JSON.stringify(a) }); } };
-        window.addScriptTier = async () => { if(activeVocId) { const voc = vocations.find(x => x.id === activeVocId); const t = JSON.parse(voc.scriptTiers || '[]'); t.push({title:"Tier", list:""}); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { scriptTiers: JSON.stringify(t) }); } };
-        window.addTable = async () => { if(activeVocId) { const v = vocations.find(x => x.id === activeVocId); const t = JSON.parse(v.tables || '[]'); t.push({title:"Table", headers:["Lvl", "Bon"], rows:[["1", "+2"]]}); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { tables: JSON.stringify(t) }); } };
-        window.addArchetypeTable = async (aIdx) => { if(activeVocId) { const v = vocations.find(x => x.id === activeVocId); const a = JSON.parse(v.archetypes || '[]'); a[aIdx].tables.push({title:"Sub", headers:["Lvl", "Bon"], rows:[["3", "..."]]}); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId), { archetypes: JSON.stringify(a) }); } };
-
-        window.triggerDel = () => { document.getElementById('del-modal').classList.remove('hidden'); };
-        document.getElementById('confirm-del-btn').onclick = async () => { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookVocations', activeVocId)); window.setView('grid'); document.getElementById('del-modal').classList.add('hidden'); };
-
-        window.showToast = (m) => { const t = document.getElementById('toast'); if(t) { t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 2000); } };
-
-        const start = async () => {
-            await signInAnonymously(auth);
+        function setupListeners() {
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookVocations'), (snap) => {
                 vocations = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => a.createdAt - b.createdAt);
-                if(currentView === 'grid') renderGrid(); else renderDetails();
-            });
-            window.updateRoleUI();
+                if(currentView === 'grid') window.renderGrid(); else window.renderDetails();
+            }, (err) => console.error("Archive Listener Interrupted:", err));
+        }
+
+        const start = async () => {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else { await signInAnonymously(auth); }
+            } catch(e) { await signInAnonymously(auth); }
         };
+
+        onAuthStateChanged(auth, (u) => {
+            userAuth = u; 
+            if (u) {
+                setupListeners();
+                window.updateRoleUI();
+            }
+        });
+
+        const confirmBtn = document.getElementById('confirm-del-btn');
+        if (confirmBtn) {
+            confirmBtn.onclick = async () => {
+                if (deleteCallback) await deleteCallback();
+                document.getElementById('del-modal')?.classList.add('hidden');
+                deleteCallback = null;
+            };
+        }
+
         start();
+
     </script>
 </body>
 </html>
