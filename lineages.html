@@ -40,7 +40,7 @@
         }
 
         .parchment-container {
-            background: #f4edd8; /* Warm Antique Vellum */
+            background: #f4edd8; 
             background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
             min-height: 800px;
             padding: 70px 60px 100px 90px; 
@@ -100,7 +100,7 @@
         /* MANUSCRIPT BOXES */
         .discovery-log-box {
             font-family: 'Special Elite', cursive; font-size: 16px; line-height: 1.8; color: #3e2723; 
-            padding: 45px; /* Label removed, so standard padding returns */
+            padding: 45px; 
             border: 1.5px solid #c5b3a3; background: #faf5eb; margin: 40px 0; position: relative;
             box-shadow: 10px 10px 0 rgba(141, 110, 99, 0.05);
         }
@@ -151,7 +151,11 @@
 
         .flip-wrapper { position: relative; width: 100%; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; min-height: 800px; }
         .flip-wrapper.flipped { transform: rotateY(180deg); }
-        .side-front, .side-back { width: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+        .side-front, .side-back { 
+            width: 100%; 
+            backface-visibility: hidden; 
+            -webkit-backface-visibility: hidden; 
+        }
         .side-front { position: relative; z-index: 2; opacity: 1; transition: opacity 0.4s; }
         .side-back { position: absolute; top: 0; left: 0; transform: rotateY(180deg); z-index: 1; opacity: 0; transition: opacity 0.4s; }
         .flipped .side-front { position: absolute; opacity: 0; pointer-events: none; visibility: hidden; }
@@ -164,7 +168,9 @@
     </style>
 </head>
 <body>
+
     <div id="toast" class="toast">Archival Message</div>
+
     <div class="journal-cover">
         <div class="parchment-container" id="parchment">
             <header class="flex flex-col md:flex-row justify-between items-center gap-6 relative z-[200] mb-8 pb-8 border-b border-brown-200/20">
@@ -198,20 +204,21 @@
             <div id="view-details" class="hidden">
                 <div class="flex justify-between items-start mb-10">
                     <div onclick="window.setView('grid')" class="back-nav">← Close Log</div>
-                    <button onclick="window.flipPage()" id="btn-flip" class="bg-[#8d6e63] text-[#fdfaf3] px-6 py-3 rounded-sm font-black text-[10px] uppercase hover:bg-[#5d4037] transition-all shadow-lg">📜 Turn Page</button>
+                    <button onclick="window.flipPage()" id="btn-flip" class="bg-[#8d6e63] text-[#fdfaf3] px-6 py-3 rounded-sm font-black text-[10px] uppercase hover:bg-[#5d4037] transition-all shadow-lg border border-white/5">📜 Turn Page</button>
                 </div>
                 <div id="flip-container" class="flip-wrapper">
                     <div class="side-front" id="details-front"></div>
                     <div class="side-back" id="details-back"></div>
                 </div>
                 <div id="dm-bottom-controls" class="hidden flex gap-4 mt-16 pt-10 border-t border-brown-200/20">
-                    <button onclick="window.addSection()" class="bg-[#8d6e63] text-[#fdfaf3] px-8 py-3 rounded-sm font-black uppercase text-[11px] hover:bg-[#5d4037] transition-all">Append Research Note</button>
-                    <button onclick="window.triggerDel()" class="bg-red-900/10 border border-red-900/30 text-red-900 px-8 py-3 rounded-sm font-black uppercase text-[11px] hover:bg-red-900/20 transition-all">Expunge Bio-Record</button>
+                    <button onclick="window.addSection()" class="bg-[#8d6e63] text-[#fdfaf3] px-8 py-3 rounded-sm font-black uppercase text-[11px] tracking-widest hover:bg-[#5d4037] transition-all">Append Research Note</button>
+                    <button onclick="window.triggerDel()" class="bg-red-900/10 border border-red-900/30 text-red-900 px-8 py-3 rounded-sm font-black uppercase text-[11px] tracking-widest hover:bg-red-900/20 transition-all">Expunge Bio-Record</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- FIREBASE MODULES -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, collection, doc, updateDoc, onSnapshot, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
@@ -381,6 +388,24 @@
                         <h4 class="m-0 border-0 font-black text-[#3e2723] uppercase tracking-widest text-sm">Systemic Readout</h4>
                         ${isDM ? `<button onclick="window.addMechTable()" class="bg-[#3e2723] text-[#fdfaf3] px-4 py-1.5 text-[9px] uppercase font-black rounded-sm">+ Add Ledger</button>` : ''}
                     </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                        <div><b class="text-[10px] uppercase text-[#3e2723] block mb-3 tracking-widest font-black">Innate Capabilities</b><div class="dm-editable min-h-[80px] p-5 bg-white/50 rounded italic text-sm border border-brown-200" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','mechTraits',this.innerText)">${isDM ? (race.mechTraits || '...') : window.parseAeonfallContent(race.mechTraits, false)}</div></div>
+                        <div><b class="text-[10px] uppercase text-[#3e2723] block mb-3 tracking-widest font-black">Core Matrix</b><div class="dm-editable min-h-[80px] p-5 bg-white/50 rounded italic text-sm border border-brown-200" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','mechDescription',this.innerText)">${isDM ? (race.mechDescription || '...') : window.parseAeonfallContent(race.mechDescription, false)}</div></div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
+                        ${[
+                            {f:'size',l:'Size'}, {f:'speed',l:'Speed'}, {f:'mechLanguages',l:'Languages'},
+                            {f:'mechBackgrounds',l:'Backgrounds'}, {f:'mechFeats',l:'Feats'}, {f:'mechEquipment',l:'Equipment'}
+                        ].map(item => `
+                            <div class="bg-white/40 p-4 border border-brown-200 rounded">
+                                <span class="block text-[10px] uppercase font-black text-[#8d6e63] border-b border-brown-200 mb-2">${item.l}</span>
+                                <div class="dm-editable text-sm" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','${item.f}',this.innerText)">${isDM ? (race[item.f] || '...') : window.parseAeonfallContent(race[item.f], false)}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+
                     <div id="mech-tables-root">
                         ${tables.map((table, tIdx) => `
                             <div class="mt-12 relative group">
@@ -398,7 +423,7 @@
                                 </div>
                                 <table class="prog-table w-full">
                                     <thead><tr>${table.headers.map((h, hIdx) => `<th contenteditable="${isDM}" oninput="window.updateMechTableField(${tIdx}, 'headers', this.innerText, ${hIdx})">${h}</th>`).join('')}</tr></thead>
-                                    <tbody>${table.rows.map((row, rIdx) => `<tr>${row.map((cell, cIdx) => `<td contenteditable="${isDM}" oninput="window.updateMechTableField(${tIdx}, 'rows', this.innerText, ${rIdx}, ${cIdx})">${window.parseAeonfallContent(cell, false)}</td>`).join('')}</tr>`).join('')}</tbody>
+                                    <tbody>${table.rows.map((row, rIdx) => `<tr>${row.map((cell, cIdx) => `<td contenteditable="${isDM}" oninput="window.updateMechTableField(${tIdx}, 'rows', this.innerText, rIdx, cIdx)">${window.parseAeonfallContent(cell, false)}</td>`).join('')}</tr>`).join('')}</tbody>
                                 </table>
                             </div>
                         `).join('')}
@@ -503,7 +528,7 @@
             if (!currentUser) return;
             const maxOrder = lineages.length > 0 ? Math.max(...lineages.map(l => l.order || l.createdAt || 0)) : Date.now();
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookLineages'), { 
-                name: "NEW SUBJECT", custodianId: "994", desc: "Log pending...", traits: "Markers pending...", intros: [],
+                name: "NEW SUBJECT", custodianId: "994", speed: "30", size: "M", desc: "Log pending...", traits: "Markers pending...", intros: [],
                 cultureName: "", majorityPop: "", coreValues: "", government: "", belief: "", culturalPractices: "", attitudes: "",
                 mechTraits: "", mechDescription: "", mechBackgrounds: "", mechLanguages: "", mechFeats: "", mechEquipment: "", mechTables: "[]",
                 createdAt: Date.now(), order: maxOrder + 1000 
