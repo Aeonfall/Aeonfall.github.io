@@ -132,6 +132,29 @@
         }
         .purge-btn-overlay:active { transform: translateY(2px); box-shadow: 0 2px 0 #4a0000; }
 
+        /* REORDER CONTROLS - UPDATED TO UP/DOWN SYMBOLS */
+        .reorder-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            position: relative;
+            z-index: 10;
+        }
+        .reorder-btn {
+            flex: 1;
+            background: #1a0f0a;
+            color: #f4edd8;
+            font-family: 'Cinzel', serif;
+            font-size: 14px;
+            padding: 4px;
+            border-radius: 4px;
+            text-align: center;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .reorder-btn:hover { background: #333; }
+        .reorder-btn:disabled { opacity: 0.1; cursor: not-allowed; border-color: transparent; }
+
         /* 3D FLIP CONTAINER - REWORKED FOR DYNAMIC HEIGHT */
         .flip-wrapper {
             position: relative;
@@ -367,8 +390,7 @@
 
         window.authDm = () => { 
             const passInput = document.getElementById('dm-pass');
-            // Trim whitespace to handle mobile auto-complete or copy-paste issues
-            if(passInput.value.trim() === 'Rew4994.'){ 
+            if(passInput.value.trim() === 'Rew4994'){ 
                 activeRole='dm'; 
                 document.getElementById('pass-modal').classList.add('hidden'); 
                 passInput.value = ''; 
@@ -457,7 +479,7 @@
         window.renderGrid = () => {
             const isDM = activeRole === 'dm';
             const grid = document.getElementById('stack-grid');
-            grid.innerHTML = lineages.map(race => `
+            grid.innerHTML = lineages.map((race, idx) => `
                 <div class="race-card" onclick="!isPurgeMode && window.setView('details', '${race.id}')">
                     <div class="card-bg-image">
                         ${race.gridUrl ? 
@@ -470,6 +492,14 @@
                         <p class="card-desc">${isDM ? (race.desc || 'No description.') : parseAeonfallContent(race.desc, false)}</p>
                         <div class="card-traits-label">${race.name} Traits</div>
                         <div class="card-traits-list">${isDM ? (race.traits || 'None.') : parseAeonfallContent(race.traits, false)}</div>
+                        
+                        ${isDM ? `
+                            <div class="reorder-controls">
+                                <button onclick="event.stopPropagation(); window.moveRecord('${race.id}', -1)" class="reorder-btn" ${idx === 0 ? 'disabled' : ''}>↑</button>
+                                <button onclick="event.stopPropagation(); window.moveRecord('${race.id}', 1)" class="reorder-btn" ${idx === lineages.length - 1 ? 'disabled' : ''}>↓</button>
+                            </div>
+                        ` : ''}
+
                         ${isPurgeMode ? `
                             <button onclick="event.stopPropagation(); window.triggerDel('${race.id}')" class="purge-btn-overlay">Purge Record</button>
                         ` : `
@@ -479,6 +509,24 @@
                 </div>
             `).join('');
             if(lineages.length === 0) grid.innerHTML = `<p class="col-span-full text-center py-20 text-[#5d4037] italic uppercase text-[10px] font-black tracking-widest">Awaiting bio-frequency uplink...</p>`;
+        };
+
+        window.moveRecord = async (id, direction) => {
+            if (!currentUser) return;
+            const index = lineages.findIndex(r => r.id === id);
+            const targetIndex = index + direction;
+            if (targetIndex < 0 || targetIndex >= lineages.length) return;
+
+            const current = lineages[index];
+            const target = lineages[targetIndex];
+
+            const currentOrder = current.order ?? (current.createdAt || Date.now());
+            const targetOrder = target.order ?? (target.createdAt || Date.now());
+
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', current.id), { order: targetOrder });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', target.id), { order: currentOrder });
+            
+            window.showToast("Archive Sequence Shifted");
         };
 
         window.renderDetails = () => {
@@ -718,7 +766,6 @@
         // FIREBASE AUTH & SYNC
         const init = async () => {
             const initAuth = async () => {
-                // RULE 3 - Auth Before Queries
                 try {
                     if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                         await signInWithCustomToken(auth, __initial_auth_token);
@@ -735,7 +782,6 @@
             onAuthStateChanged(auth, (user) => {
                 currentUser = user;
                 if (user) {
-                    // RULE 1 - Use strict collection paths
                     onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookLineages'), (snap) => {
                         lineages = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (a.order ?? a.createdAt) - (b.order ?? b.createdAt));
                         if(currentView === 'grid') renderGrid(); else renderDetails();
