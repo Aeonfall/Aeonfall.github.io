@@ -298,7 +298,7 @@
     <div id="pass-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[5000] hidden p-4">
         <div class="bg-gray-800 p-10 rounded-2xl w-full max-sm border-2 border-amber-600 text-white text-center shadow-2xl relative">
             <h3 class="text-xl font-serif text-amber-500 font-bold mb-4 uppercase">DM Access</h3>
-            <input type="password" id="dm-pass" class="w-full bg-gray-900 text-center text-2xl rounded-lg p-3 mb-8 border border-gray-700 text-amber-500 focus:outline-none focus:border-amber-500">
+            <input type="password" id="dm-pass" onkeydown="if(event.key==='Enter') window.authDm()" class="w-full bg-gray-900 text-center text-2xl rounded-lg p-3 mb-8 border border-gray-700 text-amber-500 focus:outline-none focus:border-amber-500" placeholder="Verification Code">
             <div class="flex flex-col gap-4">
                 <button onclick="window.authDm()" class="w-full bg-amber-600 hover:bg-amber-500 text-white py-4 rounded-xl font-bold uppercase text-xs tracking-widest">Authorize Access</button>
                 <button onclick="document.getElementById('pass-modal').classList.add('hidden')" class="text-[10px] text-gray-500 uppercase font-black tracking-widest">Cancel</button>
@@ -353,8 +353,31 @@
         window.activeRaceId = null; 
 
         window.showToast = (m) => { const t = document.getElementById('toast'); t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 3000); };
-        window.setRole = (r) => { if(r === 'dm') document.getElementById('pass-modal').classList.remove('hidden'); else { activeRole = 'player'; isPurgeMode = false; updateRoleUI(); } };
-        window.authDm = () => { if(document.getElementById('dm-pass').value === 'Rew4994'){ activeRole='dm'; document.getElementById('pass-modal').classList.add('hidden'); document.getElementById('dm-pass').value = ''; updateRoleUI(); } else { window.showToast("Failed Verification"); } };
+        
+        window.setRole = (r) => { 
+            if(r === 'dm') {
+                document.getElementById('pass-modal').classList.remove('hidden'); 
+                setTimeout(() => document.getElementById('dm-pass').focus(), 100);
+            } else { 
+                activeRole = 'player'; 
+                isPurgeMode = false; 
+                updateRoleUI(); 
+            } 
+        };
+
+        window.authDm = () => { 
+            const passInput = document.getElementById('dm-pass');
+            // Trim whitespace to handle mobile auto-complete or copy-paste issues
+            if(passInput.value.trim() === 'Rew4994'){ 
+                activeRole='dm'; 
+                document.getElementById('pass-modal').classList.add('hidden'); 
+                passInput.value = ''; 
+                updateRoleUI(); 
+                window.showToast("Verification Verified");
+            } else { 
+                window.showToast("Failed Verification"); 
+            } 
+        };
 
         function updateRoleUI() {
             const isDM = activeRole === 'dm';
