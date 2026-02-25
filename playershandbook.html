@@ -57,6 +57,11 @@
         .tie-button:hover { background: #d9770611; }
         .intel-block { background: rgba(122, 29, 29, 0.05); border: 1px solid rgba(122, 29, 29, 0.1); border-left: 4px solid #7a1d1d; padding: 12px; margin: 12px 0; border-radius: 4px; font-size: 11px; color: #2c1810; }
 
+        /* Search Input Styling */
+        .neural-search { background: rgba(15, 23, 42, 0.8); border: 1px solid #334155; border-radius: 12px; padding: 12px 20px; color: #fff; width: 100%; outline: none; transition: all 0.3s; font-family: 'Cinzel', serif; font-size: 14px; letter-spacing: 0.05em; }
+        .neural-search:focus { border-color: #f59e0b; box-shadow: 0 0 15px rgba(245, 158, 11, 0.2); }
+        .neural-search::placeholder { color: #475569; text-transform: uppercase; font-size: 10px; font-weight: 900; }
+
         /* Progression Table Styling */
         .progression-table-container { 
             background-color: #fdfaf3; border: 4px double #bba683; border-radius: 12px; 
@@ -353,6 +358,11 @@
     <div id="items-view" class="hidden-view p-4 md:p-8">
         <div class="max-w-6xl mx-auto">
             <button onclick="window.switchView('hub')" class="text-amber-500 font-black text-[10px] uppercase mb-6 hover:text-amber-400">← Back</button>
+            
+            <div class="mb-6">
+                <input type="text" id="item-search-input" placeholder="Neural Search: Enter weapon, armor, or artifact name..." class="neural-search" oninput="window.handleItemSearch(this.value)">
+            </div>
+
             <div class="horizontal-scroll mb-8" id="item-category-tabs"></div>
             
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
@@ -466,11 +476,13 @@
         let currentFeatureClass = "Vanguard";
         let currentLevel = 1; 
         let currentItemCategory = "All";
+        let itemSearchQuery = "";
         let currentLandmarkRegion = "All";
         let regionVisibility = { Tormarath: false, Vorastra: false, Eryndor: false, "Fractured Planes": false, Havendor: true };
         let planeNames = [...DEFAULT_PLANES];
         let activeRole = 'player';
         let scripts = [], sessions = [], items = [], features = [], archetypes = [], tables = [], landmarks = [];
+        let itemSeeds = {}; // For stable randomization
         let autoSaveTimer = null;
         let itemToDeleteId = null;
         let activeLandmarkId = null;
@@ -539,9 +551,14 @@
             renderLists();
         };
 
+        window.handleItemSearch = (q) => {
+            itemSearchQuery = q.toLowerCase();
+            renderLists();
+        };
+
         window.selectLandmarkRegion = (reg) => {
             if (activeRole !== 'dm' && reg !== 'All' && reg !== 'Havendor' && !regionVisibility[reg]) {
-                window.showToast(`The continent/plane of ${reg} has not yet been discovered.`);
+                window.showToast(`The region of ${reg} has not yet been surveyed.`);
                 return;
             }
             currentLandmarkRegion = reg;
@@ -1090,7 +1107,19 @@
             const iList = document.getElementById('items-list');
             if (iList) {
                 iList.innerHTML = '';
-                const filteredItems = items.filter(i => currentItemCategory === "All" || (i.category || 'General').toLowerCase() === currentItemCategory.toLowerCase());
+                let filteredItems = items.filter(i => {
+                    const matchesCategory = currentItemCategory === "All" || (i.category || 'General').toLowerCase() === currentItemCategory.toLowerCase();
+                    const matchesSearch = !itemSearchQuery || (i.title || '').toLowerCase().includes(itemSearchQuery);
+                    return matchesCategory && matchesSearch;
+                });
+                
+                // RANDOMIZATION LOGIC FOR "ALL" CATEGORY
+                if (currentItemCategory === "All" && !itemSearchQuery) {
+                    filteredItems.sort((a, b) => a._seed - b._seed);
+                } else if (!itemSearchQuery) {
+                    filteredItems.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                }
+
                 filteredItems.forEach(i => {
                     const card = document.createElement('div');
                     card.className = `script-card ${isDM ? 'dm-active-edit' : ''}`;
@@ -1122,6 +1151,7 @@
                     `;
                     iList.appendChild(card);
                 });
+                if (!filteredItems.length) iList.innerHTML = `<p class="col-span-full text-center italic opacity-40 py-20 uppercase font-black text-amber-900 tracking-widest text-xs">No Records Found</p>`;
             }
 
             // Render Sessions
@@ -1275,7 +1305,7 @@
         };
 
         window.addItemEntry = async () => {
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookItems'), { title: "NEW ITEM", content: "Description...", flavorText: "In-universe log entry...", category: currentItemCategory === "All" ? "Adventuring Gear" : currentItemCategory, type: "Gear", rarity: "Common", weight: "1 lb", cost: "-", properties: "None", imageUrl: "", createdAt: Date.now() });
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookItems'), { title: "NEW ITEM", content: "Description...", flavorText: "Flavor text...", category: currentItemCategory === "All" ? "Adventuring Gear" : currentItemCategory, type: "Gear", rarity: "Common", weight: "1 lb", cost: "-", properties: "None", imageUrl: "", createdAt: Date.now() });
         };
 
         window.addLandmarkEntry = async () => {
@@ -1319,7 +1349,11 @@
             });
 
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookItems'), (snap) => {
-                items = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => a.createdAt - b.createdAt);
+                items = snap.docs.map(d => {
+                    const data = d.data();
+                    if (!itemSeeds[d.id]) itemSeeds[d.id] = Math.random();
+                    return { id: d.id, ...data, _seed: itemSeeds[d.id] };
+                });
                 renderLists(); renderNavs();
             });
 
