@@ -51,6 +51,12 @@
         .item-flavor-text { color: #6b4423; font-style: italic; border-left: 2px solid #bba68344; padding-left: 10px; margin-bottom: 16px; font-size: 12px; line-height: 1.5; }
         .item-description-label { font-family: 'Cinzel', serif; font-size: 9px; font-weight: 900; text-transform: uppercase; color: #7a1d1d; letter-spacing: 0.1em; display: block; margin-bottom: 4px; border-bottom: 1px solid #7a1d1d11; }
 
+        /* Landmark Specifics */
+        .personal-tie-badge { background: #7a1d1d; color: white; padding: 3px 10px; border-radius: 4px; font-size: 9px; font-weight: 900; text-transform: uppercase; margin-top: 8px; display: inline-flex; align-items: center; gap: 6px; letter-spacing: 0.1em; }
+        .tie-button { font-size: 9px; text-transform: uppercase; font-weight: 900; color: #d97706; border: 1px solid #d9770633; padding: 2px 6px; border-radius: 4px; cursor: pointer; transition: all 0.2s; }
+        .tie-button:hover { background: #d9770611; }
+        .intel-block { background: rgba(122, 29, 29, 0.05); border: 1px solid rgba(122, 29, 29, 0.1); border-left: 4px solid #7a1d1d; padding: 12px; margin: 12px 0; border-radius: 4px; font-size: 11px; color: #2c1810; }
+
         /* Progression Table Styling */
         .progression-table-container { 
             background-color: #fdfaf3; border: 4px double #bba683; border-radius: 12px; 
@@ -109,7 +115,7 @@
         .hidden-view { display: none !important; }
         .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1e293b; color: #fff; padding: 10px 20px; border-radius: 30px; z-index: 2000; opacity: 0; transition: opacity 0.3s; border: 1px solid #3b82f6; }
         
-        .class-tab { padding: 6px 12px; font-size: 9px; font-weight: 900; text-transform: uppercase; cursor: pointer; border: 1px solid #333; border-radius: 4px; color: #94a3b8; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+        .class-tab { padding: 6px 12px; font-size: 9px; font-weight: 900; text-transform: uppercase; cursor: pointer; border: 1px solid #333; border-radius: 4px; color: #94a3b8; white-space: nowrap; display: flex; align-items: center; gap: 6px; transition: all 0.2s; }
         .class-tab.active { background: #f59e0b; color: #000; border-color: #f59e0b; }
         .class-tab.locked { opacity: 0.3; grayscale: 100%; cursor: not-allowed; }
         .dm-tab-lock-icon { cursor: pointer; font-size: 10px; opacity: 0.6; }
@@ -119,6 +125,10 @@
         .level-bubble.active { background: #7a1d1d; color: #fff; border-color: #7a1d1d; }
 
         .section-label { font-size: 9px; text-transform: uppercase; font-weight: 900; color: #f59e0b; opacity: 0.5; margin-bottom: 6px; letter-spacing: 0.2em; display: block; border-bottom: 1px solid rgba(245, 158, 11, 0.1); padding-bottom: 3px; }
+
+        /* Sub-tab styling */
+        .sub-nav-container { margin-top: 8px; border-top: 1px solid rgba(245, 158, 11, 0.1); padding-top: 8px; }
+        .sub-tab { border-style: dashed; }
 
         /* DM Specific UI */
         .dm-active-edit { position: relative; }
@@ -305,7 +315,13 @@
         <div class="max-w-6xl mx-auto">
             <button onclick="window.switchView('hub')" class="text-amber-500 font-black text-[10px] uppercase mb-6 hover:text-amber-400">← Back</button>
             
-            <div class="horizontal-scroll mb-8" id="landmark-region-tabs"></div>
+            <div class="landmark-nav-wrapper">
+                <div class="horizontal-scroll mb-2" id="landmark-region-tabs"></div>
+                <div class="sub-nav-container hidden" id="fractured-planes-subnav">
+                    <span class="section-label">Planes of the Fracture</span>
+                    <div class="horizontal-scroll mb-8" id="fractured-planes-tabs"></div>
+                </div>
+            </div>
 
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                 <div class="text-left">
@@ -372,6 +388,21 @@
         </div>
     </div>
 
+    <!-- PERSONAL TIE MODAL -->
+    <div id="tie-modal" class="fixed inset-0 z-[600] flex items-center justify-center p-4 hidden">
+        <div class="modal-overlay absolute inset-0 bg-black/50" onclick="document.getElementById('tie-modal').classList.add('hidden')"></div>
+        <div class="bg-gray-800 p-6 rounded-2xl w-full max-w-xs border-2 border-amber-600 text-white text-center relative z-10 shadow-2xl">
+            <h3 class="text-lg font-serif text-amber-500 font-bold mb-2 uppercase">Establish Personal Tie</h3>
+            <p class="text-[9px] text-gray-400 mb-4 italic">Assign a username. Only this user (and the DM) will be able to see the confidential data bound to this landmark.</p>
+            <input type="text" id="tie-username-input" placeholder="Enter Username" class="w-full bg-gray-900 text-center rounded-lg p-3 mb-4 border border-gray-700 outline-none text-sm">
+            <div class="flex flex-col gap-2">
+                <button onclick="window.saveLandmarkTie()" class="w-full bg-amber-600 text-white py-3 rounded-xl font-bold uppercase text-[10px]">Bind Identity</button>
+                <button id="sever-tie-btn" onclick="window.clearLandmarkTie()" class="w-full bg-red-900/40 text-red-400 py-2 rounded-xl font-bold uppercase text-[10px] hidden">Sever Connection</button>
+                <button onclick="document.getElementById('tie-modal').classList.add('hidden')" class="w-full text-gray-500 mt-2 text-[9px] uppercase font-bold">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <!-- DM PASSWORD MODAL -->
     <div id="password-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[500] hidden">
         <div class="bg-gray-800 p-6 rounded-2xl w-full max-w-xs border-2 border-amber-600 text-white text-center shadow-2xl mx-4">
@@ -396,8 +427,9 @@
         const CLASSES = ["Heartbound", "Nomad", "Wilderness Warden", "Chronicler", "Orator", "Scriptweaver", "War-Touched", "Archivist", "Fabricator"];
         const FEATURE_MARTIAL_CLASSES = ["Vanguard", "Warrior", "Peacekeeper", "Scavenger"];
         const ITEM_CATEGORIES = ["All", "Weapons", "Armor", "Material Component", "Adventuring Gear", "Transportation", "Artifacts", "Recipes & Consumables"];
-        const LANDMARK_REGIONS = ["All", "Havendor", "Tormarath", "Vorastra", "Eryndor"];
-        
+        const LANDMARK_REGIONS = ["All", "Havendor", "Tormarath", "Vorastra", "Eryndor", "Fractured Planes"];
+        const DEFAULT_PLANES = ["Umbraclast Veil", "Thornsong Wilds", "Luminara Drift", "Hollow Expanse", "Ember Expanse"];
+
         const TOOLTIPS = {
             "Activation Time": "The amount of time required to initialize this script and push it to reality.",
             "Range/Area": "The maximum distance the script can reach, or the spatial dimensions of its effect.",
@@ -435,11 +467,13 @@
         let currentLevel = 1; 
         let currentItemCategory = "All";
         let currentLandmarkRegion = "All";
-        let regionVisibility = { Tormarath: false, Vorastra: false, Eryndor: false, Havendor: true };
+        let regionVisibility = { Tormarath: false, Vorastra: false, Eryndor: false, "Fractured Planes": false, Havendor: true };
+        let planeNames = [...DEFAULT_PLANES];
         let activeRole = 'player';
         let scripts = [], sessions = [], items = [], features = [], archetypes = [], tables = [], landmarks = [];
         let autoSaveTimer = null;
         let itemToDeleteId = null;
+        let activeLandmarkId = null;
         let deleteType = ''; 
 
         window.showToast = (m) => { const t = document.getElementById('toast'); t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 4000); };
@@ -507,7 +541,7 @@
 
         window.selectLandmarkRegion = (reg) => {
             if (activeRole !== 'dm' && reg !== 'All' && reg !== 'Havendor' && !regionVisibility[reg]) {
-                window.showToast(`The continent of ${reg} has not yet been discovered.`);
+                window.showToast(`The region of ${reg} has not yet been surveyed.`);
                 return;
             }
             currentLandmarkRegion = reg;
@@ -524,6 +558,48 @@
                 [reg]: newVal
             });
             window.showToast(`${reg} is now ${newVal ? 'Publicly Known' : 'Hidden from Files'}`);
+        };
+
+        window.addFracturedPlane = async () => {
+            if (activeRole !== 'dm') return;
+            const name = prompt("Enter the name of the new Fractured Plane:");
+            if (!name) return;
+            const updatedPlanes = [...planeNames, name.trim()];
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'config', 'landmarkConfig'), {
+                planeNames: updatedPlanes
+            });
+            window.showToast(`${name} has been added to the Fracture Archive.`);
+        };
+
+        window.setLandmarkPersonalTie = (id) => {
+            if (activeRole !== 'dm') return;
+            activeLandmarkId = id;
+            const currentTie = landmarks.find(l => l.id === id)?.personalTie || "";
+            document.getElementById('tie-username-input').value = currentTie;
+            document.getElementById('sever-tie-btn').classList.toggle('hidden', !currentTie);
+            document.getElementById('tie-modal').classList.remove('hidden');
+            setTimeout(() => document.getElementById('tie-username-input').focus(), 100);
+        };
+
+        window.saveLandmarkTie = async () => {
+            const userVal = document.getElementById('tie-username-input').value.trim();
+            if (!activeLandmarkId) return;
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLandmarks', activeLandmarkId), { 
+                personalTie: userVal 
+            });
+            document.getElementById('tie-modal').classList.add('hidden');
+            window.showToast(userVal ? `Ties Bound to ${userVal}` : "Personal Ties Severed");
+            activeLandmarkId = null;
+        };
+
+        window.clearLandmarkTie = async () => {
+            if (!activeLandmarkId) return;
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLandmarks', activeLandmarkId), { 
+                personalTie: "" 
+            });
+            document.getElementById('tie-modal').classList.add('hidden');
+            window.showToast("Personal Ties Severed");
+            activeLandmarkId = null;
         };
 
         // DRAG AND DROP LOGIC (DM ONLY)
@@ -646,6 +722,8 @@
         };
 
         function renderNavs() {
+            const isDM = activeRole === 'dm';
+
             const tabs = document.getElementById('class-tabs');
             if (tabs) tabs.innerHTML = CLASSES.map(c => `<div class="class-tab ${currentClass === c ? 'active' : ''}" onclick="window.selectClass('${c}')">${c}</div>`).join('');
 
@@ -676,16 +754,38 @@
             const iTitle = document.getElementById('current-item-category-title');
             if (iTitle) iTitle.textContent = currentItemCategory === "All" ? "All Equipment" : currentItemCategory;
 
+            // LANDMARK REGIONS
             const lRegTabs = document.getElementById('landmark-region-tabs');
             if (lRegTabs) {
                 lRegTabs.innerHTML = LANDMARK_REGIONS.map(reg => {
-                    const isDM = activeRole === 'dm';
                     const isPublic = (reg === 'All' || reg === 'Havendor' || regionVisibility[reg]);
                     const classList = `class-tab ${currentLandmarkRegion === reg ? 'active' : ''} ${!isPublic && !isDM ? 'locked' : ''}`;
                     const lockIcon = isDM && reg !== 'All' && reg !== 'Havendor' ? `<span class="dm-tab-lock-icon" onclick="window.toggleRegionVisibility('${reg}', event)">${isPublic ? '🔓' : '🔒'}</span>` : '';
                     return `<div class="${classList}" onclick="window.selectLandmarkRegion('${reg}')">${reg} ${lockIcon}</div>`;
                 }).join('');
             }
+
+            // FRACTURED PLANES SUBNAV
+            const subNav = document.getElementById('fractured-planes-subnav');
+            const planeTabs = document.getElementById('fractured-planes-tabs');
+            if (currentLandmarkRegion === 'Fractured Planes' || planeNames.includes(currentLandmarkRegion)) {
+                subNav.classList.remove('hidden');
+                let planesHtml = planeNames.map(plane => {
+                    const isPublic = regionVisibility[plane] || false;
+                    const isActive = currentLandmarkRegion === plane;
+                    const classList = `class-tab sub-tab ${isActive ? 'active' : ''} ${!isPublic && !isDM ? 'locked' : ''}`;
+                    const lockIcon = isDM ? `<span class="dm-tab-lock-icon" onclick="window.toggleRegionVisibility('${plane}', event)">${isPublic ? '🔓' : '🔒'}</span>` : '';
+                    return `<div class="${classList}" onclick="window.selectLandmarkRegion('${plane}')">${plane} ${lockIcon}</div>`;
+                }).join('');
+                
+                if (isDM) {
+                    planesHtml += `<div class="class-tab sub-tab !border-amber-600 !text-amber-600" onclick="window.addFracturedPlane()">+ New Plane</div>`;
+                }
+                planeTabs.innerHTML = planesHtml;
+            } else {
+                subNav.classList.add('hidden');
+            }
+
             const lTitle = document.getElementById('current-landmark-region-title');
             if (lTitle) lTitle.textContent = currentLandmarkRegion === "All" ? "All Discoveries" : `${currentLandmarkRegion} Records`;
         }
@@ -859,6 +959,8 @@
 
         const renderLists = () => {
             const isDM = activeRole === 'dm';
+            const savedUser = JSON.parse(localStorage.getItem('aeonfall_user') || '{}');
+            const currentUsername = savedUser.username || 'Guest';
             
             // Render Features
             const fList = document.getElementById('features-list');
@@ -888,7 +990,7 @@
                     }
                     divider.innerHTML = `
                         <div class="flex items-center gap-4">
-                            ${isDM ? '<div class="drag-handle" title="Move Archetype">⠿</div>' : ''}
+                            ${isDM ? '<div class=\"drag-handle\" title=\"Move Archetype\">⠿</div>' : ''}
                             <div class="archetype-name dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateArchetype('${arch.id}', 'name', this.innerText)">${arch.name}</div>
                         </div>
                         ${isDM ? `
@@ -938,20 +1040,43 @@
                     card.className = `script-card ${isDM ? 'dm-active-edit' : ''}`;
                     const imgUrl = (l.imageUrl || '').trim();
                     let imgHtml = imgUrl ? `<img src="${imgUrl}" class="item-preview-img" onclick="window.zoomImage('${imgUrl}')" onerror="this.src='https://placehold.co/600x400/000000/f59e0b?text=LOCATION+ASSET+LOST'">` : (isDM ? `<div class="w-full h-10 bg-black/5 border-dashed border-2 border-amber-900/20 rounded-lg flex items-center justify-center text-[8px] uppercase font-black opacity-40 mb-4 tracking-widest">Signal Lost: Input Link Below</div>` : '');
+                    
+                    const isTargetUser = currentUsername.toLowerCase() === (l.personalTie || '').toLowerCase();
+                    let personalTieHtml = "";
+                    if (isDM || isTargetUser) {
+                        if (l.personalTie) {
+                            personalTieHtml = `
+                                <div class="personal-tie-badge">🔗 Personal Tie ${isDM ? '('+l.personalTie+')' : ''}</div>
+                                <div class="intel-block">
+                                    <span class="block font-black uppercase text-[8px] text-[#7a1d1d] opacity-60 mb-2 tracking-widest">Encrypted Dossier</span>
+                                    <div class="${isDM ? 'dm-editable' : ''} italic leading-relaxed" contenteditable="${isDM}" oninput="window.debounceUpdateLandmark('${l.id}', 'personalTieContent', this.innerText)">
+                                        ${l.personalTieContent || (isDM ? "Explain the confidential link here..." : "Data stream corrupted or unavailable.")}
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    }
+
+                    const tieButtonHtml = isDM ? `<button onclick="window.setLandmarkPersonalTie('${l.id}')" class="tie-button ml-2">${l.personalTie ? 'Bound User' : 'Bind Identity'}</button>` : "";
+
                     card.innerHTML = `
                         <div class="script-card-header">
                             <div class="script-card-title dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateLandmark('${l.id}', 'title', this.innerText)">${l.title}</div>
                             ${isDM ? `<button onclick="window.triggerDeleteLandmark('${l.id}')" class="absolute top-4 right-4 text-red-700 opacity-30 hover:opacity-100">✕</button>` : ''}
                         </div>
-                        <span class="script-card-level">
-                            <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateLandmark('${l.id}', 'region', this.innerText)">${l.region || 'Havendor'}</span>
-                        </span>
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="script-card-level">
+                                <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateLandmark('${l.id}', 'region', this.innerText)">${l.region || 'Havendor'}</span>
+                            </span>
+                            ${tieButtonHtml}
+                        </div>
                         ${imgHtml}
-                        ${isDM ? `<span class="item-url-input">Asset: <span class="dm-editable inline-block min-w-[50px] border-b border-amber-900/20" contenteditable="true" oninput="window.debounceUpdateLandmark('${l.id}', 'imageUrl', this.innerText)">${imgUrl}</span></span>` : ''}
+                        ${personalTieHtml}
+                        ${isDM ? `<span class="item-url-input mt-2">Asset: <span class="dm-editable inline-block min-w-[50px] border-b border-amber-900/20" contenteditable="true" oninput="window.debounceUpdateLandmark('${l.id}', 'imageUrl', this.innerText)">${imgUrl}</span></span>` : ''}
                         
-                        <div class="item-flavor-text ${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdateLandmark('${l.id}', 'flavorText', this.innerText)">${l.flavorText || (isDM ? "Lore/Flavor text goes here..." : "")}</div>
+                        <div class="item-flavor-text mt-4 ${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdateLandmark('${l.id}', 'flavorText', this.innerText)">${l.flavorText || (isDM ? "Lore/Flavor text goes here..." : "")}</div>
                         
-                        <span class="item-description-label">Description</span>
+                        <span class="item-description-label">Regional Data</span>
                         <div class="script-body ${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdateLandmark('${l.id}', 'content', this.innerText)">${parseAeonfallContent(l.content, isDM)}</div>
                         
                         <div class="script-footer mt-4"><b>Tags:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateLandmark('${l.id}', 'tags', this.innerText)">${l.tags || 'Location'}</span></div>
@@ -1154,7 +1279,9 @@
         };
 
         window.addLandmarkEntry = async () => {
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookLandmarks'), { title: "NEW LANDMARK", content: "Detailed description of the location...", flavorText: "In-universe log or travel snippet...", region: currentLandmarkRegion === "All" ? "Havendor" : currentLandmarkRegion, tags: "Location", imageUrl: "", createdAt: Date.now() });
+            let region = currentLandmarkRegion === "All" ? "Havendor" : currentLandmarkRegion;
+            if (region === 'Fractured Planes') region = planeNames[0];
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookLandmarks'), { title: "NEW LANDMARK", content: "Detailed description...", flavorText: "Flavor text...", region: region, tags: "Location", imageUrl: "", personalTie: "", personalTieContent: "", createdAt: Date.now() });
         };
 
         const sortFn = (a, b) => (a.order ?? a.createdAt) - (b.order ?? b.createdAt);
@@ -1201,11 +1328,21 @@
                 renderLists();
             });
 
-            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'config', 'regionVisibility'), (doc) => {
-                if (doc.exists()) {
-                    regionVisibility = doc.data();
+            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'config', 'regionVisibility'), (docSnap) => {
+                if (docSnap.exists()) {
+                    regionVisibility = docSnap.data();
                 } else {
-                    regionVisibility = { Tormarath: false, Vorastra: false, Eryndor: false, Havendor: true };
+                    regionVisibility = { Tormarath: false, Vorastra: false, Eryndor: false, "Fractured Planes": false, Havendor: true };
+                }
+                renderNavs();
+                renderLists();
+            });
+
+            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'config', 'landmarkConfig'), (docSnap) => {
+                if (docSnap.exists()) {
+                    planeNames = docSnap.data().planeNames || [...DEFAULT_PLANES];
+                } else {
+                    planeNames = [...DEFAULT_PLANES];
                 }
                 renderNavs();
                 renderLists();
