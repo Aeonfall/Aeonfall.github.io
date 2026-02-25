@@ -109,9 +109,12 @@
         .hidden-view { display: none !important; }
         .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1e293b; color: #fff; padding: 10px 20px; border-radius: 30px; z-index: 2000; opacity: 0; transition: opacity 0.3s; border: 1px solid #3b82f6; }
         
-        .class-tab { padding: 6px 12px; font-size: 9px; font-weight: 900; text-transform: uppercase; cursor: pointer; border: 1px solid #333; border-radius: 4px; color: #94a3b8; white-space: nowrap; }
+        .class-tab { padding: 6px 12px; font-size: 9px; font-weight: 900; text-transform: uppercase; cursor: pointer; border: 1px solid #333; border-radius: 4px; color: #94a3b8; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
         .class-tab.active { background: #f59e0b; color: #000; border-color: #f59e0b; }
-        
+        .class-tab.locked { opacity: 0.3; grayscale: 100%; cursor: not-allowed; }
+        .dm-tab-lock-icon { cursor: pointer; font-size: 10px; opacity: 0.6; }
+        .dm-tab-lock-icon:hover { opacity: 1; color: #f59e0b; }
+
         .level-bubble { min-width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 10px; cursor: pointer; border: 2px solid #bba683; background: #fdfaf3; color: #2c1810; flex-shrink: 0; }
         .level-bubble.active { background: #7a1d1d; color: #fff; border-color: #7a1d1d; }
 
@@ -203,6 +206,15 @@
                     <span class="ml-auto text-amber-900 font-black">→</span>
                 </a>
 
+                <div onclick="window.switchView('landmarks')" class="archive-button">
+                    <span class="text-3xl md:text-4xl">📍</span>
+                    <div class="flex flex-col">
+                        <span class="button-label">Landmarks</span>
+                        <span class="button-desc">Locations & Discoveries</span>
+                    </div>
+                    <span class="ml-auto text-amber-900 font-black">→</span>
+                </div>
+
                 <div onclick="window.switchView('scripts')" class="archive-button">
                     <span class="text-3xl md:text-4xl">📜</span>
                     <div class="flex flex-col">
@@ -288,6 +300,24 @@
         </div>
     </div>
 
+    <!-- LANDMARKS VIEW -->
+    <div id="landmarks-view" class="hidden-view p-4 md:p-8">
+        <div class="max-w-6xl mx-auto">
+            <button onclick="window.switchView('hub')" class="text-amber-500 font-black text-[10px] uppercase mb-6 hover:text-amber-400">← Back</button>
+            
+            <div class="horizontal-scroll mb-8" id="landmark-region-tabs"></div>
+
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                <div class="text-left">
+                    <h2 class="font-serif font-black text-2xl md:text-3xl uppercase text-amber-500">Landmarks</h2>
+                    <p class="text-[9px] text-amber-900/60 font-black uppercase tracking-widest mt-1" id="current-landmark-region-title">All Discoveries</p>
+                </div>
+                <button id="add-landmark-btn" onclick="window.addLandmarkEntry()" class="hidden bg-amber-600 text-white px-6 py-2 rounded-full font-black text-[9px] uppercase">+ New Landmark</button>
+            </div>
+            <div id="landmarks-list" class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8"></div>
+        </div>
+    </div>
+
     <!-- SESSIONS VIEW -->
     <div id="sessions-view" class="hidden-view p-4 md:p-8">
         <div class="max-w-6xl mx-auto">
@@ -366,6 +396,7 @@
         const CLASSES = ["Heartbound", "Nomad", "Wilderness Warden", "Chronicler", "Orator", "Scriptweaver", "War-Touched", "Archivist", "Fabricator"];
         const FEATURE_MARTIAL_CLASSES = ["Vanguard", "Warrior", "Peacekeeper", "Scavenger"];
         const ITEM_CATEGORIES = ["All", "Weapons", "Armor", "Material Component", "Adventuring Gear", "Transportation", "Artifacts", "Recipes & Consumables"];
+        const LANDMARK_REGIONS = ["All", "Havendor", "Tormarath", "Vorastra", "Eryndor"];
         
         const TOOLTIPS = {
             "Activation Time": "The amount of time required to initialize this script and push it to reality.",
@@ -403,8 +434,10 @@
         let currentFeatureClass = "Vanguard";
         let currentLevel = 1; 
         let currentItemCategory = "All";
+        let currentLandmarkRegion = "All";
+        let regionVisibility = { Tormarath: false, Vorastra: false, Eryndor: false, Havendor: true };
         let activeRole = 'player';
-        let scripts = [], sessions = [], items = [], features = [], archetypes = [], tables = [];
+        let scripts = [], sessions = [], items = [], features = [], archetypes = [], tables = [], landmarks = [];
         let autoSaveTimer = null;
         let itemToDeleteId = null;
         let deleteType = ''; 
@@ -438,12 +471,13 @@
             document.getElementById('add-feature-btn').classList.toggle('hidden', !isDM);
             document.getElementById('add-archetype-btn').classList.toggle('hidden', !isDM);
             document.getElementById('add-table-btn').classList.toggle('hidden', !isDM);
+            document.getElementById('add-landmark-btn').classList.toggle('hidden', !isDM);
             renderLists();
             renderNavs();
         };
 
         window.switchView = (v) => {
-            ['hub', 'scripts', 'sessions', 'items', 'features'].forEach(id => {
+            ['hub', 'scripts', 'sessions', 'items', 'features', 'landmarks'].forEach(id => {
                 const el = document.getElementById(`${id}-view`);
                 if(el) el.classList.add('hidden-view');
             });
@@ -469,6 +503,27 @@
             currentItemCategory = cat;
             renderNavs();
             renderLists();
+        };
+
+        window.selectLandmarkRegion = (reg) => {
+            if (activeRole !== 'dm' && reg !== 'All' && reg !== 'Havendor' && !regionVisibility[reg]) {
+                window.showToast(`The region of ${reg} has not yet been surveyed.`);
+                return;
+            }
+            currentLandmarkRegion = reg;
+            renderNavs();
+            renderLists();
+        };
+
+        window.toggleRegionVisibility = async (reg, e) => {
+            e.stopPropagation();
+            if (activeRole !== 'dm') return;
+            const newVal = !regionVisibility[reg];
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'config', 'regionVisibility'), {
+                ...regionVisibility,
+                [reg]: newVal
+            });
+            window.showToast(`${reg} is now ${newVal ? 'Publicly Known' : 'Hidden from Files'}`);
         };
 
         // DRAG AND DROP LOGIC (DM ONLY)
@@ -620,6 +675,19 @@
             }
             const iTitle = document.getElementById('current-item-category-title');
             if (iTitle) iTitle.textContent = currentItemCategory === "All" ? "All Equipment" : currentItemCategory;
+
+            const lRegTabs = document.getElementById('landmark-region-tabs');
+            if (lRegTabs) {
+                lRegTabs.innerHTML = LANDMARK_REGIONS.map(reg => {
+                    const isDM = activeRole === 'dm';
+                    const isPublic = (reg === 'All' || reg === 'Havendor' || regionVisibility[reg]);
+                    const classList = `class-tab ${currentLandmarkRegion === reg ? 'active' : ''} ${!isPublic && !isDM ? 'locked' : ''}`;
+                    const lockIcon = isDM && reg !== 'All' && reg !== 'Havendor' ? `<span class="dm-tab-lock-icon" onclick="window.toggleRegionVisibility('${reg}', event)">${isPublic ? '🔓' : '🔒'}</span>` : '';
+                    return `<div class="${classList}" onclick="window.selectLandmarkRegion('${reg}')">${reg} ${lockIcon}</div>`;
+                }).join('');
+            }
+            const lTitle = document.getElementById('current-landmark-region-title');
+            if (lTitle) lTitle.textContent = currentLandmarkRegion === "All" ? "All Discoveries" : `${currentLandmarkRegion} Records`;
         }
 
         window.zoomImage = (url) => {
@@ -860,6 +928,39 @@
                 if (!filteredScripts.length) sList.innerHTML = `<p class="col-span-full text-center italic opacity-40 py-20 uppercase font-black text-amber-900 tracking-widest text-xs">No Records Found</p>`;
             }
 
+            // Render Landmarks
+            const lList = document.getElementById('landmarks-list');
+            if (lList) {
+                lList.innerHTML = '';
+                const filteredLandmarks = landmarks.filter(l => currentLandmarkRegion === "All" || (l.region || 'Havendor') === currentLandmarkRegion);
+                filteredLandmarks.forEach(l => {
+                    const card = document.createElement('div');
+                    card.className = `script-card ${isDM ? 'dm-active-edit' : ''}`;
+                    const imgUrl = (l.imageUrl || '').trim();
+                    let imgHtml = imgUrl ? `<img src="${imgUrl}" class="item-preview-img" onclick="window.zoomImage('${imgUrl}')" onerror="this.src='https://placehold.co/600x400/000000/f59e0b?text=LOCATION+ASSET+LOST'">` : (isDM ? `<div class="w-full h-10 bg-black/5 border-dashed border-2 border-amber-900/20 rounded-lg flex items-center justify-center text-[8px] uppercase font-black opacity-40 mb-4 tracking-widest">Signal Lost: Input Link Below</div>` : '');
+                    card.innerHTML = `
+                        <div class="script-card-header">
+                            <div class="script-card-title dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateLandmark('${l.id}', 'title', this.innerText)">${l.title}</div>
+                            ${isDM ? `<button onclick="window.triggerDeleteLandmark('${l.id}')" class="absolute top-4 right-4 text-red-700 opacity-30 hover:opacity-100">✕</button>` : ''}
+                        </div>
+                        <span class="script-card-level">
+                            <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateLandmark('${l.id}', 'region', this.innerText)">${l.region || 'Havendor'}</span>
+                        </span>
+                        ${imgHtml}
+                        ${isDM ? `<span class="item-url-input">Asset: <span class="dm-editable inline-block min-w-[50px] border-b border-amber-900/20" contenteditable="true" oninput="window.debounceUpdateLandmark('${l.id}', 'imageUrl', this.innerText)">${imgUrl}</span></span>` : ''}
+                        
+                        <div class="item-flavor-text ${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdateLandmark('${l.id}', 'flavorText', this.innerText)">${l.flavorText || (isDM ? "Lore/Flavor text goes here..." : "")}</div>
+                        
+                        <span class="item-description-label">Description</span>
+                        <div class="script-body ${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdateLandmark('${l.id}', 'content', this.innerText)">${parseAeonfallContent(l.content, isDM)}</div>
+                        
+                        <div class="script-footer mt-4"><b>Tags:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateLandmark('${l.id}', 'tags', this.innerText)">${l.tags || 'Location'}</span></div>
+                    `;
+                    lList.appendChild(card);
+                });
+                if (!filteredLandmarks.length) lList.innerHTML = `<p class="col-span-full text-center italic opacity-40 py-20 uppercase font-black text-amber-900 tracking-widest text-xs">No Landmark Records Found</p>`;
+            }
+
             // Render Items
             const iList = document.getElementById('items-list');
             if (iList) {
@@ -997,6 +1098,10 @@
             if (autoSaveTimer) clearTimeout(autoSaveTimer);
             autoSaveTimer = setTimeout(() => { updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookItems', id), { [field]: val }); }, 1000);
         };
+        window.debounceUpdateLandmark = (id, field, val) => {
+            if (autoSaveTimer) clearTimeout(autoSaveTimer);
+            autoSaveTimer = setTimeout(() => { updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLandmarks', id), { [field]: val }); }, 1000);
+        };
 
         window.triggerDeleteTable = (id) => { itemToDeleteId = id; deleteType = 'table'; document.getElementById('delete-modal').classList.remove('hidden'); };
         window.triggerDeleteArchetype = (id) => { itemToDeleteId = id; deleteType = 'archetype'; document.getElementById('delete-modal').classList.remove('hidden'); };
@@ -1004,10 +1109,11 @@
         window.triggerDeleteScript = (id) => { itemToDeleteId = id; deleteType = 'script'; document.getElementById('delete-modal').classList.remove('hidden'); };
         window.triggerDeleteSession = (id) => { itemToDeleteId = id; deleteType = 'session'; document.getElementById('delete-modal').classList.remove('hidden'); };
         window.triggerDeleteItem = (id) => { itemToDeleteId = id; deleteType = 'item'; document.getElementById('delete-modal').classList.remove('hidden'); };
+        window.triggerDeleteLandmark = (id) => { itemToDeleteId = id; deleteType = 'landmark'; document.getElementById('delete-modal').classList.remove('hidden'); };
 
         document.getElementById('confirm-delete-btn').onclick = async () => {
             if (!itemToDeleteId) return;
-            const collectionName = deleteType === 'script' ? 'handbookScripts' : deleteType === 'session' ? 'handbookSessions' : deleteType === 'feature' ? 'handbookFeatures' : deleteType === 'archetype' ? 'handbookArchetypes' : deleteType === 'table' ? 'handbookTables' : 'handbookItems';
+            const collectionName = deleteType === 'script' ? 'handbookScripts' : deleteType === 'session' ? 'handbookSessions' : deleteType === 'feature' ? 'handbookFeatures' : deleteType === 'archetype' ? 'handbookArchetypes' : deleteType === 'table' ? 'handbookTables' : deleteType === 'landmark' ? 'handbookLandmarks' : 'handbookItems';
             await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', collectionName, itemToDeleteId));
             document.getElementById('delete-modal').classList.add('hidden');
             window.showToast("Record Erased");
@@ -1047,6 +1153,10 @@
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookItems'), { title: "NEW ITEM", content: "Description...", flavorText: "In-universe log entry...", category: currentItemCategory === "All" ? "Adventuring Gear" : currentItemCategory, type: "Gear", rarity: "Common", weight: "1 lb", cost: "-", properties: "None", imageUrl: "", createdAt: Date.now() });
         };
 
+        window.addLandmarkEntry = async () => {
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookLandmarks'), { title: "NEW LANDMARK", content: "Detailed description of the location...", flavorText: "In-universe log or travel snippet...", region: currentLandmarkRegion === "All" ? "Havendor" : currentLandmarkRegion, tags: "Location", imageUrl: "", createdAt: Date.now() });
+        };
+
         const sortFn = (a, b) => (a.order ?? a.createdAt) - (b.order ?? b.createdAt);
 
         const init = async () => {
@@ -1084,6 +1194,21 @@
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookItems'), (snap) => {
                 items = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => a.createdAt - b.createdAt);
                 renderLists(); renderNavs();
+            });
+
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'handbookLandmarks'), (snap) => {
+                landmarks = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => a.createdAt - b.createdAt);
+                renderLists();
+            });
+
+            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'config', 'regionVisibility'), (doc) => {
+                if (doc.exists()) {
+                    regionVisibility = doc.data();
+                } else {
+                    regionVisibility = { Tormarath: false, Vorastra: false, Eryndor: false, Havendor: true };
+                }
+                renderNavs();
+                renderLists();
             });
 
             window.updateRoleUI();
