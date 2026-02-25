@@ -47,6 +47,10 @@
         .script-footer { font-style: italic; font-size: 11px; margin-top: 12px; border-top: 1px solid #7a1d1d33; padding-top: 8px; }
         .script-footer b { font-weight: 900; font-style: normal; }
 
+        /* Item Lore/Description Distinction */
+        .item-flavor-text { color: #6b4423; font-style: italic; border-left: 2px solid #bba68344; padding-left: 10px; margin-bottom: 16px; font-size: 12px; line-height: 1.5; }
+        .item-description-label { font-family: 'Cinzel', serif; font-size: 9px; font-weight: 900; text-transform: uppercase; color: #7a1d1d; letter-spacing: 0.1em; display: block; margin-bottom: 4px; border-bottom: 1px solid #7a1d1d11; }
+
         /* Progression Table Styling */
         .progression-table-container { 
             background-color: #fdfaf3; border: 4px double #bba683; border-radius: 12px; 
@@ -113,9 +117,17 @@
 
         .section-label { font-size: 9px; text-transform: uppercase; font-weight: 900; color: #f59e0b; opacity: 0.5; margin-bottom: 6px; letter-spacing: 0.2em; display: block; border-bottom: 1px solid rgba(245, 158, 11, 0.1); padding-bottom: 3px; }
 
-        /* Adjustments for Sessions on Mobile */
-        #sessions-view .bg-\[\#fdfaf3\] { padding: 20px; border-width: 4px; }
-        .session-field-group { font-size: 13px; }
+        /* DM Specific UI */
+        .dm-active-edit { position: relative; }
+        .dm-editable { outline: none; transition: background 0.2s; border-radius: 4px; }
+        .dm-editable:hover, .dm-editable:focus { background: rgba(0,0,0,0.05); }
+        .drag-handle { cursor: grab; opacity: 0.3; transition: opacity 0.2s; }
+        .drag-handle:hover { opacity: 1; }
+        .classification-pill { font-size: 10px; font-weight: 900; color: #7a1d1d; cursor: pointer; text-decoration: underline dotted; }
+
+        /* Item Preview Img */
+        .item-preview-img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; border: 2px solid #bba683; margin-bottom: 16px; cursor: pointer; }
+        .item-url-input { font-size: 8px; font-family: monospace; color: #94a3b8; margin-bottom: 8px; display: block; overflow: hidden; text-overflow: ellipsis; }
 
         @media (max-width: 768px) {
             .brand-title { font-size: 2.5rem; }
@@ -310,16 +322,16 @@
 
     <!-- LIGHTBOX MODAL -->
     <div id="lightbox-modal" class="fixed inset-0 z-[1000] flex items-center justify-center p-4 hidden">
-        <div class="modal-overlay lightbox-modal absolute inset-0" onclick="document.getElementById('lightbox-modal').classList.add('hidden')"></div>
+        <div class="modal-overlay absolute inset-0 bg-black/80" onclick="document.getElementById('lightbox-modal').classList.add('hidden')"></div>
         <div class="relative z-10 flex flex-col items-center gap-4 w-full">
-            <img id="lightbox-img" src="" alt="Zoomed Asset" class="lightbox-img w-full">
+            <img id="lightbox-img" src="" alt="Zoomed Asset" class="max-w-full max-h-[80vh] border-4 border-[#bba683] rounded-xl shadow-2xl">
             <button onclick="document.getElementById('lightbox-modal').classList.add('hidden')" class="bg-amber-600 text-white px-6 py-2 rounded-full font-black text-[9px] uppercase tracking-widest">Close Optical Feed</button>
         </div>
     </div>
 
     <!-- DELETE CONFIRMATION MODAL -->
     <div id="delete-modal" class="fixed inset-0 z-[600] flex items-center justify-center p-4 hidden">
-        <div class="modal-overlay absolute inset-0" onclick="document.getElementById('delete-modal').classList.add('hidden')"></div>
+        <div class="modal-overlay absolute inset-0 bg-black/50" onclick="document.getElementById('delete-modal').classList.add('hidden')"></div>
         <div class="bg-white p-6 rounded-2xl w-full max-w-xs border-4 border-red-600 text-center text-gray-900 relative z-10 shadow-2xl">
             <h3 class="text-xl font-serif font-black text-red-700 uppercase mb-2">Disposal</h3>
             <p class="text-xs text-gray-500 mb-6 italic leading-relaxed">This record will be permanently erased.</p>
@@ -353,7 +365,7 @@
 
         const CLASSES = ["Heartbound", "Nomad", "Wilderness Warden", "Chronicler", "Orator", "Scriptweaver", "War-Touched", "Archivist", "Fabricator"];
         const FEATURE_MARTIAL_CLASSES = ["Vanguard", "Warrior", "Peacekeeper", "Scavenger"];
-        const ITEM_CATEGORIES = ["All", "Weapons", "Armor", "Material Component", "Adventuring Gear", "Artifacts", "Recipes & Consumables"];
+        const ITEM_CATEGORIES = ["All", "Weapons", "Armor", "Material Component", "Adventuring Gear", "Transportation", "Artifacts", "Recipes & Consumables"];
         
         const TOOLTIPS = {
             "Activation Time": "The amount of time required to initialize this script and push it to reality.",
@@ -873,7 +885,12 @@
                             <li><b>Weight:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'weight', this.innerText)">${i.weight || '1 lb'}</span></li>
                             <li><b>Value:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'cost', this.innerText)">${i.cost || '-'}</span></li>
                         </ul>
+                        
+                        <div class="item-flavor-text ${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'flavorText', this.innerText)">${i.flavorText || (isDM ? "Lore/Flavor text goes here..." : "")}</div>
+                        
+                        <span class="item-description-label">Description</span>
                         <div class="script-body ${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'content', this.innerText)">${parseAeonfallContent(i.content, isDM)}</div>
+                        
                         <div class="script-higher-levels"><b>Properties.</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'properties', this.innerText)">${i.properties || 'None.'}</span></div>
                         <button onclick="window.copyItem('${i.id}')" class="mt-4 w-full bg-[#2c1810]/5 hover:bg-[#7a1d1d]/10 border border-[#7a1d1d33] py-2 rounded-lg text-[#7a1d1d] font-black text-[9px] uppercase transition-all flex items-center justify-center gap-2"><span>📋</span> Copy Data</button>
                     `;
@@ -912,7 +929,8 @@
                         </div>
                     `;
                     if (isDM) html += `
-                        <div class="dm-intel-box mt-10"><span class="dm-intel-label">DM Intel</span>
+                        <div class="dm-intel-box mt-10 p-4 bg-[#2c1810]/5 rounded-xl border border-[#2c1810]/10">
+                            <span class="text-[9px] uppercase font-black text-[#7a1d1d] opacity-50 block mb-4">DM Intel Overlay</span>
                             <div class="mb-4"><div class="font-black text-[10px] uppercase text-[#7a1d1d] mb-1">Goals</div><div class="dm-editable min-h-[40px] bg-white/50 p-2 rounded" contenteditable="true" oninput="window.debounceUpdateSession('${s.id}', 'dmGoals', this.innerText)">${s.dmGoals || '...'}</div></div>
                             <div class="mb-4"><div class="font-black text-[10px] uppercase text-[#7a1d1d] mb-1">Notes</div><div class="dm-editable min-h-[60px] bg-white/50 p-2 rounded" contenteditable="true" oninput="window.debounceUpdateSession('${s.id}', 'dmRunningNotes', this.innerText)">${s.dmRunningNotes || '...'}</div></div>
                         </div>`;
@@ -1026,7 +1044,7 @@
         };
 
         window.addItemEntry = async () => {
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookItems'), { title: "NEW ITEM", content: "...", category: currentItemCategory === "All" ? "Adventuring Gear" : currentItemCategory, type: "Gear", rarity: "Common", weight: "1 lb", cost: "-", properties: "None", imageUrl: "", createdAt: Date.now() });
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookItems'), { title: "NEW ITEM", content: "Description...", flavorText: "In-universe log entry...", category: currentItemCategory === "All" ? "Adventuring Gear" : currentItemCategory, type: "Gear", rarity: "Common", weight: "1 lb", cost: "-", properties: "None", imageUrl: "", createdAt: Date.now() });
         };
 
         const sortFn = (a, b) => (a.order ?? a.createdAt) - (b.order ?? b.createdAt);
