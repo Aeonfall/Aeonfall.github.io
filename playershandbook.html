@@ -541,7 +541,7 @@
 
         window.selectLandmarkRegion = (reg) => {
             if (activeRole !== 'dm' && reg !== 'All' && reg !== 'Havendor' && !regionVisibility[reg]) {
-                window.showToast(`The region of ${reg} has not yet been surveyed.`);
+                window.showToast(`The continent/plane of ${reg} has not yet been discovered.`);
                 return;
             }
             currentLandmarkRegion = reg;
