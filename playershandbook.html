@@ -62,8 +62,8 @@
         /* Highlight Animation */
         @keyframes item-pulse {
             0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
-            50% { box-shadow: 0 0 30px 10px rgba(245, 158, 11, 0.6); }
-            100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+            50% { box-shadow: 0 0 30px 10px rgba(245, 158, 11, 0.6); transform: scale(1.02); }
+            100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); transform: scale(1); }
         }
         .highlight-glow { animation: item-pulse 2s ease-out 2; z-index: 50; }
 
@@ -531,6 +531,12 @@
         let activeLandmarkId = null;
         let deleteType = ''; 
 
+        // Helper to normalize strings for robust comparison
+        const normalize = (str) => {
+            if (!str) return "";
+            return str.toString().replace(/\u00a0/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
+        };
+
         window.showToast = (m) => { const t = document.getElementById('toast'); t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 4000); };
 
         window.setRole = (r) => { 
@@ -638,7 +644,6 @@
             let current = parseInt(item.storeStock || 0);
             let newVal = Math.max(0, current + delta);
             
-            // Local optimistic update for UI responsiveness
             item.storeStock = newVal;
             renderLists();
 
@@ -816,15 +821,18 @@
         function linkifyComponents(text, isDM) {
             if (!text) return '';
             if (isDM) return text;
+            
             let linked = text.replace(/\bV\b/g, wrapWithTooltip('V', 'V'))
                              .replace(/\bS\b/g, wrapWithTooltip('S', 'S'))
                              .replace(/\bM\b/g, wrapWithTooltip('M', 'M'));
             
             linked = linked.replace(/\(([^)]+)\)/g, (match, fullContent) => {
-                // Split multiple choices by " or "
-                const parts = fullContent.split(/\bor\b/i);
-                const linkedParts = parts.map((part, index) => {
-                    const detailKeywords = [" worth", " which", ","];
+                const parts = fullContent.split(/(\s+\bor\b\s+)/i);
+                
+                const linkedParts = parts.map((part) => {
+                    if (/^\s+\bor\b\s+$/i.test(part)) return part;
+
+                    const detailKeywords = [" worth", " which", ",", " that", " consumed"];
                     let itemName = part.trim();
                     let details = "";
                     
@@ -842,43 +850,46 @@
                         itemName = itemName.substring(0, lowestIndex).trim();
                     }
                     
-                    // Improved capitalization helper: handling spaces and hyphens
-                    const capitalizedItem = itemName.split(/\s+/).map(word => 
-                        word.split('-').map(sub => 
-                            sub.charAt(0).toUpperCase() + sub.slice(1).toLowerCase()
-                        ).join('-')
-                    ).join(' ');
+                    const capitalizedItem = itemName.split(/\s+/).map(word => {
+                        if (!word) return "";
+                        return word.split('-').map(sub => {
+                            if (!sub) return "";
+                            return sub.charAt(0).toUpperCase() + sub.slice(1).toLowerCase();
+                        }).join('-');
+                    }).join(' ');
                     
                     return `<span class="item-reference-link" onclick="window.jumpToItem('${capitalizedItem.replace(/'/g, "\\'")}')">${capitalizedItem}</span>${details}`;
                 });
 
-                return `(${linkedParts.join(' or ')})`;
+                return `(${linkedParts.join('')})`;
             });
             return linked;
         }
 
         window.jumpToItem = (itemName) => {
-            const matchItem = items.find(i => i.title.toLowerCase() === itemName.toLowerCase());
+            const cleanTerm = normalize(itemName);
+            const matchItem = items.find(i => normalize(i.title) === cleanTerm);
+            
             if (matchItem) {
                 currentItemCategory = matchItem.category || "All";
-                itemSearchQuery = "";
+                itemSearchQuery = ""; 
                 const searchInput = document.getElementById('item-search-input');
                 if (searchInput) searchInput.value = "";
                 
                 window.switchView('items');
                 renderNavs();
-                renderLists();
+                renderLists(); 
 
                 setTimeout(() => {
                     const itemEntryTitles = Array.from(document.querySelectorAll('#items-list .script-card-title'));
-                    const targetEl = itemEntryTitles.find(el => el.innerText.trim().toLowerCase() === itemName.toLowerCase());
+                    const targetEl = itemEntryTitles.find(el => normalize(el.innerText) === cleanTerm);
                     if (targetEl) {
                         const card = targetEl.closest('.script-card');
                         card.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         card.classList.add('highlight-glow');
                         setTimeout(() => card.classList.remove('highlight-glow'), 4000);
                     }
-                }, 300);
+                }, 500); 
             } else {
                 window.showToast(`Resource "${itemName}" is not registered.`);
             }
@@ -1125,7 +1136,6 @@
             const savedUser = JSON.parse(localStorage.getItem('aeonfall_user') || '{}');
             const currentUsername = savedUser.username || 'Guest';
             
-            // Render Features
             const fList = document.getElementById('features-list');
             if (fList) {
                 fList.innerHTML = '';
@@ -1170,17 +1180,9 @@
                     archTables.forEach(t => fList.innerHTML += createTableHtml(t, isDM));
                     archFeatures.forEach(f => fList.innerHTML += createFeatureCard(f, isDM));
                     archScripts.forEach(s => fList.innerHTML += createScriptCard(s, isDM));
-
-                    if (!archTables.length && !archFeatures.length && !archScripts.length) {
-                        const empty = document.createElement('p');
-                        empty.className = 'col-span-full text-center italic opacity-30 py-6 text-[10px] uppercase font-black';
-                        empty.textContent = 'Archetype Buffer Empty';
-                        fList.appendChild(empty);
-                    }
                 });
             }
 
-            // Render Scripts
             const sList = document.getElementById('scripts-list');
             if (sList) {
                 sList.innerHTML = '';
@@ -1193,7 +1195,6 @@
                 if (!filteredScripts.length) sList.innerHTML = `<p class="col-span-full text-center italic opacity-40 py-20 uppercase font-black text-amber-900 tracking-widest text-xs">No Records Found</p>`;
             }
 
-            // Render Landmarks
             const lList = document.getElementById('landmarks-list');
             if (lList) {
                 lList.innerHTML = '';
@@ -1204,7 +1205,7 @@
                     const imgUrl = (l.imageUrl || '').trim();
                     let imgHtml = imgUrl ? `<img src="${imgUrl}" class="item-preview-img" onclick="window.zoomImage('${imgUrl}')" onerror="this.src='https://placehold.co/600x400/000000/f59e0b?text=LOCATION+ASSET+LOST'">` : (isDM ? `<div class="w-full h-10 bg-black/5 border-dashed border-2 border-amber-900/20 rounded-lg flex items-center justify-center text-[8px] uppercase font-black opacity-40 mb-4 tracking-widest">Signal Lost: Input Link Below</div>` : '');
                     
-                    const isTargetUser = currentUsername.toLowerCase() === (l.personalTie || '').toLowerCase();
+                    const isTargetUser = normalize(currentUsername) === normalize(l.personalTie);
                     let personalTieHtml = "";
                     if (isDM || isTargetUser) {
                         if (l.personalTie) {
@@ -1236,46 +1237,42 @@
                         ${imgHtml}
                         ${personalTieHtml}
                         ${isDM ? `<span class="item-url-input mt-2">Asset: <span class="dm-editable inline-block min-w-[50px] border-b border-amber-900/20" contenteditable="true" oninput="window.debounceUpdateLandmark('${l.id}', 'imageUrl', this.innerText)">${imgUrl}</span></span>` : ''}
-                        
-                        <div class="item-flavor-text mt-4 ${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdateLandmark('${l.id}', 'flavorText', this.innerText)">${l.flavorText || (isDM ? "Lore/Flavor text goes here..." : "")}</div>
-                        
+                        <div class="item-flavor-text mt-4 ${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdateLandmark('${l.id}', 'flavorText', this.innerText)">${l.flavorText || ""}</div>
                         <span class="item-description-label">Regional Data</span>
                         <div class="script-body ${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdateLandmark('${l.id}', 'content', this.innerText)">${parseAeonfallContent(l.content, isDM)}</div>
-                        
                         <div class="script-footer mt-4"><b>Tags:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateLandmark('${l.id}', 'tags', this.innerText)">${l.tags || 'Location'}</span></div>
                     `;
                     lList.appendChild(card);
                 });
-                if (!filteredLandmarks.length) lList.innerHTML = `<p class="col-span-full text-center italic opacity-40 py-20 uppercase font-black text-amber-900 tracking-widest text-xs">No Landmark Records Found</p>`;
             }
 
-            // Render Items
             const iList = document.getElementById('items-list');
             if (iList) {
                 iList.innerHTML = '';
                 let filteredItems = items.filter(i => {
                     const matchesCategory = currentItemCategory === "Store Front" 
                         ? i.isAvailableInStore === true 
-                        : (currentItemCategory === "All" || (i.category || 'General').toLowerCase() === currentItemCategory.toLowerCase());
+                        : (currentItemCategory === "All" || normalize(i.category || 'General') === normalize(currentItemCategory));
                     
                     if (!matchesCategory) return false;
 
-                    const matchesSearch = !itemSearchQuery || (i.title || '').toLowerCase().includes(itemSearchQuery);
+                    const matchesSearch = !itemSearchQuery || normalize(i.title || '').includes(itemSearchQuery);
                     if (!matchesSearch) return false;
 
                     // STORE FRONT SPECIFIC LOGIC: Respect stock and public drafting
                     if (currentItemCategory === "Store Front") {
                         if (!isDM) {
-                            // Players only see Published (Public) items with stock > 0
-                            if (!i.isPublic) return false;
+                            if (i.isPublic === false) return false;
                             if (parseInt(i.storeStock || 0) <= 0) return false;
                         }
+                    } else {
+                        // In regular categories, hide ONLY if explicitly set to private by DM
+                        if (!isDM && i.isPublic === false) return false;
                     }
 
                     return true;
                 });
                 
-                // RANDOMIZATION LOGIC FOR "ALL" CATEGORY
                 if (currentItemCategory === "All" && !itemSearchQuery) {
                     filteredItems.sort((a, b) => a._seed - b._seed);
                 } else if (!itemSearchQuery) {
@@ -1284,98 +1281,45 @@
 
                 filteredItems.forEach(i => {
                     const card = document.createElement('div');
-                    const isPrivateStoreItem = currentItemCategory === "Store Front" && !i.isPublic;
+                    const isPrivateDraft = i.isPublic === false;
                     const raritySlug = getRarityClass(i.rarity);
                     const borderClass = `border-${raritySlug}`;
                     
-                    card.className = `script-card ${isDM ? 'dm-active-edit' : ''} ${isPrivateStoreItem ? 'is-private' : ''} ${borderClass}`;
+                    card.className = `script-card ${isDM ? 'dm-active-edit' : ''} ${isPrivateDraft ? 'is-private' : ''} ${borderClass}`;
                     const imgUrl = (i.imageUrl || '').trim();
                     let imgHtml = imgUrl ? `<img src="${imgUrl}" class="item-preview-img" onclick="window.zoomImage('${imgUrl}')" onerror="this.src='https://placehold.co/400x400/000000/f59e0b?text=ASSET+LOST'">` : (isDM ? `<div class="w-full h-10 bg-black/5 border-dashed border-2 border-amber-900/20 rounded-lg flex items-center justify-center text-[8px] uppercase font-black opacity-40 mb-4 tracking-widest">Signal Lost: Input Link Below</div>` : '');
                     
-                    // Store-specific badge
-                    let storeBadgeHtml = "";
-                    if (i.isAvailableInStore) {
-                        const stock = parseInt(i.storeStock || 0);
-                        storeBadgeHtml = `<div class="store-badge ${stock <= 0 ? 'out-of-stock' : ''}">STOCK: ${stock <= 0 ? 'OUT' : stock}</div>`;
-                    }
-
-                    // Visibility Badge (Only in Store Front)
-                    let privateBadgeHtml = (currentItemCategory === "Store Front" && !i.isPublic) ? `<div class="private-tag">Private Stock</div>` : "";
-
-                    // DM Controls: Visibility toggle only in Store Front
-                    let visibilityActionBtn = (isDM && currentItemCategory === "Store Front") ? `<button onclick="window.toggleItemPublic('${i.id}')" class="mt-2 mr-4 text-amber-500 text-[8px] font-black uppercase tracking-tighter">${i.isPublic ? '🔒 Set Private' : '👁️ Publish Public'}</button>` : "";
-
-                    // DM Add/Remove from Store button
-                    let storeActionBtn = "";
-                    if (isDM) {
-                        if (currentItemCategory === "Store Front") {
-                            storeActionBtn = `<button onclick="window.toggleStoreStatus('${i.id}')" class="mt-2 text-red-700 text-[8px] font-black uppercase tracking-tighter">Remove From Store Front</button>`;
-                        } else {
-                            storeActionBtn = `<button onclick="window.toggleStoreStatus('${i.id}')" class="mt-2 text-emerald-700 text-[8px] font-black uppercase tracking-tighter">${i.isAvailableInStore ? 'Update Store Record' : '🛒 Send to Store'}</button>`;
-                        }
-                    }
-
-                    // Stock Controls for DM in Store Front
-                    let stockControls = "";
-                    if (isDM && currentItemCategory === "Store Front") {
-                        stockControls = `
-                            <div class="stock-control">
-                                <span class="text-[8px] font-black uppercase text-[#7a1d1d]">Adjust stock</span>
-                                <div class="flex items-center gap-2 ml-auto">
-                                    <div class="stock-btn" onclick="window.updateStoreStock('${i.id}', -1)">-</div>
-                                    <input type="number" class="stock-val" value="${i.storeStock || 0}" oninput="window.setStoreStockValue('${i.id}', this.value)">
-                                    <div class="stock-btn" onclick="window.updateStoreStock('${i.id}', 1)">+</div>
-                                </div>
-                            </div>
-                        `;
-                    }
+                    let storeBadgeHtml = i.isAvailableInStore ? `<div class="store-badge ${parseInt(i.storeStock || 0) <= 0 ? 'out-of-stock' : ''}">STOCK: ${parseInt(i.storeStock || 0) <= 0 ? 'OUT' : i.storeStock}</div>` : "";
+                    let privateBadgeHtml = isPrivateDraft ? `<div class="private-tag">Private Dossier</div>` : "";
+                    let visibilityActionBtn = isDM ? `<button onclick="window.toggleItemPublic('${i.id}')" class="mt-2 mr-4 text-amber-500 text-[8px] font-black uppercase tracking-tighter">${i.isPublic !== false ? '🔒 Set Private' : '👁️ Publish Public'}</button>` : "";
+                    let storeActionBtn = isDM ? `<button onclick="window.toggleStoreStatus('${i.id}')" class="mt-2 text-red-700 text-[8px] font-black uppercase tracking-tighter">${currentItemCategory === "Store Front" ? 'Remove From Store' : (i.isAvailableInStore ? 'Update Store' : '🛒 Send to Store')}</button>` : "";
+                    let stockControls = (isDM && currentItemCategory === "Store Front") ? `<div class="stock-control"><span class="text-[8px] font-black uppercase text-[#7a1d1d]">Adjust stock</span><div class="flex items-center gap-2 ml-auto"><div class="stock-btn" onclick="window.updateStoreStock('${i.id}', -1)">-</div><input type="number" class="stock-val" value="${i.storeStock || 0}" oninput="window.setStoreStockValue('${i.id}', this.value)"><div class="stock-btn" onclick="window.updateStoreStock('${i.id}', 1)">+</div></div></div>` : "";
 
                     card.innerHTML = `
-                        ${storeBadgeHtml}
-                        ${privateBadgeHtml}
-                        <div class="script-card-header">
-                            <div class="script-card-title dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'title', this.innerText)">${i.title}</div>
-                            ${isDM ? `<button onclick="window.triggerDeleteItem('${i.id}')" class="absolute top-4 right-4 text-red-700 opacity-30 hover:opacity-100">✕</button>` : ''}
-                        </div>
-                        <span class="script-card-level">
-                            <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'category', this.innerText)">${i.category || 'General'}</span> — 
-                            <span class="dm-editable ${raritySlug}" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'rarity', this.innerText)">${i.rarity || 'Common'}</span>
-                        </span>
+                        ${storeBadgeHtml} ${privateBadgeHtml}
+                        <div class="script-card-header"><div class="script-card-title dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'title', this.innerText)">${i.title}</div>${isDM ? `<button onclick="window.triggerDeleteItem('${i.id}')" class="absolute top-4 right-4 text-red-700 opacity-30 hover:opacity-100">✕</button>` : ''}</div>
+                        <span class="script-card-level"><span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'category', this.innerText)">${i.category || 'General'}</span> — <span class="dm-editable ${raritySlug}" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'rarity', this.innerText)">${i.rarity || 'Common'}</span></span>
                         ${imgHtml}
                         ${isDM ? `<span class="item-url-input">Asset: <span class="dm-editable inline-block min-w-[50px] border-b border-amber-900/20" contenteditable="true" oninput="window.debounceUpdateItem('${i.id}', 'imageUrl', this.innerText)">${imgUrl}</span></span>` : ''}
-                        <ul class="script-prop-list">
-                            <li><b>Weight:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'weight', this.innerText)">${i.weight || '1 lb'}</span></li>
-                            <li><b>Value:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'cost', this.innerText)">${i.cost || '-'}</span></li>
-                        </ul>
-                        
-                        <div class="item-flavor-text ${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'flavorText', this.innerText)">${i.flavorText || (isDM ? "Lore/Flavor text goes here..." : "")}</div>
-                        
+                        <ul class="script-prop-list"><li><b>Weight:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'weight', this.innerText)">${i.weight || '1 lb'}</span></li><li><b>Value:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'cost', this.innerText)">${i.cost || '-'}</span></li></ul>
+                        <div class="item-flavor-text ${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'flavorText', this.innerText)">${i.flavorText || ""}</div>
                         <span class="item-description-label">Description</span>
                         <div class="script-body ${isDM ? 'dm-editable' : ''}" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'content', this.innerText)">${parseAeonfallContent(i.content, isDM)}</div>
-                        
                         <div class="script-higher-levels"><b>Properties.</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateItem('${i.id}', 'properties', this.innerText)">${i.properties || 'None.'}</span></div>
-                        
-                        ${stockControls}
-                        <div class="flex items-center">
-                            ${visibilityActionBtn}
-                            ${storeActionBtn}
-                        </div>
-
+                        ${stockControls}<div class="flex items-center">${visibilityActionBtn}${storeActionBtn}</div>
                         <button onclick="window.copyItem('${i.id}')" class="mt-4 w-full bg-[#2c1810]/5 hover:bg-[#7a1d1d]/10 border border-[#7a1d1d33] py-2 rounded-lg text-[#7a1d1d] font-black text-[9px] uppercase transition-all flex items-center justify-center gap-2"><span>📋</span> Copy Data</button>
                     `;
                     iList.appendChild(card);
                 });
-                if (!filteredItems.length) iList.innerHTML = `<p class="col-span-full text-center italic opacity-40 py-20 uppercase font-black text-amber-900 tracking-widest text-xs">No Records Found</p>`;
             }
 
-            // Render Sessions
             const sessList = document.getElementById('sessions-list');
             if (sessList) {
                 sessList.innerHTML = '';
                 sessions.forEach(s => {
                     const div = document.createElement('div');
                     div.className = `relative ${isDM ? 'dm-active-edit' : ''}`;
-                    let html = `
+                    div.innerHTML = `
                         <div class="flex flex-wrap justify-between items-start mb-6 border-b border-gray-900/10 pb-2 gap-4">
                             <div class="font-serif font-black text-2xl md:text-4xl uppercase text-[#7a1d1d] dm-editable" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'title', this.innerText)">${s.title}</div>
                             ${isDM ? `<button onclick="window.triggerDeleteSession('${s.id}')" class="text-red-700 font-black text-[9px] uppercase border border-red-200 px-2 py-1 rounded">Delete</button>` : ''}
@@ -1397,14 +1341,8 @@
                                 <div class="session-field-group"><b>5. Closing:</b> <div class="dm-editable italic min-h-[20px]" contenteditable="${isDM}" oninput="window.debounceUpdateSession('${s.id}', 'scene5', this.innerText)">${s.scene5 || '...'}</div></div>
                             </div>
                         </div>
+                        ${isDM ? `<div class="dm-intel-box mt-10 p-4 bg-[#2c1810]/5 rounded-xl border border-[#2c1810]/10"><span class="text-[9px] uppercase font-black text-[#7a1d1d] opacity-50 block mb-4">DM Intel Overlay</span><div class="mb-4"><div class="font-black text-[10px] uppercase text-[#7a1d1d] mb-1">Goals</div><div class="dm-editable min-h-[40px] bg-white/50 p-2 rounded" contenteditable="true" oninput="window.debounceUpdateSession('${s.id}', 'dmGoals', this.innerText)">${s.dmGoals || '...'}</div></div><div class="mb-4"><div class="font-black text-[10px] uppercase text-[#7a1d1d] mb-1">Notes</div><div class="dm-editable min-h-[60px] bg-white/50 p-2 rounded" contenteditable="true" oninput="window.debounceUpdateSession('${s.id}', 'dmRunningNotes', this.innerText)">${s.dmRunningNotes || '...'}</div></div></div>` : ""}
                     `;
-                    if (isDM) html += `
-                        <div class="dm-intel-box mt-10 p-4 bg-[#2c1810]/5 rounded-xl border border-[#2c1810]/10">
-                            <span class="text-[9px] uppercase font-black text-[#7a1d1d] opacity-50 block mb-4">DM Intel Overlay</span>
-                            <div class="mb-4"><div class="font-black text-[10px] uppercase text-[#7a1d1d] mb-1">Goals</div><div class="dm-editable min-h-[40px] bg-white/50 p-2 rounded" contenteditable="true" oninput="window.debounceUpdateSession('${s.id}', 'dmGoals', this.innerText)">${s.dmGoals || '...'}</div></div>
-                            <div class="mb-4"><div class="font-black text-[10px] uppercase text-[#7a1d1d] mb-1">Notes</div><div class="dm-editable min-h-[60px] bg-white/50 p-2 rounded" contenteditable="true" oninput="window.debounceUpdateSession('${s.id}', 'dmRunningNotes', this.innerText)">${s.dmRunningNotes || '...'}</div></div>
-                        </div>`;
-                    div.innerHTML = html;
                     sessList.appendChild(div);
                 });
             }
@@ -1508,23 +1446,8 @@
         window.addScriptEntry = async (lvl = null, archId = null) => {
             const targetClass = archId ? currentFeatureClass : currentClass;
             const targetLevel = (lvl !== null) ? lvl : currentLevel;
-
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookScripts'), { 
-                title: "NEW SCRIPT", 
-                content: "...", 
-                school: "Dominion", 
-                classification: "", 
-                activationTime: "1 Action", 
-                range: "30 feet", 
-                components: "V, S", 
-                duration: "Instant", 
-                higherLevels: "...", 
-                scriptLists: targetClass, 
-                className: targetClass, 
-                level: targetLevel, 
-                archetypeId: archId, 
-                createdAt: Date.now(), 
-                order: Date.now() 
+                title: "NEW SCRIPT", content: "...", school: "Dominion", classification: "", activationTime: "1 Action", range: "30 feet", components: "V, S", duration: "Instant", higherLevels: "...", scriptLists: targetClass, className: targetClass, level: targetLevel, archetypeId: archId, createdAt: Date.now(), order: Date.now() 
             });
         };
         
@@ -1533,13 +1456,13 @@
         };
 
         window.addItemEntry = async () => {
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookItems'), { title: "NEW ITEM", content: "Description...", flavorText: "Flavor text...", category: currentItemCategory === "All" || currentItemCategory === "Store Front" ? "Adventuring Gear" : currentItemCategory, type: "Gear", rarity: "Common", weight: "1 lb", cost: "-", properties: "None", imageUrl: "", isAvailableInStore: false, isPublic: false, storeStock: 0, createdAt: Date.now() });
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookItems'), { title: "NEW ITEM", content: "Description...", flavorText: "", category: normalize(currentItemCategory) === "all" || normalize(currentItemCategory) === "store front" ? "Adventuring Gear" : currentItemCategory, type: "Gear", rarity: "Common", weight: "1 lb", cost: "-", properties: "None", imageUrl: "", isAvailableInStore: false, isPublic: true, storeStock: 0, createdAt: Date.now() });
         };
 
         window.addLandmarkEntry = async () => {
             let region = currentLandmarkRegion === "All" ? "Havendor" : currentLandmarkRegion;
             if (region === 'Fractured Planes') region = planeNames[0];
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookLandmarks'), { title: "NEW LANDMARK", content: "Detailed description...", flavorText: "Flavor text...", region: region, tags: "Location", imageUrl: "", personalTie: "", personalTieContent: "", createdAt: Date.now() });
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookLandmarks'), { title: "NEW LANDMARK", content: "Detailed description...", flavorText: "", region: region, tags: "Location", imageUrl: "", personalTie: "", personalTieContent: "", createdAt: Date.now() });
         };
 
         const sortFn = (a, b) => (a.order ?? a.createdAt) - (b.order ?? b.createdAt);
@@ -1591,23 +1514,13 @@
             });
 
             onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'config', 'regionVisibility'), (docSnap) => {
-                if (docSnap.exists()) {
-                    regionVisibility = docSnap.data();
-                } else {
-                    regionVisibility = { Tormarath: false, Vorastra: false, Eryndor: false, "Fractured Planes": false, Havendor: true };
-                }
-                renderNavs();
-                renderLists();
+                regionVisibility = docSnap.exists() ? docSnap.data() : { Tormarath: false, Vorastra: false, Eryndor: false, "Fractured Planes": false, Havendor: true };
+                renderNavs(); renderLists();
             });
 
             onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'config', 'landmarkConfig'), (docSnap) => {
-                if (docSnap.exists()) {
-                    planeNames = docSnap.data().planeNames || [...DEFAULT_PLANES];
-                } else {
-                    planeNames = [...DEFAULT_PLANES];
-                }
-                renderNavs();
-                renderLists();
+                planeNames = docSnap.exists() ? (docSnap.data().planeNames || DEFAULT_PLANES) : DEFAULT_PLANES;
+                renderNavs(); renderLists();
             });
 
             window.updateRoleUI();
