@@ -803,12 +803,10 @@
             if (!text) return '';
             let linkedText = text;
             
-            // Sort by length descending to match longest names (e.g. Wilderness Warden) before Nomad
             const allClassNames = [...CLASSES, ...FEATURE_MARTIAL_CLASSES].sort((a, b) => b.length - a.length);
 
             allClassNames.forEach(cls => {
                 const escapedCls = cls.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-                // Regex matches the class name as a distinct word even if surrounded by text like "(Optional)"
                 const regex = new RegExp(`\\b${escapedCls}\\b`, 'g');
                 linkedText = linkedText.replace(regex, `<span class="class-link" onclick="event.stopPropagation(); window.selectClass('${cls.replace(/'/g, "\\'")}')">${cls}</span>`);
             });
@@ -823,28 +821,38 @@
                              .replace(/\bM\b/g, wrapWithTooltip('M', 'M'));
             
             linked = linked.replace(/\(([^)]+)\)/g, (match, fullContent) => {
-                const detailKeywords = [" worth", " which", ","];
-                let itemName = fullContent;
-                let details = "";
-                
-                let lowestIndex = -1;
-                for (const kw of detailKeywords) {
-                    const index = fullContent.toLowerCase().indexOf(kw);
-                    if (index !== -1 && (lowestIndex === -1 || index < lowestIndex)) {
-                        lowestIndex = index;
+                // Split multiple choices by " or "
+                const parts = fullContent.split(/\bor\b/i);
+                const linkedParts = parts.map((part, index) => {
+                    const detailKeywords = [" worth", " which", ","];
+                    let itemName = part.trim();
+                    let details = "";
+                    
+                    let lowestIndex = -1;
+                    for (const kw of detailKeywords) {
+                        const kwLower = kw.toLowerCase();
+                        const index = itemName.toLowerCase().indexOf(kwLower);
+                        if (index !== -1 && (lowestIndex === -1 || index < lowestIndex)) {
+                            lowestIndex = index;
+                        }
                     }
-                }
 
-                if (lowestIndex !== -1) {
-                    itemName = fullContent.substring(0, lowestIndex).trim();
-                    details = fullContent.substring(lowestIndex);
-                }
-                
-                const capitalizedItem = itemName.split(' ').map(word => 
-                    word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-                ).join(' ');
-                
-                return `(<span class="item-reference-link" onclick="window.jumpToItem('${capitalizedItem.replace(/'/g, "\\'")}')">${capitalizedItem}</span>${details})`;
+                    if (lowestIndex !== -1) {
+                        details = itemName.substring(lowestIndex);
+                        itemName = itemName.substring(0, lowestIndex).trim();
+                    }
+                    
+                    // Improved capitalization helper: handling spaces and hyphens
+                    const capitalizedItem = itemName.split(/\s+/).map(word => 
+                        word.split('-').map(sub => 
+                            sub.charAt(0).toUpperCase() + sub.slice(1).toLowerCase()
+                        ).join('-')
+                    ).join(' ');
+                    
+                    return `<span class="item-reference-link" onclick="window.jumpToItem('${capitalizedItem.replace(/'/g, "\\'")}')">${capitalizedItem}</span>${details}`;
+                });
+
+                return `(${linkedParts.join(' or ')})`;
             });
             return linked;
         }
