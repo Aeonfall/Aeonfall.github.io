@@ -39,11 +39,11 @@
         .private-tag { position: absolute; top: 10px; left: 10px; background: #334155; color: white; padding: 2px 8px; border-radius: 4px; font-size: 8px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; }
 
         /* Rarity Borders */
-        .border-rarity-common { border-color: #bba683; }
-        .border-rarity-uncommon { border-color: #16a34a; }
-        .border-rarity-rare { border-color: #2563eb; }
-        .border-rarity-very-rare { border-color: #9333ea; }
-        .border-rarity-legendary { border-color: #d97706; }
+        .border-rarity-common { border-color: #bba683 !important; }
+        .border-rarity-uncommon { border-color: #16a34a !important; }
+        .border-rarity-rare { border-color: #2563eb !important; }
+        .border-rarity-very-rare { border-color: #9333ea !important; }
+        .border-rarity-legendary { border-color: #d97706 !important; }
 
         /* Rarity Text */
         .rarity-common { color: #64748b; }
@@ -61,9 +61,9 @@
 
         /* Highlight Animation */
         @keyframes item-pulse {
-            0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); border-width: 2px; }
-            50% { box-shadow: 0 0 30px 10px rgba(245, 158, 11, 0.6); border-width: 4px; border-color: #f59e0b; }
-            100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); border-width: 2px; }
+            0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+            50% { box-shadow: 0 0 30px 10px rgba(245, 158, 11, 0.6); }
+            100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
         }
         .highlight-glow { animation: item-pulse 2s ease-out 2; z-index: 50; }
 
@@ -577,7 +577,6 @@
         window.selectClass = (c) => { 
             if (FEATURE_MARTIAL_CLASSES.includes(c)) {
                 window.selectFeatureClass(c);
-                window.switchView('features');
                 return;
             }
             currentClass = c; 
@@ -803,9 +802,15 @@
         function linkifyClasses(text) {
             if (!text) return '';
             let linkedText = text;
-            CLASSES.concat(FEATURE_MARTIAL_CLASSES).forEach(cls => {
-                const regex = new RegExp(`\\b${cls}\\b`, 'g');
-                linkedText = linkedText.replace(regex, `<span class="class-link" onclick="event.stopPropagation(); window.selectClass('${cls}')">${cls}</span>`);
+            
+            // Sort by length descending to match longest names (e.g. Wilderness Warden) before Nomad
+            const allClassNames = [...CLASSES, ...FEATURE_MARTIAL_CLASSES].sort((a, b) => b.length - a.length);
+
+            allClassNames.forEach(cls => {
+                const escapedCls = cls.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                // Regex matches the class name as a distinct word even if surrounded by text like "(Optional)"
+                const regex = new RegExp(`\\b${escapedCls}\\b`, 'g');
+                linkedText = linkedText.replace(regex, `<span class="class-link" onclick="event.stopPropagation(); window.selectClass('${cls.replace(/'/g, "\\'")}')">${cls}</span>`);
             });
             return linkedText;
         }
@@ -818,7 +823,6 @@
                              .replace(/\bM\b/g, wrapWithTooltip('M', 'M'));
             
             linked = linked.replace(/\(([^)]+)\)/g, (match, fullContent) => {
-                // Heuristic: Item name usually precedes details like "worth", "which", or a comma
                 const detailKeywords = [" worth", " which", ","];
                 let itemName = fullContent;
                 let details = "";
@@ -836,7 +840,6 @@
                     details = fullContent.substring(lowestIndex);
                 }
                 
-                // Capitalize Item Name (Title Case)
                 const capitalizedItem = itemName.split(' ').map(word => 
                     word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
                 ).join(' ');
@@ -850,15 +853,14 @@
             const matchItem = items.find(i => i.title.toLowerCase() === itemName.toLowerCase());
             if (matchItem) {
                 currentItemCategory = matchItem.category || "All";
-                itemSearchQuery = ""; // Clear search to ensure target is found
+                itemSearchQuery = "";
                 const searchInput = document.getElementById('item-search-input');
                 if (searchInput) searchInput.value = "";
                 
                 window.switchView('items');
                 renderNavs();
-                renderLists(); // Important to regenerate the DOM with current filters
+                renderLists();
 
-                // Allow DOM to update before scrolling
                 setTimeout(() => {
                     const itemEntryTitles = Array.from(document.querySelectorAll('#items-list .script-card-title'));
                     const targetEl = itemEntryTitles.find(el => el.innerText.trim().toLowerCase() === itemName.toLowerCase());
@@ -909,7 +911,6 @@
             const iTitle = document.getElementById('current-item-category-title');
             if (iTitle) iTitle.textContent = currentItemCategory === "All" ? "All Equipment" : currentItemCategory;
 
-            // LANDMARK REGIONS
             const lRegTabs = document.getElementById('landmark-region-tabs');
             if (lRegTabs) {
                 lRegTabs.innerHTML = LANDMARK_REGIONS.map(reg => {
@@ -920,7 +921,6 @@
                 }).join('');
             }
 
-            // FRACTURED PLANES SUBNAV
             const subNav = document.getElementById('fractured-planes-subnav');
             const planeTabs = document.getElementById('fractured-planes-tabs');
             if (currentLandmarkRegion === 'Fractured Planes' || planeNames.includes(currentLandmarkRegion)) {
@@ -1276,7 +1276,6 @@
 
                 filteredItems.forEach(i => {
                     const card = document.createElement('div');
-                    // Private styling only shows in Store Front
                     const isPrivateStoreItem = currentItemCategory === "Store Front" && !i.isPublic;
                     const raritySlug = getRarityClass(i.rarity);
                     const borderClass = `border-${raritySlug}`;
@@ -1499,7 +1498,6 @@
         };
 
         window.addScriptEntry = async (lvl = null, archId = null) => {
-            // Determine the target user group (Class) based on where the record is being added
             const targetClass = archId ? currentFeatureClass : currentClass;
             const targetLevel = (lvl !== null) ? lvl : currentLevel;
 
