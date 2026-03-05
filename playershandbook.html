@@ -1463,11 +1463,26 @@
         };
 
         window.addScriptEntry = async (lvl = null, archId = null) => {
+            // Determine the target user group (Class) based on where the record is being added
+            const targetClass = archId ? currentFeatureClass : currentClass;
+            const targetLevel = (lvl !== null) ? lvl : currentLevel;
+
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'handbookScripts'), { 
-                title: "NEW SCRIPT", content: "...", school: "Dominion", classification: "", 
-                activationTime: "1 Action", range: "30 feet", components: "V, S", duration: "Instant", 
-                higherLevels: "...", scriptLists: currentFeatureClass, className: currentFeatureClass, 
-                level: lvl || currentLevel, archetypeId: archId, createdAt: Date.now(), order: Date.now() 
+                title: "NEW SCRIPT", 
+                content: "...", 
+                school: "Dominion", 
+                classification: "", 
+                activationTime: "1 Action", 
+                range: "30 feet", 
+                components: "V, S", 
+                duration: "Instant", 
+                higherLevels: "...", 
+                scriptLists: targetClass, 
+                className: targetClass, 
+                level: targetLevel, 
+                archetypeId: archId, 
+                createdAt: Date.now(), 
+                order: Date.now() 
             });
         };
         
