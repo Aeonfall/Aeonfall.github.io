@@ -52,9 +52,12 @@
         .rarity-very-rare { color: #9333ea; }
         .rarity-legendary { color: #d97706; }
 
-        /* Component Links */
+        /* Component & Class Links */
         .item-reference-link { color: #7a1d1d; font-weight: 900; text-decoration: underline dotted; cursor: pointer; transition: color 0.2s; }
         .item-reference-link:hover { color: #f59e0b; }
+        
+        .class-link { color: #7a1d1d; font-weight: 900; text-decoration: underline dotted; cursor: pointer; transition: color 0.2s; }
+        .class-link:hover { color: #f59e0b; }
 
         /* Highlight Animation */
         @keyframes item-pulse {
@@ -572,15 +575,24 @@
         };
 
         window.selectClass = (c) => { 
+            if (FEATURE_MARTIAL_CLASSES.includes(c)) {
+                window.selectFeatureClass(c);
+                window.switchView('features');
+                return;
+            }
             currentClass = c; 
             const shortClasses = ["Heartbound", "Nomad", "Fabricator"];
             if (shortClasses.includes(c)) { if (currentLevel < 1) currentLevel = 1; if (currentLevel > 5) currentLevel = 5; }
+            window.switchView('scripts');
             renderNavs(); renderLists(); 
+            window.scrollTo(0,0);
         };
 
         window.selectFeatureClass = (c) => {
             currentFeatureClass = c;
+            window.switchView('features');
             renderNavs(); renderLists();
+            window.scrollTo(0,0);
         };
         
         window.selectLevel = (l) => { currentLevel = l; renderNavs(); renderLists(); };
@@ -804,8 +816,32 @@
             let linked = text.replace(/\bV\b/g, wrapWithTooltip('V', 'V'))
                              .replace(/\bS\b/g, wrapWithTooltip('S', 'S'))
                              .replace(/\bM\b/g, wrapWithTooltip('M', 'M'));
-            linked = linked.replace(/\(([^)]+)\)/g, (match, itemName) => {
-                return `(<span class="item-reference-link" onclick="window.jumpToItem('${itemName.replace(/'/g, "\\'")}')">${itemName}</span>)`;
+            
+            linked = linked.replace(/\(([^)]+)\)/g, (match, fullContent) => {
+                // Heuristic: Item name usually precedes details like "worth", "which", or a comma
+                const detailKeywords = [" worth", " which", ","];
+                let itemName = fullContent;
+                let details = "";
+                
+                let lowestIndex = -1;
+                for (const kw of detailKeywords) {
+                    const index = fullContent.toLowerCase().indexOf(kw);
+                    if (index !== -1 && (lowestIndex === -1 || index < lowestIndex)) {
+                        lowestIndex = index;
+                    }
+                }
+
+                if (lowestIndex !== -1) {
+                    itemName = fullContent.substring(0, lowestIndex).trim();
+                    details = fullContent.substring(lowestIndex);
+                }
+                
+                // Capitalize Item Name (Title Case)
+                const capitalizedItem = itemName.split(' ').map(word => 
+                    word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+                ).join(' ');
+                
+                return `(<span class="item-reference-link" onclick="window.jumpToItem('${capitalizedItem.replace(/'/g, "\\'")}')">${capitalizedItem}</span>${details})`;
             });
             return linked;
         }
