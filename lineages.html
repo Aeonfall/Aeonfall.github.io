@@ -54,7 +54,7 @@
         .brand-title { font-family: 'Pirata One', cursive; font-weight: 400; color: #3e2723; font-size: 3.2rem; line-height: 1; margin-bottom: 5px; }
         .brand-sub { font-family: 'Cinzel', serif; font-size: 9px; color: #8d6e63; letter-spacing: 0.5em; text-transform: uppercase; font-weight: bold; }
         
-        .role-pill { background: rgba(93, 64, 55, 0.08); border-radius: 99px; padding: 3px; display: flex; border: 1px solid #d7ccc8; position: relative; z-index: 500; }
+        .role-pill { background: rgba(93, 64, 55, 0.08); border-radius: 99px; padding: 3px; display: flex; border: 1px solid #d7ccc8; }
         .role-tab { padding: 4px 18px; font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; border-radius: 99px; transition: 0.3s; color: #5d4037; text-transform: uppercase; cursor: pointer; }
         .role-tab.active { background: #5d4037; color: #fdfaf3; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
 
@@ -165,40 +165,11 @@
         .dm-active-edit .dm-editable { background: rgba(93, 64, 55, 0.05); outline: 1px dashed #8d6e63; border-radius: 4px; padding: 2px; }
         .hidden { display: none !important; }
         .drop-cap { float: left; font-family: 'Pirata One', cursive; font-size: 80px; line-height: 60px; padding-top: 4px; padding-right: 12px; color: #3e2723; }
-        
-        .term-hover { position: relative; border-bottom: 1px dotted #8d6e63; cursor: help; }
-        .tooltip-content { 
-            visibility: hidden; position: absolute; bottom: 125%; left: 50%; transform: translateX(-50%); 
-            background: #3e2723; color: #fdfaf3; padding: 8px 12px; border-radius: 4px; font-size: 11px; 
-            width: 200px; z-index: 1000; line-height: 1.4; font-family: 'Roboto Slab', serif; text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3); opacity: 0; transition: opacity 0.2s;
-        }
-        .term-hover:hover .tooltip-content { visibility: visible; opacity: 1; }
-
-        .back-nav { cursor: pointer; font-family: 'Cinzel', serif; font-weight: 900; font-size: 12px; text-transform: uppercase; color: #3e2723; letter-spacing: 2px; }
-        .back-nav:hover { color: #b8860b; }
-
-        /* Lightbox Styles */
-        #lightbox {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 10000;
-            display: flex; align-items: center; justify-content: center; padding: 20px;
-            cursor: zoom-out; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
-        }
-        #lightbox.active { opacity: 1; pointer-events: auto; }
-        #lightbox-content { max-width: 95%; max-height: 90%; border: 4px solid #d4a373; box-shadow: 0 0 50px rgba(0,0,0,0.5); background: #1a0f0a; border-radius: 4px; }
-        .lightbox-close { position: absolute; top: 20px; right: 30px; color: #d4a373; font-size: 40px; font-family: 'Cinzel'; font-weight: 900; cursor: pointer; }
-        .zoomable { cursor: zoom-in; }
     </style>
 </head>
 <body>
 
     <div id="toast" class="toast">Archival Message</div>
-
-    <!-- Lightbox Container -->
-    <div id="lightbox" onclick="window.closeLightbox()">
-        <span class="lightbox-close">&times;</span>
-        <div id="lightbox-media-container" onclick="event.stopPropagation()"></div>
-    </div>
 
     <div class="journal-cover">
         <div class="parchment-container" id="parchment">
@@ -247,44 +218,20 @@
         </div>
     </div>
 
-    <!-- Modals -->
-    <div id="pass-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[5000] hidden p-4">
-        <div class="bg-[#2c1810] p-12 rounded-2xl w-full max-w-sm border-2 border-[#d4a373] text-[#fdfaf3] text-center shadow-2xl relative">
-            <h3 class="text-2xl font-serif text-[#d4a373] font-bold mb-6 uppercase">Master Key</h3>
-            <input type="password" id="dm-pass" onkeydown="if(event.key==='Enter') window.authDm()" class="w-full bg-[#1a0f0a] text-center text-3xl rounded-lg p-4 mb-8 border border-[#5d4037] text-[#d4a373] focus:outline-none" placeholder="••••">
-            <button onclick="window.authDm()" class="w-full bg-[#5d4037] hover:bg-[#8d6e63] text-white py-5 rounded-xl font-black uppercase text-sm tracking-widest transition-all mb-4">Authorize</button>
-            <button onclick="document.getElementById('pass-modal').classList.add('hidden')" class="text-[11px] text-[#8d6e63] uppercase font-black tracking-widest">Cancel</button>
-        </div>
-    </div>
-
-    <div id="del-modal" class="fixed inset-0 z-[6000] flex items-center justify-center p-4 hidden">
-        <div class="absolute inset-0 bg-black/90" onclick="document.getElementById('del-modal').classList.add('hidden')"></div>
-        <div class="bg-[#fdfaf3] p-12 rounded-2xl w-full max-w-sm text-center relative z-10 shadow-2xl border-4 border-red-900/20">
-            <h3 class="text-3xl font-serif font-black text-red-900 uppercase mb-4">Purge Record</h3>
-            <p class="text-sm text-[#5d4037] mb-10 italic">This subject will be permanently shredded.</p>
-            <button id="confirm-del-btn" class="w-full bg-red-900 text-white py-5 rounded-xl font-black text-xs uppercase shadow-lg mb-4">Confirm Shred</button>
-            <button onclick="document.getElementById('del-modal').classList.add('hidden')" class="w-full bg-white/50 text-[#8d6e63] py-3 rounded-xl font-bold uppercase text-[10px]">Abort</button>
-        </div>
-    </div>
-
     <!-- FIREBASE MODULES -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, collection, doc, updateDoc, onSnapshot, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // CONFIGURATION
-        const firebaseConfig = typeof __firebase_config !== 'undefined' 
-            ? (typeof __firebase_config === 'string' ? JSON.parse(__firebase_config) : __firebase_config) 
-            : {
-                apiKey: "",
-                authDomain: "aeonfall-523c1.firebaseapp.com",
-                projectId: "aeonfall-523c1",
-                storageBucket: "aeonfall-523c1.firebasestorage.app",
-                messagingSenderId: "716207733913",
-                appId: "1:716207733913:web:7aac43906a70e2b5f50c08"
-            };
-
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI",
+            authDomain: "aeonfall-523c1.firebaseapp.com",
+            projectId: "aeonfall-523c1",
+            storageBucket: "aeonfall-523c1.firebasestorage.app",
+            messagingSenderId: "716207733913",
+            appId: "1:716207733913:web:7aac43906a70e2b5f50c08"
+        };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
@@ -296,44 +243,18 @@
         let targetDelId = null;
         window.isPurgeMode = false;
 
-        // GLOBAL UTILITIES
-        window.showToast = (m) => { 
-            const t = document.getElementById('toast'); 
-            if(t){t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 2000);}
-        };
-
-        window.openLightbox = (url, isVideo) => {
-            if(!url) return;
-            const container = document.getElementById('lightbox-media-container');
-            container.innerHTML = isVideo 
-                ? `<video id="lightbox-content" src="${url}" controls autoplay loop class="shadow-2xl"></video>` 
-                : `<img id="lightbox-content" src="${url}" class="shadow-2xl">`;
-            document.getElementById('lightbox').classList.add('active');
-        };
-
-        window.closeLightbox = () => {
-            document.getElementById('lightbox').classList.remove('active');
-            setTimeout(() => { document.getElementById('lightbox-media-container').innerHTML = ''; }, 300);
-        };
-
+        window.showToast = (m) => { const t = document.getElementById('toast'); if(t){t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 2000);}};
+        
         window.setRole = (r) => { 
-            if(r === 'dm') { 
-                document.getElementById('pass-modal').classList.remove('hidden'); 
-            } else { 
-                activeRole = 'player'; 
-                window.isPurgeMode = false; 
-                updateRoleUI(); 
-            } 
+            if(r === 'dm') { document.getElementById('pass-modal')?.classList.remove('hidden'); }
+            else { activeRole = 'player'; window.isPurgeMode = false; updateRoleUI(); } 
         };
 
         window.authDm = () => { 
             const passInput = document.getElementById('dm-pass');
             if(passInput.value.trim() === 'Rew4994'){ 
-                activeRole='dm'; 
-                document.getElementById('pass-modal').classList.add('hidden'); 
-                passInput.value = ''; 
-                updateRoleUI(); 
-                window.showToast("Clearance Granted");
+                activeRole='dm'; document.getElementById('pass-modal')?.classList.add('hidden'); 
+                passInput.value = ''; updateRoleUI(); window.showToast("Clearance Granted");
             } else { window.showToast("Denied"); } 
         };
 
@@ -350,9 +271,8 @@
 
         window.togglePurgeMode = () => {
             window.isPurgeMode = !window.isPurgeMode;
-            const btn = document.getElementById('remove-record-btn');
-            btn.classList.toggle('bg-red-900', window.isPurgeMode);
-            btn.classList.toggle('text-white', window.isPurgeMode);
+            document.getElementById('remove-record-btn')?.classList.toggle('bg-red-900', window.isPurgeMode);
+            document.getElementById('remove-record-btn')?.classList.toggle('text-white', window.isPurgeMode);
             renderGrid();
         };
 
@@ -369,7 +289,9 @@
                 const definition = parts.length > 1 ? parts[1].trim() : "Technical record missing.";
                 return `<span class="term-hover">${term}<span class="tooltip-content">${definition}</span></span>`;
             });
-            html = html.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*(.*?)\*/g, '<i>$1</i>').replace(/__(.*?)__/g, '<u>$1</u>');
+            html = html.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+            html = html.replace(/\*(.*?)\*/g, '<i>$1</i>');
+            html = html.replace(/__(.*?)__/g, '<u>$1</u>');
             return html;
         };
 
@@ -392,15 +314,15 @@
             const grid = document.getElementById('stack-grid');
             grid.innerHTML = lineages.map((race, idx) => `
                 <div class="race-card ${window.isPurgeMode ? 'purge-mode-active' : ''}" onclick="!window.isPurgeMode && window.setView('details', '${race.id}')">
-                    <div class="card-bg-image zoomable" onclick="if(!window.isPurgeMode) { event.stopPropagation(); window.openLightbox('${race.gridUrl}', ${race.gridUrl?.includes('.mp4')}); }">
+                    <div class="card-bg-image">
                         ${race.gridUrl ? (race.gridUrl.includes('.mp4') ? `<video src="${race.gridUrl}" autoplay loop muted></video>` : `<img src="${race.gridUrl}">`) : '<div class="w-full h-full bg-[#d7ccc8] flex items-center justify-center italic text-xs">LOG EMPTY</div>'}
                     </div>
                     <div class="card-text-panel">
                         <h3 class="card-name">${race.name}</h3>
                         <p class="card-subtitle">Journal Dossier</p>
                         <p class="card-desc">${isDM ? (race.desc || '...') : window.parseAeonfallContent(race.desc, false)}</p>
-                        <div class="font-black text-[9px] uppercase tracking-widest text-[#8d6e63] mt-2">${race.name} Indicators</div>
-                        <div class="text-[10px] leading-relaxed text-[#5d4037]">${isDM ? (race.traits || '...') : window.parseAeonfallContent(race.traits, false)}</div>
+                        <div class="card-traits-label">${race.name} Indicators</div>
+                        <div class="card-traits-list">${isDM ? (race.traits || '...') : window.parseAeonfallContent(race.traits, false)}</div>
                         ${isDM ? `<div class="reorder-controls"><button onclick="event.stopPropagation(); window.moveRecord('${race.id}', -1)" class="reorder-btn">↑</button><button onclick="event.stopPropagation(); window.moveRecord('${race.id}', 1)" class="reorder-btn">↓</button></div>` : ''}
                         ${window.isPurgeMode ? `<button onclick="event.stopPropagation(); window.triggerDel('${race.id}')" class="purge-btn-overlay">Purge Entry</button>` : `<button class="view-btn">Inspect Log</button>`}
                     </div>
@@ -415,8 +337,8 @@
             const tables = safeJSONParse(race.mechTables);
 
             document.getElementById('details-front').innerHTML = `
-                <div class="flex flex-col md:flex-row justify-between gap-8 mb-12">
-                    <div class="flex flex-col flex-1">
+                <div class="record-header">
+                    <div class="flex flex-col">
                         <h2 class="card-name text-6xl dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}', 'name', this.innerText)">${race.name}</h2>
                         <p class="stat-line border-b border-brown-200/20 pb-2 mb-6 uppercase text-[10px] font-black">Verified Signature • ID #<span class="dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}', 'custodianId', this.innerText)">${race.custodianId || '994'}</span></p>
                         <div class="bg-brown-50/50 border-l-4 border-[#3e2723] p-6 rounded-sm">
@@ -424,11 +346,11 @@
                             <div class="dm-editable text-sm italic leading-relaxed text-[#5d4037]" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','traits',this.innerText)">${isDM ? (race.traits || '...') : window.parseAeonfallContent(race.traits, false)}</div>
                         </div>
                     </div>
-                    <div class="w-full md:w-1/3 h-80 bg-brown-200/20 rounded shadow-inner overflow-hidden border border-brown-200 zoomable" onclick="window.openLightbox('${race.detailUrl}', ${race.detailUrl?.includes('.mp4')})">
-                        ${race.detailUrl ? (race.detailUrl.includes('.mp4') ? `<video src="${race.detailUrl}" autoplay loop muted class="w-full h-full object-cover"></video>` : `<img src="${race.detailUrl}" class="w-full h-full object-cover">`) : '<div class="h-full flex items-center justify-center italic text-[#a1887f]">No visualization</div>'}
+                    <div class="record-illustration">
+                        ${race.detailUrl ? (race.detailUrl.includes('.mp4') ? `<video src="${race.detailUrl}" autoplay loop muted></video>` : `<img src="${race.detailUrl}">`) : '<div class="h-64 flex items-center justify-center italic text-[#a1887f]">No visualization</div>'}
                     </div>
                 </div>
-                ${isDM ? `<div class="bg-brown-100/20 p-4 rounded mb-8 grid grid-cols-2 gap-4"><div><label class="text-[9px] font-black text-[#5d4037] uppercase">Grid Profile URL</label><input type="text" class="w-full p-2 text-[11px] bg-white border border-brown-200 mt-1" value="${race.gridUrl||''}" oninput="window.dbUp('${race.id}', 'gridUrl', this.value)"></div><div><label class="text-[9px] font-black text-[#5d4037] uppercase">Detail View URL</label><input type="text" class="w-full p-2 text-[11px] bg-white border border-brown-200 mt-1" value="${race.detailUrl||''}" oninput="window.dbUp('${race.id}', 'detailUrl', this.value)"></div></div>` : ''}
+                ${isDM ? `<div class="bg-brown-100/20 p-4 rounded mb-8 grid grid-cols-2 gap-4"><div><label class="text-[9px] font-black text-[#5d4037] uppercase">Grid Profile</label><input type="text" class="w-full p-2 text-[11px] bg-white border border-brown-200 mt-1" value="${race.gridUrl||''}" oninput="window.dbUp('${race.id}', 'gridUrl', this.value)"></div><div><label class="text-[9px] font-black text-[#5d4037] uppercase">Detail View</label><input type="text" class="w-full p-2 text-[11px] bg-white border border-brown-200 mt-1" value="${race.detailUrl||''}" oninput="window.dbUp('${race.id}', 'detailUrl', this.value)"></div></div>` : ''}
                 <div class="discovery-log-box dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}', 'desc', this.innerText)">
                     <span class="drop-cap">${(race.desc||"O").charAt(0)}</span>${isDM ? (race.desc || '...').slice(1) : window.parseAeonfallContent(race.desc, false).slice(1)}
                 </div>
@@ -442,8 +364,8 @@
             `;
 
             document.getElementById('details-back').innerHTML = `
-                <h2 class="font-serif text-4xl text-[#3e2723] uppercase font-black border-b-2 border-brown-200 mb-8 pb-2">Archival Heritage</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mb-12">
+                <h2 class="record-title-culture">Archival Heritage</h2>
+                <div class="culture-ledger">
                     <ul class="ledger-list">
                         ${[
                             { f: 'cultureName', l: 'Archival Identity' },
@@ -455,21 +377,33 @@
                             { f: 'attitudes', l: 'Attitudes' }
                         ].map(item => `<li><b>${item.l}:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','${item.f}',this.innerText)">${isDM ? (race[item.f] || '...') : window.parseAeonfallContent(race[item.f], false)}</span></li>`).join('')}
                     </ul>
-                    <div class="h-80 bg-brown-200/20 rounded shadow-inner overflow-hidden border border-brown-200 zoomable" onclick="window.openLightbox('${race.backMediaUrl}', ${race.backMediaUrl?.includes('.mp4')})">
+                    <div class="record-illustration" style="height: 300px;">
                         ${race.backMediaUrl ? (race.backMediaUrl.includes('.mp4') ? `<video src="${race.backMediaUrl}" autoplay loop muted class="w-full h-full object-cover"></video>` : `<img src="${race.backMediaUrl}" class="w-full h-full object-cover">`) : '<div class="h-full flex items-center justify-center italic opacity-30">Heritage visual lost</div>'}
                     </div>
                 </div>
-                ${isDM ? `<input type="text" class="w-full p-2 text-[10px] bg-white border border-brown-200 mb-8" value="${race.backMediaUrl||''}" placeholder="Heritage Vis Link" oninput="window.dbUp('${race.id}', 'backMediaUrl', this.value)">` : ''}
+                ${isDM ? `<input type="text" class="w-full p-2 text-[10px] bg-white border border-brown-200 mt-2" value="${race.backMediaUrl||''}" placeholder="Heritage Vis Link" oninput="window.dbUp('${race.id}', 'backMediaUrl', this.value)">` : ''}
 
-                <div class="mech-box bg-[#8d6e63]/10 border-2 border-[#8d6e63]/20 p-10 rounded-sm">
+                <div class="mech-box mt-12 bg-[#8d6e63]/10 border-2 border-[#8d6e63]/20 p-10 rounded-sm">
                     <div class="flex justify-between items-center border-b-2 border-[#3e2723] mb-8 pb-3">
-                        <h4 class="m-0 font-black text-[#3e2723] uppercase tracking-widest text-sm">Systemic Readout</h4>
+                        <h4 class="m-0 border-0 font-black text-[#3e2723] uppercase tracking-widest text-sm">Systemic Readout</h4>
                         ${isDM ? `<button onclick="window.addMechTable()" class="bg-[#3e2723] text-[#fdfaf3] px-4 py-1.5 text-[9px] uppercase font-black rounded-sm">+ Add Ledger</button>` : ''}
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                         <div><b class="text-[10px] uppercase text-[#3e2723] block mb-3 tracking-widest font-black">Innate Capabilities</b><div class="dm-editable min-h-[80px] p-5 bg-white/50 rounded italic text-sm border border-brown-200" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','mechTraits',this.innerText)">${isDM ? (race.mechTraits || '...') : window.parseAeonfallContent(race.mechTraits, false)}</div></div>
                         <div><b class="text-[10px] uppercase text-[#3e2723] block mb-3 tracking-widest font-black">Core Matrix</b><div class="dm-editable min-h-[80px] p-5 bg-white/50 rounded italic text-sm border border-brown-200" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','mechDescription',this.innerText)">${isDM ? (race.mechDescription || '...') : window.parseAeonfallContent(race.mechDescription, false)}</div></div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
+                        ${[
+                            {f:'size',l:'Size'}, {f:'speed',l:'Speed'}, {f:'mechLanguages',l:'Languages'},
+                            {f:'mechBackgrounds',l:'Backgrounds'}, {f:'mechFeats',l:'Feats'}, {f:'mechEquipment',l:'Equipment'}
+                        ].map(item => `
+                            <div class="bg-white/40 p-4 border border-brown-200 rounded">
+                                <span class="block text-[10px] uppercase font-black text-[#8d6e63] border-b border-brown-200 mb-2">${item.l}</span>
+                                <div class="dm-editable text-sm" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','${item.f}',this.innerText)">${isDM ? (race[item.f] || '...') : window.parseAeonfallContent(race[item.f], false)}</div>
+                            </div>
+                        `).join('')}
                     </div>
 
                     <div id="mech-tables-root">
@@ -481,6 +415,8 @@
                                         <div class="flex gap-1">
                                             <button onclick="window.addMechTableRow(${tIdx})" class="bg-[#3e2723] text-white px-2 py-0.5 text-[8px] font-black uppercase rounded-sm">+R</button>
                                             <button onclick="window.remMechTableRow(${tIdx})" class="bg-[#3e2723] text-white px-2 py-0.5 text-[8px] font-black uppercase rounded-sm">-R</button>
+                                            <button onclick="window.addMechTableCol(${tIdx})" class="bg-[#3e2723] text-white px-2 py-0.5 text-[8px] font-black uppercase rounded-sm">+C</button>
+                                            <button onclick="window.remMechTableCol(${tIdx})" class="bg-[#3e2723] text-white px-2 py-0.5 text-[8px] font-black uppercase rounded-sm">-C</button>
                                             <button onclick="window.delMechTable(${tIdx})" class="bg-red-900 text-white px-2 py-0.5 text-[8px] font-black uppercase rounded-sm">Del</button>
                                         </div>
                                     ` : ''}
@@ -496,7 +432,6 @@
             `;
         };
 
-        // PERSISTENCE LOGIC
         window.dbUp = (id, field, val) => {
             if (!currentUser) return;
             if (saveTimer) clearTimeout(saveTimer);
@@ -544,6 +479,24 @@
             const tables = safeJSONParse(race.mechTables);
             if(tables[tIdx].rows.length > 1) {
                 tables[tIdx].rows.pop();
+                window.dbUp(activeRaceId, 'mechTables', JSON.stringify(tables));
+            }
+        };
+
+        window.addMechTableCol = async (tIdx) => {
+            const race = lineages.find(r => r.id === activeRaceId);
+            const tables = safeJSONParse(race.mechTables);
+            tables[tIdx].headers.push("ID");
+            tables[tIdx].rows = tables[tIdx].rows.map(r => [...r, "..."]);
+            window.dbUp(activeRaceId, 'mechTables', JSON.stringify(tables));
+        };
+
+        window.remMechTableCol = async (tIdx) => {
+            const race = lineages.find(r => r.id === activeRaceId);
+            const tables = safeJSONParse(race.mechTables);
+            if(tables[tIdx].headers.length > 1) {
+                tables[tIdx].headers.pop();
+                tables[tIdx].rows = tables[tIdx].rows.map(r => r.slice(0, -1));
                 window.dbUp(activeRaceId, 'mechTables', JSON.stringify(tables));
             }
         };
@@ -601,21 +554,24 @@
             window.showToast("Redacted");
         };
 
-        window.triggerDel = (id = null) => { targetDelId = id || activeRaceId; document.getElementById('del-modal').classList.remove('hidden'); };
+        window.triggerDel = (id = null) => { targetDelId = id || activeRaceId; document.getElementById('del-modal')?.classList.remove('hidden'); };
         document.getElementById('confirm-del-btn').onclick = async () => {
             if (!targetDelId || !currentUser) return;
             await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'handbookLineages', targetDelId));
-            document.getElementById('del-modal').classList.add('hidden'); window.setView('grid'); window.showToast("Purged");
+            document.getElementById('del-modal')?.classList.add('hidden'); window.setView('grid'); window.showToast("Purged");
         };
 
-        // INITIALIZATION
-        const init = async () => {
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else { await signInAnonymously(auth); }
-            } catch (e) { await signInAnonymously(auth); }
+        window.zoomMedia = (url) => { if (!url) return; window.open(url, '_blank'); };
 
+        const init = async () => {
+            const initAuth = async () => {
+                try {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else { await signInAnonymously(auth); }
+                } catch (e) { await signInAnonymously(auth); }
+            };
+            await initAuth();
             onAuthStateChanged(auth, (user) => {
                 currentUser = user;
                 if (user) {
@@ -632,5 +588,24 @@
         };
         init();
     </script>
+
+    <div id="pass-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[5000] hidden p-4">
+        <div class="bg-[#2c1810] p-12 rounded-2xl w-full max-w-sm border-2 border-[#d4a373] text-[#fdfaf3] text-center shadow-2xl relative">
+            <h3 class="text-2xl font-serif text-[#d4a373] font-bold mb-6 uppercase">Master Key</h3>
+            <input type="password" id="dm-pass" onkeydown="if(event.key==='Enter') window.authDm()" class="w-full bg-[#1a0f0a] text-center text-3xl rounded-lg p-4 mb-8 border border-[#5d4037] text-[#d4a373] focus:outline-none" placeholder="••••">
+            <button onclick="window.authDm()" class="w-full bg-[#5d4037] hover:bg-[#8d6e63] text-white py-5 rounded-xl font-black uppercase text-sm tracking-widest transition-all mb-4">Authorize</button>
+            <button onclick="document.getElementById('pass-modal').classList.add('hidden')" class="text-[11px] text-[#8d6e63] uppercase font-black tracking-widest">Cancel</button>
+        </div>
+    </div>
+
+    <div id="del-modal" class="fixed inset-0 z-[6000] flex items-center justify-center p-4 hidden">
+        <div class="absolute inset-0 bg-black/90" onclick="document.getElementById('del-modal').classList.add('hidden')"></div>
+        <div class="bg-[#fdfaf3] p-12 rounded-2xl w-full max-w-sm text-center relative z-10 shadow-2xl border-4 border-red-900/20">
+            <h3 class="text-3xl font-serif font-black text-red-900 uppercase mb-4">Purge Record</h3>
+            <p class="text-sm text-[#5d4037] mb-10 italic">This subject will be permanently shredded.</p>
+            <button id="confirm-del-btn" class="w-full bg-red-900 text-white py-5 rounded-xl font-black text-xs uppercase shadow-lg mb-4">Confirm Shred</button>
+            <button onclick="document.getElementById('del-modal').classList.add('hidden')" class="w-full bg-white/50 text-[#8d6e63] py-3 rounded-xl font-bold uppercase text-[10px]">Abort</button>
+        </div>
+    </div>
 </body>
 </html>
