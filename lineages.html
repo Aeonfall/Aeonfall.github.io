@@ -225,7 +225,7 @@
     <!-- LIGHTBOX FOR MEDIA -->
     <div id="lightbox" class="fixed inset-0 z-[9999] bg-black/95 hidden flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-300" onclick="window.closeLightbox()">
         <button class="absolute top-6 right-8 text-white text-5xl hover:text-[#b8860b] z-[10001] transition-colors drop-shadow-lg">&times;</button>
-        <div id="lightbox-content" class="relative max-w-7xl max-h-[90vh] w-full h-full flex items-center justify-center overflow-hidden pointer-events-none">
+        <div id="lightbox-content" class="relative max-w-7xl max-h-[90vh] w-full h-full flex items-center justify-center pointer-events-none">
             <!-- Image or video injected here -->
         </div>
     </div>
@@ -674,19 +674,94 @@
         };
 
         // NEW LIGHTBOX ZOOM LOGIC
+        window.lbScale = 1;
+        window.lbX = 0;
+        window.lbY = 0;
+        window.lbDragging = false;
+        window.lbStartX = 0;
+        window.lbStartY = 0;
+
+        window.lbUpdateTransform = () => {
+            const el = document.getElementById('lightbox-media-element');
+            if (el) el.style.transform = `translate(${window.lbX}px, ${window.lbY}px) scale(${window.lbScale})`;
+        };
+
+        window.lbZoom = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            window.lbScale += e.deltaY < 0 ? -0.15 : 0.15; // Wheel up to zoom in, down to zoom out
+            window.lbScale = Math.max(0.5, Math.min(window.lbScale, 6)); // Min 0.5x, Max 6x zoom
+            window.lbUpdateTransform();
+        };
+
+        window.lbDragStart = (e) => {
+            e.stopPropagation();
+            if (e.button !== 0 && !e.touches) return; // Left click or touch only
+            window.lbDragging = true;
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            
+            window.lbStartX = clientX - window.lbX;
+            window.lbStartY = clientY - window.lbY;
+            
+            const el = document.getElementById('lightbox-media-element');
+            if (el) {
+                el.style.cursor = 'grabbing';
+                el.style.transition = 'none'; // Disable smooth transition during fast drag
+            }
+        };
+
+        window.addEventListener('mousemove', (e) => {
+            if (!window.lbDragging) return;
+            window.lbX = e.clientX - window.lbStartX;
+            window.lbY = e.clientY - window.lbStartY;
+            window.lbUpdateTransform();
+        });
+
+        window.addEventListener('touchmove', (e) => {
+            if (!window.lbDragging || e.touches.length !== 1) return;
+            window.lbX = e.touches[0].clientX - window.lbStartX;
+            window.lbY = e.touches[0].clientY - window.lbStartY;
+            window.lbUpdateTransform();
+        }, { passive: false });
+
+        const lbDragEnd = () => {
+            if (window.lbDragging) {
+                window.lbDragging = false;
+                const el = document.getElementById('lightbox-media-element');
+                if (el) {
+                    el.style.cursor = 'grab';
+                    el.style.transition = 'transform 0.1s ease-out';
+                }
+            }
+        };
+
+        window.addEventListener('mouseup', lbDragEnd);
+        window.addEventListener('touchend', lbDragEnd);
+
         window.zoomMedia = (url) => { 
             if (!url || url.trim() === 'undefined' || url.trim() === 'null') return; 
             
             const lb = document.getElementById('lightbox');
             const content = document.getElementById('lightbox-content');
             
+            // Reset zoom and pan states
+            window.lbScale = 1;
+            window.lbX = 0;
+            window.lbY = 0;
+            
+            const commonClasses = "max-w-full max-h-full object-contain pointer-events-auto rounded-xl border-4 border-[#3e2723] shadow-[0_0_50px_rgba(0,0,0,0.8)]";
+            const commonEvents = `onwheel="window.lbZoom(event)" onmousedown="window.lbDragStart(event)" ontouchstart="window.lbDragStart(event)" onclick="event.stopPropagation()" draggable="false"`;
+            const commonStyles = `transition: transform 0.1s ease-out; cursor: grab; transform: translate(0px, 0px) scale(1);`;
+
             if (url.includes('.mp4') || url.includes('.webm')) {
-                content.innerHTML = `<video src="${url}" autoplay controls loop class="max-w-full max-h-full object-contain pointer-events-auto rounded-xl border-4 border-[#3e2723] shadow-[0_0_50px_rgba(0,0,0,0.8)]"></video>`;
+                content.innerHTML = `<video id="lightbox-media-element" src="${url}" autoplay controls loop class="${commonClasses}" style="${commonStyles}" ${commonEvents}></video>`;
             } else {
-                content.innerHTML = `<img src="${url}" class="max-w-full max-h-full object-contain pointer-events-auto rounded-xl border-4 border-[#3e2723] shadow-[0_0_50px_rgba(0,0,0,0.8)]">`;
+                content.innerHTML = `<img id="lightbox-media-element" src="${url}" class="${commonClasses}" style="${commonStyles}" ${commonEvents}>`;
             }
             
             lb.classList.remove('hidden');
+            lb.classList.add('flex'); // Ensuring flex displays explicitly for strict center anchoring
             document.body.classList.add('lightbox-open');
             
             // tiny delay to allow display:flex to apply before animating opacity
@@ -702,6 +777,7 @@
             
             setTimeout(() => {
                 lb.classList.add('hidden');
+                lb.classList.remove('flex');
                 document.getElementById('lightbox-content').innerHTML = ''; // clear out media
             }, 300); // match transition duration
         };
