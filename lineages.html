@@ -75,11 +75,13 @@
         }
         .race-card:hover { transform: rotate(0.5deg) translateY(-8px); box-shadow: 12px 20px 40px rgba(93, 64, 55, 0.15); }
         
-        .card-bg-image { position: absolute; top: 0; right: 0; width: 50%; height: 100%; z-index: 1; filter: sepia(0.3) contrast(1.1); }
-        .card-bg-image::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to right, #fdfaf3 10%, transparent 80%); z-index: 2; }
+        .card-bg-image { position: absolute; top: 0; right: 0; width: 50%; height: 100%; z-index: 1; filter: sepia(0.3) contrast(1.1); transition: filter 0.3s; }
+        .card-bg-image:hover { filter: sepia(0) contrast(1.2); }
+        .card-bg-image::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to right, #fdfaf3 10%, transparent 80%); z-index: 2; pointer-events: none; }
         .card-bg-image img, .card-bg-image video { width: 100%; height: 100%; object-fit: cover; }
 
-        .card-text-panel { position: relative; z-index: 3; width: 68%; height: 100%; padding: 35px; display: flex; flex-direction: column; background: linear-gradient(to right, #fdfaf3 90%, transparent); }
+        .card-text-panel { position: relative; z-index: 3; width: 68%; height: 100%; padding: 35px; display: flex; flex-direction: column; background: linear-gradient(to right, #fdfaf3 90%, transparent); pointer-events: none; }
+        .card-text-panel > * { pointer-events: auto; }
 
         .card-name { font-family: 'MedievalSharp', cursive; font-size: 28px; color: #2c1810; margin-bottom: 2px; }
         .card-subtitle { font-family: 'Homemade Apple', cursive; font-size: 10px; color: #8d6e63; margin-bottom: 20px; }
@@ -165,6 +167,8 @@
         .dm-active-edit .dm-editable { background: rgba(93, 64, 55, 0.05); outline: 1px dashed #8d6e63; border-radius: 4px; padding: 2px; }
         .hidden { display: none !important; }
         .drop-cap { float: left; font-family: 'Pirata One', cursive; font-size: 80px; line-height: 60px; padding-top: 4px; padding-right: 12px; color: #3e2723; }
+        
+        .lightbox-open { overflow: hidden; }
     </style>
 </head>
 <body>
@@ -203,7 +207,7 @@
 
             <div id="view-details" class="hidden">
                 <div class="flex justify-between items-start mb-10">
-                    <div onclick="window.setView('grid')" class="back-nav">← Close Log</div>
+                    <div onclick="window.setView('grid')" class="back-nav text-[11px] font-black uppercase tracking-widest text-[#3e2723] cursor-pointer hover:text-[#b8860b] transition-colors">← Close Log</div>
                     <button onclick="window.flipPage()" id="btn-flip" class="bg-[#8d6e63] text-[#fdfaf3] px-6 py-3 rounded-sm font-black text-[10px] uppercase hover:bg-[#5d4037] transition-all shadow-lg border border-white/5">📜 Turn Page</button>
                 </div>
                 <div id="flip-container" class="flip-wrapper">
@@ -218,13 +222,22 @@
         </div>
     </div>
 
+    <!-- LIGHTBOX FOR MEDIA -->
+    <div id="lightbox" class="fixed inset-0 z-[9999] bg-black/95 hidden flex-col items-center justify-center p-4 opacity-0 transition-opacity duration-300" onclick="window.closeLightbox()">
+        <button class="absolute top-6 right-8 text-white text-5xl hover:text-[#b8860b] z-[10001] transition-colors drop-shadow-lg">&times;</button>
+        <div id="lightbox-content" class="relative max-w-7xl max-h-[90vh] w-full h-full flex items-center justify-center overflow-hidden pointer-events-none">
+            <!-- Image or video injected here -->
+        </div>
+    </div>
+
     <!-- FIREBASE MODULES -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, collection, doc, updateDoc, onSnapshot, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+        // Hardcoded to strictly use your live database instead of the preview sandbox
+        const firebaseConfig = {
             apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI",
             authDomain: "aeonfall-523c1.firebaseapp.com",
             projectId: "aeonfall-523c1",
@@ -235,13 +248,14 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'aeonfall-manager-v2';
+        const appId = 'aeonfall-manager-v2';
 
         let lineages = [];
         let activeRole = 'player', currentView = 'grid', activeRaceId = null, isFlipped = false, currentUser = null;
         let saveTimer = null;
         let targetDelId = null;
         window.isPurgeMode = false;
+        window.currentHeritageSlide = 0; // State for slider
 
         window.showToast = (m) => { const t = document.getElementById('toast'); if(t){t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 2000);}};
         
@@ -303,6 +317,7 @@
 
         window.setView = (v, id = null) => {
             currentView = v; activeRaceId = id; isFlipped = false;
+            window.currentHeritageSlide = 0; // Reset slide index on new view
             document.getElementById('view-grid').classList.toggle('hidden', v !== 'grid');
             document.getElementById('view-details').classList.toggle('hidden', v !== 'details');
             document.getElementById('flip-container')?.classList.remove('flipped');
@@ -314,17 +329,17 @@
             const grid = document.getElementById('stack-grid');
             grid.innerHTML = lineages.map((race, idx) => `
                 <div class="race-card ${window.isPurgeMode ? 'purge-mode-active' : ''}" onclick="!window.isPurgeMode && window.setView('details', '${race.id}')">
-                    <div class="card-bg-image">
+                    <div class="card-bg-image cursor-zoom-in" onclick="event.stopPropagation(); window.zoomMedia('${race.gridUrl}')">
                         ${race.gridUrl ? (race.gridUrl.includes('.mp4') ? `<video src="${race.gridUrl}" autoplay loop muted></video>` : `<img src="${race.gridUrl}">`) : '<div class="w-full h-full bg-[#d7ccc8] flex items-center justify-center italic text-xs">LOG EMPTY</div>'}
                     </div>
                     <div class="card-text-panel">
                         <h3 class="card-name">${race.name}</h3>
                         <p class="card-subtitle">Journal Dossier</p>
                         <p class="card-desc">${isDM ? (race.desc || '...') : window.parseAeonfallContent(race.desc, false)}</p>
-                        <div class="card-traits-label">${race.name} Indicators</div>
-                        <div class="card-traits-list">${isDM ? (race.traits || '...') : window.parseAeonfallContent(race.traits, false)}</div>
+                        <div class="card-traits-label uppercase text-[8px] tracking-widest font-black text-[#8d6e63] mt-2 border-b border-[#8d6e63]/20 pb-1 mb-2">${race.name} Indicators</div>
+                        <div class="card-traits-list text-[10px] text-[#5d4037] italic line-clamp-2">${isDM ? (race.traits || '...') : window.parseAeonfallContent(race.traits, false)}</div>
                         ${isDM ? `<div class="reorder-controls"><button onclick="event.stopPropagation(); window.moveRecord('${race.id}', -1)" class="reorder-btn">↑</button><button onclick="event.stopPropagation(); window.moveRecord('${race.id}', 1)" class="reorder-btn">↓</button></div>` : ''}
-                        ${window.isPurgeMode ? `<button onclick="event.stopPropagation(); window.triggerDel('${race.id}')" class="purge-btn-overlay">Purge Entry</button>` : `<button class="view-btn">Inspect Log</button>`}
+                        ${window.isPurgeMode ? `<button onclick="event.stopPropagation(); window.triggerDel('${race.id}')" class="bg-red-900 text-white w-full py-3 text-[10px] font-black uppercase mt-auto rounded-sm">Purge Entry</button>` : `<button class="view-btn">Inspect Log</button>`}
                     </div>
                 </div>
             `).join('');
@@ -335,9 +350,15 @@
             if (!race) return;
             const isDM = activeRole === 'dm';
             const tables = safeJSONParse(race.mechTables);
+            
+            // Slider URLs fallback logic (backwards compatibility)
+            let heritageUrls = window.getHeritageUrls(race);
+            if(window.currentHeritageSlide >= heritageUrls.length && heritageUrls.length > 0) {
+                window.currentHeritageSlide = Math.max(0, heritageUrls.length - 1);
+            }
 
             document.getElementById('details-front').innerHTML = `
-                <div class="record-header">
+                <div class="record-header grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
                     <div class="flex flex-col">
                         <h2 class="card-name text-6xl dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}', 'name', this.innerText)">${race.name}</h2>
                         <p class="stat-line border-b border-brown-200/20 pb-2 mb-6 uppercase text-[10px] font-black">Verified Signature • ID #<span class="dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}', 'custodianId', this.innerText)">${race.custodianId || '994'}</span></p>
@@ -346,8 +367,8 @@
                             <div class="dm-editable text-sm italic leading-relaxed text-[#5d4037]" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','traits',this.innerText)">${isDM ? (race.traits || '...') : window.parseAeonfallContent(race.traits, false)}</div>
                         </div>
                     </div>
-                    <div class="record-illustration">
-                        ${race.detailUrl ? (race.detailUrl.includes('.mp4') ? `<video src="${race.detailUrl}" autoplay loop muted></video>` : `<img src="${race.detailUrl}">`) : '<div class="h-64 flex items-center justify-center italic text-[#a1887f]">No visualization</div>'}
+                    <div class="record-illustration cursor-zoom-in hover:opacity-90 transition-all duration-300 shadow-md border-2 border-[#d7ccc8] rounded bg-[#efebe9]" onclick="window.zoomMedia('${race.detailUrl}')">
+                        ${race.detailUrl ? (race.detailUrl.includes('.mp4') ? `<video src="${race.detailUrl}" autoplay loop muted class="w-full h-full object-cover"></video>` : `<img src="${race.detailUrl}" class="w-full h-full object-cover">`) : '<div class="h-64 flex items-center justify-center italic text-[#a1887f]">No visualization</div>'}
                     </div>
                 </div>
                 ${isDM ? `<div class="bg-brown-100/20 p-4 rounded mb-8 grid grid-cols-2 gap-4"><div><label class="text-[9px] font-black text-[#5d4037] uppercase">Grid Profile</label><input type="text" class="w-full p-2 text-[11px] bg-white border border-brown-200 mt-1" value="${race.gridUrl||''}" oninput="window.dbUp('${race.id}', 'gridUrl', this.value)"></div><div><label class="text-[9px] font-black text-[#5d4037] uppercase">Detail View</label><input type="text" class="w-full p-2 text-[11px] bg-white border border-brown-200 mt-1" value="${race.detailUrl||''}" oninput="window.dbUp('${race.id}', 'detailUrl', this.value)"></div></div>` : ''}
@@ -364,8 +385,8 @@
             `;
 
             document.getElementById('details-back').innerHTML = `
-                <h2 class="record-title-culture">Archival Heritage</h2>
-                <div class="culture-ledger">
+                <h2 class="record-title-culture font-serif text-4xl font-black text-[#3e2723] mb-8 border-b-2 border-[#b8860b] inline-block pb-2">Archival Heritage</h2>
+                <div class="culture-ledger grid grid-cols-1 md:grid-cols-2 gap-10">
                     <ul class="ledger-list">
                         ${[
                             { f: 'cultureName', l: 'Archival Identity' },
@@ -377,11 +398,42 @@
                             { f: 'attitudes', l: 'Attitudes' }
                         ].map(item => `<li><b>${item.l}:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','${item.f}',this.innerText)">${isDM ? (race[item.f] || '...') : window.parseAeonfallContent(race[item.f], false)}</span></li>`).join('')}
                     </ul>
-                    <div class="record-illustration" style="height: 300px;">
-                        ${race.backMediaUrl ? (race.backMediaUrl.includes('.mp4') ? `<video src="${race.backMediaUrl}" autoplay loop muted class="w-full h-full object-cover"></video>` : `<img src="${race.backMediaUrl}" class="w-full h-full object-cover">`) : '<div class="h-full flex items-center justify-center italic opacity-30">Heritage visual lost</div>'}
+                    
+                    <div class="relative w-full h-[350px] rounded border-2 border-[#d7ccc8] shadow-md bg-[#efebe9] overflow-hidden group cursor-zoom-in" onclick="window.zoomActiveHeritage()">
+                        ${heritageUrls.length > 0 ? heritageUrls.map((url, i) => `
+                            <div class="absolute inset-0 transition-opacity duration-500 ${i === window.currentHeritageSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'} heritage-slide" data-url="${url}">
+                                ${url.includes('.mp4') ? `<video src="${url}" autoplay loop muted class="w-full h-full object-cover"></video>` : `<img src="${url}" class="w-full h-full object-cover">`}
+                            </div>
+                        `).join('') : '<div class="absolute inset-0 flex items-center justify-center italic opacity-30">Heritage visual lost</div>'}
+                        
+                        ${heritageUrls.length > 1 ? `
+                            <button onclick="event.stopPropagation(); window.changeHeritageSlide(-1)" class="absolute left-3 top-1/2 -translate-y-1/2 z-20 bg-black/40 text-white w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#b8860b] transition-colors opacity-0 group-hover:opacity-100 font-bold">◀</button>
+                            <button onclick="event.stopPropagation(); window.changeHeritageSlide(1)" class="absolute right-3 top-1/2 -translate-y-1/2 z-20 bg-black/40 text-white w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#b8860b] transition-colors opacity-0 group-hover:opacity-100 font-bold">▶</button>
+                            <div class="absolute bottom-3 left-0 right-0 flex justify-center gap-2 z-20">
+                                ${heritageUrls.map((_, i) => `<div class="w-2 h-2 rounded-full transition-colors ${i === window.currentHeritageSlide ? 'bg-white shadow-[0_0_5px_white]' : 'bg-white/40'} heritage-dot"></div>`).join('')}
+                            </div>
+                        ` : ''}
                     </div>
                 </div>
-                ${isDM ? `<input type="text" class="w-full p-2 text-[10px] bg-white border border-brown-200 mt-2" value="${race.backMediaUrl||''}" placeholder="Heritage Vis Link" oninput="window.dbUp('${race.id}', 'backMediaUrl', this.value)">` : ''}
+
+                ${isDM ? `
+                    <div class="mt-6 bg-[#8d6e63]/5 p-4 border border-brown-200/50 rounded-sm">
+                        <div class="text-[10px] font-black uppercase tracking-widest text-[#5d4037] mb-3 flex justify-between items-center border-b border-brown-200/50 pb-2">
+                            <span>Heritage Visuals (Slider)</span>
+                            <button onclick="window.addHeritageMedia()" class="bg-[#3e2723] text-white px-3 py-1 rounded-sm hover:bg-[#5d4037] transition-colors shadow">+ Add Slide</button>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            ${heritageUrls.map((url, i) => `
+                                <div class="flex gap-2 items-center">
+                                    <span class="text-[9px] font-bold text-[#8d6e63] w-4">#${i+1}</span>
+                                    <input type="text" class="flex-1 p-2 text-[11px] bg-white border border-brown-200" value="${url}" placeholder="Media URL (.jpg, .mp4, etc.)" oninput="window.updateHeritageMedia(${i}, this.value)">
+                                    <button onclick="window.removeHeritageMedia(${i})" class="text-red-900 bg-red-900/5 hover:bg-red-900/20 px-3 py-2 text-[10px] uppercase font-black rounded-sm transition-colors">X</button>
+                                </div>
+                            `).join('')}
+                            ${heritageUrls.length === 0 ? `<div class="text-[10px] italic text-[#8d6e63] py-2">No slider media configured.</div>` : ''}
+                        </div>
+                    </div>
+                ` : ''}
 
                 <div class="mech-box mt-12 bg-[#8d6e63]/10 border-2 border-[#8d6e63]/20 p-10 rounded-sm">
                     <div class="flex justify-between items-center border-b-2 border-[#3e2723] mb-8 pb-3">
@@ -432,6 +484,66 @@
             `;
         };
 
+        // Slider Support Functions
+        window.getHeritageUrls = (race) => {
+            try { 
+                return race.heritageMedia ? JSON.parse(race.heritageMedia) : (race.backMediaUrl ? [race.backMediaUrl] : []); 
+            } catch(e) { 
+                return []; 
+            }
+        };
+
+        window.changeHeritageSlide = (dir) => {
+            const slides = document.querySelectorAll('.heritage-slide');
+            const dots = document.querySelectorAll('.heritage-dot');
+            if (slides.length <= 1) return;
+
+            slides[window.currentHeritageSlide].classList.remove('opacity-100', 'z-10');
+            slides[window.currentHeritageSlide].classList.add('opacity-0', 'z-0');
+            dots[window.currentHeritageSlide].classList.remove('bg-white', 'shadow-[0_0_5px_white]');
+            dots[window.currentHeritageSlide].classList.add('bg-white/40');
+
+            window.currentHeritageSlide = (window.currentHeritageSlide + dir + slides.length) % slides.length;
+
+            slides[window.currentHeritageSlide].classList.remove('opacity-0', 'z-0');
+            slides[window.currentHeritageSlide].classList.add('opacity-100', 'z-10');
+            dots[window.currentHeritageSlide].classList.remove('bg-white/40');
+            dots[window.currentHeritageSlide].classList.add('bg-white', 'shadow-[0_0_5px_white]');
+        };
+
+        window.zoomActiveHeritage = () => {
+            const slides = document.querySelectorAll('.heritage-slide');
+            if (slides.length > 0) {
+                window.zoomMedia(slides[window.currentHeritageSlide].getAttribute('data-url'));
+            }
+        };
+
+        window.addHeritageMedia = () => {
+            const race = lineages.find(r => r.id === activeRaceId);
+            const urls = window.getHeritageUrls(race);
+            urls.push("");
+            window.dbUp(activeRaceId, 'heritageMedia', JSON.stringify(urls));
+        };
+
+        window.updateHeritageMedia = (idx, val) => {
+            if(saveTimer) clearTimeout(saveTimer);
+            saveTimer = setTimeout(() => {
+                const race = lineages.find(r => r.id === activeRaceId);
+                const urls = window.getHeritageUrls(race);
+                urls[idx] = val;
+                window.dbUp(activeRaceId, 'heritageMedia', JSON.stringify(urls));
+            }, 800);
+        };
+
+        window.removeHeritageMedia = (idx) => {
+            const race = lineages.find(r => r.id === activeRaceId);
+            const urls = window.getHeritageUrls(race);
+            urls.splice(idx, 1);
+            if(window.currentHeritageSlide >= urls.length) window.currentHeritageSlide = Math.max(0, urls.length - 1);
+            window.dbUp(activeRaceId, 'heritageMedia', JSON.stringify(urls));
+        };
+
+        // Core DB Updaters
         window.dbUp = (id, field, val) => {
             if (!currentUser) return;
             if (saveTimer) clearTimeout(saveTimer);
@@ -561,7 +673,38 @@
             document.getElementById('del-modal')?.classList.add('hidden'); window.setView('grid'); window.showToast("Purged");
         };
 
-        window.zoomMedia = (url) => { if (!url) return; window.open(url, '_blank'); };
+        // NEW LIGHTBOX ZOOM LOGIC
+        window.zoomMedia = (url) => { 
+            if (!url || url.trim() === 'undefined' || url.trim() === 'null') return; 
+            
+            const lb = document.getElementById('lightbox');
+            const content = document.getElementById('lightbox-content');
+            
+            if (url.includes('.mp4') || url.includes('.webm')) {
+                content.innerHTML = `<video src="${url}" autoplay controls loop class="max-w-full max-h-full object-contain pointer-events-auto rounded-xl border-4 border-[#3e2723] shadow-[0_0_50px_rgba(0,0,0,0.8)]"></video>`;
+            } else {
+                content.innerHTML = `<img src="${url}" class="max-w-full max-h-full object-contain pointer-events-auto rounded-xl border-4 border-[#3e2723] shadow-[0_0_50px_rgba(0,0,0,0.8)]">`;
+            }
+            
+            lb.classList.remove('hidden');
+            document.body.classList.add('lightbox-open');
+            
+            // tiny delay to allow display:flex to apply before animating opacity
+            requestAnimationFrame(() => {
+                lb.classList.remove('opacity-0');
+            });
+        };
+
+        window.closeLightbox = () => {
+            const lb = document.getElementById('lightbox');
+            lb.classList.add('opacity-0');
+            document.body.classList.remove('lightbox-open');
+            
+            setTimeout(() => {
+                lb.classList.add('hidden');
+                document.getElementById('lightbox-content').innerHTML = ''; // clear out media
+            }, 300); // match transition duration
+        };
 
         const init = async () => {
             const initAuth = async () => {
