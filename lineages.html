@@ -165,11 +165,48 @@
         .dm-active-edit .dm-editable { background: rgba(93, 64, 55, 0.05); outline: 1px dashed #8d6e63; border-radius: 4px; padding: 2px; }
         .hidden { display: none !important; }
         .drop-cap { float: left; font-family: 'Pirata One', cursive; font-size: 80px; line-height: 60px; padding-top: 4px; padding-right: 12px; color: #3e2723; }
+        
+        /* Tooltip and term styling if needed */
+        .term-hover { position: relative; border-bottom: 1px dotted #8d6e63; cursor: help; }
+        .tooltip-content { 
+            visibility: hidden; position: absolute; bottom: 125%; left: 50%; transform: translateX(-50%); 
+            background: #3e2723; color: #fdfaf3; padding: 8px 12px; border-radius: 4px; font-size: 11px; 
+            width: 200px; z-index: 1000; line-height: 1.4; font-family: 'Roboto Slab', serif; text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); opacity: 0; transition: opacity 0.2s;
+        }
+        .term-hover:hover .tooltip-content { visibility: visible; opacity: 1; }
+
+        /* Navigation Styles */
+        .back-nav { cursor: pointer; font-family: 'Cinzel', serif; font-weight: 900; font-size: 12px; text-transform: uppercase; color: #3e2723; letter-spacing: 2px; }
+        .back-nav:hover { color: #b8860b; }
+
+        /* Purge Mode UI */
+        .purge-mode-active { outline: 2px solid #991b1b; outline-offset: 4px; }
+        .purge-btn-overlay { position: absolute; inset: 0; background: rgba(153, 27, 27, 0.8); color: white; display: flex; align-items: center; justify-content: center; font-family: 'Cinzel'; font-weight: 900; text-transform: uppercase; z-index: 50; }
+
+        /* Lightbox Styles */
+        #lightbox {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 10000;
+            display: flex; align-items: center; justify-content: center; padding: 20px;
+            cursor: zoom-out; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        #lightbox.active { opacity: 1; pointer-events: auto; }
+        #lightbox-content { max-width: 95%; max-height: 90%; border: 4px solid #d4a373; box-shadow: 0 0 50px rgba(0,0,0,0.5); background: #1a0f0a; border-radius: 4px; }
+        .lightbox-close { position: absolute; top: 20px; right: 30px; color: #d4a373; font-size: 40px; font-family: 'Cinzel'; font-weight: 900; cursor: pointer; }
+        .zoomable { cursor: zoom-in; }
     </style>
 </head>
 <body>
 
     <div id="toast" class="toast">Archival Message</div>
+
+    <!-- Lightbox Container -->
+    <div id="lightbox" onclick="window.closeLightbox()">
+        <span class="lightbox-close">&times;</span>
+        <div id="lightbox-media-container" onclick="event.stopPropagation()">
+            <!-- Media injected here -->
+        </div>
+    </div>
 
     <div class="journal-cover">
         <div class="parchment-container" id="parchment">
@@ -225,7 +262,7 @@
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-            apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI",
+            apiKey: "",
             authDomain: "aeonfall-523c1.firebaseapp.com",
             projectId: "aeonfall-523c1",
             storageBucket: "aeonfall-523c1.firebasestorage.app",
@@ -245,6 +282,24 @@
 
         window.showToast = (m) => { const t = document.getElementById('toast'); if(t){t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 2000);}};
         
+        // Lightbox Functions
+        window.openLightbox = (url, isVideo) => {
+            const container = document.getElementById('lightbox-media-container');
+            if (isVideo) {
+                container.innerHTML = `<video id="lightbox-content" src="${url}" controls autoplay loop class="shadow-2xl"></video>`;
+            } else {
+                container.innerHTML = `<img id="lightbox-content" src="${url}" class="shadow-2xl">`;
+            }
+            document.getElementById('lightbox').classList.add('active');
+        };
+
+        window.closeLightbox = () => {
+            document.getElementById('lightbox').classList.remove('active');
+            setTimeout(() => {
+                document.getElementById('lightbox-media-container').innerHTML = '';
+            }, 300);
+        };
+
         window.setRole = (r) => { 
             if(r === 'dm') { document.getElementById('pass-modal')?.classList.remove('hidden'); }
             else { activeRole = 'player'; window.isPurgeMode = false; updateRoleUI(); } 
@@ -314,7 +369,7 @@
             const grid = document.getElementById('stack-grid');
             grid.innerHTML = lineages.map((race, idx) => `
                 <div class="race-card ${window.isPurgeMode ? 'purge-mode-active' : ''}" onclick="!window.isPurgeMode && window.setView('details', '${race.id}')">
-                    <div class="card-bg-image">
+                    <div class="card-bg-image zoomable" onclick="if(!window.isPurgeMode) { event.stopPropagation(); window.openLightbox('${race.gridUrl}', ${race.gridUrl?.includes('.mp4')}); }">
                         ${race.gridUrl ? (race.gridUrl.includes('.mp4') ? `<video src="${race.gridUrl}" autoplay loop muted></video>` : `<img src="${race.gridUrl}">`) : '<div class="w-full h-full bg-[#d7ccc8] flex items-center justify-center italic text-xs">LOG EMPTY</div>'}
                     </div>
                     <div class="card-text-panel">
@@ -337,8 +392,8 @@
             const tables = safeJSONParse(race.mechTables);
 
             document.getElementById('details-front').innerHTML = `
-                <div class="record-header">
-                    <div class="flex flex-col">
+                <div class="flex flex-col md:flex-row justify-between gap-8 mb-12">
+                    <div class="flex flex-col flex-1">
                         <h2 class="card-name text-6xl dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}', 'name', this.innerText)">${race.name}</h2>
                         <p class="stat-line border-b border-brown-200/20 pb-2 mb-6 uppercase text-[10px] font-black">Verified Signature • ID #<span class="dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}', 'custodianId', this.innerText)">${race.custodianId || '994'}</span></p>
                         <div class="bg-brown-50/50 border-l-4 border-[#3e2723] p-6 rounded-sm">
@@ -346,11 +401,11 @@
                             <div class="dm-editable text-sm italic leading-relaxed text-[#5d4037]" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','traits',this.innerText)">${isDM ? (race.traits || '...') : window.parseAeonfallContent(race.traits, false)}</div>
                         </div>
                     </div>
-                    <div class="record-illustration">
-                        ${race.detailUrl ? (race.detailUrl.includes('.mp4') ? `<video src="${race.detailUrl}" autoplay loop muted></video>` : `<img src="${race.detailUrl}">`) : '<div class="h-64 flex items-center justify-center italic text-[#a1887f]">No visualization</div>'}
+                    <div class="w-full md:w-1/3 h-80 bg-brown-200/20 rounded shadow-inner overflow-hidden border border-brown-200 zoomable" onclick="window.openLightbox('${race.detailUrl}', ${race.detailUrl?.includes('.mp4')})">
+                        ${race.detailUrl ? (race.detailUrl.includes('.mp4') ? `<video src="${race.detailUrl}" autoplay loop muted class="w-full h-full object-cover"></video>` : `<img src="${race.detailUrl}" class="w-full h-full object-cover">`) : '<div class="h-full flex items-center justify-center italic text-[#a1887f]">No visualization</div>'}
                     </div>
                 </div>
-                ${isDM ? `<div class="bg-brown-100/20 p-4 rounded mb-8 grid grid-cols-2 gap-4"><div><label class="text-[9px] font-black text-[#5d4037] uppercase">Grid Profile</label><input type="text" class="w-full p-2 text-[11px] bg-white border border-brown-200 mt-1" value="${race.gridUrl||''}" oninput="window.dbUp('${race.id}', 'gridUrl', this.value)"></div><div><label class="text-[9px] font-black text-[#5d4037] uppercase">Detail View</label><input type="text" class="w-full p-2 text-[11px] bg-white border border-brown-200 mt-1" value="${race.detailUrl||''}" oninput="window.dbUp('${race.id}', 'detailUrl', this.value)"></div></div>` : ''}
+                ${isDM ? `<div class="bg-brown-100/20 p-4 rounded mb-8 grid grid-cols-2 gap-4"><div><label class="text-[9px] font-black text-[#5d4037] uppercase">Grid Profile URL</label><input type="text" class="w-full p-2 text-[11px] bg-white border border-brown-200 mt-1" value="${race.gridUrl||''}" oninput="window.dbUp('${race.id}', 'gridUrl', this.value)"></div><div><label class="text-[9px] font-black text-[#5d4037] uppercase">Detail View URL</label><input type="text" class="w-full p-2 text-[11px] bg-white border border-brown-200 mt-1" value="${race.detailUrl||''}" oninput="window.dbUp('${race.id}', 'detailUrl', this.value)"></div></div>` : ''}
                 <div class="discovery-log-box dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}', 'desc', this.innerText)">
                     <span class="drop-cap">${(race.desc||"O").charAt(0)}</span>${isDM ? (race.desc || '...').slice(1) : window.parseAeonfallContent(race.desc, false).slice(1)}
                 </div>
@@ -364,8 +419,8 @@
             `;
 
             document.getElementById('details-back').innerHTML = `
-                <h2 class="record-title-culture">Archival Heritage</h2>
-                <div class="culture-ledger">
+                <h2 class="font-serif text-4xl text-[#3e2723] uppercase font-black border-b-2 border-brown-200 mb-8 pb-2">Archival Heritage</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mb-12">
                     <ul class="ledger-list">
                         ${[
                             { f: 'cultureName', l: 'Archival Identity' },
@@ -377,15 +432,15 @@
                             { f: 'attitudes', l: 'Attitudes' }
                         ].map(item => `<li><b>${item.l}:</b> <span class="dm-editable" contenteditable="${isDM}" oninput="window.dbUp('${race.id}','${item.f}',this.innerText)">${isDM ? (race[item.f] || '...') : window.parseAeonfallContent(race[item.f], false)}</span></li>`).join('')}
                     </ul>
-                    <div class="record-illustration" style="height: 300px;">
+                    <div class="h-80 bg-brown-200/20 rounded shadow-inner overflow-hidden border border-brown-200 zoomable" onclick="window.openLightbox('${race.backMediaUrl}', ${race.backMediaUrl?.includes('.mp4')})">
                         ${race.backMediaUrl ? (race.backMediaUrl.includes('.mp4') ? `<video src="${race.backMediaUrl}" autoplay loop muted class="w-full h-full object-cover"></video>` : `<img src="${race.backMediaUrl}" class="w-full h-full object-cover">`) : '<div class="h-full flex items-center justify-center italic opacity-30">Heritage visual lost</div>'}
                     </div>
                 </div>
-                ${isDM ? `<input type="text" class="w-full p-2 text-[10px] bg-white border border-brown-200 mt-2" value="${race.backMediaUrl||''}" placeholder="Heritage Vis Link" oninput="window.dbUp('${race.id}', 'backMediaUrl', this.value)">` : ''}
+                ${isDM ? `<input type="text" class="w-full p-2 text-[10px] bg-white border border-brown-200 mb-8" value="${race.backMediaUrl||''}" placeholder="Heritage Vis Link" oninput="window.dbUp('${race.id}', 'backMediaUrl', this.value)">` : ''}
 
-                <div class="mech-box mt-12 bg-[#8d6e63]/10 border-2 border-[#8d6e63]/20 p-10 rounded-sm">
+                <div class="mech-box bg-[#8d6e63]/10 border-2 border-[#8d6e63]/20 p-10 rounded-sm">
                     <div class="flex justify-between items-center border-b-2 border-[#3e2723] mb-8 pb-3">
-                        <h4 class="m-0 border-0 font-black text-[#3e2723] uppercase tracking-widest text-sm">Systemic Readout</h4>
+                        <h4 class="m-0 font-black text-[#3e2723] uppercase tracking-widest text-sm">Systemic Readout</h4>
                         ${isDM ? `<button onclick="window.addMechTable()" class="bg-[#3e2723] text-[#fdfaf3] px-4 py-1.5 text-[9px] uppercase font-black rounded-sm">+ Add Ledger</button>` : ''}
                     </div>
                     
