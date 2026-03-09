@@ -818,13 +818,55 @@
 
     <!-- MOVE MODAL -->
     <div id="move-modal" class="modal-overlay hidden">
-        <div class="modal-container max-w-xl">
-            <h2 id="move-modal-title" class="modal-header">Edit Move</h2>
-            <div class="space-y-4">
-                <div><label class="tiny-label">Move Name</label><input type="text" id="move-name-in" class="w-full bg-gray-100 p-3 rounded font-bold"></div>
-                <div><label class="tiny-label">Dice/Effect Roll (Optional)</label><input type="text" id="move-roll-in" class="w-full bg-gray-100 p-3 rounded font-mono text-indigo-600" placeholder="E.g. 2d6+4"></div>
-                <div><label class="tiny-label">Description</label><textarea id="move-desc-in" class="w-full bg-gray-100 p-3 rounded text-sm h-48 leading-relaxed"></textarea></div>
+        <div class="modal-container max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b-2 border-gray-100 mb-6 pb-2">
+                <h2 id="move-modal-title" class="text-xl font-serif font-bold uppercase tracking-wider text-indigo-700">Edit Move</h2>
+                <button id="move-import-btn" onclick="window.toggleImportView()" class="bg-indigo-50 text-indigo-600 px-3 py-1 rounded text-[10px] font-black uppercase hover:bg-indigo-100 transition-colors">Import Move</button>
             </div>
+
+            <!-- IMPORT VIEW (Textarea for pasting) -->
+            <div id="import-view" class="hidden space-y-4 mb-6 animate-in fade-in zoom-in duration-200">
+                <div class="bg-amber-50 p-4 rounded-lg border border-amber-200">
+                    <p id="import-hint-text" class="text-[10px] font-bold text-amber-800 uppercase mb-2">Paste Move Text Below:</p>
+                    <textarea id="import-paste-area" class="w-full h-48 bg-white p-3 rounded border font-mono text-xs leading-relaxed" placeholder="NAME: ...&#10;DICE/EFFECT ROLL: ...&#10;DESCRIPTION: ..."></textarea>
+                    <div class="flex gap-2 mt-4">
+                        <button onclick="window.executeMoveImport()" class="bg-indigo-600 text-white px-6 py-2 rounded text-xs font-black uppercase shadow-md">Parse & Fill</button>
+                        <button onclick="window.toggleImportView()" class="text-gray-400 px-4 py-2 text-xs font-black uppercase">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STANDARD VIEW (Individual Fields) -->
+            <div id="modal-standard-view" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><label class="tiny-label">Name</label><input type="text" id="move-name-in" class="w-full bg-gray-100 p-3 rounded font-bold uppercase"></div>
+                    <div><label class="tiny-label">Dice/Effect Roll (Optional)</label><input type="text" id="move-roll-in" class="w-full bg-gray-100 p-3 rounded font-mono text-indigo-600" placeholder="E.g. 2d6+4"></div>
+                </div>
+
+                <!-- SCRIPTCASTING SPECIFIC FIELDS -->
+                <div id="script-extra-fields" class="hidden space-y-4">
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div><label class="tiny-label">Level</label><input type="text" id="script-lvl-in" class="w-full bg-gray-100 p-3 rounded font-bold" readonly></div>
+                        <div><label class="tiny-label">School</label><input type="text" id="script-school-in" class="w-full bg-gray-100 p-3 rounded font-bold" placeholder="E.g. Dominion"></div>
+                        <div><label class="tiny-label">Type</label><input type="text" id="script-type-in" class="w-full bg-gray-100 p-3 rounded font-bold" placeholder="Standard"></div>
+                        <div><label class="tiny-label">Activation</label><input type="text" id="script-activation-in" class="w-full bg-gray-100 p-3 rounded font-bold" placeholder="1 Action"></div>
+                        <div><label class="tiny-label">Range</label><input type="text" id="script-range-in" class="w-full bg-gray-100 p-3 rounded font-bold" placeholder="30 Feet"></div>
+                        <div><label class="tiny-label">Components</label><input type="text" id="script-comp-in" class="w-full bg-gray-100 p-3 rounded font-bold" placeholder="V, S, M"></div>
+                    </div>
+                    <div><label class="tiny-label">Duration</label><input type="text" id="script-duration-in" class="w-full bg-gray-100 p-3 rounded font-bold" placeholder="Instantaneous"></div>
+                </div>
+
+                <div>
+                    <label id="move-desc-label" class="tiny-label">Description</label>
+                    <textarea id="move-desc-in" class="w-full bg-gray-100 p-3 rounded text-sm h-32 leading-relaxed" placeholder="Detailed effects..."></textarea>
+                </div>
+
+                <div id="script-scaling-field" class="hidden">
+                    <label class="tiny-label">Scaling</label>
+                    <textarea id="script-scaling-in" class="w-full bg-gray-100 p-3 rounded text-sm h-20 leading-relaxed" placeholder="Higher level initialization effects..."></textarea>
+                </div>
+            </div>
+
             <div class="modal-footer">
                 <button id="move-delete-btn" onclick="window.deleteMove()" class="hidden mr-auto text-red-500 font-black uppercase text-[10px]">Delete</button>
                 <button onclick="document.getElementById('move-modal').classList.add('hidden')" class="px-4 py-2 text-gray-400 font-bold uppercase text-xs">Cancel</button>
@@ -1506,11 +1548,152 @@
         };
         window.openMoveModal = (lvl, idx = null) => { 
             activeMoveLvl = lvl; editingMoveIndex = idx; const char = characters.find(c => c.id === activeCharId); const moves = char?.moves || [];
-            if (idx !== null) { const m = moves[idx]; document.getElementById('move-name-in').value = m.name; document.getElementById('move-roll-in').value = m.roll; document.getElementById('move-desc-in').value = m.desc; document.getElementById('move-modal-title').textContent = "Edit Move"; document.getElementById('move-delete-btn').classList.remove('hidden'); } 
-            else { document.getElementById('move-name-in').value = ''; document.getElementById('move-roll-in').value = ''; document.getElementById('move-desc-in').value = ''; document.getElementById('move-modal-title').textContent = "Add Move - " + lvl; document.getElementById('move-delete-btn').classList.add('hidden'); }
+            const moveType = document.getElementById('moves-selector').value;
+            const isScript = moveType === 'scriptcasting';
+            
+            document.getElementById('move-import-btn').classList.remove('hidden');
+            document.getElementById('script-extra-fields').classList.toggle('hidden', !isScript);
+            document.getElementById('script-scaling-field').classList.toggle('hidden', !isScript);
+            document.getElementById('move-desc-label').textContent = isScript ? "Effect" : "Description";
+            
+            // Close import view if open
+            document.getElementById('import-view').classList.add('hidden');
+            document.getElementById('modal-standard-view').classList.remove('hidden');
+
+            const hint = isScript ? "Paste Script Data (NAME, SCHOOL, EFFECT, etc):" : "Paste Move/Feature Data (NAME, DESCRIPTION):";
+            document.getElementById('import-hint-text').textContent = hint;
+
+            if (idx !== null) { 
+                const m = moves[idx]; 
+                document.getElementById('move-name-in').value = m.name || ''; 
+                document.getElementById('move-roll-in').value = m.roll || ''; 
+                document.getElementById('move-desc-in').value = m.desc || ''; 
+                document.getElementById('script-lvl-in').value = lvl;
+                document.getElementById('script-school-in').value = m.school || '';
+                document.getElementById('script-type-in').value = m.sType || '';
+                document.getElementById('script-activation-in').value = m.activation || '';
+                document.getElementById('script-range-in').value = m.range || '';
+                document.getElementById('script-comp-in').value = m.comp || '';
+                document.getElementById('script-duration-in').value = m.duration || '';
+                document.getElementById('script-scaling-in').value = m.scaling || '';
+                document.getElementById('move-modal-title').textContent = "Edit " + (isScript ? "Script" : "Move"); 
+                document.getElementById('move-delete-btn').classList.remove('hidden'); 
+            } else { 
+                document.getElementById('move-name-in').value = ''; 
+                document.getElementById('move-roll-in').value = ''; 
+                document.getElementById('move-desc-in').value = ''; 
+                document.getElementById('script-lvl-in').value = lvl;
+                document.getElementById('script-school-in').value = '';
+                document.getElementById('script-type-in').value = '';
+                document.getElementById('script-activation-in').value = '';
+                document.getElementById('script-range-in').value = '';
+                document.getElementById('script-comp-in').value = '';
+                document.getElementById('script-duration-in').value = '';
+                document.getElementById('script-scaling-in').value = '';
+                document.getElementById('move-modal-title').textContent = "Add " + (isScript ? "Script" : "Move") + " - " + lvl; 
+                document.getElementById('move-delete-btn').classList.add('hidden'); 
+            }
             document.getElementById('move-modal').classList.remove('hidden'); 
         };
-        window.saveMove = async () => { const char = characters.find(c => c.id === activeCharId); const moves = char.moves || []; const newMove = { name: document.getElementById('move-name-in').value, roll: document.getElementById('move-roll-in').value, desc: document.getElementById('move-desc-in').value, lvl: activeMoveLvl, type: document.getElementById('moves-selector').value }; if (editingMoveIndex !== null) moves[editingMoveIndex] = newMove; else moves.push(newMove); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { moves }); document.getElementById('move-modal').classList.add('hidden'); };
+
+        window.toggleImportView = () => {
+            const importView = document.getElementById('import-view');
+            const standardView = document.getElementById('modal-standard-view');
+            const isImportHidden = importView.classList.contains('hidden');
+            
+            importView.classList.toggle('hidden', !isImportHidden);
+            standardView.classList.toggle('hidden', isImportHidden);
+            
+            if (isImportHidden) {
+                document.getElementById('import-paste-area').value = '';
+                document.getElementById('import-paste-area').focus();
+            }
+        };
+
+        window.executeMoveImport = () => {
+            const rawText = document.getElementById('import-paste-area').value;
+            if (!rawText.trim()) return;
+            const moveType = document.getElementById('moves-selector').value;
+            const isScript = moveType === 'scriptcasting';
+
+            // Simple regex parser
+            const extract = (regex) => {
+                const match = rawText.match(regex);
+                return match ? match[1].trim() : "";
+            };
+
+            // Multi-line extraction helper
+            const extractBlock = (startKey, endKeys) => {
+                const startIdx = rawText.indexOf(startKey);
+                if (startIdx === -1) return "";
+                const afterStart = rawText.substring(startIdx + startKey.length);
+                
+                let firstEndIdx = afterStart.length;
+                endKeys.forEach(ek => {
+                    const idx = afterStart.indexOf(ek);
+                    if (idx !== -1 && idx < firstEndIdx) firstEndIdx = idx;
+                });
+                
+                return afterStart.substring(0, firstEndIdx).trim();
+            };
+
+            const name = extract(/NAME:\s*(.*)/i) || extract(/\(The Name\)\s*(.*)/i);
+            const roll = extract(/DICE\/EFFECT ROLL:\s*(.*)/i) || extract(/ROLL:\s*(.*)/i);
+
+            if (isScript) {
+                const school = extract(/SCHOOL:\s*(.*)/i);
+                const type = extract(/TYPE:\s*(.*)/i);
+                const activation = extract(/ACTIVATION:\s*(.*)/i);
+                const range = extract(/RANGE:\s*(.*)/i);
+                const comp = extract(/COMPONENTS:\s*(.*)/i);
+                const duration = extract(/DURATION:\s*(.*)/i);
+                const effect = extractBlock("EFFECT:", ["SCALING:", "AUTHORIZED USERS:"]);
+                const scaling = extractBlock("SCALING:", ["AUTHORIZED USERS:"]);
+
+                if (name) document.getElementById('move-name-in').value = name;
+                if (roll) document.getElementById('move-roll-in').value = roll;
+                if (school) document.getElementById('script-school-in').value = school;
+                if (type) document.getElementById('script-type-in').value = type;
+                if (activation) document.getElementById('script-activation-in').value = activation;
+                if (range) document.getElementById('script-range-in').value = range;
+                if (comp) document.getElementById('script-comp-in').value = comp;
+                if (duration) document.getElementById('script-duration-in').value = duration;
+                if (effect) document.getElementById('move-desc-in').value = effect;
+                if (scaling) document.getElementById('script-scaling-in').value = scaling;
+            } else {
+                const desc = extractBlock("DESCRIPTION:", []) || extractBlock("(The Description)", []);
+                if (name) document.getElementById('move-name-in').value = name;
+                if (roll) document.getElementById('move-roll-in').value = roll;
+                if (desc) document.getElementById('move-desc-in').value = desc;
+            }
+
+            window.toggleImportView();
+            window.showToast("Move Parsed Successfully");
+        };
+
+        window.saveMove = async () => { 
+            const char = characters.find(c => c.id === activeCharId); 
+            const moves = char.moves || []; 
+            const newMove = { 
+                name: document.getElementById('move-name-in').value, 
+                roll: document.getElementById('move-roll-in').value, 
+                desc: document.getElementById('move-desc-in').value, 
+                lvl: activeMoveLvl, 
+                type: document.getElementById('moves-selector').value,
+                // Script specific fields
+                school: document.getElementById('script-school-in').value,
+                sType: document.getElementById('script-type-in').value,
+                activation: document.getElementById('script-activation-in').value,
+                range: document.getElementById('script-range-in').value,
+                comp: document.getElementById('script-comp-in').value,
+                duration: document.getElementById('script-duration-in').value,
+                scaling: document.getElementById('script-scaling-in').value
+            }; 
+            if (editingMoveIndex !== null) moves[editingMoveIndex] = newMove; 
+            else moves.push(newMove); 
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { moves }); 
+            document.getElementById('move-modal').classList.add('hidden'); 
+        };
         window.deleteMove = async () => { const char = characters.find(c => c.id === activeCharId); const moves = char.moves || []; moves.splice(editingMoveIndex, 1); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { moves }); document.getElementById('move-modal').classList.add('hidden'); };
 
         window.saveCurrentCharacter = (m) => { if (!activeCharId || !user) return; const char = characters.find(c => c.id === activeCharId); if (!((currentUser && char.owner === currentUser.username) || char.owner === 'DM' || activeRole === 'dm')) return; const data = {}; document.querySelectorAll('[data-key]').forEach(el => data[el.dataset.key] = el.type === 'checkbox' ? el.checked : el.value); data.languages = char.languages || []; data.attacks = Array.from(document.querySelectorAll('#attacks-list > div')).map(r => ({ name: r.querySelector('.atk-name')?.value || "", bonus: r.querySelector('.atk-bonus')?.value || "", dmg: r.querySelector('.atk-dmg')?.value || "" })); data.moves = char.moves || []; updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), data); if (m) window.showToast("Synced"); const si = document.getElementById('sync-indicator'); if (si) { si.style.opacity = 1; setTimeout(()=>si.style.opacity = 0, 1000); } };
