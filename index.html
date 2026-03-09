@@ -171,6 +171,12 @@
         .cond-row { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 700; color: #475569; text-transform: uppercase; }
         .cond-row input[type="checkbox"] { width: 12px; height: 12px; accent-color: #8b0000; }
 
+        /* INITIATIVE TRACKER STYLES */
+        .init-row { display: grid; grid-template-columns: 40px 1fr 80px; align-items: center; background: #1e293b; padding: 10px 16px; border-radius: 8px; margin-bottom: 6px; border-left: 4px solid #f59e0b; cursor: pointer; transition: transform 0.1s; }
+        .init-row:hover { transform: translateX(4px); }
+        .init-row.npc { border-left-color: #7c3aed; background: #13171c; }
+        .init-row.active-turn { outline: 2px solid #f59e0b; box-shadow: 0 0 15px rgba(245, 158, 11, 0.3); }
+
         /* CRITICAL EFFECTS */
         #critical-fail-overlay, #critical-success-overlay { 
             position: fixed; 
@@ -277,6 +283,20 @@
             </div>
 
             <div id="view-content" class="space-y-8">
+                <!-- INITIATIVE TRACKER SECTION (ONLY IN ENCOUNTERS VIEW) -->
+                <div id="initiative-tracker-view" class="hidden-view space-y-4">
+                    <div class="flex justify-between items-center border-b border-purple-900/50 pb-2">
+                        <h3 class="font-serif text-purple-400 font-bold uppercase tracking-widest text-sm">Initiative Order</h3>
+                        <div class="flex gap-2">
+                            <button onclick="window.rollAllInitiative()" class="text-[9px] font-black uppercase text-amber-400 bg-amber-900/20 px-3 py-1 rounded-full border border-amber-900/40">Roll All</button>
+                            <button onclick="window.clearAllInitiatives()" class="text-[9px] font-black uppercase text-red-400 bg-red-900/20 px-3 py-1 rounded-full border border-red-900/40">Reset All</button>
+                        </div>
+                    </div>
+                    <div id="init-list" class="space-y-2">
+                        <!-- Initiative items populated by JS -->
+                    </div>
+                </div>
+
                 <div id="party-view-container" class="space-y-8"></div>
                 <div id="encounters-view-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden-view"></div>
                 <div id="graveyard-view-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden-view"></div>
@@ -332,7 +352,7 @@
                             <div class="lg:col-span-8 grid grid-cols-2 md:grid-cols-3 gap-4">
                                 <div>
                                     <div class="flex justify-between items-center pr-1">
-                                        <input type="text" data-key="class" id="class-input" placeholder="Fighter">
+                                        <input type="text" data-key="class" id="class-input" placeholder="Fighter" oninput="window.calcMods()">
                                         <div id="npc-type-selectors" class="hidden flex gap-1">
                                             <button onclick="window.setNpcCategory('Enemy')" class="text-[7px] font-black bg-red-100 text-red-600 px-1 rounded">E</button>
                                             <button onclick="window.setNpcCategory('Beast')" class="text-[7px] font-black bg-green-100 text-green-600 px-1 rounded">B</button>
@@ -394,7 +414,8 @@
                                     </div>
                                     <div class="vital-container vital-square-init">
                                         <div class="vital-label">INIT</div>
-                                        <input type="text" class="vital-input" data-key="init" placeholder="0">
+                                        <button onclick="window.rollIndividualInitiative()" class="absolute top-1 right-1 text-[8px] bg-amber-100 hover:bg-amber-200 text-amber-600 p-0.5 rounded border border-amber-200 transition-colors z-20 read-only-hide">🎲</button>
+                                        <input type="text" class="vital-input" data-key="init" placeholder="0" onchange="window.saveCurrentCharacter()">
                                     </div>
                                     <div class="vital-container vital-square-speed">
                                         <div class="vital-label">Speed</div>
@@ -539,7 +560,7 @@
                                         <div class="bg-white border rounded-lg p-4 shadow-inner">
                                             <div class="prof-group">
                                                 <label class="prof-label">Armor</label>
-                                                <input type="text" data-key="profArmor" class="prof-list-text w-full italic" placeholder="Light Armor, Medium Armor...">
+                                                <input type="text" data-key="profArmor" class="prof-list-text w-full italic" placeholder="Shield, Light Armor: Leather..." oninput="window.calcMods()">
                                             </div>
                                             <div class="prof-group">
                                                 <label class="prof-label">Weapons</label>
@@ -1111,6 +1132,79 @@
         window.openPartyModal = () => { document.getElementById('party-modal')?.classList.remove('hidden'); };
         window.createParty = async () => { const n = document.getElementById('party-name-input'); if (!n || !n.value) return; await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'parties'), {name: n.value, createdAt: Date.now()}); document.getElementById('party-modal').classList.add('hidden'); n.value = ''; window.showToast("Party Formed"); };
 
+        window.renderInitiativeTracker = () => {
+            const list = document.getElementById('init-list');
+            if (!list) return;
+            
+            // Filter all alive characters that have a numeric initiative set
+            const initChars = characters
+                .filter(c => !c.isDeleted && c.status !== 'dead' && c.init !== undefined && c.init !== "" && !isNaN(parseInt(c.init)))
+                .sort((a, b) => parseInt(b.init) - parseInt(a.init));
+
+            if (initChars.length === 0) {
+                list.innerHTML = `<div class="text-center py-6 text-purple-900/40 font-bold uppercase text-[10px] tracking-widest italic">Waiting for rolls...</div>`;
+                return;
+            }
+
+            list.innerHTML = initChars.map((c, i) => {
+                const isNpc = c.type === 'NPC';
+                return `
+                    <div class="init-row ${isNpc ? 'npc' : ''}" onclick="window.openSheet('${c.id}')">
+                        <div class="text-xl font-black text-amber-500">${c.init}</div>
+                        <div class="pl-2">
+                            <div class="text-[10px] font-black uppercase text-white">${c.name}</div>
+                            <div class="text-[8px] text-gray-500 uppercase">${c.class || (isNpc ? 'Enemy' : 'Class')}</div>
+                        </div>
+                        <div class="text-right flex flex-col justify-center items-end">
+                            <div class="text-[8px] font-black uppercase ${c.hpCurrent < (c.hpMax/2) ? 'text-red-500' : 'text-green-500'}">
+                                HP ${c.hpCurrent}/${c.hpMax}
+                            </div>
+                            <div class="text-[8px] font-black uppercase text-blue-400">
+                                AC ${c.ac || 10}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        };
+
+        window.clearAllInitiatives = async () => {
+            if (activeRole !== 'dm') return;
+            const promises = characters
+                .filter(c => c.init !== "")
+                .map(c => updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', c.id), { init: "" }));
+            await Promise.all(promises);
+            window.showToast("Initiative Cleared");
+        };
+
+        // --- INITIATIVE ROLLING LOGIC ---
+        window.rollIndividualInitiative = async (targetId = activeCharId) => {
+            if (!targetId) return;
+            const char = characters.find(c => c.id === targetId);
+            if (!char) return;
+            const dexMod = Math.floor(((char.dex || 10) - 10) / 2);
+            const roll = Math.floor(Math.random() * 20) + 1;
+            const total = roll + dexMod;
+            if (roll === 20) triggerCriticalSuccess();
+            if (roll === 1) triggerCriticalFailure();
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', targetId), { init: total.toString() });
+            addRollToHistory("Initiative Roll", (total >= 0 ? '+' : '') + total);
+            window.showToast(`Initiative: ${total} (${roll} + ${dexMod})`);
+        };
+
+        window.rollAllInitiative = async () => {
+            if (activeRole !== 'dm') return;
+            const targets = characters.filter(c => !c.isDeleted && c.status !== 'dead');
+            if (targets.length === 0) return;
+            const promises = targets.map(c => {
+                const dexMod = Math.floor(((c.dex || 10) - 10) / 2);
+                const roll = Math.floor(Math.random() * 20) + 1;
+                return updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', c.id), { init: (roll + dexMod).toString() });
+            });
+            await Promise.all(promises);
+            window.showToast("Initiative Rolled for All Entities");
+        };
+
         window.renderDashboard = () => {
             const pcC = document.getElementById('party-view-container'), 
                   grC = document.getElementById('graveyard-view-container'),
@@ -1135,6 +1229,9 @@
 
             activeNPCs.forEach(c => enC.appendChild(createCard(c)));
             characters.filter(c => c.isDeleted).forEach(c => grC.appendChild(createCard(c)));
+            
+            // Render the initiative tracker if on encounters view
+            window.renderInitiativeTracker();
         };
 
         function createCard(c) {
@@ -1191,7 +1288,8 @@
                     profArmor: "", profWeapons: "", profTools: "", 
                     imageSrc: "", heroicInspiration: 0, exhaustion: 0, 
                     currentStress: 0, stressThreshold: 10,
-                    passivePerception: 10
+                    passivePerception: 10,
+                    init: ""
                 }); 
                 window.openSheet(ref.id); 
             } catch (e) { window.showToast("Create Failed"); } 
@@ -1203,6 +1301,7 @@
             if (ci) ci.value = cat;
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { class: cat });
             window.showToast(`Set to ${cat}`);
+            window.calcMods();
         };
 
         function initSheetUI() {
@@ -1419,19 +1518,62 @@
         
         window.calcMods = () => { 
             const p = parseInt(document.querySelector('[data-key="profBonus"]')?.value) || 2; 
-            let wisMod = 0;
+            let stats = {};
             STATS.forEach(s => { 
                 const v = parseInt(document.querySelector(`[data-key="${s}"]`)?.value) || 10; const m = Math.floor((v - 10) / 2); 
-                if (s === 'wis') wisMod = m;
+                stats[s] = {val: v, mod: m};
                 const el = document.getElementById(`mod-${s}`); if(el) el.textContent = (m >= 0 ? '+' : '') + m; 
                 const sp = document.querySelector(`[data-key="save_prof_${s}"]`)?.checked; const sel = document.getElementById(`save-mod-${s}`); if(sel) sel.textContent = (m + (sp ? p : 0) >= 0 ? '+' : '') + (m + (sp ? p : 0)); 
             }); 
-            const ppInput = document.querySelector('[data-key="passivePerception"]'); if (ppInput) ppInput.value = 10 + wisMod + p;
+            const ppInput = document.querySelector('[data-key="passivePerception"]'); if (ppInput) ppInput.value = 10 + stats.wis.mod + p;
             SKILLS.forEach(sk => { 
                 const v = parseInt(document.querySelector(`[data-key="${sk.s}"]`)?.value) || 10; const m = Math.floor((v - 10) / 2); 
                 const safe = sk.n.toLowerCase().replace(/ /g,'_').replace(/[()]/g,''); const sp = document.querySelector(`[data-key="prof_${safe}"]`)?.checked; 
                 const sel = document.getElementById(`skill-mod-${safe}`); if(sel) sel.textContent = (m + (sp ? p : 0) >= 0 ? '+' : '') + (m + (sp ? p : 0)); 
-            }); 
+            });
+
+            // --- ARMOR CLASS CALCULATION ENGINE ---
+            const armorText = (document.querySelector('[data-key="profArmor"]')?.value || "").toLowerCase();
+            const classText = (document.querySelector('[data-key="class"]')?.value || "").toLowerCase();
+            const acInput = document.querySelector('[data-key="ac"]');
+            
+            if (acInput) {
+                let baseAC = 10;
+                let dexBonus = stats.dex.mod;
+                let shieldBonus = armorText.includes('shield') ? 2 : 0;
+                let wearingArmor = false;
+
+                // 1. Process Armor Categories
+                if (armorText.includes('light armor')) {
+                    baseAC = 11;
+                    dexBonus = stats.dex.mod;
+                    wearingArmor = true;
+                } else if (armorText.includes('medium armor')) {
+                    baseAC = 14;
+                    dexBonus = Math.min(stats.dex.mod, 2);
+                    wearingArmor = true;
+                } else if (armorText.includes('heavy armor')) {
+                    baseAC = 16;
+                    dexBonus = 0;
+                    wearingArmor = true;
+                }
+
+                // 2. Unarmored Defense (Vanguard/Peacekeeper)
+                if (!wearingArmor) {
+                    if (classText.includes('vanguard')) {
+                        baseAC = 10 + stats.con.mod;
+                        dexBonus = stats.dex.mod;
+                    } else if (classText.includes('peacekeeper')) {
+                        baseAC = 10 + stats.wis.mod;
+                        dexBonus = stats.dex.mod;
+                    } else {
+                        baseAC = 10;
+                        dexBonus = stats.dex.mod;
+                    }
+                }
+
+                acInput.value = baseAC + dexBonus + shieldBonus;
+            }
         };
         
         window.updateCharStatus = async (s) => { if (!activeCharId) return; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { status: s }); };
@@ -1543,9 +1685,17 @@
 
         window.setView = (v) => {
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active')); document.getElementById(`nav-${v}`)?.classList.add('active');
-            document.getElementById('party-view-container').classList.add('hidden-view'); document.getElementById('graveyard-view-container').classList.add('hidden-view'); document.getElementById('encounters-view-container').classList.add('hidden-view');
+            document.getElementById('party-view-container').classList.add('hidden-view'); 
+            document.getElementById('graveyard-view-container').classList.add('hidden-view'); 
+            document.getElementById('encounters-view-container').classList.add('hidden-view');
+            document.getElementById('initiative-tracker-view').classList.add('hidden-view');
+
             if (v === 'graveyard') { document.getElementById('graveyard-view-container').classList.remove('hidden-view'); document.getElementById('view-title').textContent = 'Graveyard'; } 
-            else if (v === 'encounters') { document.getElementById('encounters-view-container').classList.remove('hidden-view'); document.getElementById('view-title').textContent = 'Encounters & Enemies'; } 
+            else if (v === 'encounters') { 
+                document.getElementById('encounters-view-container').classList.remove('hidden-view'); 
+                document.getElementById('initiative-tracker-view').classList.remove('hidden-view');
+                document.getElementById('view-title').textContent = 'Encounters & Enemies'; 
+            } 
             else { document.getElementById('party-view-container').classList.remove('hidden-view'); document.getElementById('view-title').textContent = 'The Party'; }
             window.renderDashboard();
         };
