@@ -36,13 +36,13 @@
         .sheet-card { background-color: #fff; border: 1px solid #dcd3c0; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 16px; margin-bottom: 16px; position: relative; overflow: hidden; }
         .sheet-card h3 { font-family: 'Cinzel', serif; font-weight: 700; text-align: center; font-size: 0.85rem; color: #222; border-bottom: 2px solid #e8e0cd; padding-bottom: 4px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
         
-        .nav-link { color: #94a3b8; font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.2s; cursor: pointer; text-decoration: none; }
+        .nav-link { color: #94a3b8; font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.2s; cursor: pointer; text-decoration: none; white-space: nowrap; }
         .nav-link.active { color: #f59e0b; border-bottom: 2px solid #f59e0b; padding-bottom: 4px; }
         .nav-link:hover { color: #f59e0b; }
 
         /* ROLE SELECTOR STYLING */
         .role-selector { background: #0f172a; border-radius: 12px; padding: 4px; display: flex; gap: 4px; border: 1px solid #1e293b; }
-        .role-btn { padding: 8px 24px; font-family: 'Cinzel', serif; font-size: 11px; font-weight: 900; border-radius: 8px; transition: all 0.3s; color: #475569; text-transform: uppercase; }
+        .role-btn { padding: 8px 24px; font-family: 'Cinzel', serif; font-size: 11px; font-weight: 900; border-radius: 8px; transition: all 0.3s; color: #475569; text-transform: uppercase; flex: 1; text-align: center; }
         .role-btn.active { background: #d97706; color: white; box-shadow: 0 4px 12px rgba(217, 119, 6, 0.4); }
 
         /* VITALS SYSTEM - Centered Inputs */
@@ -201,6 +201,10 @@
         .dm-auth-enter-btn { background: #c2782c !important; color: white !important; font-family: 'Cinzel', serif !important; font-weight: 900 !important; font-size: 1.1rem !important; padding: 16px !important; border-radius: 18px !important; width: 100% !important; text-transform: uppercase !important; transition: transform 0.1s, background-color 0.2s !important; }
         .dm-auth-enter-btn:active { transform: scale(0.98); }
         .dm-auth-back-btn { background: transparent !important; color: #5b626e !important; font-weight: 900 !important; font-size: 0.9rem !important; text-transform: uppercase !important; margin-top: 24px !important; display: block !important; margin-left: auto !important; margin-right: auto !important; letter-spacing: 0.1em !important; }
+        
+        /* CUSTOM MOBILE UTILS */
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="min-h-screen">
@@ -244,41 +248,47 @@
     <!-- MAIN DASHBOARD -->
     <div id="dashboard-screen" class="min-h-screen dashboard-bg p-4 md:p-8 hidden-view">
         <div class="max-w-6xl mx-auto">
-            <header class="flex flex-col md:flex-row justify-between items-center mb-10 border-b border-gray-800 pb-8 gap-6">
-                <div>
-                    <h1 class="text-4xl md:text-6xl text-amber-500 font-bold mb-2 font-serif tracking-tight">Aeonfall</h1>
-                    <div class="flex items-center gap-4">
-                        <p class="text-gray-500 text-xs md:text-sm uppercase tracking-widest font-bold">Campaign Management Suite</p>
-                        <div class="bg-gray-800 px-3 py-1 rounded-full border border-gray-700 flex items-center gap-2">
+            <header class="flex flex-col items-center md:items-start md:flex-row justify-between mb-10 border-b border-gray-800 pb-8 gap-8">
+                <!-- LOGO & TITLE SECTION -->
+                <div class="text-center md:text-left w-full md:w-auto">
+                    <h1 class="text-5xl md:text-7xl text-amber-500 font-bold mb-2 font-serif tracking-tight leading-none">Aeonfall</h1>
+                    <div class="flex flex-col md:flex-row items-center gap-4">
+                        <p class="text-gray-500 text-[10px] md:text-sm uppercase tracking-[0.2em] font-black opacity-80">Campaign Management Suite</p>
+                        <div class="bg-gray-800/80 backdrop-blur-sm px-4 py-1.5 rounded-full border border-gray-700 flex items-center gap-3 shadow-lg">
                             <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                            <span id="user-display-name" class="text-[10px] font-black text-gray-300 uppercase tracking-wider">Guest</span>
-                            <button onclick="window.logout()" class="text-[10px] text-red-400 hover:text-red-300 font-bold ml-2 border-l border-gray-600 pl-2">LOGOUT</button>
+                            <span id="user-display-name" class="text-[10px] font-black text-gray-200 uppercase tracking-widest">Guest</span>
+                            <button onclick="window.logout()" class="text-[10px] text-red-500 hover:text-red-400 font-black ml-2 border-l border-gray-600 pl-3 transition-colors">LOGOUT</button>
                         </div>
                     </div>
                 </div>
-                <div class="flex flex-col items-end gap-6 w-full md:w-auto">
-                    <div class="role-selector">
+
+                <!-- CONTROLS & NAV SECTION -->
+                <div class="flex flex-col items-center md:items-end gap-6 w-full md:w-auto">
+                    <!-- ROLE SELECTOR -->
+                    <div class="role-selector w-full max-w-[300px] md:w-auto shadow-2xl">
                         <button id="role-player-btn" onclick="window.setRole('player')" class="role-btn active">Player</button>
                         <button id="role-dm-btn" onclick="window.setRole('dm')" class="role-btn">DM</button>
                     </div>
-                    <nav id="main-nav" class="flex gap-8 items-center">
+                    
+                    <!-- NAVIGATION -->
+                    <nav id="main-nav" class="flex gap-6 md:gap-8 items-center w-full overflow-x-auto scrollbar-hide pb-2 px-2 md:px-0 md:pb-0 justify-start md:justify-end">
                         <a href="#" onclick="window.setView('party'); return false;" id="nav-party" class="nav-link active">Party</a>
                         <a href="#" onclick="window.setView('encounters'); return false;" id="nav-encounters" class="nav-link !text-purple-400 hidden">Encounters</a>
                         <a href="npcs.html" class="nav-link">NPCs</a>
                         <a href="beasts.html" class="nav-link">Bestiary</a>
                         <a href="partybag.html" class="nav-link">Backpack</a>
                         <a href="playershandbook.html" class="nav-link">Handbook</a>
-                        <a href="#" onclick="window.setView('graveyard'); return false;" id="nav-graveyard" class="nav-link !text-red-900">Graveyard</a>
+                        <a href="#" onclick="window.setView('graveyard'); return false;" id="nav-graveyard" class="nav-link !text-red-900/60 hover:!text-red-500 transition-colors">Graveyard</a>
                     </nav>
                 </div>
             </header>
 
-            <div class="flex justify-between items-center mb-8">
-                <h2 id="view-title" class="text-2xl font-serif text-gray-400 uppercase font-bold tracking-widest">The Party</h2>
-                <div id="create-actions" class="flex gap-2">
-                    <button id="btn-create-party" onclick="window.openPartyModal()" class="bg-indigo-600 text-white px-4 py-2.5 rounded-lg text-sm font-bold shadow-lg">NEW PARTY</button>
-                    <button id="btn-create-pc" onclick="window.createChar('PC')" class="bg-green-700 text-white px-6 py-2.5 rounded-lg text-sm font-bold shadow-lg">+ NEW PC</button>
-                    <button id="btn-create-npc" onclick="window.createChar('NPC')" class="bg-purple-700 text-white px-6 py-2.5 rounded-lg text-sm font-bold shadow-lg hidden">NEW ENCOUNTER</button>
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+                <h2 id="view-title" class="text-xl md:text-2xl font-serif text-gray-400 uppercase font-bold tracking-widest">The Party</h2>
+                <div id="create-actions" class="flex gap-2 w-full md:w-auto">
+                    <button id="btn-create-party" onclick="window.openPartyModal()" class="flex-1 md:flex-none bg-indigo-600 text-white px-4 py-2.5 rounded-lg text-xs md:text-sm font-bold shadow-lg">NEW PARTY</button>
+                    <button id="btn-create-pc" onclick="window.createChar('PC')" class="flex-1 md:flex-none bg-green-700 text-white px-6 py-2.5 rounded-lg text-xs md:text-sm font-bold shadow-lg">+ NEW PC</button>
+                    <button id="btn-create-npc" onclick="window.createChar('NPC')" class="flex-1 md:flex-none bg-purple-700 text-white px-6 py-2.5 rounded-lg text-xs md:text-sm font-bold shadow-lg hidden">NEW ENCOUNTER</button>
                 </div>
             </div>
 
@@ -1922,7 +1932,7 @@
                     const roundEl = document.getElementById('current-round-display');
                     if (roundEl) roundEl.textContent = currentRound;
                 }
-            });
+            }, (err) => console.error("Global State Sync Error:", err));
         };
 
         const initAuth = async () => {
