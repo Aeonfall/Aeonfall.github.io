@@ -175,7 +175,9 @@
         .init-row { display: grid; grid-template-columns: 40px 1fr 80px; align-items: center; background: #1e293b; padding: 10px 16px; border-radius: 8px; margin-bottom: 6px; border-left: 4px solid #f59e0b; cursor: pointer; transition: transform 0.1s; }
         .init-row:hover { transform: translateX(4px); }
         .init-row.npc { border-left-color: #7c3aed; background: #13171c; }
-        .init-row.active-turn { outline: 2px solid #f59e0b; box-shadow: 0 0 15px rgba(245, 158, 11, 0.3); }
+        .init-row.active-turn { outline: 3px solid #f59e0b; box-shadow: 0 0 20px rgba(245, 158, 11, 0.4); animation: turnPulse 2s infinite ease-in-out; }
+
+        @keyframes turnPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
 
         /* CRITICAL EFFECTS */
         #critical-fail-overlay, #critical-success-overlay { 
@@ -205,6 +207,12 @@
         /* CUSTOM MOBILE UTILS */
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* TURN NOTIFICATION */
+        .turn-banner { background: linear-gradient(to right, #b45309, #d97706, #b45309); color: white; padding: 12px; text-align: center; font-weight: 900; text-transform: uppercase; font-family: 'Cinzel', serif; letter-spacing: 0.2em; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .turn-btns { display: flex; gap: 8px; justify-content: center; margin-top: 8px; }
+        .turn-btns button { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.4); padding: 6px 16px; border-radius: 4px; font-size: 10px; font-weight: 900; transition: all 0.2s; }
+        .turn-btns button:hover { background: rgba(0,0,0,0.5); }
     </style>
 </head>
 <body class="min-h-screen">
@@ -314,6 +322,7 @@
                             <span id="current-round-display" class="text-2xl font-black text-amber-500 w-8 text-center drop-shadow-[0_0_8px_rgba(245,158,11,0.4)]">1</span>
                             <button onclick="window.updateRound(1)" class="w-6 h-6 flex items-center justify-center bg-purple-900/40 rounded text-purple-300 hover:bg-purple-900 hover:text-white transition-all text-lg font-black">+</button>
                         </div>
+                        <button onclick="window.nextTurn()" class="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded text-[10px] font-black uppercase shadow-lg transition-all ml-4">Next Turn &rarr;</button>
                         <button onclick="window.resetRound()" class="ml-auto text-[9px] font-black uppercase text-purple-500 hover:text-purple-300 transition-colors border-l border-purple-900/30 pl-4 h-8">Reset Round</button>
                     </div>
 
@@ -331,6 +340,13 @@
 
     <!-- SHEET SCREEN -->
     <div id="sheet-screen" class="hidden-view">
+        <div id="turn-notification-banner" class="turn-banner hidden">
+            <span>Your Turn!</span>
+            <div class="turn-btns">
+                <button onclick="window.nextTurn()">End Turn</button>
+                <button onclick="window.nextTurn()">Hold Turn</button>
+            </div>
+        </div>
         <div id="sheet-container">
             <nav class="sticky top-0 z-[60] bg-gray-900 p-2 shadow-2xl border-b border-gray-800">
                 <div class="max-w-6xl mx-auto flex justify-between items-center text-white px-4">
@@ -989,6 +1005,7 @@
         let activeManagePartyId = null, activeMoveLvl = null, editingMoveIndex = null;
         let currentUser = null; 
         let currentRound = 1;
+        let activeTurnId = null;
 
         const STATS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
         const SKILLS = [
@@ -1216,9 +1233,10 @@
 
             list.innerHTML = initChars.map((c, i) => {
                 const isNpc = c.type === 'NPC';
+                const isActive = c.id === activeTurnId;
                 return `
-                    <div class="init-row ${isNpc ? 'npc' : ''}" onclick="window.openSheet('${c.id}')">
-                        <div class="text-xl font-black text-amber-500">${c.init}</div>
+                    <div class="init-row ${isNpc ? 'npc' : ''} ${isActive ? 'active-turn' : ''}" onclick="window.setTurn('${c.id}')">
+                        <div class="text-xl font-black ${isActive ? 'text-white' : 'text-amber-500'}">${c.init} ${isActive ? '⚡' : ''}</div>
                         <div class="pl-2">
                             <div class="text-[10px] font-black uppercase text-white">${c.name}</div>
                             <div class="text-[8px] text-gray-500 uppercase">${c.class || (isNpc ? 'Enemy' : 'Class')}</div>
@@ -1246,7 +1264,7 @@
             window.resetRound();
         };
 
-        // --- ROUND COUNTER LOGIC ---
+        // --- ROUND & TURN LOGIC ---
         window.updateRound = async (delta) => {
             const newRound = Math.max(1, currentRound + delta);
             if (newRound === currentRound) return;
@@ -1254,7 +1272,35 @@
         };
 
         window.resetRound = async () => {
-            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'campaignState', 'global'), { currentRound: 1 }, { merge: true });
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'campaignState', 'global'), { currentRound: 1, activeTurnId: null }, { merge: true });
+        };
+
+        window.setTurn = async (id) => {
+            if (activeRole !== 'dm') return;
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'campaignState', 'global'), { activeTurnId: id }, { merge: true });
+            window.showToast("Active Turn Updated");
+        };
+
+        window.nextTurn = async () => {
+            const sorted = characters
+                .filter(c => !c.isDeleted && c.status !== 'dead' && c.init !== undefined && c.init !== "" && !isNaN(parseInt(c.init)))
+                .sort((a, b) => parseInt(b.init) - parseInt(a.init));
+            
+            if (sorted.length === 0) return;
+
+            let nextIdx = 0;
+            if (activeTurnId) {
+                const curIdx = sorted.findIndex(c => c.id === activeTurnId);
+                nextIdx = curIdx + 1;
+            }
+
+            if (nextIdx >= sorted.length) {
+                nextIdx = 0;
+                await window.updateRound(1);
+            }
+
+            const nextChar = sorted[nextIdx];
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'campaignState', 'global'), { activeTurnId: nextChar.id }, { merge: true });
         };
 
         // --- INITIATIVE ROLLING LOGIC ---
@@ -1283,6 +1329,9 @@
             });
             await Promise.all(promises);
             window.showToast("Initiative Rolled for All Entities");
+            // Set first person's turn
+            const sorted = targets.sort((a,b) => parseInt(b.init) - parseInt(a.init));
+            if (sorted.length > 0) window.setTurn(sorted[0].id);
         };
 
         window.renderDashboard = () => {
@@ -1476,6 +1525,10 @@
                 if (sDot) sDot.className = `ds-dot ${(char.dsSucc || 0) >= i ? 'checked-succ' : ''}`;
                 if (fDot) fDot.className = `ds-dot ${(char.dsFail || 0) >= i ? 'checked-fail' : ''}`;
             }
+
+            // --- TURN NOTIFICATION ---
+            const turnBanner = document.getElementById('turn-notification-banner');
+            if (turnBanner) turnBanner.classList.toggle('hidden', activeTurnId !== activeCharId);
 
             const log = document.getElementById('dice-log'); if (log) { log.innerHTML = ''; (char.rollHistory || []).forEach(r => { const d = document.createElement('div'); d.className = "flex justify-between border-b border-gray-100 py-1.5"; d.innerHTML = `<span class="text-gray-500 font-bold">${r.label}</span><b class="text-indigo-900">${r.total}</b>`; log.appendChild(d); }); }
             const pDisplay = document.getElementById('portrait-media-display');
@@ -1929,8 +1982,11 @@
             onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'campaignState', 'global'), (doc) => {
                 if (doc.exists()) {
                     currentRound = doc.data().currentRound || 1;
+                    activeTurnId = doc.data().activeTurnId || null;
                     const roundEl = document.getElementById('current-round-display');
                     if (roundEl) roundEl.textContent = currentRound;
+                    window.renderInitiativeTracker();
+                    if (activeCharId) syncSheetData();
                 }
             }, (err) => console.error("Global State Sync Error:", err));
         };
