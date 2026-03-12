@@ -1390,13 +1390,15 @@
             
             let newData = {
                 ...clone,
-                type: 'PC', // Treat as PC so it renders alongside the party
+                type: 'BEAST', // Keep as BEAST so it stays out of the Party tab
+                visibility: 'private', // Mark as private tie for beasts.html
+                linkedUsername: currentUser.username, // Link to the user
                 class: clone.summary || 'Beast Companion',
                 ownerId: user.uid,
                 owner: currentUser.username,
                 isDeleted: false,
                 status: 'alive',
-                partyId: pc ? pc.partyId : "",
+                partyId: "", // Do not assign to the party grid
                 init: "",
                 scoresGenerated: true,
                 hpMax: parsedHp, 
