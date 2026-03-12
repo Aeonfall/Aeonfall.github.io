@@ -1568,7 +1568,8 @@
                     owner: currentUser.username,
                     hpMax: template.hpMax || parsedHp,
                     hpCurrent: template.hpCurrent || template.hpMax || parsedHp,
-                    bondLevel: 'claiming'
+                    bondLevel: 'claiming',
+                    bondSuccesses: 0 // Start fresh
                 });
                 
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { companionId: template.id });
@@ -1617,7 +1618,7 @@
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', targetId), updates);
         };
 
-        window.handleTrainingCheck = async (targetId, cmdKey, cmdName, DC) => {
+        window.handleTrainingCheck = async (targetId, cmdKey, cmdName, baseDC) => {
             const char = characters.find(c => c.id === activeCharId);
             const pet = characters.find(p => p.id === targetId);
             if (!char || !pet) return;
@@ -1630,30 +1631,51 @@
                 return;
             }
 
-            const isNomadWarden = char.class?.toLowerCase() === 'nomad' && char.archetype?.toLowerCase() === 'way of the warden';
+            // Determine Bond Tier Logic
+            const bars = pet.bondSuccesses || 0;
+            let effectiveDC = 15;
+            let rollOption = 'normal';
+
+            if (bars >= 3) { effectiveDC = 8; rollOption = 'adv'; }
+            else if (bars >= 2) { effectiveDC = 12; rollOption = 'normal'; }
+            else { effectiveDC = 15; rollOption = 'dis'; }
+
+            // DM Bypass
+            if (isDM) rollOption = 'normal';
+
             const ahMod = parseInt(document.getElementById('skill-mod-animal_handling')?.textContent) || 0;
-            const roll = getRoll(20);
-            const bonus = isNomadWarden ? 5 : 0;
-            const total = roll + ahMod + bonus;
+            const isNomadWarden = char.class?.toLowerCase() === 'nomad' && char.archetype?.toLowerCase() === 'way of the warden';
+            const wardenBonus = isNomadWarden ? 5 : 0;
+
+            const r1 = getRoll(20);
+            const r2 = getRoll(20);
+            let finalRoll = r1;
+            if (rollOption === 'adv') finalRoll = Math.max(r1, r2);
+            if (rollOption === 'dis') finalRoll = Math.min(r1, r2);
+
+            const total = finalRoll + ahMod + wardenBonus;
 
             const trainingData = pet.trainingProgress || {};
             const cmdData = trainingData[cmdKey] || { successes: 0, learned: false };
 
-            if (total >= DC) {
+            if (total >= effectiveDC) {
                 cmdData.successes++;
-                window.showToast(`${cmdName} Progress: ${cmdData.successes}/2.`);
+                window.showToast(`${cmdName} Progress: ${cmdData.successes}/2. (Total ${total} vs DC ${effectiveDC})`);
                 if (cmdData.successes >= 2) {
                     cmdData.learned = true;
                     window.showToast(`${cmdName.toUpperCase()} LEARNED!`);
                 }
-                if (roll === 20) triggerCriticalSuccess();
+                if (finalRoll === 20) triggerCriticalSuccess();
             } else {
-                window.showToast(`Training Failed (${total} vs ${DC}).`);
-                if (roll === 1) triggerCriticalFailure();
+                window.showToast(`Training Failed. (Total ${total} vs DC ${effectiveDC})`);
+                if (finalRoll === 1) triggerCriticalFailure();
             }
 
             trainingData[cmdKey] = cmdData;
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', targetId), { trainingProgress: trainingData, lastTrainCheckDate: today });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', targetId), { 
+                trainingProgress: trainingData, 
+                lastTrainCheckDate: today 
+            });
         };
 
         window.dmMaxCompanion = async (targetId) => {
@@ -2473,35 +2495,52 @@
                         let trainUI = '';
                         if (isBonded || isClaiming) {
                             const trainedToday = pet.lastTrainCheckDate === today;
+                            const bars = pet.bondSuccesses || 0;
+                            
                             const commands = [
-                                {k:'follow', n:'Follow', dc:10}, {k:'stay', n:'Stay/Guard', dc:11},
-                                {k:'fetch', n:'Fetch/Retrieve', dc:12}, {k:'track', n:'Track', dc:13},
-                                {k:'attack', n:'Attack Target', dc:15}, {k:'tricks', n:'Complex Tricks', dc:17}
+                                {k:'follow', n:'Follow', dc: (bars >= 3 ? 8 : (bars >= 2 ? 12 : 15)), complex: false}, 
+                                {k:'stay', n:'Stay/Guard', dc: (bars >= 3 ? 8 : (bars >= 2 ? 12 : 15)), complex: false},
+                                {k:'fetch', n:'Fetch/Retrieve', dc: (bars >= 3 ? 8 : (bars >= 2 ? 12 : 15)), complex: false}, 
+                                {k:'track', n:'Track', dc: (bars >= 3 ? 8 : (bars >= 2 ? 12 : 15)), complex: true},
+                                {k:'attack', n:'Attack Target', dc: (bars >= 3 ? 8 : (bars >= 2 ? 12 : 15)), complex: true}, 
+                                {k:'tricks', n:'Complex Tricks', dc: (bars >= 3 ? 10 : (bars >= 2 ? 14 : 18)), complex: true}
                             ];
+
                             trainUI = `
                                 <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-                                    <h5 class="text-[10px] font-black uppercase text-blue-700 mb-3 border-b border-blue-200 pb-1">Command Training</h5>
+                                    <div class="flex justify-between items-center mb-3 border-b border-blue-200 pb-1">
+                                        <h5 class="text-[10px] font-black uppercase text-blue-700">Command Training</h5>
+                                        <span class="text-[9px] font-black px-2 py-0.5 rounded ${bars >= 3 ? 'bg-green-100 text-green-700' : (bars >= 2 ? 'bg-orange-100 text-orange-700' : 'bg-red-100 text-red-700')}">
+                                            Tier ${bars}: ${bars >= 3 ? 'Advantage' : (bars >= 2 ? 'Normal' : 'Disadvantage')}
+                                        </span>
+                                    </div>
                                     <div class="space-y-3">
                                         ${commands.map(c => {
                                             const progress = training[c.k] || {successes:0, learned:false};
+                                            const locked = bars < 2 && c.complex;
+                                            
                                             let btnHtml = '';
-                                            if (!progress.learned) {
+                                            if (locked) {
+                                                btnHtml = `<span class="text-[7px] font-black text-red-400 uppercase">Tier 2 Required</span>`;
+                                            } else if (!progress.learned) {
                                                 btnHtml = `<button onclick="window.handleTrainingCheck('${pet.id}', '${c.k}', '${c.n}', ${c.dc})" 
-                                                    class="${(!isDM && trainedToday) ? 'bg-gray-300 cursor-not-allowed text-gray-500' : 'bg-blue-600 text-white'} px-3 py-1 rounded text-[8px] font-black" 
+                                                    class="${(!isDM && trainedToday) ? 'bg-gray-300 cursor-not-allowed text-gray-500' : 'bg-blue-600 text-white hover:bg-blue-700'} px-3 py-1 rounded text-[8px] font-black transition-colors" 
                                                     ${(!isDM && trainedToday) ? 'disabled' : ''}>
                                                     ${(!isDM && trainedToday) ? 'USED' : 'TRAIN'}
                                                 </button>`;
                                             } else {
-                                                btnHtml = `<button onclick="window.handleActionCheck('${c.n}', ${c.dc === 10 ? 10 : c.dc === 11 ? 10 : c.dc === 12 ? 10 : 13})" 
-                                                    class="bg-green-600 text-white px-3 py-1 rounded text-[8px] font-black">ACT</button>`;
+                                                btnHtml = `<button onclick="window.handleActionCheck('${c.n}', ${c.dc})" 
+                                                    class="bg-green-600 text-white px-3 py-1 rounded text-[8px] font-black hover:bg-green-700 transition-colors">ACT</button>`;
                                             }
 
                                             return `
-                                                <div class="flex items-center justify-between gap-3">
+                                                <div class="flex items-center justify-between gap-3 ${locked ? 'opacity-50 grayscale' : ''}">
                                                     <div class="flex-grow">
                                                         <div class="flex justify-between items-center mb-1">
-                                                            <span class="text-[9px] font-bold ${progress.learned ? 'text-green-700' : 'text-slate-600'}">${c.n} ${progress.learned ? '✓' : `(DC ${c.dc})`}</span>
-                                                            ${!progress.learned ? `<span class="text-[8px] font-black text-slate-400">${progress.successes}/2</span>` : ''}
+                                                            <span class="text-[9px] font-bold ${progress.learned ? 'text-green-700' : 'text-slate-600'}">
+                                                                ${c.n} ${progress.learned ? '✓' : `(DC ${c.dc})`}
+                                                            </span>
+                                                            ${(!progress.learned && !locked) ? `<span class="text-[8px] font-black text-slate-400">${progress.successes}/2</span>` : ''}
                                                         </div>
                                                         <div class="flex gap-1">
                                                             ${[1,2].map(i => `<div class="flex-grow h-1.5 rounded-full ${progress.successes >= i ? 'bg-blue-500' : 'bg-blue-200'}"></div>`).join('')}
@@ -2511,7 +2550,7 @@
                                                 </div>
                                             `;
                                         }).join('')}
-                                        ${(!isDM && trainedToday) ? `<div class="text-[8px] font-black text-blue-400 uppercase text-center mt-2 italic">Training attempt used for today</div>` : ''}
+                                        ${(!isDM && trainedToday) ? `<div class="text-[8px] font-black text-blue-400 uppercase text-center mt-2 italic">Daily training attempt exhausted</div>` : ''}
                                     </div>
                                 </div>
                             `;
@@ -2979,7 +3018,12 @@
         const initAuth = async () => {
             try { await signInAnonymously(auth); onAuthStateChanged(auth, (u) => { user = u; if (user) { setupListeners(); window.updateRoleUI(); const savedUser = localStorage.getItem('aeonfall_user'); if (savedUser) { try { currentUser = JSON.parse(savedUser); authSystem.completeAuth(); } catch(e) { localStorage.removeItem('aeonfall_user'); } } } }); } catch (err) {}
         };
-        document.addEventListener('input', (e) => { if (e.target.dataset.key) { if (autoSaveTimer) clearTimeout(autoSaveTimer); autoSaveTimer = setTimeout(() => window.saveCurrentCharacter(), 1000); } });
+        document.addEventListener('input', (e) => { 
+            if (e.target.dataset.key) { 
+                if (autoSaveTimer) clearTimeout(autoSaveTimer); 
+                autoSaveTimer = setTimeout(() => window.saveCurrentCharacter(), 1000); 
+            } 
+        });
         initAuth();
     </script>
 </body>
