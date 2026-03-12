@@ -316,7 +316,7 @@
                                     <button onclick="window.clearAllInitiatives()" class="text-[10px] font-black uppercase text-red-400 bg-red-900/20 hover:bg-red-900/40 px-4 py-2.5 rounded-xl border border-red-900/50 transition-colors">Reset</button>
                                 </div>
 
-                                <button onclick="window.advanceTurn()" class="ml-auto lg:ml-2 bg-gradient-to-br from-amber-600 to-orange-700 hover:from-amber-500 hover:to-orange-600 text-white px-6 py-2.5 rounded-xl font-black uppercase text-xs tracking-widest shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-all active:scale-95 flex items-center gap-2">
+                                <button onclick="window.advanceTurn()" class="ml-auto lg:ml-2 bg-gradient-to-br from-amber-600 to-orange-700 hover:from-amber-500 hover:to-orange-600 text-white px-6 py-2.5 rounded-xl font-black uppercase text-xs tracking-widest shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-all active:scale-95 flex items-center justify-center gap-2">
                                     Next Turn <span class="text-[10px]">➔</span>
                                 </button>
                             </div>
@@ -430,7 +430,7 @@
                                 <div><input type="number" data-key="level" placeholder="1" onchange="window.updateLevelDependencies(this.value)"><label class="tiny-label">Level</label></div>
                                 <div><select id="party-select" data-key="partyId" class="cursor-pointer"><option value="">Unassigned</option></select><label class="tiny-label">Party</label></div>
                                 <div><input type="text" data-key="race" placeholder="Human"><label class="tiny-label">Race</label></div>
-                                <div><input type="text" data-key="archetype" placeholder="Survivor"><label class="tiny-label">Archetype</label></div>
+                                <div><input type="text" id="archetype-field" data-key="archetype" placeholder="Survivor"><label class="tiny-label">Archetype</label></div>
                                 <div><input type="text" data-key="belief" placeholder="Belief"><label class="tiny-label">Belief</label></div>
                             </div>
                         </div>
@@ -1240,9 +1240,15 @@
             "Assisted Recovery"
         ];
 
+        // --- UNBIASED RANDOMNESS SYSTEM ---
+        const getRoll = (sides) => {
+            return Math.floor(Math.random() * sides) + 1;
+        };
+
         // --- CRITICAL EFFECTS SYSTEM ---
         const triggerCriticalFailure = () => {
             const overlay = document.getElementById('critical-fail-overlay');
+            if(!overlay) return;
             overlay.style.opacity = '1';
             overlay.style.pointerEvents = 'auto';
             setTimeout(() => {
@@ -1253,6 +1259,7 @@
 
         const triggerCriticalSuccess = () => {
             const overlay = document.getElementById('critical-success-overlay');
+            if(!overlay) return;
             overlay.style.opacity = '1';
             overlay.style.pointerEvents = 'auto';
             setTimeout(() => {
@@ -1261,6 +1268,7 @@
             }, 2000);
 
             const canvas = document.getElementById('fireworks-canvas');
+            if(!canvas) return;
             const ctx = canvas.getContext('2d');
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
@@ -1434,16 +1442,12 @@
         window.openAdoptModal = async () => {
             document.getElementById('adopt-companion-modal').classList.remove('hidden');
             
-            // Derive strictly ONLY beasts that are specifically linked to the player via Private Tie
             compendiumBeasts = characters.filter(c => {
                 if (c.isDeleted) return false;
                 if (!currentUser) return false;
-                
-                // Only show BEASTs that the DM specifically assigned as a private tie to this user
                 if (c.type === 'BEAST' && c.visibility === 'private') {
                     return c.linkedUsername === currentUser.username || c.owner === currentUser.username;
                 }
-                
                 return false;
             });
             
@@ -1460,19 +1464,16 @@
 
             container.innerHTML = compendiumBeasts.map((b, i) => {
                 let badge = `<span class="bg-purple-600 text-white px-2 py-0.5 rounded text-[8px] ml-2">Personal Tie</span>`;
-                
                 let btnText = "Bond";
                 let btnStyle = "bg-gray-800 group-hover:bg-green-600 border-gray-700 group-hover:border-green-500";
                 let action = `onclick="window.confirmAdopt(${i})"`;
 
-                // If it's already an active companion for someone
                 const currentOwnerPC = characters.find(pc => pc.type === 'PC' && pc.companionId === b.id);
-                
                 if (currentOwnerPC) {
                     if (currentOwnerPC.id === activeCharId) {
                         btnText = "Active";
                         btnStyle = "bg-green-900 border-green-700 text-green-300 opacity-50 cursor-not-allowed";
-                        action = ""; // Prevent clicking
+                        action = "";
                     } else {
                         badge += `<span class="bg-blue-600 text-white px-2 py-0.5 rounded text-[8px] ml-2">With ${currentOwnerPC.name}</span>`;
                         btnText = "Transfer";
@@ -1501,35 +1502,131 @@
         window.confirmAdopt = async (index) => {
             if (!user || !currentUser || !activeCharId) return;
             const template = compendiumBeasts[index];
+            const char = characters.find(c => c.id === activeCharId);
+            const isNomadWarden = char.class?.toLowerCase() === 'nomad' && char.archetype?.toLowerCase() === 'way of the warden';
 
-            // 1. Unlink if it was previously attached to another one of the player's characters
-            const oldPC = characters.find(pc => pc.type === 'PC' && pc.companionId === template.id);
-            if (oldPC) {
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', oldPC.id), { companionId: null });
+            let claimSuccessful = false;
+            if (isNomadWarden) {
+                claimSuccessful = true;
+                window.showToast("Warden connection: Automatic claim!");
+            } else {
+                const ahMod = parseInt(document.getElementById('skill-mod-animal_handling')?.textContent) || 0;
+                const roll = getRoll(20);
+                const total = roll + ahMod;
+                const targetDC = template.ac ? parseInt(template.ac) : 12;
+
+                if (total >= targetDC) {
+                    claimSuccessful = true;
+                    window.showToast(`Claim Success! Roll: ${total} (Natural ${roll}) vs DC ${targetDC}`);
+                    if (roll === 20) triggerCriticalSuccess();
+                } else if (targetDC - total <= 4) {
+                    window.showToast(`Animal distrusts you (Missed by ${targetDC - total}). Try again later.`);
+                    document.getElementById('adopt-companion-modal').classList.add('hidden');
+                    return;
+                } else {
+                    window.showToast(`Animal flees in hostility! (Missed by ${targetDC - total})`);
+                    triggerCriticalFailure();
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', template.id), { visibility: 'public', linkedUsername: null });
+                    document.getElementById('adopt-companion-modal').classList.add('hidden');
+                    return;
+                }
             }
+
+            if (claimSuccessful) {
+                const oldPC = characters.find(pc => pc.type === 'PC' && pc.companionId === template.id);
+                if (oldPC) {
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', oldPC.id), { companionId: null });
+                }
+                
+                let parsedHp = 10;
+                if (template.hpDisplay) {
+                    const match = template.hpDisplay.match(/^(\d+)/);
+                    if (match) parsedHp = parseInt(match[1], 10);
+                }
+
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', template.id), {
+                    ownerId: user.uid,
+                    owner: currentUser.username,
+                    hpMax: template.hpMax || parsedHp,
+                    hpCurrent: template.hpCurrent || template.hpMax || parsedHp,
+                    bondLevel: 'claiming'
+                });
+                
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { companionId: template.id });
+
+                document.getElementById('adopt-companion-modal').classList.add('hidden');
+                syncSheetData();
+            }
+        };
+
+        window.handleBondingCheck = async (targetId) => {
+            const char = characters.find(c => c.id === activeCharId);
+            const pet = characters.find(p => p.id === targetId);
+            if (!char || !pet) return;
+
+            const isNomadWarden = char.class?.toLowerCase() === 'nomad' && char.archetype?.toLowerCase() === 'way of the warden';
+            const ahMod = parseInt(document.getElementById('skill-mod-animal_handling')?.textContent) || 0;
+            const roll = getRoll(20);
+            const bonus = isNomadWarden ? 5 : 0;
+            const total = roll + ahMod + bonus;
+            const DC = 12;
+
+            let currentSuccs = parseInt(pet.bondSuccesses) || 0;
             
-            // 2. Parse HP from beasts.html format (e.g. "10 (2d8 + 2)") to an integer
-            let parsedHp = 10;
-            if (template.hpDisplay) {
-                const match = template.hpDisplay.match(/^(\d+)/);
-                if (match) parsedHp = parseInt(match[1], 10);
+            if (total >= DC) {
+                currentSuccs++;
+                window.showToast(`Bond Strength +1 (${total} vs ${DC}). ${currentSuccs}/3 Progress.`);
+                if (roll === 20) triggerCriticalSuccess();
+            } else {
+                window.showToast(`Bond Slowed (${total} vs ${DC}).`);
+                if (roll === 1) triggerCriticalFailure();
             }
 
-            // 3. Update the existing Private Tie document directly (DO NOT CLONE)
-            // It remains a 'BEAST' so it perfectly syncs with beasts.html without disappearing
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', template.id), {
-                ownerId: user.uid,
-                owner: currentUser.username, // Ensures the player actually owns it now
-                hpMax: template.hpMax || parsedHp,
-                hpCurrent: template.hpCurrent || template.hpMax || parsedHp
-            });
-            
-            // 4. Link to the active character sheet
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { companionId: template.id });
+            const updates = { bondSuccesses: currentSuccs };
+            if (currentSuccs >= 3) {
+                updates.bondLevel = 'bonded';
+                window.showToast("COMPANION BOND COMPLETE!");
+            }
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', targetId), updates);
+        };
 
-            document.getElementById('adopt-companion-modal').classList.add('hidden');
-            window.showToast(`${template.name} bonded successfully!`);
-            syncSheetData();
+        window.handleTrainingCheck = async (targetId, cmdKey, cmdName, DC) => {
+            const char = characters.find(c => c.id === activeCharId);
+            const pet = characters.find(p => p.id === targetId);
+            if (!char || !pet) return;
+
+            const isNomadWarden = char.class?.toLowerCase() === 'nomad' && char.archetype?.toLowerCase() === 'way of the warden';
+            const ahMod = parseInt(document.getElementById('skill-mod-animal_handling')?.textContent) || 0;
+            const roll = getRoll(20);
+            const bonus = isNomadWarden ? 5 : 0;
+            const total = roll + ahMod + bonus;
+
+            const trainingData = pet.trainingProgress || {};
+            const cmdData = trainingData[cmdKey] || { successes: 0, learned: false };
+
+            if (total >= DC) {
+                cmdData.successes++;
+                window.showToast(`${cmdName} Progress: ${cmdData.successes}/2.`);
+                if (cmdData.successes >= 2) {
+                    cmdData.learned = true;
+                    window.showToast(`${cmdName.toUpperCase()} LEARNED!`);
+                }
+                if (roll === 20) triggerCriticalSuccess();
+            } else {
+                window.showToast(`Training Failed (${total} vs ${DC}).`);
+                if (roll === 1) triggerCriticalFailure();
+            }
+
+            trainingData[cmdKey] = cmdData;
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', targetId), { trainingProgress: trainingData });
+        };
+
+        window.handleActionCheck = (cmdName, DC) => {
+            const char = characters.find(c => c.id === activeCharId);
+            const isNomadWarden = char.class?.toLowerCase() === 'nomad' && char.archetype?.toLowerCase() === 'way of the warden';
+            const ahMod = parseInt(document.getElementById('skill-mod-animal_handling')?.textContent) || 0;
+            const bonus = isNomadWarden ? 5 : 0;
+            execRoll(`${cmdName} Command`, ahMod + bonus);
         };
 
         window.releaseCompanion = async () => {
@@ -1543,19 +1640,12 @@
         window.openEncounterSpawner = async () => {
             document.getElementById('encounter-spawner-modal').classList.remove('hidden');
             document.getElementById('spawner-list-container').innerHTML = '<div class="text-center py-12 text-purple-400 text-xs uppercase font-black tracking-widest animate-pulse">Loading Archives...</div>';
-            
             try {
-                // NPCs might be in a separate collection depending on how npcs.html stores them
                 const nSnap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'npcs'));
                 compendiumNPCs = nSnap.docs.map(d => ({id: d.id, ...d.data()}));
-                
-                // Beasts are correctly pulled from the unified characters array
                 compendiumBeasts = characters.filter(c => c.type === 'BEAST' && !c.isDeleted && (c.visibility === 'public' || activeRole === 'dm'));
-                
                 window.switchSpawnerTab('blank');
             } catch (e) {
-                console.error("Error loading compendiums:", e);
-                // Fallback rendering
                 compendiumBeasts = characters.filter(c => c.type === 'BEAST' && !c.isDeleted && (c.visibility === 'public' || activeRole === 'dm'));
                 window.switchSpawnerTab('blank');
             }
@@ -1600,7 +1690,6 @@
         function createSpawnerRow(entity, type, index) {
             let hpText = entity.hpMax ? `HP ${entity.hpMax}` : (entity.hpDisplay ? `HP ${entity.hpDisplay}` : 'HP ?');
             let acText = entity.ac ? `AC ${entity.ac}` : 'AC ?';
-            
             return `
                 <div class="bg-black/40 p-4 rounded-xl border border-gray-800 flex justify-between items-center hover:border-purple-500 hover:bg-purple-900/10 transition-all cursor-pointer group" onclick="window.spawnCompendiumEntity(${index}, '${type}')">
                     <div class="flex items-center gap-4">
@@ -1648,38 +1737,26 @@
                     imageSrc: "", heroicInspiration: 0, exhaustion: 0,
                     currentStress: 0, stressThreshold: 10, passivePerception: 10
                 };
-
                 let sourceEntity = null;
                 if (sourceType === 'npc') sourceEntity = compendiumNPCs[index];
                 if (sourceType === 'beast') sourceEntity = compendiumBeasts[index];
-
                 if (sourceEntity) {
                     const clone = JSON.parse(JSON.stringify(sourceEntity));
-                    delete clone.id; // Strip original DB ID so it generates a new one
-                    
-                    // Attempt to parse HP if it came from beasts.html
+                    delete clone.id;
                     let parsedHp = clone.hpMax || 10;
                     if (!clone.hpMax && clone.hpDisplay) {
                         const match = clone.hpDisplay.match(/^(\d+)/);
                         if (match) parsedHp = parseInt(match[1], 10);
                     }
-                    
                     newData = { ...newData, ...clone, hpMax: parsedHp, hpCurrent: parsedHp };
-                    
-                    // Force the type to be NPC so it shows up in Encounters panel
                     newData.type = 'NPC';
-                    
-                    // Ensure missing class is populated
                     if (!newData.class) newData.class = sourceType === 'beast' ? 'Beast' : 'Enemy';
-                    
-                    // Mark name clearly if needed, or keep original
                     newData.name = clone.name || 'Unnamed Entity';
                 } else {
                     newData.name = "New Encounter";
                     newData.class = "Enemy";
                     newData.scoresGenerated = false;
                 }
-
                 const ref = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), newData);
                 document.getElementById('encounter-spawner-modal').classList.add('hidden');
                 window.openSheet(ref.id);
@@ -1694,23 +1771,18 @@
             const tBanner = document.getElementById('sheet-turn-banner');
             const hBanner = document.getElementById('sheet-held-banner');
             if (!tBanner || !hBanner) return;
-
             if (!activeCharId) {
                 tBanner.classList.add('hidden');
                 hBanner.classList.add('hidden');
                 return;
             }
-
             const char = characters.find(c => c.id === activeCharId);
             if (!char) return;
-
             const isMine = currentUser && char.owner === currentUser.username;
             const isDM = activeRole === 'dm';
             const canControl = isMine || isDM || char.owner === 'DM';
-
             const isActive = activeTurnId === activeCharId;
             const isHeld = !!char.heldAction;
-
             if (isActive) {
                 tBanner.classList.remove('hidden');
                 hBanner.classList.add('hidden');
@@ -1723,7 +1795,6 @@
                 hBanner.classList.remove('hidden');
                 const controls = hBanner.querySelector('.turn-controls');
                 if (controls) controls.classList.toggle('hidden', !canControl);
-
                 const detailsText = document.getElementById('held-details-text');
                 if (detailsText) {
                     const triggerText = char.heldTrigger ? `Trigger: <span class="text-white">${char.heldTrigger}</span>` : 'Waiting for trigger...';
@@ -1750,7 +1821,6 @@
             const trigger = document.getElementById('hold-trigger-input').value.trim();
             const action = document.getElementById('hold-action-input').value.trim();
             if (!trigger || !action) return window.showToast("Please provide both a trigger and an action.");
-
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', pendingHoldId), { 
                 heldAction: true,
                 heldTrigger: trigger,
@@ -1758,7 +1828,6 @@
             });
             window.showToast("Action Readied (Reaction used).");
             document.getElementById('ready-action-modal').classList.add('hidden');
-            
             if (activeTurnId === pendingHoldId) {
                 window.advanceTurn();
             }
@@ -1778,49 +1847,40 @@
         window.renderInitiativeTracker = () => {
             const list = document.getElementById('init-list');
             if (!list) return;
-            
             const initChars = characters
                 .filter(c => !c.isDeleted && c.status !== 'dead' && c.init !== undefined && c.init !== "" && !isNaN(parseInt(c.init)))
                 .sort((a, b) => parseInt(b.init) - parseInt(a.init));
-
             if (initChars.length === 0) {
                 list.innerHTML = `<div class="text-center py-16 border-2 border-dashed border-gray-800/50 rounded-2xl bg-gray-900/20"><span class="text-gray-600 font-bold uppercase text-xs tracking-widest inline-block mb-2">No Combatants Active</span><br><span class="text-[10px] text-gray-500 font-bold">Roll initiative for the party & enemies to begin the encounter</span></div>`;
                 return;
             }
-
             list.innerHTML = initChars.map((c, i) => {
                 const isNpc = c.type === 'NPC';
                 const isActive = c.id === activeTurnId;
                 const isHeld = !!c.heldAction;
                 const isMine = currentUser && c.owner === currentUser.username;
                 const turnLabel = isMine ? "Your Turn!" : "Current Turn";
-                
                 const baseBg = isActive ? 'bg-[#1a1f29]' : (isHeld ? 'bg-[#141b2e]' : (isNpc ? 'bg-[#111318]' : 'bg-[#151921]'));
                 const borderCol = isActive ? 'border-amber-500' : (isHeld ? 'border-blue-500/50' : (isNpc ? 'border-purple-900/50' : 'border-gray-800'));
                 const borderLeft = isActive ? 'border-l-4 border-l-amber-500' : (isHeld ? 'border-l-4 border-l-blue-500' : (isNpc ? 'border-l-4 border-l-purple-600' : 'border-l-4 border-l-gray-600'));
                 const shadow = isActive ? 'shadow-[0_0_25px_rgba(245,158,11,0.15)]' : (isHeld ? 'shadow-[0_0_15px_rgba(37,99,235,0.1)]' : 'shadow-md');
                 const transform = isActive ? 'scale-[1.01] z-10' : 'hover:scale-[1.005] opacity-85 hover:opacity-100';
-
                 let badge = '';
                 if (isActive) {
                     badge = `<div class="absolute -top-3 left-1/2 -translate-x-1/2 md:translate-x-0 md:left-auto md:right-6 bg-gradient-to-r from-amber-500 to-orange-500 text-black text-[9px] font-black px-4 py-1 rounded-full uppercase tracking-widest shadow-lg animate-bounce border-2 border-[#1a1f29] whitespace-nowrap z-20">${turnLabel}</div>`;
                 } else if (isHeld) {
                     badge = `<div class="absolute -top-3 left-1/2 -translate-x-1/2 md:translate-x-0 md:left-auto md:right-6 bg-blue-600 text-white text-[9px] font-black px-4 py-1 rounded-full uppercase tracking-widest shadow-lg border-2 border-[#1a1f29] whitespace-nowrap z-20" title="Trigger: ${c.heldTrigger || 'Unknown'} | Action: ${c.heldActionDesc || 'Unknown'}">READIED ACTION</div>`;
                 }
-
                 return `
                     <div class="relative flex items-center ${baseBg} p-3 md:p-4 rounded-xl border ${borderCol} ${borderLeft} ${shadow} ${transform} transition-all duration-300 cursor-pointer group" onclick="window.openSheet('${c.id}')">
                         ${badge}
-                        
                         <div class="w-12 h-12 md:w-14 md:h-14 flex-shrink-0 flex items-center justify-center ${isActive ? 'bg-amber-500/10' : (isHeld ? 'bg-blue-500/10' : 'bg-black/40')} rounded-lg border ${isActive ? 'border-amber-500/30' : (isHeld ? 'border-blue-500/30' : 'border-gray-800')} text-2xl font-black ${isActive ? 'text-amber-500 drop-shadow-[0_0_5px_rgba(245,158,11,0.5)]' : (isHeld ? 'text-blue-400' : 'text-gray-400')}">
                             ${c.init}
                         </div>
-                        
                         <div class="ml-4 flex-grow min-w-0 pr-2">
                             <div class="text-sm md:text-base font-black uppercase truncate ${isActive ? 'text-white' : (isHeld ? 'text-blue-100' : 'text-gray-300')} group-hover:text-white transition-colors">${c.name}</div>
                             <div class="text-[9px] md:text-[10px] ${isNpc ? 'text-purple-400' : 'text-gray-500'} font-bold uppercase tracking-wider truncate">${c.class || (isNpc ? 'Enemy' : 'Class')} <span class="mx-1 text-gray-700 opacity-50">•</span> Lvl ${c.level || 1}</div>
                         </div>
-                        
                         <div class="flex flex-col gap-1.5 items-end flex-shrink-0 ml-auto">
                             <div class="flex justify-between items-center gap-2 w-[70px] bg-black/60 border border-gray-800 px-2 py-1 rounded">
                                 <span class="text-[8px] text-gray-600 font-bold uppercase tracking-wider">HP</span>
@@ -1842,17 +1902,13 @@
         window.advanceTurn = async () => {
             const activeChar = characters.find(c => c.id === activeTurnId);
             const isMine = activeChar && currentUser && activeChar.owner === currentUser.username;
-            
             if (activeRole !== 'dm' && !isMine) {
                 return window.showToast("Only the DM or the active player can advance the turn.");
             }
-            
             const initChars = characters
                 .filter(c => !c.isDeleted && c.status !== 'dead' && c.init !== undefined && c.init !== "" && !isNaN(parseInt(c.init)))
                 .sort((a, b) => parseInt(b.init) - parseInt(a.init));
-                
             if (initChars.length === 0) return;
-            
             let nextIndex = 0;
             if (activeTurnId) {
                 const currentIndex = initChars.findIndex(c => c.id === activeTurnId);
@@ -1885,7 +1941,6 @@
             window.resetRound();
         };
 
-        // --- ROUND COUNTER LOGIC ---
         window.updateRound = async (delta) => {
             const newRound = Math.max(1, currentRound + delta);
             if (newRound === currentRound) return;
@@ -1896,19 +1951,18 @@
             await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'campaignState', 'global'), { currentRound: 1, activeTurnId: null }, { merge: true });
         };
 
-        // --- INITIATIVE ROLLING LOGIC ---
         window.rollIndividualInitiative = async (targetId = activeCharId) => {
             if (!targetId) return;
             const char = characters.find(c => c.id === targetId);
             if (!char) return;
             const dexMod = Math.floor(((char.dex || 10) - 10) / 2);
-            const roll = Math.floor(Math.random() * 20) + 1;
+            const roll = getRoll(20);
             const total = roll + dexMod;
             if (roll === 20) triggerCriticalSuccess();
             if (roll === 1) triggerCriticalFailure();
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', targetId), { init: total.toString() });
-            addRollToHistory("Initiative Roll", (total >= 0 ? '+' : '') + total);
-            window.showToast(`Initiative: ${total} (${roll} + ${dexMod})`);
+            addRollToHistory("Initiative Roll", (total >= 0 ? '+' : '') + total + ` (Natural ${roll})`);
+            window.showToast(`Initiative: ${total} (Natural ${roll} + ${dexMod})`);
         };
 
         window.rollAllInitiative = async () => {
@@ -1917,7 +1971,7 @@
             if (targets.length === 0) return;
             const promises = targets.map(c => {
                 const dexMod = Math.floor(((c.dex || 10) - 10) / 2);
-                const roll = Math.floor(Math.random() * 20) + 1;
+                const roll = getRoll(20);
                 return updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', c.id), { init: (roll + dexMod).toString() });
             });
             await Promise.all(promises);
@@ -1930,12 +1984,9 @@
                   enC = document.getElementById('encounters-view-container');
             if (!pcC || !grC || !enC) return; 
             pcC.innerHTML = ''; grC.innerHTML = ''; enC.innerHTML = '';
-
             const allCompanions = characters.map(c => c.companionId).filter(Boolean);
-
             const activePCs = characters.filter(c => c.type === 'PC' && !c.isDeleted && !allCompanions.includes(c.id));
             const activeNPCs = characters.filter(c => c.type === 'NPC' && !c.isDeleted && !allCompanions.includes(c.id));
-
             parties.forEach(p => {
                 const s = document.createElement('div'); s.className = "bg-gray-900/40 p-6 rounded-2xl border border-gray-800 shadow-xl mb-8";
                 s.innerHTML = `<div class="flex justify-between items-center mb-4"><h3 class="text-indigo-400 font-serif font-bold uppercase text-sm">${p.name}</h3><button onclick="window.openManageParty('${p.id}')" class="text-[9px] font-black uppercase text-gray-500 hover:text-indigo-400 bg-black/20 px-2 py-1 rounded">Manage</button></div><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="party-grid-${p.id}"></div>`;
@@ -1947,26 +1998,19 @@
                 s.innerHTML = `<h3 class="text-gray-500 font-serif font-bold uppercase text-sm mb-4">Unassigned Adventurers</h3><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="unassigned-grid"></div>`;
                 pcC.appendChild(s); const g = s.querySelector('#unassigned-grid'); unassignedPCs.forEach(c => g.appendChild(createCard(c)));
             }
-
-            // Categorize Encounters
             const enemies = activeNPCs.filter(c => (c.class || '').toLowerCase() === 'enemy');
             const beasts = activeNPCs.filter(c => (c.class || '').toLowerCase() === 'beast');
             const npcs = activeNPCs.filter(c => { const cl = (c.class || '').toLowerCase(); return cl !== 'enemy' && cl !== 'beast'; });
-
             const renderEncounterSection = (title, items, color) => {
                 if (items.length === 0) return;
                 const s = document.createElement('div'); s.className = "bg-gray-900/20 p-6 rounded-2xl border border-gray-800 shadow-xl mb-8";
                 s.innerHTML = `<h3 class="${color} font-serif font-bold uppercase text-sm mb-4 border-b border-gray-800/50 pb-2">${title}</h3><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>`;
                 const g = s.querySelector('.grid'); items.forEach(c => g.appendChild(createCard(c))); enC.appendChild(s);
             };
-
             renderEncounterSection('Enemies', enemies, 'text-red-400');
             renderEncounterSection('Beasts', beasts, 'text-green-400');
             renderEncounterSection('NPCs & Others', npcs, 'text-blue-400');
-
             characters.filter(c => c.isDeleted).forEach(c => grC.appendChild(createCard(c)));
-            
-            // Render the initiative tracker if on encounters view
             window.renderInitiativeTracker();
         };
 
@@ -1974,19 +2018,12 @@
             let statusClass = "border-amber-600", badgeHtml = "", imgStyle = "";
             if (c.status === 'coma') { statusClass = "border-[#f59e0b] shadow-[0_0_15px_rgba(245,158,11,0.2)]"; badgeHtml += `<span class="status-badge badge-coma" style="right: 8px">Coma</span>`; }
             else if (c.status === 'dead') { statusClass = "border-[#1a1a1a] opacity-70 grayscale"; badgeHtml += `<span class="status-badge badge-dead" style="right: 8px">Dead</span>`; imgStyle = "filter: grayscale(1)"; }
-            else if (c.type === 'NPC') {
-                statusClass = "border-[#7c3aed]";
-                badgeHtml += `<span class="status-badge badge-npc" style="right: 8px">ENC</span>`;
-            }
-
+            else if (c.type === 'NPC') { statusClass = "border-[#7c3aed]"; badgeHtml += `<span class="status-badge badge-npc" style="right: 8px">ENC</span>`; }
             if (currentUser && c.owner === currentUser.username) badgeHtml += `<span class="status-badge bg-green-700 text-white" style="left: 8px; right: auto;">YOURS</span>`;
             else if (!c.owner && c.type !== 'NPC' && c.type !== 'BEAST') badgeHtml += `<span class="status-badge bg-gray-500 text-white" style="left: 8px; right: auto;">UNCLAIMED</span>`;
-            
             const mediaSrc = c.imageSrc ? renderMedia(c.imageSrc, "w-full h-full object-cover", imgStyle) : `<div class="w-full h-full flex items-center justify-center text-xl" style="${imgStyle}">👤</div>`;
-            
             const d = document.createElement('div'); 
             d.className = `bg-gray-800 rounded-xl card border-l-4 flex flex-col overflow-hidden ${statusClass}`;
-            
             let innerHtml = `
                 <div class="p-4 md:p-5 relative flex-grow hover:bg-gray-700/50 transition-colors" onclick="window.openSheet('${c.id}')">
                     ${badgeHtml}
@@ -1999,7 +2036,6 @@
                     </div>
                 </div>
             `;
-
             if (c.companionId) {
                 const pet = characters.find(p => p.id === c.companionId && !p.isDeleted);
                 if (pet) {
@@ -2019,7 +2055,6 @@
                     `;
                 }
             }
-
             d.innerHTML = innerHtml;
             return d;
         }
@@ -2185,31 +2220,95 @@
             const compTab = document.getElementById('companion-view-area');
             if (compTab) {
                 const rulesBtnHtml = `<div class="text-center mt-8 pt-6 border-t border-gray-200"><button onclick="document.getElementById('companion-rules-modal').classList.remove('hidden')" class="text-green-700 hover:text-green-600 text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 mx-auto transition-colors"><span class="text-lg leading-none">📖</span> Animal Handling Rules Guide</button></div>`;
-                
                 if (char.companionId) {
                     const pet = characters.find(c => c.id === char.companionId && !c.isDeleted);
                     if (pet) {
+                        const isBonded = pet.bondLevel === 'bonded';
+                        const isClaiming = pet.bondLevel === 'claiming';
+                        const bondSuccs = pet.bondSuccesses || 0;
+                        const training = pet.trainingProgress || {};
+
+                        let bondUI = '';
+                        if (isClaiming) {
+                            bondUI = `
+                                <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-[10px] font-black uppercase text-amber-700">Bonding Period (Day Progress)</span>
+                                        <span class="text-[10px] font-black text-amber-900">${bondSuccs}/3 Successes</span>
+                                    </div>
+                                    <div class="flex gap-2 mb-3">
+                                        ${[1,2,3].map(i => `<div class="flex-grow h-2 rounded-full ${bondSuccs >= i ? 'bg-amber-500' : 'bg-amber-200'}"></div>`).join('')}
+                                    </div>
+                                    <button onclick="window.handleBondingCheck('${pet.id}')" class="w-full bg-amber-600 text-white py-2 rounded text-[10px] font-black uppercase shadow-sm">Roll Bonding Check</button>
+                                </div>
+                            `;
+                        }
+
+                        let trainUI = '';
+                        if (isBonded || isClaiming) {
+                            const commands = [
+                                {k:'follow', n:'Follow', dc:10}, {k:'stay', n:'Stay/Guard', dc:11},
+                                {k:'fetch', n:'Fetch/Retrieve', dc:12}, {k:'track', n:'Track', dc:13},
+                                {k:'attack', n:'Attack Target', dc:15}, {k:'tricks', n:'Complex Tricks', dc:17}
+                            ];
+                            trainUI = `
+                                <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                                    <h5 class="text-[10px] font-black uppercase text-blue-700 mb-3 border-b border-blue-200 pb-1">Command Training</h5>
+                                    <div class="space-y-3">
+                                        ${commands.map(c => {
+                                            const progress = training[c.k] || {successes:0, learned:false};
+                                            return `
+                                                <div class="flex items-center justify-between gap-3">
+                                                    <div class="flex-grow">
+                                                        <div class="flex justify-between items-center mb-1">
+                                                            <span class="text-[9px] font-bold ${progress.learned ? 'text-green-700' : 'text-slate-600'}">${c.n} ${progress.learned ? '✓' : `(DC ${c.dc})`}</span>
+                                                            ${!progress.learned ? `<span class="text-[8px] font-black text-slate-400">${progress.successes}/2</span>` : ''}
+                                                        </div>
+                                                        <div class="flex gap-1">
+                                                            ${[1,2].map(i => `<div class="flex-grow h-1.5 rounded-full ${progress.successes >= i ? 'bg-blue-500' : 'bg-blue-200'}"></div>`).join('')}
+                                                        </div>
+                                                    </div>
+                                                    ${!progress.learned ? `<button onclick="window.handleTrainingCheck('${pet.id}', '${c.k}', '${c.n}', ${c.dc})" class="bg-blue-600 text-white px-3 py-1 rounded text-[8px] font-black">TRAIN</button>` : `<button onclick="window.handleActionCheck('${c.n}', ${c.dc === 10 ? 10 : c.dc === 11 ? 10 : c.dc === 12 ? 10 : 13})" class="bg-green-600 text-white px-3 py-1 rounded text-[8px] font-black">ACT</button>`}
+                                                </div>
+                                            `;
+                                        }).join('')}
+                                    </div>
+                                </div>
+                                <div class="bg-red-50 border border-red-200 rounded-lg p-3">
+                                    <h5 class="text-[10px] font-black uppercase text-red-700 mb-2">Stress Situations</h5>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <button onclick="window.handleActionCheck('Stressful', 13)" class="bg-red-600 text-white py-1.5 rounded text-[8px] font-black uppercase">Combat (13)</button>
+                                        <button onclick="window.handleActionCheck('Chaos', 15)" class="bg-red-800 text-white py-1.5 rounded text-[8px] font-black uppercase">Chaotic (15)</button>
+                                    </div>
+                                </div>
+                            `;
+                        }
+
                         compTab.innerHTML = `
                             <div class="bg-gray-50 border-2 border-amber-200 rounded-xl p-6 text-center shadow-lg relative max-w-sm mx-auto mt-4">
                                 ${canEdit ? `<button onclick="window.releaseCompanion()" class="absolute top-3 right-3 bg-red-100 text-red-600 hover:bg-red-200 px-3 py-1 rounded text-[9px] font-black uppercase transition-colors">Release</button>` : ''}
                                 ${pet.imageSrc ? `<img src="${pet.imageSrc}" class="w-24 h-24 mx-auto rounded-full object-cover border-4 border-amber-500 mb-4 shadow-md">` : `<div class="w-24 h-24 mx-auto rounded-full bg-gray-200 flex items-center justify-center text-4xl border-4 border-amber-500 mb-4 shadow-md">🐾</div>`}
                                 <h4 class="text-2xl font-serif font-black text-amber-700 uppercase tracking-widest mb-1">${pet.name}</h4>
-                                <p class="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-6">${pet.class || 'Beast Companion'}</p>
+                                <p class="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-6">${isBonded ? 'Bonded Companion' : 'Connection Forming...'}</p>
                                 
                                 <div class="flex justify-center gap-8 mb-8 bg-white p-4 rounded-lg border border-gray-100 shadow-inner">
                                     <div class="text-center"><span class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">HP</span><span class="text-xl font-black ${pet.hpCurrent < (pet.hpMax/2) ? 'text-red-500' : 'text-green-600'}">${pet.hpCurrent}/${pet.hpMax}</span></div>
                                     <div class="text-center border-l border-r border-gray-100 px-8"><span class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">AC</span><span class="text-xl font-black text-blue-600">${pet.ac || 10}</span></div>
-                                    <div class="text-center"><span class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Speed</span><span class="text-xl font-black text-gray-700">${pet.speed || '30ft'}</span></div>
                                 </div>
                                 
-                                <button onclick="window.openSheet('${pet.id}')" class="w-full bg-amber-600 hover:bg-amber-500 text-white px-8 py-3.5 rounded-xl font-black uppercase text-xs shadow-lg transition-transform active:scale-95 flex items-center justify-center gap-2">
-                                    <span>Manage Companion Stats</span> <span>➔</span>
+                                <div class="text-left space-y-4">
+                                    ${bondUI}
+                                    ${trainUI}
+                                </div>
+
+                                <button onclick="window.openSheet('${pet.id}')" class="w-full mt-6 bg-slate-800 hover:bg-slate-700 text-white px-8 py-3.5 rounded-xl font-black uppercase text-xs shadow-lg flex items-center justify-center gap-2">
+                                    <span>Detailed Stats</span> <span>➔</span>
                                 </button>
                             </div>
                             ${rulesBtnHtml}
                         `;
                     } else {
-                        compTab.innerHTML = `<div class="text-center py-12"><p class="text-red-500 font-bold mb-4 text-xs uppercase tracking-widest">Companion missing, deceased, or deleted.</p>${canEdit ? `<button onclick="window.releaseCompanion()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-2.5 rounded-lg font-black text-[10px] uppercase tracking-widest transition-colors">Clear Link</button>` : ''}</div> ${rulesBtnHtml}`;
+                        compTab.innerHTML = `<div class="text-center py-12"><p class="text-red-500 font-bold mb-4 text-xs uppercase tracking-widest">Companion missing or deleted.</p>${canEdit ? `<button onclick="window.releaseCompanion()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-2.5 rounded-lg font-black text-[10px] uppercase tracking-widest transition-colors">Clear Link</button>` : ''}</div> ${rulesBtnHtml}`;
                     }
                 } else {
                     compTab.innerHTML = `
@@ -2223,9 +2322,7 @@
                     `;
                 }
             }
-
-            window.calcMods(); window.renderMovesGrid();
-            window.updateSheetTurnState();
+            window.calcMods(); window.renderMovesGrid(); window.updateSheetTurnState();
         }
 
         window.sendDmWhisper = async () => {
@@ -2258,7 +2355,7 @@
         window.openScoreGenModal = () => { sessionRerollUsed = false; document.getElementById('score-gen-modal')?.classList.remove('hidden'); document.getElementById('gen-results-area')?.classList.add('hidden'); document.getElementById('gen-apply-area')?.classList.add('hidden'); document.getElementById('gen-controls')?.classList.remove('hidden'); };
         window.generateScores = (method, isReroll = false) => { 
             if (method === 'standard') lastGeneratedScores = [15, 14, 13, 12, 10, 8]; 
-            else { if (isReroll) sessionRerollUsed = true; lastGeneratedScores = Array.from({length: 6}, () => { const r = [Math.floor(Math.random()*6)+1, Math.floor(Math.random()*6)+1, Math.floor(Math.random()*6)+1, Math.floor(Math.random()*6)+1]; r.sort((a,b)=>b-a); return r[0]+r[1]+r[2]; }).sort((a,b)=>b-a); } 
+            else { if (isReroll) sessionRerollUsed = true; lastGeneratedScores = Array.from({length: 6}, () => { const r = [getRoll(6), getRoll(6), getRoll(6), getRoll(6)]; r.sort((a,b)=>b-a); return r[0]+r[1]+r[2]; }).sort((a,b)=>b-a); } 
             document.getElementById('gen-numbers-display').innerHTML = lastGeneratedScores.map(n => `<span class="score-line-val font-black mx-2 text-2xl text-indigo-700">${n}</span>`).join(''); 
             document.getElementById('assign-grid').innerHTML = STATS.map(s => `<div class="bg-gray-100 p-2 px-3 rounded-lg flex justify-between items-center"><span class="font-black text-[10px] uppercase text-gray-400">${s}</span><select data-assign-stat="${s}" class="text-xs font-black border-none bg-transparent focus:ring-0"><option value="">-</option>${lastGeneratedScores.map((n, i) => `<option value="${i}">${n}</option>`).join('')}</select></div>`).join(''); 
             document.getElementById('gen-results-area')?.classList.remove('hidden'); document.getElementById('gen-apply-area')?.classList.remove('hidden'); document.getElementById('gen-controls')?.classList.add('hidden'); document.getElementById('heroic-reroll-area')?.classList.toggle('hidden', method !== 'heroic' || sessionRerollUsed); 
@@ -2284,13 +2381,18 @@
         };
 
         function execRoll(label, bonus) { 
-            const r1 = Math.floor(Math.random() * 20) + 1, r2 = Math.floor(Math.random() * 20) + 1; 
+            const r1 = getRoll(20), r2 = getRoll(20); 
             let final, btxt; if (rollMode === 'adv') { final = Math.max(r1, r2); btxt = `Adv: High(${r1}, ${r2})`; } else if (rollMode === 'dis') { final = Math.min(r1, r2); btxt = `Dis: Low(${r1}, ${r2})`; } else { final = r1; btxt = `(${r1})`; } 
-            if (final === 1) triggerCriticalFailure(); if (final === 20) triggerCriticalSuccess();
+            
+            // Check Natural Roll for Overlays
+            if (final === 1) triggerCriticalFailure(); 
+            if (final === 20) triggerCriticalSuccess();
+            
             const total = final + bonus; const displayTotal = (total >= 0 ? '+' : '') + total;
             document.getElementById('roll-label').textContent = label; document.getElementById('roll-total').textContent = displayTotal; 
             document.getElementById('roll-breakdown').textContent = `${btxt} + ${bonus}`; 
-            document.getElementById('dice-result-overlay').classList.remove('hidden'); addRollToHistory(label, displayTotal); 
+            document.getElementById('dice-result-overlay').classList.remove('hidden'); 
+            addRollToHistory(label, displayTotal + ` (Natural ${final})`); 
         }
 
         window.rollStat = (s) => execRoll(`${s.toUpperCase()} Check`, parseInt(document.getElementById(`mod-${s}`).textContent) || 0);
@@ -2300,11 +2402,11 @@
         window.rollDice = (s) => { 
             const count = parseInt(document.getElementById('roll-count').value) || 1; let label, total, breakdown; 
             if (count === 1 && rollMode !== 'normal') { 
-                const r1 = Math.floor(Math.random() * s) + 1, r2 = Math.floor(Math.random() * s) + 1; let final = rollMode === 'adv' ? Math.max(r1, r2) : Math.min(r1, r2);
+                const r1 = getRoll(s), r2 = getRoll(s); let final = rollMode === 'adv' ? Math.max(r1, r2) : Math.min(r1, r2);
                 if (s === 20) { if (final === 1) triggerCriticalFailure(); if (final === 20) triggerCriticalSuccess(); }
                 total = final; label = `d${s} Roll`; breakdown = `${rollMode.toUpperCase()}: (${r1}, ${r2})`;
             } else { 
-                const rolls = Array.from({length: count}, () => Math.floor(Math.random() * s) + 1); 
+                const rolls = Array.from({length: count}, () => getRoll(s)); 
                 if (count === 1 && s === 20) { if (rolls[0] === 1) triggerCriticalFailure(); if (rolls[0] === 20) triggerCriticalSuccess(); }
                 total = rolls.reduce((a, b) => a + b, 0); label = `${count}d${s} Roll`; breakdown = count > 1 ? `${rolls.join(' + ')} = ${total}` : `(${rolls[0]})`; 
             } 
@@ -2328,19 +2430,14 @@
             activeMoveLvl = lvl; editingMoveIndex = idx; const char = characters.find(c => c.id === activeCharId); const moves = char?.moves || [];
             const moveType = document.getElementById('moves-selector').value;
             const isScript = moveType === 'scriptcasting';
-            
             document.getElementById('move-import-btn').classList.remove('hidden');
             document.getElementById('script-extra-fields').classList.toggle('hidden', !isScript);
             document.getElementById('script-scaling-field').classList.toggle('hidden', !isScript);
             document.getElementById('move-desc-label').textContent = isScript ? "Effect" : "Description";
-            
-            // Close import view if open
             document.getElementById('import-view').classList.add('hidden');
             document.getElementById('modal-standard-view').classList.remove('hidden');
-
             const hint = isScript ? "Paste Script Data (NAME, SCHOOL, EFFECT, etc):" : "Paste Move/Feature Data (NAME, DESCRIPTION):";
             document.getElementById('import-hint-text').textContent = hint;
-
             if (idx !== null) { 
                 const m = moves[idx]; 
                 document.getElementById('move-name-in').value = m.name || ''; 
@@ -2378,10 +2475,8 @@
             const importView = document.getElementById('import-view');
             const standardView = document.getElementById('modal-standard-view');
             const isImportHidden = importView.classList.contains('hidden');
-            
             importView.classList.toggle('hidden', !isImportHidden);
             standardView.classList.toggle('hidden', isImportHidden);
-            
             if (isImportHidden) {
                 document.getElementById('import-paste-area').value = '';
                 document.getElementById('import-paste-area').focus();
@@ -2393,31 +2488,23 @@
             if (!rawText.trim()) return;
             const moveType = document.getElementById('moves-selector').value;
             const isScript = moveType === 'scriptcasting';
-
-            // Simple regex parser
             const extract = (regex) => {
                 const match = rawText.match(regex);
                 return match ? match[1].trim() : "";
             };
-
-            // Multi-line extraction helper
             const extractBlock = (startKey, endKeys) => {
                 const startIdx = rawText.indexOf(startKey);
                 if (startIdx === -1) return "";
                 const afterStart = rawText.substring(startIdx + startKey.length);
-                
                 let firstEndIdx = afterStart.length;
                 endKeys.forEach(ek => {
                     const idx = afterStart.indexOf(ek);
                     if (idx !== -1 && idx < firstEndIdx) firstEndIdx = idx;
                 });
-                
                 return afterStart.substring(0, firstEndIdx).trim();
             };
-
             const name = extract(/NAME:\s*(.*)/i) || extract(/\(The Name\)\s*(.*)/i);
             const roll = extract(/DICE\/EFFECT ROLL:\s*(.*)/i) || extract(/ROLL:\s*(.*)/i);
-
             if (isScript) {
                 const school = extract(/SCHOOL:\s*(.*)/i);
                 const type = extract(/TYPE:\s*(.*)/i);
@@ -2427,7 +2514,6 @@
                 const duration = extract(/DURATION:\s*(.*)/i);
                 const effect = extractBlock("EFFECT:", ["SCALING:", "AUTHORIZED USERS:"]);
                 const scaling = extractBlock("SCALING:", ["AUTHORIZED USERS:"]);
-
                 if (name) document.getElementById('move-name-in').value = name;
                 if (roll) document.getElementById('move-roll-in').value = roll;
                 if (school) document.getElementById('script-school-in').value = school;
@@ -2444,7 +2530,6 @@
                 if (roll) document.getElementById('move-roll-in').value = roll;
                 if (desc) document.getElementById('move-desc-in').value = desc;
             }
-
             window.toggleImportView();
             window.showToast("Move Parsed Successfully");
         };
@@ -2458,7 +2543,6 @@
                 desc: document.getElementById('move-desc-in').value, 
                 lvl: activeMoveLvl, 
                 type: document.getElementById('moves-selector').value,
-                // Script specific fields
                 school: document.getElementById('script-school-in').value,
                 sType: document.getElementById('script-type-in').value,
                 activation: document.getElementById('script-activation-in').value,
@@ -2492,47 +2576,22 @@
                 const safe = sk.n.toLowerCase().replace(/ /g,'_').replace(/[()]/g,''); const sp = document.querySelector(`[data-key="prof_${safe}"]`)?.checked; 
                 const sel = document.getElementById(`skill-mod-${safe}`); if(sel) sel.textContent = (m + (sp ? p : 0) >= 0 ? '+' : '') + (m + (sp ? p : 0)); 
             });
-
-            // --- ARMOR CLASS CALCULATION ENGINE ---
             const armorText = (document.querySelector('[data-key="profArmor"]')?.value || "").toLowerCase();
             const classText = (document.querySelector('[data-key="class"]')?.value || "").toLowerCase();
             const acInput = document.querySelector('[data-key="ac"]');
-            
             if (acInput) {
                 let baseAC = 10;
                 let dexBonus = stats.dex.mod;
                 let shieldBonus = armorText.includes('shield') ? 2 : 0;
                 let wearingArmor = false;
-
-                // 1. Process Armor Categories
-                if (armorText.includes('light armor')) {
-                    baseAC = 11;
-                    dexBonus = stats.dex.mod;
-                    wearingArmor = true;
-                } else if (armorText.includes('medium armor')) {
-                    baseAC = 14;
-                    dexBonus = Math.min(stats.dex.mod, 2);
-                    wearingArmor = true;
-                } else if (armorText.includes('heavy armor')) {
-                    baseAC = 16;
-                    dexBonus = 0;
-                    wearingArmor = true;
-                }
-
-                // 2. Unarmored Defense (Vanguard/Peacekeeper)
+                if (armorText.includes('light armor')) { baseAC = 11; dexBonus = stats.dex.mod; wearingArmor = true; }
+                else if (armorText.includes('medium armor')) { baseAC = 14; dexBonus = Math.min(stats.dex.mod, 2); wearingArmor = true; }
+                else if (armorText.includes('heavy armor')) { baseAC = 16; dexBonus = 0; wearingArmor = true; }
                 if (!wearingArmor) {
-                    if (classText.includes('vanguard')) {
-                        baseAC = 10 + stats.con.mod;
-                        dexBonus = stats.dex.mod;
-                    } else if (classText.includes('peacekeeper')) {
-                        baseAC = 10 + stats.wis.mod;
-                        dexBonus = stats.dex.mod;
-                    } else {
-                        baseAC = 10;
-                        dexBonus = stats.dex.mod;
-                    }
+                    if (classText.includes('vanguard')) { baseAC = 10 + stats.con.mod; dexBonus = stats.dex.mod; }
+                    else if (classText.includes('peacekeeper')) { baseAC = 10 + stats.wis.mod; dexBonus = stats.dex.mod; }
+                    else { baseAC = 10; dexBonus = stats.dex.mod; }
                 }
-
                 acInput.value = baseAC + dexBonus + shieldBonus;
             }
         };
@@ -2577,7 +2636,7 @@
             const dieMatch = hdText.match(/d(\d+)/);
             const dieSize = dieMatch ? parseInt(dieMatch[1]) : 8;
             const conMod = parseInt(document.getElementById('sr-con-mod-display').dataset.mod) || 0; 
-            const roll = Math.floor(Math.random() * dieSize) + 1;
+            const roll = getRoll(dieSize);
             const gain = Math.max(0, roll + conMod);
             const newHp = Math.min(parseInt(char.hpMax) || gain, (parseInt(char.hpCurrent) || 0) + gain);
             const newHdCount = (char.hdCurrent || 0) - 1;
@@ -2602,7 +2661,7 @@
 
         window.rollDeathSave = async () => {
             const char = characters.find(c => c.id === activeCharId); if (!char || char.status === 'dead' || (char.status === 'coma' && !char.comaActive) || char.hpCurrent > 0) return;
-            const roll = Math.floor(Math.random() * 20) + 1;
+            const roll = getRoll(20);
             let s = char.dsSucc || 0, f = char.dsFail || 0, updates = {}, msg = "";
             const isComa = !!char.comaActive;
             if (isComa) {
@@ -2650,7 +2709,6 @@
             document.getElementById('graveyard-view-container').classList.add('hidden-view'); 
             document.getElementById('encounters-view-container').classList.add('hidden-view');
             document.getElementById('initiative-tracker-view').classList.add('hidden-view');
-
             if (v === 'graveyard') { document.getElementById('graveyard-view-container').classList.remove('hidden-view'); document.getElementById('view-title').textContent = 'Graveyard'; } 
             else if (v === 'encounters') { 
                 document.getElementById('encounters-view-container').classList.remove('hidden-view'); 
@@ -2665,7 +2723,6 @@
             if (!user) return;
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), (snap) => { characters = snap.docs.map(d => ({id: d.id, ...d.data()})); window.renderDashboard(); if (activeCharId) syncSheetData(); });
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'parties'), (snap) => { parties = snap.docs.map(d => ({id: d.id, ...d.data()})); window.renderDashboard(); if (activeCharId) syncSheetData(); });
-            // Sync global campaign state
             onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'campaignState', 'global'), (docSnap) => {
                 if (docSnap.exists()) {
                     currentRound = docSnap.data().currentRound || 1;
@@ -2681,7 +2738,6 @@
         const initAuth = async () => {
             try { await signInAnonymously(auth); onAuthStateChanged(auth, (u) => { user = u; if (user) { setupListeners(); window.updateRoleUI(); const savedUser = localStorage.getItem('aeonfall_user'); if (savedUser) { try { currentUser = JSON.parse(savedUser); authSystem.completeAuth(); } catch(e) { localStorage.removeItem('aeonfall_user'); } } } }); } catch (err) {}
         };
-
         document.addEventListener('input', (e) => { if (e.target.dataset.key) { if (autoSaveTimer) clearTimeout(autoSaveTimer); autoSaveTimer = setTimeout(() => window.saveCurrentCharacter(), 1000); } });
         initAuth();
     </script>
