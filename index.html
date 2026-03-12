@@ -1339,12 +1339,22 @@
         window.openAdoptModal = async () => {
             document.getElementById('adopt-companion-modal').classList.remove('hidden');
             
-            // Derive available beasts directly from the synced characters array
-            compendiumBeasts = characters.filter(c => 
-                c.type === 'BEAST' && 
-                !c.isDeleted && 
-                (c.visibility === 'public' || (c.visibility === 'private' && currentUser && c.linkedUsername === currentUser.username))
-            );
+            // Derive available beasts and existing companions owned by this user
+            compendiumBeasts = characters.filter(c => {
+                if (c.isDeleted) return false;
+                
+                // Show available wild beasts (public, or private ties to this user)
+                if (c.type === 'BEAST') {
+                    return c.visibility === 'public' || (c.visibility === 'private' && currentUser && c.linkedUsername === currentUser.username);
+                }
+                
+                // Show existing COMPANIONS already owned by this user (to allow transferring between PCs)
+                if (c.type === 'COMPANION' && currentUser) {
+                    return c.owner === currentUser.username || c.linkedUsername === currentUser.username;
+                }
+                
+                return false;
+            });
             
             const container = document.getElementById('adopt-list-container');
             if (compendiumBeasts.length === 0) {
@@ -1353,22 +1363,43 @@
             }
 
             container.innerHTML = compendiumBeasts.map((b, i) => {
-                const isPrivate = b.visibility === 'private';
-                const badge = isPrivate ? `<span class="bg-purple-600 text-white px-2 py-0.5 rounded text-[8px] ml-2">Personal Tie</span>` : '';
+                const isPrivate = b.visibility === 'private' || b.type === 'COMPANION';
+                let badge = isPrivate ? `<span class="bg-purple-600 text-white px-2 py-0.5 rounded text-[8px] ml-2">Personal Tie</span>` : '';
+                
+                let btnText = "Bond";
+                let btnStyle = "bg-gray-800 group-hover:bg-green-600 border-gray-700 group-hover:border-green-500";
+                let action = `onclick="window.confirmAdopt(${i})"`;
+
+                // If it's already an active companion, check who owns it
+                if (b.type === 'COMPANION') {
+                    const currentOwnerPC = characters.find(pc => pc.type === 'PC' && pc.companionId === b.id);
+                    if (currentOwnerPC) {
+                        if (currentOwnerPC.id === activeCharId) {
+                            btnText = "Active";
+                            btnStyle = "bg-green-900 border-green-700 text-green-300 opacity-50 cursor-not-allowed";
+                            action = ""; // Prevent clicking
+                        } else {
+                            badge += `<span class="bg-blue-600 text-white px-2 py-0.5 rounded text-[8px] ml-2">With ${currentOwnerPC.name}</span>`;
+                            btnText = "Transfer";
+                            btnStyle = "bg-blue-900 group-hover:bg-blue-600 border-blue-700 group-hover:border-blue-500";
+                        }
+                    }
+                }
+
                 return `
-                <div class="bg-black/40 p-4 rounded-xl border ${isPrivate ? 'border-purple-600/50' : 'border-gray-800'} flex justify-between items-center hover:border-green-600 hover:bg-green-900/20 transition-all cursor-pointer group" onclick="window.confirmAdopt(${i})">
+                <div class="bg-black/40 p-4 rounded-xl border ${isPrivate ? 'border-purple-600/50' : 'border-gray-800'} flex justify-between items-center hover:border-green-600 hover:bg-green-900/20 transition-all cursor-pointer group" ${action}>
                     <div class="flex items-center gap-4">
                         ${b.imageSrc ? `<img src="${b.imageSrc}" class="w-12 h-12 rounded object-cover border border-gray-700 group-hover:border-green-500">` : `<div class="w-12 h-12 rounded bg-gray-800 flex items-center justify-center text-xl border border-gray-700 group-hover:border-green-500">🐾</div>`}
                         <div>
                             <div class="text-white font-black uppercase text-sm tracking-wider mb-1">${b.name || 'Unknown Beast'} ${badge}</div>
                             <div class="text-[9px] text-gray-500 uppercase font-bold tracking-[0.1em] flex gap-2">
-                                <span class="text-green-500">${b.hpDisplay ? `HP ${b.hpDisplay}` : 'HP ?'}</span>
+                                <span class="text-green-500">${b.hpDisplay ? `HP ${b.hpDisplay}` : (b.hpMax ? `HP ${b.hpMax}` : 'HP ?')}</span>
                                 <span>•</span>
                                 <span class="text-blue-400">AC ${b.ac || '10'}</span>
                             </div>
                         </div>
                     </div>
-                    <button class="bg-gray-800 group-hover:bg-green-600 text-white px-5 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors border border-gray-700 group-hover:border-green-500">Bond</button>
+                    <button class="${btnStyle} text-white px-5 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors border">${btnText}</button>
                 </div>
             `}).join('');
         };
@@ -1376,49 +1407,76 @@
         window.confirmAdopt = async (index) => {
             if (!user || !currentUser || !activeCharId) return;
             const template = compendiumBeasts[index];
-            const clone = JSON.parse(JSON.stringify(template));
-            delete clone.id; // Important: generates a new document instance
+
+            // 1. Handle transferring an EXISTING Companion
+            if (template.type === 'COMPANION') {
+                // Unlink from the previous character
+                const oldPC = characters.find(pc => pc.type === 'PC' && pc.companionId === template.id);
+                if (oldPC) {
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', oldPC.id), { companionId: null });
+                }
+                
+                // Link to the new active character
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { companionId: template.id });
+                
+                document.getElementById('adopt-companion-modal').classList.add('hidden');
+                window.showToast(`${template.name} transferred successfully!`);
+                syncSheetData();
+                return;
+            }
             
-            const pc = characters.find(c => c.id === activeCharId);
-            
-            // Parse HP from beasts.html format (e.g. "10 (2d8 + 2)") to an integer
+            // 2. Parse HP from beasts.html format (e.g. "10 (2d8 + 2)") to an integer
             let parsedHp = 10;
-            if (clone.hpDisplay) {
-                const match = clone.hpDisplay.match(/^(\d+)/);
+            if (template.hpDisplay) {
+                const match = template.hpDisplay.match(/^(\d+)/);
                 if (match) parsedHp = parseInt(match[1], 10);
             }
-            
-            let newData = {
-                ...clone,
-                type: 'COMPANION', // Changed to COMPANION so it disappears from beasts.html and party tab
-                visibility: 'private', // Mark as private tie
-                linkedUsername: currentUser.username, // Link to the user
-                class: clone.summary || 'Beast Companion',
-                ownerId: user.uid,
-                owner: currentUser.username,
-                isDeleted: false,
-                status: 'alive',
-                partyId: "", // Do not assign to the party grid
-                init: "",
-                scoresGenerated: true,
-                hpMax: parsedHp, 
-                hpCurrent: parsedHp,
-                ac: clone.ac || 10,
-                speed: clone.speed || "30 ft"
-            };
-            
-            newData.name = clone.name || 'Companion';
 
-            try {
+            // 3. Handle bonding a brand NEW Beast
+            if (template.visibility === 'private') {
+                // DO NOT CLONE: Convert the DM's Private Tie directly into a Companion to prevent duplicates
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', template.id), {
+                    type: 'COMPANION',
+                    ownerId: user.uid,
+                    owner: currentUser.username,
+                    hpMax: template.hpMax || parsedHp,
+                    hpCurrent: template.hpMax || parsedHp
+                });
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { companionId: template.id });
+                window.showToast(`${template.name} bonded successfully!`);
+            } else {
+                // CLONE PUBLIC BEAST: Generate a fresh companion instance, keeping the template untouched
+                const clone = JSON.parse(JSON.stringify(template));
+                delete clone.id; 
+                
+                let newData = {
+                    ...clone,
+                    type: 'COMPANION',
+                    visibility: 'private', 
+                    linkedUsername: currentUser.username,
+                    class: clone.summary || 'Beast Companion',
+                    ownerId: user.uid,
+                    owner: currentUser.username,
+                    isDeleted: false,
+                    status: 'alive',
+                    partyId: "",
+                    init: "",
+                    scoresGenerated: true,
+                    hpMax: parsedHp, 
+                    hpCurrent: parsedHp,
+                    ac: clone.ac || 10,
+                    speed: clone.speed || "30 ft"
+                };
+                
+                newData.name = clone.name || 'Companion';
+
                 const ref = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), newData);
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { companionId: ref.id });
-                document.getElementById('adopt-companion-modal').classList.add('hidden');
                 window.showToast(`${newData.name} bonded successfully!`);
-                syncSheetData(); // refresh the sheet view
-            } catch(e) {
-                console.error(e);
-                window.showToast("Failed to bond companion.");
             }
+
+            document.getElementById('adopt-companion-modal').classList.add('hidden');
+            syncSheetData();
         };
 
         window.releaseCompanion = async () => {
