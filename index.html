@@ -1338,51 +1338,60 @@
         // --- COMPANION & ADOPTION LOGIC ---
         window.openAdoptModal = async () => {
             document.getElementById('adopt-companion-modal').classList.remove('hidden');
-            document.getElementById('adopt-list-container').innerHTML = '<div class="text-center py-12 text-green-500 text-xs uppercase font-black tracking-widest animate-pulse">Searching the Wilds...</div>';
-            try {
-                const bSnap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'beasts'));
-                compendiumBeasts = bSnap.docs.map(d => ({id: d.id, ...d.data()}));
-                
-                const container = document.getElementById('adopt-list-container');
-                if (compendiumBeasts.length === 0) {
-                    container.innerHTML = `<div class="text-center py-12 text-gray-500 font-bold uppercase tracking-widest text-[10px]">No Beasts available in Bestiary.</div>`;
-                    return;
-                }
+            
+            // Derive available beasts directly from the synced characters array
+            compendiumBeasts = characters.filter(c => 
+                c.type === 'BEAST' && 
+                !c.isDeleted && 
+                (c.visibility === 'public' || (c.visibility === 'private' && currentUser && c.linkedUsername === currentUser.username))
+            );
+            
+            const container = document.getElementById('adopt-list-container');
+            if (compendiumBeasts.length === 0) {
+                container.innerHTML = `<div class="text-center py-12 text-gray-500 font-bold uppercase tracking-widest text-[10px]">No beasts or personal ties found in the wild.</div>`;
+                return;
+            }
 
-                container.innerHTML = compendiumBeasts.map((b, i) => `
-                    <div class="bg-black/40 p-4 rounded-xl border border-gray-800 flex justify-between items-center hover:border-green-600 hover:bg-green-900/20 transition-all cursor-pointer group" onclick="window.confirmAdopt(${i})">
-                        <div class="flex items-center gap-4">
-                            ${b.imageSrc ? `<img src="${b.imageSrc}" class="w-12 h-12 rounded object-cover border border-gray-700 group-hover:border-green-500">` : `<div class="w-12 h-12 rounded bg-gray-800 flex items-center justify-center text-xl border border-gray-700 group-hover:border-green-500">🐾</div>`}
-                            <div>
-                                <div class="text-white font-black uppercase text-sm tracking-wider mb-1">${b.name || 'Unknown Beast'}</div>
-                                <div class="text-[9px] text-gray-500 uppercase font-bold tracking-[0.1em] flex gap-2">
-                                    <span class="text-green-500">HP ${b.hpMax || '?'}</span>
-                                    <span>•</span>
-                                    <span class="text-blue-400">AC ${b.ac || '10'}</span>
-                                </div>
+            container.innerHTML = compendiumBeasts.map((b, i) => {
+                const isPrivate = b.visibility === 'private';
+                const badge = isPrivate ? `<span class="bg-purple-600 text-white px-2 py-0.5 rounded text-[8px] ml-2">Personal Tie</span>` : '';
+                return `
+                <div class="bg-black/40 p-4 rounded-xl border ${isPrivate ? 'border-purple-600/50' : 'border-gray-800'} flex justify-between items-center hover:border-green-600 hover:bg-green-900/20 transition-all cursor-pointer group" onclick="window.confirmAdopt(${i})">
+                    <div class="flex items-center gap-4">
+                        ${b.imageSrc ? `<img src="${b.imageSrc}" class="w-12 h-12 rounded object-cover border border-gray-700 group-hover:border-green-500">` : `<div class="w-12 h-12 rounded bg-gray-800 flex items-center justify-center text-xl border border-gray-700 group-hover:border-green-500">🐾</div>`}
+                        <div>
+                            <div class="text-white font-black uppercase text-sm tracking-wider mb-1">${b.name || 'Unknown Beast'} ${badge}</div>
+                            <div class="text-[9px] text-gray-500 uppercase font-bold tracking-[0.1em] flex gap-2">
+                                <span class="text-green-500">${b.hpDisplay ? `HP ${b.hpDisplay}` : 'HP ?'}</span>
+                                <span>•</span>
+                                <span class="text-blue-400">AC ${b.ac || '10'}</span>
                             </div>
                         </div>
-                        <button class="bg-gray-800 group-hover:bg-green-600 text-white px-5 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors border border-gray-700 group-hover:border-green-500">Bond</button>
                     </div>
-                `).join('');
-
-            } catch (e) {
-                console.error(e);
-                document.getElementById('adopt-list-container').innerHTML = '<div class="text-center py-12 text-red-500 text-xs uppercase font-black tracking-widest">Failed to load beasts.</div>';
-            }
+                    <button class="bg-gray-800 group-hover:bg-green-600 text-white px-5 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors border border-gray-700 group-hover:border-green-500">Bond</button>
+                </div>
+            `}).join('');
         };
 
         window.confirmAdopt = async (index) => {
             if (!user || !currentUser || !activeCharId) return;
             const template = compendiumBeasts[index];
             const clone = JSON.parse(JSON.stringify(template));
-            delete clone.id;
+            delete clone.id; // Important: generates a new document instance
             
             const pc = characters.find(c => c.id === activeCharId);
             
+            // Parse HP from beasts.html format (e.g. "10 (2d8 + 2)") to an integer
+            let parsedHp = 10;
+            if (clone.hpDisplay) {
+                const match = clone.hpDisplay.match(/^(\d+)/);
+                if (match) parsedHp = parseInt(match[1], 10);
+            }
+            
             let newData = {
+                ...clone,
                 type: 'PC', // Treat as PC so it renders alongside the party
-                class: 'Beast Companion',
+                class: clone.summary || 'Beast Companion',
                 ownerId: user.uid,
                 owner: currentUser.username,
                 isDeleted: false,
@@ -1390,11 +1399,12 @@
                 partyId: pc ? pc.partyId : "",
                 init: "",
                 scoresGenerated: true,
-                hpMax: 10, hpCurrent: 10, // Defaults
-                ...clone // Overwrite with beast template data
+                hpMax: parsedHp, 
+                hpCurrent: parsedHp,
+                ac: clone.ac || 10,
+                speed: clone.speed || "30 ft"
             };
             
-            if(newData.hpMax) newData.hpCurrent = newData.hpMax;
             newData.name = clone.name || 'Companion';
 
             try {
@@ -1422,17 +1432,19 @@
             document.getElementById('spawner-list-container').innerHTML = '<div class="text-center py-12 text-purple-400 text-xs uppercase font-black tracking-widest animate-pulse">Loading Archives...</div>';
             
             try {
-                // Always fetch fresh in case they modified NPCS/Beasts in other tabs
+                // NPCs might be in a separate collection depending on how npcs.html stores them
                 const nSnap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'npcs'));
                 compendiumNPCs = nSnap.docs.map(d => ({id: d.id, ...d.data()}));
                 
-                const bSnap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'beasts'));
-                compendiumBeasts = bSnap.docs.map(d => ({id: d.id, ...d.data()}));
+                // Beasts are correctly pulled from the unified characters array
+                compendiumBeasts = characters.filter(c => c.type === 'BEAST' && !c.isDeleted && (c.visibility === 'public' || activeRole === 'dm'));
                 
                 window.switchSpawnerTab('blank');
             } catch (e) {
                 console.error("Error loading compendiums:", e);
-                document.getElementById('spawner-list-container').innerHTML = '<div class="text-center py-12 text-red-500 text-xs uppercase font-black tracking-widest">Failed to load archives. Check console.</div>';
+                // Fallback rendering
+                compendiumBeasts = characters.filter(c => c.type === 'BEAST' && !c.isDeleted && (c.visibility === 'public' || activeRole === 'dm'));
+                window.switchSpawnerTab('blank');
             }
         };
 
@@ -1473,7 +1485,7 @@
         };
 
         function createSpawnerRow(entity, type, index) {
-            let hpText = entity.hpMax ? `HP ${entity.hpMax}` : 'HP ?';
+            let hpText = entity.hpMax ? `HP ${entity.hpMax}` : (entity.hpDisplay ? `HP ${entity.hpDisplay}` : 'HP ?');
             let acText = entity.ac ? `AC ${entity.ac}` : 'AC ?';
             
             return `
@@ -1531,16 +1543,21 @@
                 if (sourceEntity) {
                     const clone = JSON.parse(JSON.stringify(sourceEntity));
                     delete clone.id; // Strip original DB ID so it generates a new one
-                    newData = { ...newData, ...clone };
+                    
+                    // Attempt to parse HP if it came from beasts.html
+                    let parsedHp = clone.hpMax || 10;
+                    if (!clone.hpMax && clone.hpDisplay) {
+                        const match = clone.hpDisplay.match(/^(\d+)/);
+                        if (match) parsedHp = parseInt(match[1], 10);
+                    }
+                    
+                    newData = { ...newData, ...clone, hpMax: parsedHp, hpCurrent: parsedHp };
                     
                     // Force the type to be NPC so it shows up in Encounters panel
                     newData.type = 'NPC';
                     
                     // Ensure missing class is populated
                     if (!newData.class) newData.class = sourceType === 'beast' ? 'Beast' : 'Enemy';
-                    
-                    // Ensure HP is full upon spawn
-                    if(newData.hpMax) newData.hpCurrent = newData.hpMax;
                     
                     // Mark name clearly if needed, or keep original
                     newData.name = clone.name || 'Unnamed Entity';
