@@ -282,7 +282,7 @@
                 <div id="create-actions" class="flex gap-2 w-full md:w-auto">
                     <button id="btn-create-party" onclick="window.openPartyModal()" class="flex-1 md:flex-none bg-indigo-600 text-white px-4 py-2.5 rounded-lg text-xs md:text-sm font-bold shadow-lg">NEW PARTY</button>
                     <button id="btn-create-pc" onclick="window.createChar('PC')" class="flex-1 md:flex-none bg-green-700 text-white px-6 py-2.5 rounded-lg text-xs md:text-sm font-bold shadow-lg">+ NEW PC</button>
-                    <button id="btn-create-npc" onclick="window.createChar('NPC')" class="flex-1 md:flex-none bg-purple-700 text-white px-6 py-2.5 rounded-lg text-xs md:text-sm font-bold shadow-lg hidden">NEW ENCOUNTER</button>
+                    <button id="btn-create-npc" onclick="window.openEncounterSpawner()" class="flex-1 md:flex-none bg-purple-700 text-white px-6 py-2.5 rounded-lg text-xs md:text-sm font-bold shadow-lg hidden">NEW ENCOUNTER</button>
                 </div>
             </div>
 
@@ -343,7 +343,7 @@
                 </div>
 
                 <div id="party-view-container" class="space-y-8"></div>
-                <div id="encounters-view-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden-view"></div>
+                <div id="encounters-view-container" class="space-y-8 hidden-view"></div>
                 <div id="graveyard-view-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden-view"></div>
             </div>
         </div>
@@ -563,6 +563,7 @@
                                     <button onclick="window.switchSheetTab('inventory')" class="tab-btn" id="tab-btn-inventory">Inventory</button>
                                     <button onclick="window.switchSheetTab('features')" class="tab-btn" id="tab-btn-features">Features & Traits</button>
                                     <button onclick="window.switchSheetTab('background')" class="tab-btn" id="tab-btn-background">Background</button>
+                                    <button onclick="window.switchSheetTab('companion')" class="tab-btn" id="tab-btn-companion">Companion</button>
                                     <button onclick="window.switchSheetTab('notes')" class="tab-btn" id="tab-btn-notes">Notes</button>
                                 </div>
                                 
@@ -711,6 +712,11 @@
                                             <div class="beyond-header">Appearance</div>
                                             <textarea data-key="appearance" class="text-sm text-gray-600 w-full h-32" placeholder="+ Add Appearance information"></textarea>
                                         </div>
+                                    </div>
+                                    
+                                    <div id="tab-content-companion" class="tab-pane hidden">
+                                        <div class="beyond-header">Personal Companion</div>
+                                        <div id="companion-view-area"></div>
                                     </div>
 
                                     <div id="tab-content-notes" class="tab-pane hidden">
@@ -1017,6 +1023,39 @@
         </div>
     </div>
 
+    <!-- ENCOUNTER SPAWNER MODAL -->
+    <div id="encounter-spawner-modal" class="modal-overlay hidden z-[700]">
+        <div class="modal-container bg-[#1a1f29] border border-purple-900 shadow-2xl max-w-2xl max-h-[85vh] flex flex-col p-6 md:p-8">
+            <div class="flex justify-between items-center mb-6 border-b border-purple-900/50 pb-4">
+                <h2 class="font-serif text-2xl font-black text-purple-400 uppercase tracking-widest">Spawn Encounter</h2>
+                <button onclick="document.getElementById('encounter-spawner-modal').classList.add('hidden')" class="text-gray-500 hover:text-white text-xl font-black">✕</button>
+            </div>
+            
+            <div class="flex flex-wrap gap-2 mb-4 border-b border-gray-800 pb-4">
+                <button onclick="window.switchSpawnerTab('blank')" id="spawn-tab-blank" class="spawn-tab flex-grow md:flex-grow-0 active bg-purple-900 text-white px-4 py-2 rounded text-[10px] font-black uppercase tracking-widest transition-colors">Blank Template</button>
+                <button onclick="window.switchSpawnerTab('npcs')" id="spawn-tab-npcs" class="spawn-tab flex-grow md:flex-grow-0 bg-gray-800/80 text-gray-400 hover:text-white hover:bg-gray-700 px-4 py-2 rounded text-[10px] font-black uppercase tracking-widest transition-colors">NPC Compendium</button>
+                <button onclick="window.switchSpawnerTab('beasts')" id="spawn-tab-beasts" class="spawn-tab flex-grow md:flex-grow-0 bg-gray-800/80 text-gray-400 hover:text-white hover:bg-gray-700 px-4 py-2 rounded text-[10px] font-black uppercase tracking-widest transition-colors">Bestiary</button>
+            </div>
+
+            <div class="overflow-y-auto flex-grow pr-2 space-y-3 pb-4 scrollbar-hide" id="spawner-list-container">
+                <!-- Dynamic spawner content goes here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ADOPT COMPANION MODAL -->
+    <div id="adopt-companion-modal" class="modal-overlay hidden z-[700]">
+        <div class="modal-container bg-[#1a1f29] border border-green-700 shadow-2xl max-w-2xl max-h-[85vh] flex flex-col p-6 md:p-8">
+            <div class="flex justify-between items-center mb-6 border-b border-green-900/50 pb-4">
+                <h2 class="font-serif text-2xl font-black text-green-500 uppercase tracking-widest">Adopt Companion</h2>
+                <button onclick="document.getElementById('adopt-companion-modal').classList.add('hidden')" class="text-gray-500 hover:text-white text-xl font-black">✕</button>
+            </div>
+            <div class="overflow-y-auto flex-grow pr-2 space-y-3 pb-4 scrollbar-hide" id="adopt-list-container">
+                <!-- Dynamic adopt content goes here -->
+            </div>
+        </div>
+    </div>
+
     <!-- DICE OVERLAY -->
     <div id="dice-result-overlay" class="fixed inset-0 bg-black/90 flex items-center justify-center z-[600] hidden" onclick="this.classList.add('hidden')">
         <div class="text-center text-white p-12">
@@ -1081,6 +1120,10 @@
         let currentRound = 1;
         let activeTurnId = null;
         let pendingHoldId = null;
+        
+        // COMPENDIUM CACHE
+        let compendiumNPCs = [];
+        let compendiumBeasts = [];
 
         const STATS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
         const SKILLS = [
@@ -1291,6 +1334,231 @@
 
         window.openPartyModal = () => { document.getElementById('party-modal')?.classList.remove('hidden'); };
         window.createParty = async () => { const n = document.getElementById('party-name-input'); if (!n || !n.value) return; await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'parties'), {name: n.value, createdAt: Date.now()}); document.getElementById('party-modal').classList.add('hidden'); n.value = ''; window.showToast("Party Formed"); };
+
+        // --- COMPANION & ADOPTION LOGIC ---
+        window.openAdoptModal = async () => {
+            document.getElementById('adopt-companion-modal').classList.remove('hidden');
+            document.getElementById('adopt-list-container').innerHTML = '<div class="text-center py-12 text-green-500 text-xs uppercase font-black tracking-widest animate-pulse">Searching the Wilds...</div>';
+            try {
+                const bSnap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'beasts'));
+                compendiumBeasts = bSnap.docs.map(d => ({id: d.id, ...d.data()}));
+                
+                const container = document.getElementById('adopt-list-container');
+                if (compendiumBeasts.length === 0) {
+                    container.innerHTML = `<div class="text-center py-12 text-gray-500 font-bold uppercase tracking-widest text-[10px]">No Beasts available in Bestiary.</div>`;
+                    return;
+                }
+
+                container.innerHTML = compendiumBeasts.map((b, i) => `
+                    <div class="bg-black/40 p-4 rounded-xl border border-gray-800 flex justify-between items-center hover:border-green-600 hover:bg-green-900/20 transition-all cursor-pointer group" onclick="window.confirmAdopt(${i})">
+                        <div class="flex items-center gap-4">
+                            ${b.imageSrc ? `<img src="${b.imageSrc}" class="w-12 h-12 rounded object-cover border border-gray-700 group-hover:border-green-500">` : `<div class="w-12 h-12 rounded bg-gray-800 flex items-center justify-center text-xl border border-gray-700 group-hover:border-green-500">🐾</div>`}
+                            <div>
+                                <div class="text-white font-black uppercase text-sm tracking-wider mb-1">${b.name || 'Unknown Beast'}</div>
+                                <div class="text-[9px] text-gray-500 uppercase font-bold tracking-[0.1em] flex gap-2">
+                                    <span class="text-green-500">HP ${b.hpMax || '?'}</span>
+                                    <span>•</span>
+                                    <span class="text-blue-400">AC ${b.ac || '10'}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="bg-gray-800 group-hover:bg-green-600 text-white px-5 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors border border-gray-700 group-hover:border-green-500">Bond</button>
+                    </div>
+                `).join('');
+
+            } catch (e) {
+                console.error(e);
+                document.getElementById('adopt-list-container').innerHTML = '<div class="text-center py-12 text-red-500 text-xs uppercase font-black tracking-widest">Failed to load beasts.</div>';
+            }
+        };
+
+        window.confirmAdopt = async (index) => {
+            if (!user || !currentUser || !activeCharId) return;
+            const template = compendiumBeasts[index];
+            const clone = JSON.parse(JSON.stringify(template));
+            delete clone.id;
+            
+            const pc = characters.find(c => c.id === activeCharId);
+            
+            let newData = {
+                type: 'PC', // Treat as PC so it renders alongside the party
+                class: 'Beast Companion',
+                ownerId: user.uid,
+                owner: currentUser.username,
+                isDeleted: false,
+                status: 'alive',
+                partyId: pc ? pc.partyId : "",
+                init: "",
+                scoresGenerated: true,
+                hpMax: 10, hpCurrent: 10, // Defaults
+                ...clone // Overwrite with beast template data
+            };
+            
+            if(newData.hpMax) newData.hpCurrent = newData.hpMax;
+            newData.name = clone.name || 'Companion';
+
+            try {
+                const ref = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), newData);
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { companionId: ref.id });
+                document.getElementById('adopt-companion-modal').classList.add('hidden');
+                window.showToast(`${newData.name} bonded successfully!`);
+                syncSheetData(); // refresh the sheet view
+            } catch(e) {
+                console.error(e);
+                window.showToast("Failed to bond companion.");
+            }
+        };
+
+        window.releaseCompanion = async () => {
+            if (!activeCharId) return;
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'characters', activeCharId), { companionId: null });
+            window.showToast("Companion bond severed.");
+            syncSheetData();
+        };
+
+        // --- ENCOUNTER SPAWNER LOGIC ---
+        window.openEncounterSpawner = async () => {
+            document.getElementById('encounter-spawner-modal').classList.remove('hidden');
+            document.getElementById('spawner-list-container').innerHTML = '<div class="text-center py-12 text-purple-400 text-xs uppercase font-black tracking-widest animate-pulse">Loading Archives...</div>';
+            
+            try {
+                // Always fetch fresh in case they modified NPCS/Beasts in other tabs
+                const nSnap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'npcs'));
+                compendiumNPCs = nSnap.docs.map(d => ({id: d.id, ...d.data()}));
+                
+                const bSnap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'beasts'));
+                compendiumBeasts = bSnap.docs.map(d => ({id: d.id, ...d.data()}));
+                
+                window.switchSpawnerTab('blank');
+            } catch (e) {
+                console.error("Error loading compendiums:", e);
+                document.getElementById('spawner-list-container').innerHTML = '<div class="text-center py-12 text-red-500 text-xs uppercase font-black tracking-widest">Failed to load archives. Check console.</div>';
+            }
+        };
+
+        window.switchSpawnerTab = (tab) => {
+            document.querySelectorAll('.spawn-tab').forEach(b => {
+                b.classList.remove('bg-purple-900', 'text-white');
+                b.classList.add('bg-gray-800/80', 'text-gray-400');
+            });
+            const activeBtn = document.getElementById(`spawn-tab-${tab}`);
+            if(activeBtn) {
+                activeBtn.classList.remove('bg-gray-800/80', 'text-gray-400');
+                activeBtn.classList.add('bg-purple-900', 'text-white');
+            }
+
+            const container = document.getElementById('spawner-list-container');
+            container.innerHTML = '';
+
+            if (tab === 'blank') {
+                container.innerHTML = `
+                    <div class="bg-black/40 p-5 rounded-xl border border-gray-800 flex justify-between items-center hover:border-purple-500 hover:bg-purple-900/10 transition-all cursor-pointer group" onclick="window.spawnCompendiumEntity(null, 'blank')">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded bg-gray-800 flex items-center justify-center text-xl border border-gray-700 group-hover:border-purple-500 transition-colors">👤</div>
+                            <div>
+                                <div class="text-white font-black uppercase text-sm tracking-wider mb-1">Blank Encounter</div>
+                                <div class="text-[10px] text-gray-500 uppercase font-bold">Create a completely new entity from scratch.</div>
+                            </div>
+                        </div>
+                        <button class="bg-purple-700 group-hover:bg-purple-500 text-white px-6 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors shadow-lg">Spawn</button>
+                    </div>
+                `;
+            } else if (tab === 'npcs') {
+                if(compendiumNPCs.length === 0) container.innerHTML = `<div class="text-center py-12 text-gray-600 text-[10px] uppercase font-black tracking-widest">No NPCs found in archive.</div>`;
+                else compendiumNPCs.forEach((npc, index) => container.innerHTML += createSpawnerRow(npc, 'npc', index));
+            } else if (tab === 'beasts') {
+                if(compendiumBeasts.length === 0) container.innerHTML = `<div class="text-center py-12 text-gray-600 text-[10px] uppercase font-black tracking-widest">No Beasts found in archive.</div>`;
+                else compendiumBeasts.forEach((beast, index) => container.innerHTML += createSpawnerRow(beast, 'beast', index));
+            }
+        };
+
+        function createSpawnerRow(entity, type, index) {
+            let hpText = entity.hpMax ? `HP ${entity.hpMax}` : 'HP ?';
+            let acText = entity.ac ? `AC ${entity.ac}` : 'AC ?';
+            
+            return `
+                <div class="bg-black/40 p-4 rounded-xl border border-gray-800 flex justify-between items-center hover:border-purple-500 hover:bg-purple-900/10 transition-all cursor-pointer group" onclick="window.spawnCompendiumEntity(${index}, '${type}')">
+                    <div class="flex items-center gap-4">
+                        ${entity.imageSrc ? `<img src="${entity.imageSrc}" class="w-12 h-12 rounded object-cover border border-gray-700 group-hover:border-purple-500 transition-colors">` : `<div class="w-12 h-12 rounded bg-gray-800 flex items-center justify-center text-xl border border-gray-700 group-hover:border-purple-500 transition-colors">👤</div>`}
+                        <div>
+                            <div class="text-white font-black uppercase text-sm tracking-wider mb-1">${entity.name || 'Unnamed Entity'}</div>
+                            <div class="text-[9px] text-gray-500 uppercase font-bold tracking-[0.1em] flex gap-2">
+                                <span class="text-purple-400">${entity.class || (type === 'beast' ? 'Beast' : 'NPC')}</span>
+                                <span>•</span>
+                                <span class="text-green-500">${hpText}</span>
+                                <span>•</span>
+                                <span class="text-blue-400">${acText}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="bg-gray-800 group-hover:bg-purple-600 text-white px-5 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors border border-gray-700 group-hover:border-purple-500">Spawn</button>
+                </div>
+            `;
+        }
+
+        window.spawnCompendiumEntity = async (index, sourceType) => {
+            if (!user || !currentUser) return;
+            try {
+                let newData = {
+                    type: 'NPC',
+                    ownerId: user.uid,
+                    owner: 'DM',
+                    isDeleted: false,
+                    status: 'alive',
+                    scoresGenerated: true,
+                    dmWhispers: [],
+                    init: "",
+                    heldAction: false,
+                    hpMax: 10,
+                    hpCurrent: 10,
+                    tempHp: 0,
+                    level: 1,
+                    str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10,
+                    profBonus: 2,
+                    languages: [], attacks: [], moves: [],
+                    dsSucc: 0, dsFail: 0, hdCurrent: 1, hd: "1d8",
+                    age: "", gender: "", alignment: "Neutral", faith: "", hair: "", skin: "", size: "Medium", height: "", weight: "", appearance: "",
+                    backgroundTitle: "Template Origin", backgroundDesc: "",
+                    profArmor: "", profWeapons: "", profTools: "",
+                    imageSrc: "", heroicInspiration: 0, exhaustion: 0,
+                    currentStress: 0, stressThreshold: 10, passivePerception: 10
+                };
+
+                let sourceEntity = null;
+                if (sourceType === 'npc') sourceEntity = compendiumNPCs[index];
+                if (sourceType === 'beast') sourceEntity = compendiumBeasts[index];
+
+                if (sourceEntity) {
+                    const clone = JSON.parse(JSON.stringify(sourceEntity));
+                    delete clone.id; // Strip original DB ID so it generates a new one
+                    newData = { ...newData, ...clone };
+                    
+                    // Force the type to be NPC so it shows up in Encounters panel
+                    newData.type = 'NPC';
+                    
+                    // Ensure missing class is populated
+                    if (!newData.class) newData.class = sourceType === 'beast' ? 'Beast' : 'Enemy';
+                    
+                    // Ensure HP is full upon spawn
+                    if(newData.hpMax) newData.hpCurrent = newData.hpMax;
+                    
+                    // Mark name clearly if needed, or keep original
+                    newData.name = clone.name || 'Unnamed Entity';
+                } else {
+                    newData.name = "New Encounter";
+                    newData.class = "Enemy";
+                    newData.scoresGenerated = false;
+                }
+
+                const ref = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'characters'), newData);
+                document.getElementById('encounter-spawner-modal').classList.add('hidden');
+                window.openSheet(ref.id);
+                window.showToast(sourceEntity ? `${newData.name} Spawned!` : "Blank Encounter Created");
+            } catch(e) {
+                console.error(e);
+                window.showToast("Spawn Failed");
+            }
+        };
 
         window.updateSheetTurnState = () => {
             const tBanner = document.getElementById('sheet-turn-banner');
@@ -1548,7 +1816,22 @@
                 pcC.appendChild(s); const g = s.querySelector('#unassigned-grid'); unassignedPCs.forEach(c => g.appendChild(createCard(c)));
             }
 
-            activeNPCs.forEach(c => enC.appendChild(createCard(c)));
+            // Categorize Encounters
+            const enemies = activeNPCs.filter(c => (c.class || '').toLowerCase() === 'enemy');
+            const beasts = activeNPCs.filter(c => (c.class || '').toLowerCase() === 'beast');
+            const npcs = activeNPCs.filter(c => { const cl = (c.class || '').toLowerCase(); return cl !== 'enemy' && cl !== 'beast'; });
+
+            const renderEncounterSection = (title, items, color) => {
+                if (items.length === 0) return;
+                const s = document.createElement('div'); s.className = "bg-gray-900/20 p-6 rounded-2xl border border-gray-800 shadow-xl mb-8";
+                s.innerHTML = `<h3 class="${color} font-serif font-bold uppercase text-sm mb-4 border-b border-gray-800/50 pb-2">${title}</h3><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>`;
+                const g = s.querySelector('.grid'); items.forEach(c => g.appendChild(createCard(c))); enC.appendChild(s);
+            };
+
+            renderEncounterSection('Enemies', enemies, 'text-red-400');
+            renderEncounterSection('Beasts', beasts, 'text-green-400');
+            renderEncounterSection('NPCs & Others', npcs, 'text-blue-400');
+
             characters.filter(c => c.isDeleted).forEach(c => grC.appendChild(createCard(c)));
             
             // Render the initiative tracker if on encounters view
@@ -1726,6 +2009,45 @@
             }
             const lc = document.getElementById('languages-list'); if (lc) { lc.innerHTML = ''; const langs = (char.languages || []); if (langs.length === 0) lc.innerHTML = '<span class="text-slate-400 font-normal italic">None</span>'; else langs.forEach((l, idx) => { const d = document.createElement('div'); d.className = "flex items-center gap-1"; const delBtn = canEdit ? `<button onclick="window.removeLanguageItem(${idx})" class="text-red-400 hover:text-red-600">×</button>` : ''; d.innerHTML = `<span>${l}${idx < langs.length - 1 ? ',' : ''}</span>${delBtn}`; lc.appendChild(d); }); }
             const ac = document.getElementById('attacks-list'); if (ac) { ac.innerHTML = ''; (char.attacks || []).forEach(a => { const d = document.createElement('div'); d.className = "equip-row"; const disabledAttr = !canEdit ? 'disabled' : ''; const delBtn = canEdit ? `<button onclick="this.parentElement.remove(); window.saveCurrentCharacter();" class="text-red-300">✕</button>` : ''; d.innerHTML = `<input type="text" class="atk-name font-bold" value="${a.name}" ${disabledAttr}><input type="text" class="atk-bonus text-center" value="${a.bonus}" ${disabledAttr}><input type="text" class="atk-dmg text-center" value="${a.dmg}" ${disabledAttr}>${delBtn}`; ac.appendChild(d); }); }
+            
+            const compTab = document.getElementById('companion-view-area');
+            if (compTab) {
+                if (char.companionId) {
+                    const pet = characters.find(c => c.id === char.companionId && !c.isDeleted);
+                    if (pet) {
+                        compTab.innerHTML = `
+                            <div class="bg-gray-50 border-2 border-amber-200 rounded-xl p-6 text-center shadow-lg relative max-w-sm mx-auto mt-4">
+                                ${canEdit ? `<button onclick="window.releaseCompanion()" class="absolute top-3 right-3 bg-red-100 text-red-600 hover:bg-red-200 px-3 py-1 rounded text-[9px] font-black uppercase transition-colors">Release</button>` : ''}
+                                ${pet.imageSrc ? `<img src="${pet.imageSrc}" class="w-24 h-24 mx-auto rounded-full object-cover border-4 border-amber-500 mb-4 shadow-md">` : `<div class="w-24 h-24 mx-auto rounded-full bg-gray-200 flex items-center justify-center text-4xl border-4 border-amber-500 mb-4 shadow-md">🐾</div>`}
+                                <h4 class="text-2xl font-serif font-black text-amber-700 uppercase tracking-widest mb-1">${pet.name}</h4>
+                                <p class="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-6">${pet.class || 'Beast Companion'}</p>
+                                
+                                <div class="flex justify-center gap-8 mb-8 bg-white p-4 rounded-lg border border-gray-100 shadow-inner">
+                                    <div class="text-center"><span class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">HP</span><span class="text-xl font-black ${pet.hpCurrent < (pet.hpMax/2) ? 'text-red-500' : 'text-green-600'}">${pet.hpCurrent}/${pet.hpMax}</span></div>
+                                    <div class="text-center border-l border-r border-gray-100 px-8"><span class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">AC</span><span class="text-xl font-black text-blue-600">${pet.ac || 10}</span></div>
+                                    <div class="text-center"><span class="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Speed</span><span class="text-xl font-black text-gray-700">${pet.speed || '30ft'}</span></div>
+                                </div>
+                                
+                                <button onclick="window.openSheet('${pet.id}')" class="w-full bg-amber-600 hover:bg-amber-500 text-white px-8 py-3.5 rounded-xl font-black uppercase text-xs shadow-lg transition-transform active:scale-95 flex items-center justify-center gap-2">
+                                    <span>Manage Companion Stats</span> <span>➔</span>
+                                </button>
+                            </div>
+                        `;
+                    } else {
+                        compTab.innerHTML = `<div class="text-center py-12"><p class="text-red-500 font-bold mb-4 text-xs uppercase tracking-widest">Companion missing, deceased, or deleted.</p>${canEdit ? `<button onclick="window.releaseCompanion()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-2.5 rounded-lg font-black text-[10px] uppercase tracking-widest transition-colors">Clear Link</button>` : ''}</div>`;
+                    }
+                } else {
+                    compTab.innerHTML = `
+                        <div class="text-center py-16 border-2 border-dashed border-gray-200 rounded-2xl bg-gray-50 max-w-lg mx-auto mt-4">
+                            <div class="text-5xl mb-4 grayscale opacity-50">🐾</div>
+                            <h4 class="text-sm font-black text-gray-400 uppercase tracking-[0.2em] mb-2">No Companion Linked</h4>
+                            <p class="text-xs text-gray-500 mb-8 max-w-xs mx-auto">You travel alone. Adopt a beast from the bestiary to fight by your side.</p>
+                            ${canEdit ? `<button onclick="window.openAdoptModal()" class="bg-green-700 hover:bg-green-600 text-white px-8 py-3 rounded-xl font-black uppercase text-xs tracking-widest shadow-lg transition-transform active:scale-95">Search the Wilds</button>` : ''}
+                        </div>
+                    `;
+                }
+            }
+
             window.calcMods(); window.renderMovesGrid();
             window.updateSheetTurnState();
         }
