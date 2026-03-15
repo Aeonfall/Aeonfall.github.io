@@ -48,6 +48,48 @@
             opacity: 0.9;
         }
 
+        /* Definitions & Inline Assets */
+        .definition-word {
+            color: var(--arch-burgundy);
+            border-bottom: 1px dashed var(--arch-burgundy);
+            cursor: help;
+            position: relative;
+            font-weight: 700;
+        }
+        .definition-word:hover::after {
+            content: attr(data-definition);
+            position: absolute;
+            bottom: 120%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #262626;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 11px;
+            width: max-content;
+            max-width: 200px;
+            z-index: 100;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            font-family: 'Roboto Slab', serif;
+            font-weight: 400;
+            font-style: normal;
+            line-height: 1.4;
+            pointer-events: none;
+            white-space: normal;
+            text-align: center;
+        }
+
+        .inline-img-wrapper { margin: 20px 0; text-align: center; }
+        .inline-arch-asset { 
+            display: inline-block; 
+            max-width: 100%; 
+            border-radius: 8px; 
+            border: 1px solid rgba(0,0,0,0.1); 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            cursor: zoom-in;
+        }
+
         /* Selection Bubble */
         #selection-bubble {
             position: fixed;
@@ -408,6 +450,10 @@
                 newRange.selectNodeContents(span);
                 window.aeonState.lockedSelection = newRange;
             }
+
+            // Persistence update: re-clone for stackability
+            if (sel.rangeCount > 0) window.aeonState.lockedSelection = sel.getRangeAt(0).cloneRange();
+
             const editBox = container.closest('.dm-editable');
             if (editBox) {
                 const id = editBox.getAttribute('data-id');
@@ -416,13 +462,18 @@
         };
 
         window.execFormat = (cmd, val = null) => {
+            const sel = window.getSelection();
             if (window.aeonState.lockedSelection) {
-                const sel = window.getSelection();
                 sel.removeAllRanges();
                 sel.addRange(window.aeonState.lockedSelection);
             }
             document.execCommand(cmd, false, val);
-            // After formatting, update the underlying data if we're in a block
+            
+            // CRITICAL: Re-clone range after DOM modification to allow stacking
+            if (sel.rangeCount > 0) {
+                window.aeonState.lockedSelection = sel.getRangeAt(0).cloneRange();
+            }
+
             const focused = document.activeElement;
             if (focused && focused.classList.contains('dm-editable')) {
                 const id = focused.getAttribute('data-id');
@@ -431,7 +482,13 @@
         };
 
         window.insertTemplate = (type) => {
-            const tpl = type === 'img' ? '{{URL | Caption}}' : '[[Text | Definition]]';
+            const sel = window.getSelection();
+            if (window.aeonState.lockedSelection) {
+                sel.removeAllRanges();
+                sel.addRange(window.aeonState.lockedSelection);
+            }
+            
+            const tpl = type === 'img' ? '{{URL | Caption}}' : '[[Text | definition]]';
             window.execFormat('insertText', tpl);
         };
 
@@ -533,10 +590,11 @@
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { tableRows: JSON.stringify(rows) });
         };
         window.remRow = async (id) => {
-            const s = window.aeonState.manualSections.find(x => x.id === id); if (!s) return;
-            const rows = JSON.parse(s.tableRows || '[]'); if (rows.length <= 1) return;
-            rows.pop();
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { tableRows: JSON.stringify(rows) });
+            const s = window.aeonState.manualSections.find(x => x.id === id); if (s) {
+                const rows = JSON.parse(s.tableRows || '[]'); if (rows.length <= 1) return;
+                rows.pop();
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { tableRows: JSON.stringify(rows) });
+            }
         };
 
         // Firestore Sync
@@ -590,6 +648,7 @@
         };
 
         window.renderManual = () => {
+            // Guard: don't re-render while text is locked for stackable formatting
             if (window.aeonState.lockedSelection) return; 
 
             const isDM = window.aeonState.activeRole === 'dm';
@@ -670,8 +729,8 @@
                             <button class="format-tool-btn" title="Outdent" onclick="window.execFormat('outdent')">⇤</button>
                         </div>
                         <div class="flex gap-1 border-r pr-2 mr-1">
-                            <button class="format-tool-btn" onclick="window.insertTemplate('img')">IMG</button>
-                            <button class="format-tool-btn" onclick="window.insertTemplate('def')">DEF</button>
+                            <button class="format-tool-btn" title="Image Wrap" onclick="window.insertTemplate('img')">IMG</button>
+                            <button class="format-tool-btn" title="Definition Wrap" onclick="window.insertTemplate('def')">DEF</button>
                         </div>
                         <div class="flex items-center gap-1">
                             <span class="text-[8px] font-bold">SIZE</span>
@@ -700,6 +759,7 @@
         document.addEventListener('mouseup', (e) => {
             if (window.aeonState.activeRole !== 'dm') return;
             const bubble = document.getElementById('selection-bubble');
+            // Allow bubble to persist if already locked or interacting with toolbar
             if (window.aeonState.lockedSelection || e.target.closest('.tuner-panel') || e.target.closest('#selection-bubble')) return;
             const sel = window.getSelection();
             if (sel.toString().trim().length > 0) {
