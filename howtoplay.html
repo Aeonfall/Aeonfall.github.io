@@ -129,6 +129,17 @@
         }
         .manual-note-box { background: var(--sage-note-bg) !important; }
 
+        /* Unified Manual Text Blocks (Strict Pencil Look) */
+        .manual-p, 
+        .manual-note-box .manual-p, 
+        .manual-info-box .manual-p, 
+        [contenteditable="true"]:not(.manual-h1):not(.manual-h2),
+        [contenteditable="true"] *, /* Force all nested tags (spans, b, i) to inherit charcoal */
+        .manual-table td {
+            font-family: 'Special Elite', cursive !important;
+            color: var(--charcoal-pencil) !important;
+        }
+
         .table-wrap {
             width: 100%;
             border: 2px solid var(--arch-gold);
@@ -166,7 +177,7 @@
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Updated editable styles for "Pencil" look */
+        /* Editable UI Focus */
         .dm-editable:focus { 
             outline: none; 
             background: rgba(122, 29, 29, 0.03); 
@@ -174,8 +185,8 @@
             box-shadow: 0 0 0 2px rgba(122, 29, 29, 0.1); 
         }
         
-        /* Any text added to text boxes (contenteditable) uses the lead charcoal color and Special Elite font */
-        [contenteditable="true"], input[type="text"], input[type="password"], textarea {
+        /* Enforce global input/textarea lead pencil color */
+        input[type="text"], input[type="password"], textarea {
             font-family: 'Special Elite', cursive !important;
             color: var(--charcoal-pencil) !important;
         }
@@ -263,6 +274,16 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, collection, doc, updateDoc, setDoc, onSnapshot, addDoc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        // FORCED PLAIN TEXT ON PASTE (Prevents white text)
+        document.addEventListener('paste', (e) => {
+            const active = document.activeElement;
+            if (active && active.hasAttribute('contenteditable')) {
+                e.preventDefault();
+                const text = (e.originalEvent || e).clipboardData.getData('text/plain');
+                document.execCommand('insertText', false, text);
+            }
+        });
 
         window.closeAllDropdowns = () => {};
         window.showToast = (m) => { 
