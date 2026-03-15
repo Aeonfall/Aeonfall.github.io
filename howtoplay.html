@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Aeonfall - Operational Manual</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Roboto+Slab:wght@300;400;700&family=Qwigley&family=MedievalSharp&family=Homemade+Apple&family=Pirata+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Roboto+Slab:wght@300;400;700&family=Playwrite+DE+Grund:wght@100..400&family=MedievalSharp&family=Homemade+Apple&family=Pirata+One&display=swap" rel="stylesheet">
     <style>
         :root {
             --arch-burgundy: #7a1d1d;
@@ -29,7 +29,6 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Responsive Sidebar Toggle */
         #nav-toggle-btn {
             display: none;
             position: fixed;
@@ -108,7 +107,7 @@
         #dm-global-controls.active-dm { display: flex; }
 
         .manual-h1 { font-family: 'Cinzel', serif; font-weight: 900; font-size: clamp(1.8rem, 5vw, 3.5rem); color: var(--arch-burgundy); text-transform: uppercase; margin-bottom: 10px; width: 100%; letter-spacing: 2px; text-align: left; }
-        .manual-main-subtitle { font-family: 'Qwigley', cursive; font-size: 24px; color: #5d4037; opacity: 0.8; margin-bottom: 30px; letter-spacing: 1px; }
+        .manual-main-subtitle { font-family: 'Playwrite DE Grund', cursive; font-size: 14px; color: #5d4037; opacity: 0.8; margin-bottom: 30px; letter-spacing: 1px; }
         .manual-h2 { font-family: 'Cinzel', serif; font-weight: 900; font-size: clamp(1.2rem, 4vw, 2.2rem); border-bottom: 4px double var(--arch-burgundy); padding-bottom: 8px; text-transform: uppercase; margin-bottom: 25px; width: 100%; letter-spacing: 2px; }
         .manual-h3 { font-family: 'Cinzel', serif; font-weight: 700; font-size: clamp(1rem, 3vw, 1.4rem); border-bottom: 1px solid rgba(93, 64, 55, 0.4); padding-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; width: 100%; }
 
@@ -129,17 +128,41 @@
         }
         .manual-note-box { background: var(--sage-note-bg) !important; }
 
-        /* Unified Manual Text Blocks (Strict Qwigley Pencil Look) */
         .manual-p, 
         .manual-note-box .manual-p, 
         .manual-info-box .manual-p, 
         [contenteditable="true"]:not(.manual-h1):not(.manual-h2),
         [contenteditable="true"] *, 
         .manual-table td {
-            font-family: 'Qwigley', cursive !important;
+            font-family: 'Playwrite DE Grund', cursive !important;
             color: var(--charcoal-pencil) !important;
-            font-size: 1.85em; /* Qwigley needs a large bump for legibility */
-            line-height: 1.1;
+            line-height: 1.6;
+        }
+
+        .definition-trigger {
+            border-bottom: 2px dashed var(--arch-burgundy);
+            cursor: help;
+            position: relative;
+            display: inline-block;
+        }
+        .definition-trigger:hover::after {
+            content: attr(data-definition);
+            position: absolute;
+            bottom: 120%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1a1a;
+            color: #f4edd8;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-family: 'Playwrite DE Grund', cursive;
+            white-space: normal;
+            width: 200px;
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            border: 1px solid var(--arch-gold);
+            line-height: 1.4;
         }
 
         .table-wrap {
@@ -153,7 +176,7 @@
         }
         .manual-table { width: 100%; min-width: 400px; border-collapse: collapse; text-align: left; }
         .manual-table th { padding: 10px; background: rgba(0,0,0,0.1); border-bottom: 2px solid var(--arch-burgundy); font-family: 'Cinzel'; font-size: 10px; }
-        .manual-table td { padding: 10px; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 22px; }
+        .manual-table td { padding: 10px; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 16px; }
 
         .slider-bubble { background: #ffffff !important; border: 2px solid var(--arch-gold) !important; border-radius: 20px !important; padding: 20px !important; box-shadow: 0 25px 60px rgba(0,0,0,0.18) !important; width: 100%; margin-bottom: 2.5rem; position: relative; overflow: hidden; }
 
@@ -163,7 +186,6 @@
 
         .toast { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); background: #1a0f0a; color: #f4edd8; padding: 10px 24px; border-radius: 40px; z-index: 2000000; opacity: 0; transition: opacity 0.3s; font-family: 'Cinzel'; font-size: 10px; font-weight: 900; border: 1px solid var(--arch-burgundy); pointer-events: none; }
 
-        /* Media / Slide Specifics */
         .slider-viewport { position: relative; width: 100%; }
         .slide-container { display: none; width: 100%; }
         .slide-container.active { display: block; animation: fadeIn 0.4s ease; }
@@ -174,12 +196,11 @@
 
         .inline-img-wrapper { position: relative; display: inline-block; margin: 10px; max-width: 100%; }
         .inline-arch-asset { max-width: 100%; border-radius: 12px; border: 3px solid var(--arch-gold); cursor: zoom-in; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-        .media-footnote { text-align: center; font-size: 18px; font-style: italic; opacity: 0.7; margin-top: 5px; font-family: 'Qwigley', cursive; }
+        .media-footnote { text-align: center; font-size: 16px; font-style: italic; opacity: 0.7; margin-top: 5px; font-family: 'Playwrite DE Grund', cursive; }
         .embed-purge-btn { position: absolute; top: -10px; right: -10px; background: #7a1d1d; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; cursor: pointer; border: 1px solid white; z-index: 5; }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Editable UI Focus */
         .dm-editable:focus { 
             outline: none; 
             background: rgba(122, 29, 29, 0.03); 
@@ -187,9 +208,8 @@
             box-shadow: 0 0 0 2px rgba(122, 29, 29, 0.1); 
         }
         
-        /* Enforce global input/textarea lead pencil color */
         input[type="text"], input[type="password"], textarea {
-            font-family: 'Qwigley', cursive !important;
+            font-family: 'Playwrite DE Grund', cursive !important;
             color: var(--charcoal-pencil) !important;
         }
 
@@ -202,20 +222,40 @@
 
         .tuner-slider { -webkit-appearance: none; width: 60px; height: 4px; background: #ddd; border-radius: 2px; }
         .tuner-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; background: var(--arch-burgundy); border-radius: 50%; cursor: pointer; }
-        .align-btn { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: #f0f0f0; border: 1px solid #ccc; font-weight: bold; }
-        .align-btn.active { background: var(--arch-burgundy); color: white; border-color: var(--arch-burgundy); }
+        
+        .tuner-group { display: flex; align-items: center; gap: 4px; font-family: 'Cinzel'; font-weight: bold; }
+        
+        .align-btn, .format-btn { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: #f0f0f0; border: 1px solid #ccc; font-weight: bold; font-family: 'Roboto Slab'; transition: 0.2s; }
+        .align-btn.active, .format-btn:active { background: var(--arch-burgundy); color: white; border-color: var(--arch-burgundy); }
+        .format-btn { font-family: 'Cinzel'; font-size: 9px; min-width: 22px; }
+        
+        .size-num-input { 
+            width: 44px; 
+            font-family: 'Roboto Slab'; 
+            font-size: 11px; 
+            padding: 2px 4px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            text-align: center;
+            background: #fff;
+            color: #000 !important;
+        }
+
+        /* Highlight during sizing */
+        .aeon-active-sizing {
+            background-color: rgba(122, 29, 29, 0.15) !important;
+            box-shadow: 0 0 0 1px var(--arch-gold);
+        }
     </style>
 </head>
 <body class="dm-mode-active" onclick="window.closeAllDropdowns()">
 
     <div id="toast" class="toast">Manual Synchronized</div>
 
-    <!-- Navigation Toggle (Mobile) -->
     <div id="nav-toggle-btn" onclick="window.toggleNav(); event.stopPropagation();">
         <span>☰</span>
     </div>
 
-    <!-- Backdrop (Mobile) -->
     <div id="nav-overlay" onclick="window.toggleNav()"></div>
 
     <div id="pass-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[110000] hidden p-4 text-black">
@@ -277,7 +317,31 @@
         import { getFirestore, collection, doc, updateDoc, setDoc, onSnapshot, addDoc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // FORCED PLAIN TEXT ON PASTE (Prevents formatting contamination)
+        // SELECTION PERSISTENCE
+        window.aeonStateSelection = {
+            frozenRange: null,
+            activeBlock: null,
+            isInteracting: false
+        };
+
+        // Track changes and capture range
+        document.addEventListener('selectionchange', () => {
+            if (window.aeonStateSelection.isInteracting) return;
+            const sel = window.getSelection();
+            if (sel.rangeCount > 0 && !sel.isCollapsed) {
+                const range = sel.getRangeAt(0);
+                const block = range.commonAncestorContainer.nodeType === 1 
+                    ? range.commonAncestorContainer.closest('[contenteditable="true"]') 
+                    : range.commonAncestorContainer.parentNode.closest('[contenteditable="true"]');
+                
+                if (block && !block.closest('.tuner-panel')) {
+                    window.aeonStateSelection.frozenRange = range.cloneRange();
+                    window.aeonStateSelection.activeBlock = block;
+                }
+            }
+        });
+
+        // Forced plain text paste
         document.addEventListener('paste', (e) => {
             const active = document.activeElement;
             if (active && active.hasAttribute('contenteditable')) {
@@ -286,6 +350,77 @@
                 document.execCommand('insertText', false, text);
             }
         });
+
+        window.formatText = (cmd, val = null) => {
+            const sel = window.getSelection();
+            if (window.aeonStateSelection.frozenRange) {
+                sel.removeAllRanges();
+                sel.addRange(window.aeonStateSelection.frozenRange);
+            }
+            document.execCommand(cmd, false, val);
+        };
+
+        window.lockSelectionForSizing = () => {
+            window.aeonStateSelection.isInteracting = true;
+        };
+
+        window.unlockSelectionForSizing = () => {
+            setTimeout(() => { window.aeonStateSelection.isInteracting = false; }, 500);
+        };
+
+        window.applySelectionFontSize = (size) => {
+            const sel = window.getSelection();
+            const range = window.aeonStateSelection.frozenRange;
+            
+            if (!range) return;
+
+            // Restore focus and selection
+            sel.removeAllRanges();
+            sel.addRange(range);
+            
+            if (!sel.isCollapsed) {
+                // To keep sizing fluid, we wrap the selection in a specific span once
+                // and then just update the style of that span
+                let span = range.commonAncestorContainer;
+                if (span.nodeType === 3) span = span.parentNode;
+
+                if (span && span.classList && span.classList.contains('aeon-active-sizing')) {
+                    span.style.fontSize = size + 'px';
+                } else {
+                    const newSpan = document.createElement('span');
+                    newSpan.className = 'aeon-active-sizing';
+                    newSpan.style.fontSize = size + 'px';
+                    try {
+                        newSpan.appendChild(range.extractContents());
+                        range.insertNode(newSpan);
+                        
+                        // Re-capture this as the new selection range
+                        const newRange = document.createRange();
+                        newRange.selectNodeContents(newSpan);
+                        sel.removeAllRanges();
+                        sel.addRange(newRange);
+                        window.aeonStateSelection.frozenRange = newRange.cloneRange();
+                    } catch(e) { console.error(e); }
+                }
+
+                // Sync block
+                const block = window.aeonStateSelection.activeBlock;
+                if (block) {
+                    const id = block.getAttribute('data-sync-id');
+                    const field = block.getAttribute('data-sync-field');
+                    if (id && field) window.dbUpdateSection(id, field, block.innerHTML);
+                }
+            }
+        };
+
+        window.insertCustomTag = (tag) => {
+            const sel = window.getSelection();
+            if (window.aeonStateSelection.frozenRange) {
+                sel.removeAllRanges();
+                sel.addRange(window.aeonStateSelection.frozenRange);
+            }
+            document.execCommand('insertText', false, tag);
+        };
 
         window.closeAllDropdowns = () => {};
         window.showToast = (m) => { 
@@ -400,7 +535,7 @@
         window.dbUpdateHeader = (field, val) => { if(window.aeonState.saveTimer) clearTimeout(window.aeonState.saveTimer); window.aeonState.saveTimer = setTimeout(async () => { try { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'header'), { [field]: val }, { merge: true }); window.showToast("Header Sync"); } catch(e) {} }, 800); };
         window.updateTableCell = (id, type, rIdx, val, cIdx = null) => { if(window.aeonState.saveTimer) clearTimeout(window.aeonState.saveTimer); window.aeonState.saveTimer = setTimeout(async () => { const s = window.aeonState.manualSections.find(x => x.id === id); if(!s) return; if(type === 'headers') { const h = [...s.tableHeaders]; h[rIdx] = val; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { tableHeaders: h }); } else { const r = JSON.parse(s.tableRows); r[rIdx][cIdx] = val; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { tableRows: JSON.stringify(r) }); } }, 800); };
         
-        window.addManualSection = async (type) => { const data = { title: "NEW ENTRY", content: type==='table'?"[]":"Inscribe details...", type, order: window.aeonState.manualSections.length, createdAt: Date.now(), width: 100, fontSize: 14, ySpacing: 0, align: 'left', tableHeaders: type==='table'?["Key","Val"]:null, tableRows: type==='table'?JSON.stringify([["Detail","Detail"]]):null, mediaUrl: "", mediaDescription: "" }; await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'manualSections'), data); };
+        window.addManualSection = async (type) => { const data = { title: "NEW ENTRY", content: type==='table'?"[]":"Inscribe details...", type, order: window.aeonState.manualSections.length, createdAt: Date.now(), width: 100, fontSize: 18, ySpacing: 0, align: 'left', tableHeaders: type==='table'?["Key","Val"]:null, tableRows: type==='table'?JSON.stringify([["Detail","Detail"]]):null, mediaUrl: "", mediaDescription: "" }; await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'manualSections'), data); };
         window.triggerDelete = (id) => { window.openDelModal("Purge archival segment?", async () => { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id)); }); };
         window.addRow = async (id) => { const s = window.aeonState.manualSections.find(x => x.id === id); if(!s) return; const r = JSON.parse(s.tableRows || '[]'); r.push(new Array((s.tableHeaders || ["Key", "Val"]).length).fill("...")); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { tableRows: JSON.stringify(r) }); };
         window.remRow = async (id) => { const s = window.aeonState.manualSections.find(x => x.id === id); if(!s) return; const r = JSON.parse(s.tableRows || '[]'); if(r.length <= 1) return; r.pop(); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { tableRows: JSON.stringify(r) }); };
@@ -436,7 +571,17 @@
 
         window.parseAeonfallContent = (text, isDM, sectionId) => {
             if (!text) return ''; if (isDM && window.aeonState.activeEditId !== null) return text;
-            let parsed = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*(?!\*)([^\*]+?)\*(?!\*)/g, '<i>$1</i>');
+            
+            let parsed = text
+                .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+                .replace(/\*(?!\*)([^\*]+?)\*(?!\*)/g, '<i>$1</i>');
+            
+            parsed = parsed.replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (m, label, def) => {
+                const cleanLabel = label.trim();
+                const cleanDef = def ? def.trim() : 'No definition inscribed.';
+                return `<span class="definition-trigger" data-definition="${cleanDef}">${cleanLabel}</span>`;
+            });
+
             return parsed.replace(/\{\{([^}|]+)(?:\|([^}]+))?\}\}/g, (m, url, desc) => {
                 const trimmedUrl = url.trim();
                 const escapedTag = m.replace(/'/g, "\\'").replace(/"/g, '&quot;');
@@ -445,6 +590,8 @@
         };
 
         window.renderManual = () => {
+            if (window.aeonStateSelection.isInteracting) return;
+
             const isDM = window.aeonState.activeRole === 'dm';
             const container = document.getElementById('manual-sections-container'); if(!container) return;
             const headerEl = document.getElementById('manual-header');
@@ -452,20 +599,37 @@
             document.getElementById('nav-list').innerHTML = window.aeonState.manualSections.filter(s => s.type === 'heading').map(s => `<div class="shelf-item" onclick="document.getElementById('section-${s.id}').scrollIntoView({behavior:'smooth'}); if(window.innerWidth < 1024) window.toggleNav();">${s.title}</div>`).join('');
 
             container.innerHTML = window.aeonState.manualSections.map(s => {
-                const style = `width: calc(${s.width ?? 100}% - 15px); margin-top: ${s.ySpacing ?? 0}px; text-align: ${s.align || 'left'};`;
+                const style = `width: calc(${s.width ?? 100}% - 15px); margin-top: ${s.ySpacing ?? 0}px; text-align: ${s.align || 'left'}; font-size: ${s.fontSize ?? 18}px;`;
                 return `<section id="section-${s.id}" class="manual-section-unit group relative" style="${style}" draggable="false" ondragstart="window.handleDragStart(event, '${s.id}')" ondragover="window.handleDragOver(event)" ondragleave="window.handleDragLeave(event)" ondrop="window.handleDrop(event, '${s.id}')">
-                    ${isDM ? `<div class="tuner-panel">
+                    ${isDM ? `<div class="tuner-panel" onmousedown="window.lockSelectionForSizing()">
                         <div class="drag-handle-anchor cursor-grab" onmousedown="document.getElementById('section-${s.id}').setAttribute('draggable', 'true')" onmouseup="document.getElementById('section-${s.id}').setAttribute('draggable', 'false')">⠿</div>
                         <div class="tuner-group"><span>W</span><input type="range" class="tuner-slider" min="10" max="100" value="${s.width ?? 100}" oninput="window.dbUpdateSection('${s.id}', 'width', parseInt(this.value))"></div>
                         <div class="tuner-group"><span>V</span><input type="range" class="tuner-slider" min="0" max="150" value="${s.ySpacing ?? 0}" oninput="window.dbUpdateSection('${s.id}', 'ySpacing', parseInt(this.value))"></div>
-                        <div class="flex gap-1"><button class="align-btn ${s.align==='left'?'active':''}" onclick="window.dbUpdateSection('${s.id}', 'align', 'left')">L</button><button class="align-btn ${s.align==='center'?'active':''}" onclick="window.dbUpdateSection('${s.id}', 'align', 'center')">C</button><button class="align-btn ${s.align==='right'?'active':''}" onclick="window.dbUpdateSection('${s.id}', 'align', 'right')">R</button></div>
-                        <button onclick="window.triggerDelete('${s.id}')" class="ml-auto text-red-700 font-black text-lg">✕</button>
+                        <div class="tuner-group"><span>T</span><input type="range" class="tuner-slider" min="10" max="100" value="${s.fontSize ?? 18}" oninput="window.dbUpdateSection('${s.id}', 'fontSize', parseInt(this.value)); document.getElementById('section-${s.id}').style.fontSize = this.value + 'px';"></div>
+                        <div class="tuner-group border-l pl-2">
+                            <span>S</span>
+                            <input type="range" class="tuner-slider" min="1" max="200" value="18" id="s-slider-${s.id}" onmousedown="window.lockSelectionForSizing()" onmouseup="window.unlockSelectionForSizing()" oninput="document.getElementById('s-num-${s.id}').value = this.value; window.applySelectionFontSize(this.value)">
+                            <input type="number" class="size-num-input" min="1" max="500" value="18" id="s-num-${s.id}" onfocus="window.lockSelectionForSizing()" onblur="window.unlockSelectionForSizing()" oninput="document.getElementById('s-slider-${s.id}').value = this.value; window.applySelectionFontSize(this.value)">
+                        </div>
+                        <div class="flex gap-1 border-l pl-2 ml-2">
+                            <button class="align-btn ${s.align==='left'?'active':''}" onmousedown="event.preventDefault(); window.dbUpdateSection('${s.id}', 'align', 'left')">L</button>
+                            <button class="align-btn ${s.align==='center'?'active':''}" onmousedown="event.preventDefault(); window.dbUpdateSection('${s.id}', 'align', 'center')">C</button>
+                            <button class="align-btn ${s.align==='right'?'active':''}" onmousedown="event.preventDefault(); window.dbUpdateSection('${s.id}', 'align', 'right')">R</button>
+                        </div>
+                        <div class="flex gap-1 border-l pl-2 ml-2">
+                            <button class="format-btn" onmousedown="event.preventDefault(); window.formatText('bold')">B</button>
+                            <button class="format-btn" onmousedown="event.preventDefault(); window.formatText('italic')">I</button>
+                            <button class="format-btn" onmousedown="event.preventDefault(); window.formatText('underline')">U</button>
+                            <button class="format-btn bg-amber-50" onmousedown="event.preventDefault(); window.insertCustomTag('{{URL | Caption}}')">IMG</button>
+                            <button class="format-btn bg-amber-50" onmousedown="event.preventDefault(); window.insertCustomTag('[[Text | Definition]]')">DEF</button>
+                        </div>
+                        <button onclick="window.triggerDelete('${s.id}')" onmousedown="event.stopPropagation()" class="ml-auto text-red-700 font-black text-lg">✕</button>
                     </div>` : ''}
-                    ${s.type==='heading'?`<h2 class="manual-h2 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-t'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','title',this.innerText)">${s.title}</h2>`:''}
-                    ${s.type==='subheading'?`<h3 class="manual-h3 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-t'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','title',this.innerText)">${s.title}</h3>`:''}
-                    ${s.type==='text'?`<div class="manual-p dm-editable leading-relaxed" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-c'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','content',this.innerHTML)">${window.aeonState.activeEditId === `${s.id}-c` ? s.content : window.parseAeonfallContent(s.content, false, s.id)}</div>`:''}
-                    ${s.type==='note'?`<div class="manual-note-box"><div class="font-bold uppercase text-[9px] mb-2 opacity-50 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-t'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">📑 ${s.title}</div><div class="manual-p dm-editable italic" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-c'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${window.aeonState.activeEditId === `${s.id}-c` ? s.content : window.parseAeonfallContent(s.content, false, s.id)}</div></div>`:''}
-                    ${s.type==='info'?`<div class="manual-info-box"><div class="font-bold uppercase text-[9px] mb-2 opacity-50 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-t'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">📊 ${s.title}</div><div class="manual-p dm-editable leading-relaxed" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-c'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${window.aeonState.activeEditId === `${s.id}-c` ? s.content : window.parseAeonfallContent(s.content, false, s.id)}</div></div>`:''}
+                    ${s.type==='heading'?`<h2 class="manual-h2 dm-editable" data-sync-id="${s.id}" data-sync-field="title" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-t'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','title',this.innerText)">${s.title}</h2>`:''}
+                    ${s.type==='subheading'?`<h3 class="manual-h3 dm-editable" data-sync-id="${s.id}" data-sync-field="title" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-t'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','title',this.innerText)">${s.title}</h3>`:''}
+                    ${s.type==='text'?`<div class="manual-p dm-editable leading-relaxed" data-sync-id="${s.id}" data-sync-field="content" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-c'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','content',this.innerHTML)">${window.aeonState.activeEditId === `${s.id}-c` ? s.content : window.parseAeonfallContent(s.content, false, s.id)}</div>`:''}
+                    ${s.type==='note'?`<div class="manual-note-box"><div class="font-bold uppercase text-[9px] mb-2 opacity-50 dm-editable" data-sync-id="${s.id}" data-sync-field="title" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-t'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">📑 ${s.title}</div><div class="manual-p dm-editable italic" data-sync-id="${s.id}" data-sync-field="content" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-c'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${window.aeonState.activeEditId === `${s.id}-c` ? s.content : window.parseAeonfallContent(s.content, false, s.id)}</div></div>`:''}
+                    ${s.type==='info'?`<div class="manual-info-box"><div class="font-bold uppercase text-[9px] mb-2 opacity-50 dm-editable" data-sync-id="${s.id}" data-sync-field="title" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-t'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">📊 ${s.title}</div><div class="manual-p dm-editable leading-relaxed" data-sync-id="${s.id}" data-sync-field="content" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-c'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${window.aeonState.activeEditId === `${s.id}-c` ? s.content : window.parseAeonfallContent(s.content, false, s.id)}</div></div>`:''}
                     ${s.type==='table'?`<div class="table-wrap">${isDM?`<div class="flex gap-2 p-2 border-b bg-white/50"><button onclick="window.addRow('${s.id}')" class="arch-btn arch-btn-tool !py-1 !px-3">+R</button><button onclick="window.remRow('${s.id}')" class="arch-btn arch-btn-tool !py-1 !px-3">-R</button><button onclick="window.addCol('${s.id}')" class="arch-btn arch-btn-tool !py-1 !px-3">+C</button><button onclick="window.remCol('${s.id}')" class="arch-btn arch-btn-tool !py-1 !px-3">-C</button></div>`:''}<table class="manual-table"><thead><tr>${(s.tableHeaders||["Key","Val"]).map((h,i)=>`<th contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}','headers',${i},this.innerText)">${h}</th>`).join('')}</tr></thead><tbody>${JSON.parse(s.tableRows||'[]').map((row,rIdx)=>`<tr>${row.map((c,cIdx)=>`<td contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}','rows',${rIdx},this.innerText,${cIdx})">${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`:''}
                     ${s.type==='media'?`<div class="slider-bubble" id="slider-${s.id}"><div class="slider-viewport">${(s.mediaUrl || "").split(',').length > 1 ? `<div class="slider-arrow arrow-left" onclick="window.moveSlide('${s.id}', -1)">←</div><div class="slider-arrow arrow-right" onclick="window.moveSlide('${s.id}', 1)">→</div>` : ''}${(s.mediaUrl || "").split(',').map((l, i) => `<div class="slide-container ${i===0?'active':''}"><img src="${l.trim()}" class="slide-asset" onclick="window.openZoom(event, '${l.trim()}')"><div class="text-[10px] mt-4 opacity-70 text-center italic">${(s.mediaDescription || "").split(',')[i] || ''}</div></div>`).join('')}</div>${isDM ? `<div class="mt-6 border-t pt-4"><input type="text" class="w-full text-[9px] p-2 bg-black/5 border mb-2 rounded" value="${s.mediaUrl}" placeholder="Links" oninput="window.dbUpdateSection('${s.id}', 'mediaUrl', this.value)"><input type="text" class="w-full text-[9px] p-2 bg-black/5 border rounded" value="${s.mediaDescription}" placeholder="Footnotes" oninput="window.dbUpdateSection('${s.id}', 'mediaDescription', this.value)"></div>` : ''}</div>`:''}
                 </section>`;
