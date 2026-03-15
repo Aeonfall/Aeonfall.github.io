@@ -37,6 +37,17 @@
         }
         .dm-editable * { color: inherit !important; background: transparent !important; }
 
+        /* Blockquote / Indentation Styling */
+        .dm-editable blockquote {
+            border-left: 2px solid var(--arch-gold);
+            padding-left: 1.5rem;
+            margin-left: 1rem;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-style: italic;
+            opacity: 0.9;
+        }
+
         /* Selection Bubble */
         #selection-bubble {
             position: fixed;
@@ -411,6 +422,12 @@
                 sel.addRange(window.aeonState.lockedSelection);
             }
             document.execCommand(cmd, false, val);
+            // After formatting, update the underlying data if we're in a block
+            const focused = document.activeElement;
+            if (focused && focused.classList.contains('dm-editable')) {
+                const id = focused.getAttribute('data-id');
+                if (id) window.dbUpdateSection(id, 'content', focused.innerHTML);
+            }
         };
 
         window.insertTemplate = (type) => {
@@ -647,6 +664,10 @@
                             <button class="format-tool-btn" onclick="window.execFormat('bold')">B</button>
                             <button class="format-tool-btn" onclick="window.execFormat('italic')">I</button>
                             <button class="format-tool-btn" onclick="window.execFormat('underline')">U</button>
+                        </div>
+                        <div class="flex gap-1 border-r pr-2 mr-1">
+                            <button class="format-tool-btn" title="Indent" onclick="window.execFormat('indent')">⇥</button>
+                            <button class="format-tool-btn" title="Outdent" onclick="window.execFormat('outdent')">⇤</button>
                         </div>
                         <div class="flex gap-1 border-r pr-2 mr-1">
                             <button class="format-tool-btn" onclick="window.insertTemplate('img')">IMG</button>
