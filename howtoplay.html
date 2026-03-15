@@ -241,16 +241,49 @@
             color: #000 !important;
         }
 
-        /* Highlight during sizing */
+        /* Red Selection Box Styling - Fixed empty range appearance */
         .aeon-active-sizing {
+            outline: none !important;
+            display: inline !important; 
             background-color: rgba(122, 29, 29, 0.15) !important;
-            box-shadow: 0 0 0 1px var(--arch-gold);
+            box-shadow: 0 0 0 2px var(--arch-burgundy) !important;
+            border-radius: 3px !important;
+            padding: 1px 2px !important;
+            transition: none !important;
         }
+
+        /* Selection Bubble */
+        #selection-lock-bubble {
+            position: fixed;
+            z-index: 100000;
+            background: var(--arch-burgundy);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-family: 'Cinzel', serif;
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border: 1.5px solid var(--arch-gold);
+            cursor: pointer;
+            pointer-events: auto;
+            display: none;
+            transition: transform 0.2s, opacity 0.2s;
+            transform: scale(0.9);
+            opacity: 0;
+        }
+        #selection-lock-bubble.visible { display: block; transform: scale(1); opacity: 1; }
+        #selection-lock-bubble.locked { background: #22c55e; border-color: #fff; }
+
     </style>
 </head>
 <body class="dm-mode-active" onclick="window.closeAllDropdowns()">
 
     <div id="toast" class="toast">Manual Synchronized</div>
+
+    <!-- Selection Lock Bubble -->
+    <button id="selection-lock-bubble" onmousedown="window.toggleSelectionLock(event)">Select</button>
 
     <div id="nav-toggle-btn" onclick="window.toggleNav(); event.stopPropagation();">
         <span>☰</span>
@@ -321,25 +354,121 @@
         window.aeonStateSelection = {
             frozenRange: null,
             activeBlock: null,
-            isInteracting: false
+            isInteracting: false,
+            isLocked: false
         };
 
         // Track changes and capture range
         document.addEventListener('selectionchange', () => {
-            if (window.aeonStateSelection.isInteracting) return;
+            if (window.aeonStateSelection.isInteracting || window.aeonStateSelection.isLocked) return;
+            
             const sel = window.getSelection();
-            if (sel.rangeCount > 0 && !sel.isCollapsed) {
+            const bubble = document.getElementById('selection-lock-bubble');
+
+            if (sel.rangeCount > 0 && !sel.isCollapsed && window.aeonState.activeRole === 'dm') {
                 const range = sel.getRangeAt(0);
                 const block = range.commonAncestorContainer.nodeType === 1 
                     ? range.commonAncestorContainer.closest('[contenteditable="true"]') 
                     : range.commonAncestorContainer.parentNode.closest('[contenteditable="true"]');
                 
                 if (block && !block.closest('.tuner-panel')) {
-                    window.aeonStateSelection.frozenRange = range.cloneRange();
-                    window.aeonStateSelection.activeBlock = block;
+                    const textContent = range.toString().trim();
+                    if (textContent.length > 0) {
+                        window.aeonStateSelection.frozenRange = range.cloneRange();
+                        window.aeonStateSelection.activeBlock = block;
+                        
+                        const rect = range.getBoundingClientRect();
+                        bubble.style.top = `${rect.top - 40}px`;
+                        bubble.style.left = `${rect.left + rect.width/2 - 30}px`;
+                        bubble.classList.add('visible');
+                    }
                 }
             }
         });
+
+        window.toggleSelectionLock = (e) => {
+            // Prevent event from bubbling up to body/content pane which might clear selection
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const bubble = document.getElementById('selection-lock-bubble');
+            const state = window.aeonStateSelection;
+            
+            if (state.isLocked) {
+                // UNLOCK ARCHIVE
+                state.isLocked = false;
+                bubble.innerText = 'Select';
+                bubble.classList.remove('locked');
+                bubble.classList.remove('visible');
+                
+                const existing = document.querySelector('.aeon-active-sizing');
+                if (existing) {
+                    if (existing.style.fontSize) {
+                        existing.classList.remove('aeon-active-sizing');
+                    } else {
+                        const parent = existing.parentNode;
+                        while (existing.firstChild) parent.insertBefore(existing.firstChild, existing);
+                        parent.removeChild(existing);
+                    }
+                    
+                    const block = state.activeBlock;
+                    if (block) {
+                        const id = block.getAttribute('data-sync-id');
+                        const field = block.getAttribute('data-sync-field');
+                        if (id && field) window.dbUpdateSection(id, field, block.innerHTML);
+                    }
+                }
+                window.getSelection().removeAllRanges();
+            } else {
+                // LOCK ARCHIVE
+                if (!state.frozenRange) return;
+                
+                // Re-verify range has text
+                if (state.frozenRange.toString().trim().length === 0) {
+                    bubble.classList.remove('visible');
+                    return;
+                }
+
+                state.isLocked = true;
+                bubble.innerText = 'Unselect';
+                bubble.classList.add('locked');
+                
+                const range = state.frozenRange;
+                const newSpan = document.createElement('span');
+                newSpan.className = 'aeon-active-sizing';
+                
+                try {
+                    // Inject span wrapper
+                    newSpan.appendChild(range.extractContents());
+                    range.insertNode(newSpan);
+                    
+                    // Kill native browser selection UI for cleanliness
+                    window.getSelection().removeAllRanges();
+
+                    // UI SYNC: Update sliders to match captured text size
+                    const currentFontSize = window.getComputedStyle(newSpan).fontSize;
+                    const numericSize = parseInt(currentFontSize);
+                    
+                    const block = state.activeBlock || newSpan.closest('[contenteditable="true"]');
+                    if (block) {
+                        const id = block.getAttribute('data-sync-id');
+                        const sliderEl = document.getElementById(`s-slider-${id}`);
+                        const numEl = document.getElementById(`s-num-${id}`);
+                        if (sliderEl) sliderEl.value = numericSize;
+                        if (numEl) numEl.value = numericSize;
+                    }
+
+                    // Pivot state onto the actual DOM element
+                    const newRange = document.createRange();
+                    newRange.selectNodeContents(newSpan);
+                    state.frozenRange = newRange;
+                } catch(err) { 
+                    console.error("Archive Selection Failure:", err);
+                    state.isLocked = false;
+                    bubble.classList.remove('visible');
+                }
+            }
+        };
 
         // Forced plain text paste
         document.addEventListener('paste', (e) => {
@@ -352,10 +481,19 @@
         });
 
         window.formatText = (cmd, val = null) => {
-            const sel = window.getSelection();
-            if (window.aeonStateSelection.frozenRange) {
+            const state = window.aeonStateSelection;
+            const target = document.querySelector('.aeon-active-sizing');
+            
+            if (state.isLocked && target) {
+                const sel = window.getSelection();
+                const range = document.createRange();
+                range.selectNodeContents(target);
                 sel.removeAllRanges();
-                sel.addRange(window.aeonStateSelection.frozenRange);
+                sel.addRange(range);
+            } else if (state.frozenRange) {
+                const sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(state.frozenRange);
             }
             document.execCommand(cmd, false, val);
         };
@@ -369,42 +507,10 @@
         };
 
         window.applySelectionFontSize = (size) => {
-            const sel = window.getSelection();
-            const range = window.aeonStateSelection.frozenRange;
-            
-            if (!range) return;
-
-            // Restore focus and selection
-            sel.removeAllRanges();
-            sel.addRange(range);
-            
-            if (!sel.isCollapsed) {
-                // To keep sizing fluid, we wrap the selection in a specific span once
-                // and then just update the style of that span
-                let span = range.commonAncestorContainer;
-                if (span.nodeType === 3) span = span.parentNode;
-
-                if (span && span.classList && span.classList.contains('aeon-active-sizing')) {
-                    span.style.fontSize = size + 'px';
-                } else {
-                    const newSpan = document.createElement('span');
-                    newSpan.className = 'aeon-active-sizing';
-                    newSpan.style.fontSize = size + 'px';
-                    try {
-                        newSpan.appendChild(range.extractContents());
-                        range.insertNode(newSpan);
-                        
-                        // Re-capture this as the new selection range
-                        const newRange = document.createRange();
-                        newRange.selectNodeContents(newSpan);
-                        sel.removeAllRanges();
-                        sel.addRange(newRange);
-                        window.aeonStateSelection.frozenRange = newRange.cloneRange();
-                    } catch(e) { console.error(e); }
-                }
-
-                // Sync block
-                const block = window.aeonStateSelection.activeBlock;
+            const target = document.querySelector('.aeon-active-sizing');
+            if (target) {
+                target.style.fontSize = size + 'px';
+                const block = target.closest('[contenteditable="true"]');
                 if (block) {
                     const id = block.getAttribute('data-sync-id');
                     const field = block.getAttribute('data-sync-field');
@@ -423,6 +529,7 @@
         };
 
         window.closeAllDropdowns = () => {};
+
         window.showToast = (m) => { 
             const t = document.getElementById('toast'); 
             if(t) { t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 3000); } 
@@ -590,7 +697,7 @@
         };
 
         window.renderManual = () => {
-            if (window.aeonStateSelection.isInteracting) return;
+            if (window.aeonStateSelection.isInteracting || window.aeonStateSelection.isLocked) return;
 
             const isDM = window.aeonState.activeRole === 'dm';
             const container = document.getElementById('manual-sections-container'); if(!container) return;
@@ -629,7 +736,7 @@
                     ${s.type==='subheading'?`<h3 class="manual-h3 dm-editable" data-sync-id="${s.id}" data-sync-field="title" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-t'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','title',this.innerText)">${s.title}</h3>`:''}
                     ${s.type==='text'?`<div class="manual-p dm-editable leading-relaxed" data-sync-id="${s.id}" data-sync-field="content" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-c'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','content',this.innerHTML)">${window.aeonState.activeEditId === `${s.id}-c` ? s.content : window.parseAeonfallContent(s.content, false, s.id)}</div>`:''}
                     ${s.type==='note'?`<div class="manual-note-box"><div class="font-bold uppercase text-[9px] mb-2 opacity-50 dm-editable" data-sync-id="${s.id}" data-sync-field="title" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-t'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">📑 ${s.title}</div><div class="manual-p dm-editable italic" data-sync-id="${s.id}" data-sync-field="content" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-c'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${window.aeonState.activeEditId === `${s.id}-c` ? s.content : window.parseAeonfallContent(s.content, false, s.id)}</div></div>`:''}
-                    ${s.type==='info'?`<div class="manual-info-box"><div class="font-bold uppercase text-[9px] mb-2 opacity-50 dm-editable" data-sync-id="${s.id}" data-sync-field="title" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-t'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">📊 ${s.title}</div><div class="manual-p dm-editable leading-relaxed" data-sync-id="${s.id}" data-sync-field="content" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-c'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${window.aeonState.activeEditId === `${s.id}-c` ? s.content : window.parseAeonfallContent(s.content, false, s.id)}</div></div>`:''}
+                    ${s.type==='info'?`<div class="manual-info-box"><div class="font-bold uppercase text-[9px] mb-2 opacity-50 dm-editable" data-sync-id="${s.id}" data-sync-field="title" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-t'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">📊 ${s.title}</div><div class="manual-p dm-editable leading-relaxed" data-sync-id="${s.id}" data-sync-field="content" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-c'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','content',this.innerHTML)">${window.aeonState.activeEditId === `${s.id}-c` ? s.content : window.parseAeonfallContent(s.content, false, s.id)}</div></div>`:''}
                     ${s.type==='table'?`<div class="table-wrap">${isDM?`<div class="flex gap-2 p-2 border-b bg-white/50"><button onclick="window.addRow('${s.id}')" class="arch-btn arch-btn-tool !py-1 !px-3">+R</button><button onclick="window.remRow('${s.id}')" class="arch-btn arch-btn-tool !py-1 !px-3">-R</button><button onclick="window.addCol('${s.id}')" class="arch-btn arch-btn-tool !py-1 !px-3">+C</button><button onclick="window.remCol('${s.id}')" class="arch-btn arch-btn-tool !py-1 !px-3">-C</button></div>`:''}<table class="manual-table"><thead><tr>${(s.tableHeaders||["Key","Val"]).map((h,i)=>`<th contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}','headers',${i},this.innerText)">${h}</th>`).join('')}</tr></thead><tbody>${JSON.parse(s.tableRows||'[]').map((row,rIdx)=>`<tr>${row.map((c,cIdx)=>`<td contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}','rows',${rIdx},this.innerText,${cIdx})">${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`:''}
                     ${s.type==='media'?`<div class="slider-bubble" id="slider-${s.id}"><div class="slider-viewport">${(s.mediaUrl || "").split(',').length > 1 ? `<div class="slider-arrow arrow-left" onclick="window.moveSlide('${s.id}', -1)">←</div><div class="slider-arrow arrow-right" onclick="window.moveSlide('${s.id}', 1)">→</div>` : ''}${(s.mediaUrl || "").split(',').map((l, i) => `<div class="slide-container ${i===0?'active':''}"><img src="${l.trim()}" class="slide-asset" onclick="window.openZoom(event, '${l.trim()}')"><div class="text-[10px] mt-4 opacity-70 text-center italic">${(s.mediaDescription || "").split(',')[i] || ''}</div></div>`).join('')}</div>${isDM ? `<div class="mt-6 border-t pt-4"><input type="text" class="w-full text-[9px] p-2 bg-black/5 border mb-2 rounded" value="${s.mediaUrl}" placeholder="Links" oninput="window.dbUpdateSection('${s.id}', 'mediaUrl', this.value)"><input type="text" class="w-full text-[9px] p-2 bg-black/5 border rounded" value="${s.mediaDescription}" placeholder="Footnotes" oninput="window.dbUpdateSection('${s.id}', 'mediaDescription', this.value)"></div>` : ''}</div>`:''}
                 </section>`;
