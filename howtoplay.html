@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Aeonfall - Operational Manual</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Roboto+Slab:wght@300;400;700&family=Special+Elite&family=MedievalSharp&family=Homemade+Apple&family=Pirata+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Roboto+Slab:wght@300;400;700&family=Handlee&family=MedievalSharp&family=Homemade+Apple&family=Pirata+One&display=swap" rel="stylesheet">
     <style>
         :root {
             --arch-burgundy: #7a1d1d;
@@ -108,7 +108,7 @@
         #dm-global-controls.active-dm { display: flex; }
 
         .manual-h1 { font-family: 'Cinzel', serif; font-weight: 900; font-size: clamp(1.8rem, 5vw, 3.5rem); color: var(--arch-burgundy); text-transform: uppercase; margin-bottom: 10px; width: 100%; letter-spacing: 2px; text-align: left; }
-        .manual-main-subtitle { font-family: 'Special Elite', cursive; font-size: 11px; color: #5d4037; opacity: 0.8; margin-bottom: 30px; letter-spacing: 1px; }
+        .manual-main-subtitle { font-family: 'Handlee', cursive; font-size: 13px; color: #5d4037; opacity: 0.8; margin-bottom: 30px; letter-spacing: 1px; }
         .manual-h2 { font-family: 'Cinzel', serif; font-weight: 900; font-size: clamp(1.2rem, 4vw, 2.2rem); border-bottom: 4px double var(--arch-burgundy); padding-bottom: 8px; text-transform: uppercase; margin-bottom: 25px; width: 100%; letter-spacing: 2px; }
         .manual-h3 { font-family: 'Cinzel', serif; font-weight: 700; font-size: clamp(1rem, 3vw, 1.4rem); border-bottom: 1px solid rgba(93, 64, 55, 0.4); padding-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; width: 100%; }
 
@@ -129,15 +129,17 @@
         }
         .manual-note-box { background: var(--sage-note-bg) !important; }
 
-        /* Unified Manual Text Blocks (Strict Pencil Look) */
+        /* Unified Manual Text Blocks (Strict Legible Handwritten Look) */
         .manual-p, 
         .manual-note-box .manual-p, 
         .manual-info-box .manual-p, 
         [contenteditable="true"]:not(.manual-h1):not(.manual-h2),
-        [contenteditable="true"] *, /* Force all nested tags (spans, b, i) to inherit charcoal */
+        [contenteditable="true"] *, 
         .manual-table td {
-            font-family: 'Special Elite', cursive !important;
+            font-family: 'Handlee', cursive !important;
             color: var(--charcoal-pencil) !important;
+            font-size: 1.1em;
+            line-height: 1.6;
         }
 
         .table-wrap {
@@ -151,7 +153,7 @@
         }
         .manual-table { width: 100%; min-width: 400px; border-collapse: collapse; text-align: left; }
         .manual-table th { padding: 10px; background: rgba(0,0,0,0.1); border-bottom: 2px solid var(--arch-burgundy); font-family: 'Cinzel'; font-size: 10px; }
-        .manual-table td { padding: 10px; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 13px; }
+        .manual-table td { padding: 10px; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 15px; }
 
         .slider-bubble { background: #ffffff !important; border: 2px solid var(--arch-gold) !important; border-radius: 20px !important; padding: 20px !important; box-shadow: 0 25px 60px rgba(0,0,0,0.18) !important; width: 100%; margin-bottom: 2.5rem; position: relative; overflow: hidden; }
 
@@ -172,7 +174,7 @@
 
         .inline-img-wrapper { position: relative; display: inline-block; margin: 10px; max-width: 100%; }
         .inline-arch-asset { max-width: 100%; border-radius: 12px; border: 3px solid var(--arch-gold); cursor: zoom-in; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-        .media-footnote { text-align: center; font-size: 10px; font-style: italic; opacity: 0.7; margin-top: 5px; }
+        .media-footnote { text-align: center; font-size: 10px; font-style: italic; opacity: 0.7; margin-top: 5px; font-family: 'Handlee', cursive; }
         .embed-purge-btn { position: absolute; top: -10px; right: -10px; background: #7a1d1d; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; cursor: pointer; border: 1px solid white; z-index: 5; }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -187,7 +189,7 @@
         
         /* Enforce global input/textarea lead pencil color */
         input[type="text"], input[type="password"], textarea {
-            font-family: 'Special Elite', cursive !important;
+            font-family: 'Handlee', cursive !important;
             color: var(--charcoal-pencil) !important;
         }
 
@@ -275,7 +277,7 @@
         import { getFirestore, collection, doc, updateDoc, setDoc, onSnapshot, addDoc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // FORCED PLAIN TEXT ON PASTE (Prevents white text)
+        // FORCED PLAIN TEXT ON PASTE (Prevents formatting contamination)
         document.addEventListener('paste', (e) => {
             const active = document.activeElement;
             if (active && active.hasAttribute('contenteditable')) {
