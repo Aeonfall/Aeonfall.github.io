@@ -174,7 +174,7 @@
             transform: scale(1.02);
         }
 
-        .aeon-size-span { display: inline-block; transition: font-size 0.05s ease-out; line-height: 1.1; }
+        .aeon-size-span { display: inline-block; transition: font-size: 0.05s ease-out; line-height: 1.1; }
 
         /* Carousel Styles */
         .slider-bubble { background: #fff; border: 2px solid var(--arch-gold); border-radius: 20px; padding: 20px; box-shadow: 0 15px 45px rgba(0,0,0,0.1); width: 100%; margin-bottom: 2.5rem; position: relative; overflow: hidden; }
@@ -200,23 +200,20 @@
             transition: 0.2s;
             padding: 15px;
             border-top: 1px solid rgba(0,0,0,0.05);
-            margin-top: auto; /* Push to bottom of flex sidebar */
+            margin-top: auto;
         }
         .system-hub-link:hover { background: rgba(0,0,0,0.02); text-decoration: underline; }
 
-        .definition-word { border-bottom: 1px dashed var(--arch-burgundy); cursor: help; position: relative; }
-        .definition-word:hover::after {
-            content: attr(data-definition);
-            position: absolute; bottom: 130%; left: 50%; transform: translateX(-50%);
-            background: #262626; color: white; padding: 10px 14px; border-radius: 6px;
-            font-size: 11px; font-family: 'Roboto Slab'; width: max-content; max-width: 250px;
-            z-index: 1000; pointer-events: none; white-space: normal; line-height: 1.5;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-        }
-
-        .inline-img-wrapper { position: relative; display: inline-block; margin: 15px; vertical-align: top; }
-        .inline-arch-asset { max-width: 400px; border: 2px solid var(--arch-gold); cursor: pointer; border-radius: 6px; transition: 0.3s; }
-        .inline-arch-asset:hover { transform: scale(1.02); }
+        /* Drag & Drop Styles */
+        .manual-section-unit { transition: opacity 0.2s, border 0.1s; }
+        .unit-dragging { opacity: 0.3 !important; }
+        .drop-zone-top { border-top: 5px solid var(--arch-burgundy) !important; }
+        .drop-zone-bottom { border-bottom: 5px solid var(--arch-burgundy) !important; }
+        .drop-zone-left { border-left: 5px solid var(--arch-burgundy) !important; }
+        .drop-zone-right { border-right: 5px solid var(--arch-burgundy) !important; }
+        .drag-handle-anchor { cursor: grab; padding: 6px; color: var(--arch-burgundy); font-size: 16px; opacity: 0.5; transition: 0.2s; user-select: none; }
+        .drag-handle-anchor:hover { opacity: 1; }
+        .drag-handle-anchor:active { cursor: grabbing; }
 
         .table-wrap { width: 100%; overflow-x: auto; background: white; border: 2px solid var(--arch-gold); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 30px; }
         .manual-table { width: 100%; border-collapse: collapse; text-align: left; }
@@ -233,7 +230,9 @@
             activeEditId: null,
             lockedSelection: null,
             saveTimer: null,
-            deleteCallback: null
+            deleteCallback: null,
+            draggedId: null,
+            dropSide: null
         };
 
         window.closeAllDropdowns = () => {};
@@ -322,7 +321,6 @@
             <div id="manual-header"></div>
             <div id="manual-sections-container"></div>
             
-            <!-- bottom orchestration bar (strictly hidden for players) -->
             <div id="dm-global-controls">
                 <button onclick="window.addManualSection('heading')" class="arch-btn">🔗 GROUP</button>
                 <button onclick="window.addManualSection('subheading')" class="arch-btn">📑 SUB</button>
@@ -340,7 +338,6 @@
         import { getFirestore, collection, doc, updateDoc, setDoc, onSnapshot, addDoc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // Global Linkages
         const firebaseConfig = { apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI", authDomain: "aeonfall-523c1.firebaseapp.com", projectId: "aeonfall-523c1", storageBucket: "aeonfall-523c1.firebasestorage.app", messagingSenderId: "716207733913", appId: "1:716207733913:web:7aac43906a70e2b5f50c08" };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
@@ -377,7 +374,7 @@
             window.renderManual(); 
         };
 
-        // Precision Sizing Logic
+        // Precision Sizing
         window.applySize = (size) => {
             if (!window.aeonState.lockedSelection) return;
             const sel = window.getSelection();
@@ -385,10 +382,8 @@
             sel.addRange(window.aeonState.lockedSelection);
             if (sel.rangeCount === 0) return;
             const range = sel.getRangeAt(0);
-            
             let container = range.commonAncestorContainer;
             if (container.nodeType === 3) container = container.parentElement;
-            
             let targetSpan = container.closest('.aeon-size-span');
             if (targetSpan) {
                 targetSpan.style.fontSize = size + 'px';
@@ -402,7 +397,6 @@
                 newRange.selectNodeContents(span);
                 window.aeonState.lockedSelection = newRange;
             }
-
             const editBox = container.closest('.dm-editable');
             if (editBox) {
                 const id = editBox.getAttribute('data-id');
@@ -443,13 +437,78 @@
             }
         };
 
-        window.triggerManualDelete = (id) => {
-            window.openDelModal('Purge archival segment?', async () => {
-                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id));
-            });
+        // DRAG & DROP ENGINE
+        window.handleDragStart = function(e, id) { 
+            if (window.aeonState.activeRole !== 'dm') return; 
+            window.aeonState.draggedId = id; 
+            e.currentTarget.classList.add('unit-dragging'); 
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', id); 
         };
 
-        // Table Operations
+        window.handleDragOver = function(e) { 
+            if (!window.aeonState.draggedId) return; 
+            e.preventDefault(); 
+            const el = e.currentTarget; 
+            const rect = el.getBoundingClientRect(); 
+            const relX = e.clientX - rect.left; 
+            const relY = e.clientY - rect.top;
+
+            el.classList.remove('drop-zone-left', 'drop-zone-right', 'drop-zone-top', 'drop-zone-bottom');
+            if (relY < rect.height * 0.25) { window.aeonState.dropSide = 'top'; el.classList.add('drop-zone-top'); }
+            else if (relY > rect.height * 0.75) { window.aeonState.dropSide = 'bottom'; el.classList.add('drop-zone-bottom'); }
+            else if (relX < rect.width * 0.33) { window.aeonState.dropSide = 'left'; el.classList.add('drop-zone-left'); }
+            else if (relX > rect.width * 0.66) { window.aeonState.dropSide = 'right'; el.classList.add('drop-zone-right'); }
+        };
+
+        window.handleDragLeave = function(e) { e.currentTarget.classList.remove('drop-zone-left', 'drop-zone-right', 'drop-zone-top', 'drop-zone-bottom'); };
+        window.handleDragEnd = function(e) { e.currentTarget.classList.remove('unit-dragging'); };
+
+        window.handleDrop = async function(e, targetId) { 
+            e.preventDefault(); 
+            e.currentTarget.classList.remove('drop-zone-left', 'drop-zone-right', 'drop-zone-top', 'drop-zone-bottom'); 
+            if (!window.aeonState.draggedId || window.aeonState.draggedId === targetId) return; 
+
+            // Find full group range if dragging a heading
+            const getGroup = (id) => {
+                const idx = window.aeonState.manualSections.findIndex(s => s.id === id);
+                if (idx === -1) return [];
+                const section = window.aeonState.manualSections[idx];
+                if (section.type !== 'heading') return [section];
+                
+                const group = [section];
+                for (let i = idx + 1; i < window.aeonState.manualSections.length; i++) {
+                    if (window.aeonState.manualSections[i].type === 'heading') break;
+                    group.push(window.aeonState.manualSections[i]);
+                }
+                return group;
+            };
+
+            const movedGroup = getGroup(window.aeonState.draggedId);
+            const remaining = window.aeonState.manualSections.filter(s => !movedGroup.map(m => m.id).includes(s.id));
+            let targetIdx = remaining.findIndex(s => s.id === targetId);
+            
+            const batch = writeBatch(db);
+            const side = window.aeonState.dropSide;
+
+            if (side === 'left' || side === 'right') {
+                movedGroup.forEach(m => batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', m.id), { width: 48 }));
+                batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', targetId), { width: 48 });
+                if (side === 'right') targetIdx += 1;
+            } else {
+                movedGroup.forEach(m => batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', m.id), { width: 100 }));
+                if (side === 'bottom') targetIdx += 1;
+            }
+
+            remaining.splice(targetIdx, 0, ...movedGroup);
+            remaining.forEach((sec, i) => { batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', sec.id), { order: i }); }); 
+
+            await batch.commit(); 
+            window.aeonState.draggedId = null; 
+            window.showToast("Archive Structural Sync");
+        };
+
+        // Table Ops
         window.addRow = async (id) => {
             const s = window.aeonState.manualSections.find(x => x.id === id); if (!s) return;
             const rows = JSON.parse(s.tableRows || '[]');
@@ -488,6 +547,12 @@
                 const r = JSON.parse(s.tableRows); r[rIdx][cIdx] = val;
                 window.dbUpdateSection(id, 'tableRows', JSON.stringify(r));
             }
+        };
+
+        window.triggerManualDelete = (id) => {
+            window.openDelModal('Purge archival segment?', async () => {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id));
+            });
         };
 
         window.addManualSection = async (type) => { 
@@ -530,7 +595,7 @@
                 
                 if (s.type === 'table') {
                     contentHTML = `<div class="table-wrap">
-                        ${isDM ? `<div class="flex gap-2 p-2 bg-gray-50 border-b"><button onclick="window.addRow('${s.id}')" class="format-tool-btn text-[9px]">+Row</button><button onclick="window.remRow('${s.id}')" class="format-tool-btn text-[9px]">-Row</button></div>` : ''}
+                        ${isDM ? `<div class="flex gap-2 p-2 bg-gray-50 border-b"><button onclick="window.addRow('${s.id}')" class="format-tool-btn">+Row</button><button onclick="window.remRow('${s.id}')" class="format-tool-btn">-Row</button></div>` : ''}
                         <table class="manual-table">
                             <thead><tr>${(s.tableHeaders||['H1','H2']).map((h, i) => `<th contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}','headers',${i},this.innerText)">${h}</th>`).join('')}</tr></thead>
                             <tbody>${JSON.parse(s.tableRows || '[]').map((row, rIdx) => `<tr>${row.map((c, cIdx) => `<td contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}','rows',${rIdx},this.innerText,${cIdx})">${c}</td>`).join('')}</tr>`).join('')}</tbody>
@@ -559,19 +624,20 @@
                 } else if (s.type === 'note' || s.type === 'info') {
                     contentHTML = `<div class="${s.type === 'note' ? 'manual-note-box' : 'manual-info-box'}">
                         <div class="text-[10px] font-bold uppercase mb-2 opacity-50">${s.type === 'note' ? '📑 Note' : '📊 Info'}</div>
-                        <div class="dm-editable ${s.type==='note'?'italic':''}" data-id="${s.id}" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','content',this.innerHTML)">${s.content}</div>
+                        <div class="dm-editable ${s.type==='note'?'italic':''}" data-id="${s.id}" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','content',this.innerHTML)">${window.aeonState.activeEditId === s.id ? s.content : window.parseAeonfallContent(s.content, isDM, s.id)}</div>
                     </div>`;
                 } else if (s.type === 'heading') {
                     contentHTML = `<h2 class="manual-h2 dm-editable" contenteditable="${isDM}" oninput="window.dbUpdateSection('${s.id}','title',this.innerText)">${s.title}</h2>`;
                 } else if (s.type === 'subheading') {
                     contentHTML = `<h3 class="manual-h3 dm-editable" contenteditable="${isDM}" oninput="window.dbUpdateSection('${s.id}','title',this.innerText)">${s.title}</h3>`;
                 } else {
-                    // This is the +TEXT type
                     contentHTML = `<div class="dm-editable leading-relaxed" data-id="${s.id}" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','content',this.innerHTML)">${window.aeonState.activeEditId === s.id ? s.content : window.parseAeonfallContent(s.content, isDM, s.id)}</div>`;
                 }
 
-                return `<section id="section-${s.id}" class="manual-section-unit relative p-2" style="${style}">
+                return `<section id="section-${s.id}" class="manual-section-unit relative p-2" style="${style}" draggable="false" 
+                    ondragstart="window.handleDragStart(event, '${s.id}')" ondragover="window.handleDragOver(event)" ondragleave="window.handleDragLeave(event)" ondragend="window.handleDragEnd(event)" ondrop="window.handleDrop(event, '${s.id}')">
                     ${isDM ? `<div class="tuner-panel">
+                        <div class="drag-handle-anchor" onmousedown="document.getElementById('section-${s.id}').setAttribute('draggable', 'true')" onmouseup="document.getElementById('section-${s.id}').setAttribute('draggable', 'false')">⠿</div>
                         <div class="flex gap-1 border-r pr-2 mr-1">
                             <button class="format-tool-btn ${s.align==='left'?'active':''}" onclick="window.dbUpdateSection('${s.id}', 'align', 'left')">L</button>
                             <button class="format-tool-btn ${s.align==='center'?'active':''}" onclick="window.dbUpdateSection('${s.id}', 'align', 'center')">C</button>
@@ -598,7 +664,18 @@
             }).join('');
         };
 
-        // UI Interaction Listeners
+        // UI Listeners
+        window.openZoom = (e, url) => { 
+            if (e) e.stopPropagation(); if (!url) return;
+            const modal = document.getElementById('lightbox-modal'); 
+            const content = document.getElementById('lightbox-content'); 
+            const isVideo = url.toLowerCase().endsWith('.mp4');
+            content.innerHTML = isVideo 
+                ? `<video src="${url}" class="max-w-[95vw] max-h-[85vh] object-contain border-2 border-white shadow-2xl" autoplay loop muted playsinline></video>`
+                : `<img src="${url}" class="max-w-[95vw] max-h-[85vh] object-contain border-2 border-white shadow-2xl">`;
+            modal.classList.remove('hidden'); 
+        };
+
         document.addEventListener('mouseup', (e) => {
             if (window.aeonState.activeRole !== 'dm') return;
             const bubble = document.getElementById('selection-bubble');
