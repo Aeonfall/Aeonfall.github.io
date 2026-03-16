@@ -11,9 +11,13 @@
             --arch-burgundy: #7a1d1d;
             --arch-gold: #bba683;
             --arch-parchment: #f4edd8;
-            --arch-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            --arch-shadow: 0 10px 30px rgba(0,0,0,0.4);
             --charcoal-pencil: #262626; 
             --sage-note-bg: #cbd4ab; 
+            --ui-pill-bg: #dbdbdb;
+            /* New Elevation Shadow */
+            --pop-shadow: 0 15px 35px rgba(0,0,0,0.12), 0 5px 15px rgba(0,0,0,0.08);
+            --carousel-shadow: 0 25px 50px rgba(0,0,0,0.18), 0 10px 20px rgba(0,0,0,0.1);
         }
 
         * { box-sizing: border-box; }
@@ -26,156 +30,218 @@
             min-height: 100vh;
             overflow-x: hidden;
             margin: 0;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        #cinematic-overlay {
-            position: fixed; inset: 0; background: #000; z-index: 20000;
-            display: flex; align-items: center; justify-content: center;
-            opacity: 0; pointer-events: none; transition: opacity 0.5s ease;
+        .dm-editable { 
+            color: var(--charcoal-pencil) !important; 
+            outline: none; 
+            min-height: 1.2em;
         }
-        #cinematic-overlay.active { opacity: 1; pointer-events: auto; }
-        .loading-text { font-family: 'Cinzel', serif; color: var(--arch-gold); font-size: 12px; letter-spacing: 4px; text-transform: uppercase; font-weight: 900; animation: pulse 1.5s infinite; }
+        .dm-editable * { color: inherit !important; background: transparent !important; }
+
+        /* Blockquote / Indentation Styling */
+        .dm-editable blockquote {
+            border-left: 2px solid var(--arch-gold);
+            padding-left: 1.5rem;
+            margin-left: 1rem;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-style: italic;
+            opacity: 0.9;
+        }
+
+        /* Granular Indent Span */
+        .aeon-indent-span { 
+            display: inline-block; 
+            transition: margin-left 0.2s ease;
+            vertical-align: top;
+        }
+
+        /* Definitions & Inline Assets */
+        .definition-word {
+            color: var(--arch-burgundy);
+            border-bottom: 1px dashed var(--arch-burgundy);
+            cursor: help;
+            position: relative;
+            font-weight: 700;
+        }
+        .definition-word:hover::after {
+            content: attr(data-definition);
+            position: absolute;
+            bottom: 120%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #262626;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 11px;
+            width: max-content;
+            max-width: 200px;
+            z-index: 100;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            font-family: 'Roboto Slab', serif;
+            font-weight: 400;
+            font-style: normal;
+            line-height: 1.4;
+            pointer-events: none;
+            white-space: normal;
+            text-align: center;
+        }
+
+        .inline-img-wrapper { margin: 20px 0; text-align: center; }
+        .inline-arch-asset { 
+            display: inline-block; 
+            max-width: 100%; 
+            border-radius: 8px; 
+            border: 1px solid rgba(0,0,0,0.1); 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            cursor: zoom-in;
+        }
+
+        /* Selection Bubble */
+        #selection-bubble {
+            position: fixed;
+            z-index: 210000;
+            background: var(--arch-burgundy);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-family: 'Cinzel', serif;
+            font-size: 10px;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            display: none;
+            border: 2px solid var(--arch-gold);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            user-select: none;
+            transition: opacity 0.2s ease;
+            pointer-events: auto;
+        }
+
+        /* Nav & Overlay */
+        #nav-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 900; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        #nav-overlay.active { opacity: 1; pointer-events: auto; }
 
         .parchment-container {
-            max-width: 1400px; margin: 0 auto; background: var(--arch-parchment);
+            max-width: 1600px; margin: 0 auto; background: var(--arch-parchment);
             background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
             box-shadow: 0 50px 100px rgba(0,0,0,0.8), inset 0 0 100px rgba(0,0,0,0.05);
-            position: relative; display: flex; min-height: 100vh;
-            border: 1px solid #dcd1b2; overflow: hidden;
+            position: relative; display: flex; min-height: 100vh; border: 1px solid #dcd1b2; overflow: hidden;
         }
 
         .manual-nav {
-            width: 300px; background: rgba(0,0,0,0.04); border-right: 1px solid rgba(122, 29, 29, 0.15);
-            padding: 40px 0; flex-shrink: 0; display: flex; flex-direction: column;
-            transition: transform 0.3s ease; z-index: 1000; height: 100vh; overflow: hidden;
+            width: 300px; background: rgba(0,0,0,0.03); border-right: 1px solid rgba(0,0,0,0.1);
+            padding: 40px 0 0 0; flex-shrink: 0; display: flex; flex-direction: column;
+            transition: transform 0.3s ease; z-index: 1000; height: 100vh;
         }
-        .sidebar-header { padding: 0 20px 20px 20px; flex-shrink: 0; }
-        .sidebar-footer { padding: 20px 20px 0 20px; flex-shrink: 0; border-top: 1px solid rgba(0,0,0,0.05); margin-top: auto; }
         #nav-list { flex-grow: 1; overflow-y: auto; padding: 20px; scrollbar-width: thin; scrollbar-color: var(--arch-burgundy) transparent; }
 
-        @media (max-width: 1024px) { .manual-nav { position: fixed; left: 0; top: 0; bottom: 0; transform: translateX(-100%); background: var(--arch-parchment); box-shadow: 10px 0 30px rgba(0,0,0,0.2); } .manual-nav.open { transform: translateX(0); } }
+        @media (max-width: 1024px) { 
+            .manual-nav { position: fixed; left: 0; top: 0; bottom: 0; transform: translateX(-100%); background: var(--arch-parchment); } 
+            .manual-nav.open { transform: translateX(0); } 
+            .manual-body { padding: 80px 20px 140px 20px !important; }
+        }
 
         .shelf-item { 
+            font-family: 'Cinzel', serif; font-size: 11px; font-weight: 900; text-transform: uppercase; 
+            color: var(--charcoal-pencil); padding: 12px 18px; margin-bottom: 6px; cursor: pointer; 
+            border-radius: 4px; transition: 0.3s; border-left: 4px solid transparent; background: rgba(0,0,0,0.03);
+            letter-spacing: 1px;
+        }
+        .shelf-item:hover { background: rgba(122, 29, 29, 0.05); border-left-color: var(--arch-burgundy); }
+        .shelf-item.active { background: var(--arch-burgundy); color: white; border-left-color: var(--arch-gold); }
+
+        .manual-body { flex-grow: 1; padding: 60px 60px 140px 60px; height: 100vh; overflow-y: auto; scroll-behavior: smooth; position: relative; }
+        #manual-sections-container { display: flex; flex-direction: row; flex-wrap: wrap; align-items: flex-start; width: 100%; gap: 15px; }
+
+        /* DM Controls Bar */
+        #dm-global-controls {
+            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
+            display: none !important; 
+            gap: 12px; padding: 12px 35px; background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px); border-radius: 100px; border: 1px solid rgba(122, 29, 29, 0.2);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3); z-index: 10000; align-items: center;
+        }
+        #dm-global-controls.dm-active { display: flex !important; }
+
+        .arch-btn { 
             font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; text-transform: uppercase; 
-            color: var(--charcoal-pencil); padding: 14px 18px; margin-bottom: 8px; cursor: pointer; 
-            border-radius: 2px; transition: 0.3s; border-left: 5px solid transparent; background: rgba(0,0,0,0.02);
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.05); letter-spacing: 1px;
+            padding: 8px 20px; border-radius: 30px; cursor: pointer; border: none; 
+            background: var(--arch-burgundy); color: white; white-space: nowrap; transition: 0.2s;
+            box-shadow: 0 4px 10px rgba(122, 29, 29, 0.2); display: flex; align-items: center; gap: 8px;
         }
-        .shelf-item:hover { background: rgba(122, 29, 29, 0.06); border-left-color: var(--arch-burgundy); transform: translateX(5px); }
-        .shelf-item.active { background: var(--arch-burgundy); color: white; border-left-color: var(--arch-gold); box-shadow: 4px 4px 15px rgba(122, 29, 29, 0.3); }
+        .arch-btn:hover { background: #5a1515; transform: translateY(-1px); }
 
-        .manual-body { flex-grow: 1; padding: 60px 40px 100px 80px; height: 100vh; overflow-y: auto; scroll-behavior: smooth; position: relative; }
-        
-        #manual-sections-container { display: flex; flex-direction: row; flex-wrap: wrap; align-items: flex-start; width: 100%; gap: 10px; }
-
-        /* Drag Feedbacks */
-        .drop-zone-left { border-left: 8px solid var(--arch-gold) !important; padding-left: 10px; }
-        .drop-zone-right { border-right: 8px solid var(--arch-gold) !important; padding-right: 10px; }
-        .drop-zone-top { border-top: 5px solid var(--arch-gold) !important; }
-        .drop-zone-bottom { border-bottom: 5px solid var(--arch-gold) !important; }
-        .unit-dragging { opacity: 0.2 !important; transform: scale(0.98); border: 2px dashed var(--arch-burgundy) !important; background: rgba(0,0,0,0.02); }
-
-        #dm-global-controls { 
-            position: sticky; bottom: 20px; margin-left: auto; margin-right: 20px;
-            z-index: 10000; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); 
-            padding: 10px 20px; border-radius: 50px; border: 1.5px solid rgba(122, 29, 29, 0.3); 
-            box-shadow: 0 15px 45px rgba(0,0,0,0.3); display: none; gap: 10px; width: fit-content; align-items: center;
+        /* Block Controls */
+        .tuner-panel { 
+            font-size: 8px; gap: 8px; padding: 10px 16px; flex-wrap: wrap; display: flex; align-items: center; 
+            background: white; border: 1px solid var(--arch-gold); border-radius: 30px; margin-bottom: 12px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08); 
         }
-        #dm-global-controls.active-dm { display: flex; }
 
-        .manual-h1 { font-family: 'Cinzel', serif; font-weight: 900; font-size: clamp(2rem, 5vw, 3.5rem); color: var(--arch-burgundy); text-transform: uppercase; margin-bottom: 10px; width: 100%; letter-spacing: 2px; text-align: left; }
-        .manual-main-subtitle { font-family: 'Special Elite', cursive; font-size: 12px; color: #5d4037; opacity: 0.8; margin-bottom: 40px; letter-spacing: 2px; }
-        .manual-h2 { font-family: 'Cinzel', serif; font-weight: 900; font-size: clamp(1.4rem, 4vw, 2.2rem); border-bottom: 4px double var(--arch-burgundy); padding-bottom: 8px; text-transform: uppercase; margin-bottom: 25px; width: 100%; letter-spacing: 2px; }
-        .manual-h3 { font-family: 'Cinzel', serif; font-weight: 700; font-size: clamp(1.1rem, 3vw, 1.4rem); border-bottom: 1px solid rgba(93, 64, 55, 0.4); padding-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; width: 100%; }
+        .tuner-num-input { border: 1px solid #ddd; width: 60px; text-align: center; border-radius: 6px; font-family: monospace; font-size: 13px; padding: 4px; color: var(--charcoal-pencil); }
+        .format-tool-btn { font-weight: 900; border: 1px solid #ddd; border-radius: 6px; padding: 4px 12px; cursor: pointer; font-size: 11px; transition: 0.2s; background: #fff; color: var(--charcoal-pencil); }
+        .format-tool-btn:hover { background: #f9f9f9; border-color: var(--arch-burgundy); }
+        .format-tool-btn.active { background: var(--arch-burgundy); color: white; border-color: var(--arch-gold); }
 
-        .tuner-panel { font-size: 8px; gap: 12px; padding: 10px 15px; flex-wrap: wrap; display: flex; align-items: center; background: white; border: 1px solid var(--arch-gold); border-radius: 30px; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .tuner-label { font-weight: 900; color: var(--arch-burgundy); text-transform: uppercase; font-size: 7px; letter-spacing: 1px; margin-bottom: 2px; }
-        .tuner-slider { accent-color: var(--arch-burgundy); width: 60px; height: 12px; }
-        .align-btn { width: 22px; height: 22px; border: 1px solid #ddd; background: #f9f9f9; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #555; transition: 0.2s; cursor: pointer; }
-        .align-btn.active { background: var(--arch-burgundy); color: white; border-color: var(--arch-burgundy); }
-        .purge-btn { border-color: #fecaca; color: #ef4444; }
-        .purge-btn:hover { background: #ef4444; color: white; border-color: #ef4444; }
+        /* Core Typography */
+        .manual-h1 { font-family: 'Cinzel', serif; font-weight: 900; font-size: 65px; color: var(--arch-burgundy); text-transform: uppercase; margin-bottom: 5px; line-height: 0.9; letter-spacing: -2px; }
+        .manual-h2 { font-family: 'Cinzel', serif; font-weight: 900; font-size: clamp(1.2rem, 4vw, 2.2rem); border-bottom: 4px double var(--arch-burgundy); padding-bottom: 8px; text-transform: uppercase; margin-bottom: 25px; width: 100%; letter-spacing: 2px; color: var(--arch-burgundy); }
+        .manual-h3 { font-family: 'Cinzel', serif; font-weight: 700; font-size: clamp(1rem, 3vw, 1.4rem); border-bottom: 1px solid rgba(93, 64, 55, 0.4); padding-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; width: 100%; color: var(--charcoal-pencil); }
 
-        .arch-btn { font-family: 'Cinzel', serif; font-size: 8px; font-weight: 900; text-transform: uppercase; padding: 10px 18px; border-radius: 25px; cursor: pointer; border: 1px solid var(--arch-burgundy); transition: 0.2s; display: inline-flex; align-items: center; gap: 4px; background: var(--arch-burgundy); color: white; white-space: nowrap; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .arch-btn:hover { background: #000; border-color: #000; transform: translateY(-2px); }
-
-        /* NOTE & INFO BOXES - FRAMED WITH SHADOW */
         .manual-note-box, .manual-info-box { 
-            background: #ffffff !important; 
-            border-radius: 20px !important; 
-            padding: clamp(20px, 5vw, 40px) !important; 
-            box-shadow: 0 15px 45px rgba(0,0,0,0.15) !important; 
-            border: 2px solid var(--arch-gold) !important;
-            width: 100%; 
-            margin-bottom: 3.5rem; 
-            position: relative; 
-            color: var(--charcoal-pencil);
+            border: 2px solid var(--arch-gold); border-radius: 20px; padding: 25px; margin-bottom: 25px; position: relative; background: white; box-shadow: var(--pop-shadow); transition: transform 0.3s ease;
         }
         .manual-note-box { background: var(--sage-note-bg) !important; }
 
-        /* STRICT GRAPHITE COLOR Protocol */
-        .dm-editable, .dm-editable *, [contenteditable], [contenteditable] *, .manual-p, .manual-h2, .manual-h3 { color: #262626 !important; }
-        body.dm-mode-active .dm-editable { border-bottom: 1px dashed rgba(122, 29, 29, 0.2); }
-        .drag-handle-anchor { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; color: var(--arch-burgundy); font-size: 18px; cursor: grab; opacity: 0.6; transition: 0.2s; margin-right: 10px; user-select: none; }
-        .drag-handle-anchor:hover { opacity: 1; background: rgba(122, 29, 29, 0.05); transform: scale(1.1); }
+        .toast { position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%); background: #1a0f0a; color: #f4edd8; padding: 12px 28px; border-radius: 40px; z-index: 2000000; opacity: 0; transition: opacity 0.3s; font-family: 'Cinzel'; font-size: 11px; font-weight: 900; border: 1px solid var(--arch-burgundy); pointer-events: none; }
+        
+        .role-pill { background: var(--ui-pill-bg); border-radius: 50px; padding: 4px; display: inline-flex; border: 1px solid rgba(0,0,0,0.08); width: 180px; justify-content: space-between; box-shadow: inset 0 2px 5px rgba(0,0,0,0.1); margin-top: 15px; }
+        .role-tab { flex: 1; padding: 7px 0; cursor: pointer; border-radius: 50px; font-size: 11px; font-weight: 900; text-transform: uppercase; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); color: #5d4037; text-align: center; }
+        .role-tab.active { background: var(--arch-burgundy); color: white; box-shadow: 0 4px 12px rgba(122,29,29,0.35); transform: scale(1.02); }
 
-        /* TABLE STYLES - FRAMED WITH SHADOW */
-        .table-wrap {
-            width: 100%;
-            border: 2px solid var(--arch-gold);
-            box-shadow: 0 15px 45px rgba(0,0,0,0.15);
-            border-radius: 8px;
-            overflow: hidden;
-            margin-bottom: 3rem;
-            background: white;
-        }
+        .aeon-size-span { display: inline; transition: font-size 0.05s ease-out; }
+
+        /* Carousel Styles */
+        .slider-bubble { background: #fff; border: 2px solid var(--arch-gold); border-radius: 20px; padding: 20px; box-shadow: var(--carousel-shadow); width: 100%; margin-bottom: 2.5rem; position: relative; overflow: hidden; }
+        .slider-viewport { position: relative; display: flex; align-items: center; justify-content: center; min-height: 250px; }
+        .slide-container { display: none; width: 100%; text-align: center; }
+        .slide-container.active { display: block; animation: fadeIn 0.4s ease; }
+        .slide-asset { max-width: 100%; max-height: 600px; border-radius: 8px; cursor: zoom-in; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 1px solid rgba(0,0,0,0.05); }
+        .slider-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: var(--arch-burgundy); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; font-weight: bold; border: 1px solid var(--arch-gold); box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: 0.2s; }
+        .arrow-left { left: 10px; }
+        .arrow-right { right: 10px; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Drag & Drop Styles */
+        .manual-section-unit { transition: opacity 0.2s, border 0.1s; }
+        .unit-dragging { opacity: 0.3 !important; }
+        .drop-zone-top { border-top: 5px solid var(--arch-burgundy) !important; }
+        .drop-zone-bottom { border-bottom: 5px solid var(--arch-burgundy) !important; }
+        .drop-zone-left { border-left: 5px solid var(--arch-burgundy) !important; }
+        .drop-zone-right { border-right: 5px solid var(--arch-burgundy) !important; }
+        .drag-handle-anchor { cursor: grab; padding: 6px; color: var(--arch-burgundy); font-size: 16px; opacity: 0.5; transition: 0.2s; user-select: none; }
+        .drag-handle-anchor:hover { opacity: 1; }
+
+        .table-wrap { width: 100%; overflow-x: auto; background: white; border: 2px solid var(--arch-gold); border-radius: 12px; box-shadow: var(--pop-shadow); margin-bottom: 30px; }
         .manual-table { width: 100%; border-collapse: collapse; text-align: left; }
-        .manual-table th { padding: 12px; background: rgba(0,0,0,0.1); border-bottom: 2px solid var(--arch-burgundy); font-family: 'Cinzel'; font-size: 11px; }
-        .manual-table td { padding: 12px; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 14px; }
-        .manual-table tbody tr:nth-child(even) { background-color: var(--sage-note-bg) !important; }
+        .manual-table th { background: rgba(0,0,0,0.05); padding: 14px; font-family: 'Cinzel', serif; border-bottom: 2px solid var(--arch-burgundy); font-size: 11px; }
+        .manual-table td { padding: 14px; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 13px; }
 
-        /* HYPERLINK STYLES */
-        .arch-hyperlink { color: var(--arch-burgundy) !important; text-decoration: underline; font-weight: 700; transition: color 0.2s; }
-        .arch-hyperlink:hover { color: #000 !important; }
-
-        /* IMAGE SLIDER */
-        .slider-bubble { background: #ffffff !important; border: 2px solid var(--arch-gold) !important; border-radius: 40px !important; padding: 40px !important; box-shadow: 0 25px 60px rgba(0,0,0,0.18) !important; width: 100%; margin-bottom: 3.5rem; position: relative; overflow: hidden; }
-        .slider-viewport { width: 100%; position: relative; display: flex; align-items: center; justify-content: center; min-height: 250px; }
-        .slide-container { display: none; width: 100%; flex-direction: column; align-items: center; }
-        .slide-container.active { display: flex; animation: fadeIn 0.5s ease; }
-        .slide-asset { max-width: 100%; height: auto; border-radius: 4px; cursor: zoom-in; }
-        .slider-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; background: var(--arch-burgundy); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; opacity: 0.8; }
-        .arrow-left { left: 10px; } .arrow-right { right: 10px; }
-
-        /* Footnote Styling - Center, Small, Italic, Bordered Image */
-        .inline-img-wrapper { margin: 2.5rem 0; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; position: relative; }
-        .inline-arch-asset { 
-            max-width: 100%; 
-            height: auto; 
-            border-radius: 4px; 
-            display: block; 
-            margin: 0 auto; 
-            border: 2px solid var(--arch-gold);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
-            cursor: zoom-in; 
-            transition: transform 0.3s ease;
-        }
-        .inline-arch-asset:hover { transform: scale(1.01); }
-
-        .embed-purge-btn { position: absolute; top: -12px; right: -12px; width: 28px; height: 28px; background: #ef4444; color: white; border-radius: 50%; border: 3px solid white; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 900; cursor: pointer; z-index: 100; transition: 0.2s; }
-        .media-footnote { color: #262626; font-size: 0.7rem; font-style: italic; margin-top: 10px; opacity: 0.7; text-align: center; font-family: 'Special Elite', cursive; width: 100%; display: block; }
-
-        .role-pill { background: rgba(0,0,0,0.05); border-radius: 99px; padding: 4px; display: inline-flex; gap: 4px; border: 1px solid rgba(0,0,0,0.1); margin: 20px auto 0 auto; }
-        .role-tab { padding: 8px 24px; font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; border-radius: 99px; transition: 0.3s; color: #5d4037; text-transform: uppercase; cursor: pointer; user-select: none; }
-        .role-tab.active { background: var(--arch-burgundy) !important; color: white !important; }
-
-        .hidden { display: none !important; }
-        .toast { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); background: #1a0f0a; color: #f4edd8; padding: 12px 32px; border-radius: 40px; z-index: 2000000; opacity: 0; transition: 0.3s; font-family: 'Cinzel'; font-size: 11px; font-weight: 900; border: 1px solid var(--arch-burgundy); pointer-events: none; }
+        /* Cinematic Overlay */
+        .loading-text { font-family: 'Cinzel', serif; color: var(--arch-gold); font-size: 14px; letter-spacing: 4px; text-transform: uppercase; animation: cinematicPulse 2s infinite; }
+        @keyframes cinematicPulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
     </style>
 </head>
 <body class="dm-mode-active" onclick="window.closeAllDropdowns()">
 
     <div id="toast" class="toast">Lore Data Synchronized</div>
+    <div id="selection-bubble" onmousedown="window.toggleSelectionLock(event)">Select</div>
 
     <div id="nav-toggle" class="fixed top-4 left-4 z-[1500] bg-[#7a1d1d] text-white p-2 rounded lg:hidden" onclick="window.toggleNav()">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
@@ -220,251 +286,425 @@
         <div class="manual-body" id="content-pane" onclick="window.closeAllDropdowns()">
             <div id="manual-header"></div>
             <div id="manual-sections-container"></div>
+            
             <div id="dm-global-controls">
-                <button onclick="window.addManualSection('heading')" class="arch-btn">🔗 + Group</button>
-                <button onclick="window.addManualSection('subheading')" class="arch-btn">📑 + Subhead</button>
-                <button onclick="window.addManualSection('text')" class="arch-btn">+ Text</button>
-                <button onclick="window.addManualSection('table')" class="arch-btn">+ Table</button>
-                <button onclick="window.addManualSection('note')" class="arch-btn">📑 Note</button>
-                <button onclick="window.addManualSection('info')" class="arch-btn">📊 Info</button>
-                <button onclick="window.addManualSection('media')" class="arch-btn">🖼 Carousel</button>
+                <button onclick="window.addLoreSection('heading')" class="arch-btn">🔗 GROUP</button>
+                <button onclick="window.addLoreSection('subheading')" class="arch-btn">📑 SUB</button>
+                <button onclick="window.addLoreSection('text')" class="arch-btn">✚ TEXT</button>
+                <button onclick="window.addLoreSection('table')" class="arch-btn">✚ TBL</button>
+                <button onclick="window.addLoreSection('note')" class="arch-btn">📑 NOTE</button>
+                <button onclick="window.addLoreSection('info')" class="arch-btn">📊 INFO</button>
+                <button onclick="window.addLoreSection('media')" class="arch-btn">🖼 CAROUSEL</button>
             </div>
-        </div>
-    </div>
-
-    <div id="del-modal" class="fixed inset-0 z-[110000] flex items-center justify-center p-4 hidden text-black">
-        <div class="absolute inset-0 bg-black/90" onclick="document.getElementById('del-modal').classList.add('hidden')"></div>
-        <div class="bg-white p-10 rounded-2xl w-full max-w-sm text-center relative z-10 shadow-2xl">
-            <h3 class="text-2xl font-serif font-black text-red-700 uppercase mb-4">Purge Record</h3>
-            <p id="del-modal-text" class="text-xs text-slate-500 mb-8 italic">This entry will be lost.</p>
-            <button id="confirm-del-btn" class="w-full bg-red-700 text-white py-4 rounded-xl font-black text-xs uppercase shadow-lg">Confirm erasure</button>
-            <button onclick="document.getElementById('del-modal').classList.add('hidden')" class="w-full bg-gray-100 text-gray-400 py-3 rounded-xl font-bold uppercase text-[10px] mt-2">Cancel</button>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, collection, doc, updateDoc, setDoc, onSnapshot, addDoc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // GLOBAL STUBS
-        window.closeAllDropdowns = () => {};
-        window.showToast = (m) => { 
-            const t = document.getElementById('toast'); 
-            if(t) { t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 3000); } 
-        };
-
-        // EXPLICIT GLOBAL STATE
-        window.aeonState = {
-            manualSections: [],
-            manualHeader: { title: "Lore Archives", subtitle: "Verifying synchronization." },
-            activeRole: localStorage.getItem('aeonfall_role') || 'player',
-            activeEditId: null,
-            userAuth: null,
-            saveTimer: null,
-            draggedId: null,
-            dropSide: null,
-            deleteCallback: null
-        };
-
-        window.toggleNav = () => { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('nav-overlay').classList.toggle('active'); };
-        
-        window.openDelModal = (text, callback) => {
-            const txt = document.getElementById('del-modal-text');
-            if (txt) txt.innerText = text;
-            window.aeonState.deleteCallback = callback;
-            document.getElementById('del-modal')?.classList.remove('hidden');
-        };
-
-        window.openZoom = (e, url) => { 
-            if (e) e.stopPropagation();
-            if (!url) return;
-            const modal = document.getElementById('lightbox-modal'); 
-            const content = document.getElementById('lightbox-content'); 
-            if (!modal || !content) return;
-            const isVideo = url.toLowerCase().endsWith('.mp4');
-            content.innerHTML = isVideo 
-                ? `<video src="${url}" class="max-w-[95vw] max-h-[85vh] object-contain border-4 border-white shadow-2xl" autoplay loop muted playsinline></video>`
-                : `<img src="${url}" class="max-w-[95vw] max-h-[85vh] object-contain border-4 border-white shadow-2xl">`;
-            modal.classList.remove('hidden'); 
-        };
-
-        window.openArchiveSequence = (url) => {
-            document.getElementById('cinematic-overlay')?.classList.add('active');
-            setTimeout(() => { window.location.href = url; }, 800);
-        };
-
-        window.addEventListener('paste', function(e) {
-            if (e.target.hasAttribute('contenteditable') || e.target.closest('[contenteditable="true"]')) {
-                e.preventDefault();
-                const text = (e.originalEvent || e).clipboardData.getData('text/plain');
-                document.execCommand('insertText', false, text);
-            }
-        });
-
-        const firebaseConfig = { apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI", authDomain: "aeonfall-523c1.firebaseapp.com", projectId: "aeonfall-523c1", storageBucket: "aeonfall-523c1.firebasestorage.app", messagingSenderId: "716207733913", appId: "1:716207733913:web:7aac43906a70e2b5f50c08" };
+        // CONFIG & INITIALIZATION (Storage isolation for Lore Archives)
+        const firebaseConfigFallback = { apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI", authDomain: "aeonfall-523c1.firebaseapp.com", projectId: "aeonfall-523c1", storageBucket: "aeonfall-523c1.firebasestorage.app", messagingSenderId: "716207733913", appId: "1:716207733913:web:7aac43906a70e2b5f50c08" };
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : firebaseConfigFallback;
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'aeonfall-manager-v2';
 
-        window.setEditing = (id) => { window.aeonState.activeEditId = id; };
-        window.clearEditing = () => { window.aeonState.activeEditId = null; };
+        window.aeonState = {
+            loreSections: [],
+            loreHeader: { title: "ARCHIVAL RECORDS", subtitle: "World Origin & Lore" },
+            activeRole: localStorage.getItem('aeonfall_role') || 'player',
+            activeEditId: null,
+            lockedSelection: null,
+            saveTimer: null,
+            draggedId: null,
+            dropSide: null
+        };
 
-        window.setRole = (r) => { if(r === 'dm') document.getElementById('pass-modal')?.classList.remove('hidden'); else { window.aeonState.activeRole = 'player'; localStorage.setItem('aeonfall_role', 'player'); window.updateRoleUI(); } };
-        window.authDm = () => { if(document.getElementById('dm-pass')?.value === 'Rew4994') { window.aeonState.activeRole='dm'; localStorage.setItem('aeonfall_role', 'dm'); document.getElementById('pass-modal')?.classList.add('hidden'); window.updateRoleUI(); } else { window.showToast("Authority Refused"); } };
+        // UI Handlers
+        window.closeAllDropdowns = () => {};
+        window.showToast = (m) => { 
+            const t = document.getElementById('toast'); 
+            if(t) { t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 3000); } 
+        };
+        window.toggleNav = () => { 
+            document.getElementById('sidebar')?.classList.toggle('open'); 
+            document.getElementById('nav-overlay')?.classList.toggle('active'); 
+        };
+        window.openArchiveSequence = (f) => { window.location.href = f; };
+
+        // AUTH Logic
+        window.authDm = () => { 
+            if(document.getElementById('dm-pass')?.value === 'Rew4994') { 
+                window.aeonState.activeRole='dm'; 
+                localStorage.setItem('aeonfall_role', 'dm'); 
+                document.getElementById('pass-modal')?.classList.add('hidden'); 
+                window.updateRoleUI(); 
+            } else { 
+                window.showToast("Authority Refused"); 
+            } 
+        };
+
+        window.setRole = (r) => { 
+            if(r === 'dm') document.getElementById('pass-modal')?.classList.remove('hidden'); 
+            else { 
+                window.aeonState.activeRole = 'player'; 
+                localStorage.setItem('aeonfall_role', 'player'); 
+                window.updateRoleUI(); 
+            } 
+        };
+
         window.updateRoleUI = () => { 
             const isDM = window.aeonState.activeRole === 'dm'; 
             document.body.classList.toggle('dm-mode-active', isDM); 
-            document.getElementById('dm-global-controls')?.classList.toggle('active-dm', isDM); 
+            const ctrl = document.getElementById('dm-global-controls');
+            if (ctrl) isDM ? ctrl.classList.add('dm-active') : ctrl.classList.remove('dm-active');
             document.getElementById('role-dm')?.classList.toggle('active', isDM); 
             document.getElementById('role-player')?.classList.toggle('active', !isDM); 
-            window.renderManual(); 
+            window.renderLore(); 
         };
 
-        window.handleHandleDown = (e, id) => { const section = document.getElementById(`section-${id}`); if (section) section.setAttribute('draggable', 'true'); };
-        window.handleHandleUp = (e, id) => { const section = document.getElementById(`section-${id}`); if (section) section.setAttribute('draggable', 'false'); };
-        window.handleDragLeave = (e) => { e.currentTarget.classList.remove('drop-zone-left', 'drop-zone-right', 'drop-zone-top', 'drop-zone-bottom'); };
+        // Formatting logic
+        window.applySize = (size) => {
+            const sel = window.getSelection();
+            if (!window.aeonState.lockedSelection) {
+                if (sel.rangeCount > 0 && sel.toString().trim().length > 0) {
+                    window.aeonState.lockedSelection = sel.getRangeAt(0).cloneRange();
+                    const bubble = document.getElementById('selection-bubble');
+                    if (bubble) { bubble.innerText = "Unselect"; bubble.style.background = "#22c55e"; bubble.style.display = "block"; }
+                } else { return; }
+            }
+            sel.removeAllRanges(); sel.addRange(window.aeonState.lockedSelection);
+            if (sel.rangeCount === 0) return;
+            const range = sel.getRangeAt(0);
+            let container = range.commonAncestorContainer;
+            if (container.nodeType === 3) container = container.parentElement;
+            let targetSpan = container.closest('.aeon-size-span');
+            if (targetSpan) {
+                targetSpan.style.fontSize = size + 'px';
+            } else {
+                const span = document.createElement('span'); span.className = 'aeon-size-span'; span.style.fontSize = size + 'px';
+                try { range.surroundContents(span); } catch(e) { const content = range.extractContents(); span.appendChild(content); range.insertNode(span); }
+                const newRange = document.createRange(); newRange.selectNodeContents(span);
+                sel.removeAllRanges(); sel.addRange(newRange); window.aeonState.lockedSelection = newRange.cloneRange();
+            }
+            const editBox = container.closest('.dm-editable');
+            if (editBox) { const id = editBox.getAttribute('data-id'); if (id) window.dbUpdateSection(id, 'content', editBox.innerHTML); }
+        };
 
+        window.execGranularIndent = (dir) => {
+            const sel = window.getSelection();
+            if (!window.aeonState.lockedSelection) {
+                if (sel.rangeCount > 0 && sel.toString().trim().length > 0) { window.aeonState.lockedSelection = sel.getRangeAt(0).cloneRange(); } else { return; }
+            }
+            sel.removeAllRanges(); sel.addRange(window.aeonState.lockedSelection);
+            if (sel.rangeCount === 0) return;
+            const range = sel.getRangeAt(0);
+            let container = range.commonAncestorContainer;
+            if (container.nodeType === 3) container = container.parentElement;
+            let targetSpan = container.closest('.aeon-indent-span');
+            if (dir === 'indent') {
+                if (targetSpan) { targetSpan.style.marginLeft = (parseInt(targetSpan.style.marginLeft || 0) + 20) + 'px'; } else {
+                    const span = document.createElement('span'); span.className = 'aeon-indent-span'; span.style.marginLeft = '20px';
+                    try { range.surroundContents(span); } catch(e) { const content = range.extractContents(); span.appendChild(content); range.insertNode(span); }
+                    const newRange = document.createRange(); newRange.selectNodeContents(span);
+                    sel.removeAllRanges(); sel.addRange(newRange); window.aeonState.lockedSelection = newRange.cloneRange();
+                }
+            } else {
+                if (targetSpan) {
+                    let current = parseInt(targetSpan.style.marginLeft || 0);
+                    if (current > 20) { targetSpan.style.marginLeft = (current - 20) + 'px'; } else {
+                        const parent = targetSpan.parentNode; while (targetSpan.firstChild) { parent.insertBefore(targetSpan.firstChild, targetSpan); }
+                        parent.removeChild(targetSpan); window.aeonState.lockedSelection = null;
+                        const bubble = document.getElementById('selection-bubble'); if (bubble) bubble.style.display = 'none';
+                    }
+                }
+            }
+            const editBox = container.closest('.dm-editable');
+            if (editBox) { const id = editBox.getAttribute('data-id'); if (id) window.dbUpdateSection(id, 'content', editBox.innerHTML); }
+        };
+
+        window.execFormat = (cmd, val = null) => {
+            const sel = window.getSelection();
+            if (window.aeonState.lockedSelection) { sel.removeAllRanges(); sel.addRange(window.aeonState.lockedSelection); }
+            document.execCommand(cmd, false, val);
+            if (sel.rangeCount > 0) { window.aeonState.lockedSelection = sel.getRangeAt(0).cloneRange(); }
+            const focused = document.activeElement;
+            if (focused && (focused.classList.contains('dm-editable') || focused.closest('.dm-editable'))) {
+                const box = focused.closest('.dm-editable') || focused;
+                const id = box.getAttribute('data-id'); if (id) window.dbUpdateSection(id, 'content', box.innerHTML);
+            }
+        };
+
+        window.insertTemplate = (type) => {
+            const tpl = type === 'img' ? '{{URL | Caption}}' : '[[Text | definition]]'; window.execFormat('insertHTML', tpl);
+        };
+
+        window.toggleSelectionLock = (e) => {
+            e.preventDefault(); e.stopPropagation();
+            const bubble = document.getElementById('selection-bubble'); const sel = window.getSelection();
+            if (window.aeonState.lockedSelection) {
+                if (sel.toString().trim().length > 0) {
+                    window.aeonState.lockedSelection = sel.getRangeAt(0).cloneRange(); bubble.innerText = "Unselect"; bubble.style.background = "#22c55e"; 
+                } else {
+                    window.aeonState.lockedSelection = null; bubble.innerText = "Select"; bubble.style.background = 'var(--arch-burgundy)'; bubble.style.display = "none";
+                }
+            } else {
+                if (sel.rangeCount > 0 && sel.toString().trim().length > 0) { window.aeonState.lockedSelection = sel.getRangeAt(0).cloneRange(); bubble.innerText = "Unselect"; bubble.style.background = "#22c55e"; }
+            }
+        };
+
+        // DRAG & DROP engine
         window.handleDragStart = function(e, id) { 
             if (window.aeonState.activeRole !== 'dm') return; 
             window.aeonState.draggedId = id; e.currentTarget.classList.add('unit-dragging'); 
-            e.dataTransfer.setData('text/plain', id);
+            e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', id); 
         };
 
         window.handleDragOver = function(e) { 
-            if (!window.aeonState.draggedId) return; e.preventDefault(); 
-            const el = e.currentTarget; const rect = el.getBoundingClientRect(); 
+            if (!window.aeonState.draggedId) return; 
+            e.preventDefault(); const el = e.currentTarget; const rect = el.getBoundingClientRect(); 
             const relX = e.clientX - rect.left; const relY = e.clientY - rect.top;
             el.classList.remove('drop-zone-left', 'drop-zone-right', 'drop-zone-top', 'drop-zone-bottom');
-            if (relY < rect.height / 4) { window.aeonState.dropSide = 'top'; el.classList.add('drop-zone-top'); }
+            if (relY < rect.height * 0.25) { window.aeonState.dropSide = 'top'; el.classList.add('drop-zone-top'); }
             else if (relY > rect.height * 0.75) { window.aeonState.dropSide = 'bottom'; el.classList.add('drop-zone-bottom'); }
-            else if (relX < rect.width / 3) { window.aeonState.dropSide = 'left'; el.classList.add('drop-zone-left'); }
-            else if (relX > rect.width * 2 / 3) { window.aeonState.dropSide = 'right'; el.classList.add('drop-zone-right'); }
+            else if (relX < rect.width * 0.33) { window.aeonState.dropSide = 'left'; el.classList.add('drop-zone-left'); }
+            else if (relX > rect.width * 0.66) { window.aeonState.dropSide = 'right'; el.classList.add('drop-zone-right'); }
         };
+
+        window.handleDragLeave = function(e) { e.currentTarget.classList.remove('drop-zone-left', 'drop-zone-right', 'drop-zone-top', 'drop-zone-bottom'); };
+        window.handleDragEnd = function(e) { e.currentTarget.classList.remove('unit-dragging'); };
 
         window.handleDrop = async function(e, targetId) { 
             e.preventDefault(); e.currentTarget.classList.remove('drop-zone-left', 'drop-zone-right', 'drop-zone-top', 'drop-zone-bottom'); 
             if (!window.aeonState.draggedId || window.aeonState.draggedId === targetId) return; 
 
             const getGroup = (id) => {
-                const idx = window.aeonState.manualSections.findIndex(s => s.id === id);
-                if (window.aeonState.manualSections[idx].type !== 'heading') return [window.aeonState.manualSections[idx]];
-                const group = [window.aeonState.manualSections[idx]];
-                for (let i = idx + 1; i < window.aeonState.manualSections.length; i++) {
-                    if (window.aeonState.manualSections[i].type === 'heading') break;
-                    group.push(window.aeonState.manualSections[i]);
+                const idx = window.aeonState.loreSections.findIndex(s => s.id === id);
+                if (idx === -1) return []; const section = window.aeonState.loreSections[idx];
+                if (section.type !== 'heading') return [section];
+                const group = [section];
+                for (let i = idx + 1; i < window.aeonState.loreSections.length; i++) {
+                    if (window.aeonState.loreSections[i].type === 'heading') break;
+                    group.push(window.aeonState.loreSections[i]);
                 }
                 return group;
             };
 
             const movedGroup = getGroup(window.aeonState.draggedId);
-            const remaining = window.aeonState.manualSections.filter(s => !movedGroup.map(m => m.id).includes(s.id));
+            const remaining = window.aeonState.loreSections.filter(s => !movedGroup.map(m => m.id).includes(s.id));
             let targetIdx = remaining.findIndex(s => s.id === targetId);
-            
-            const batch = writeBatch(db);
-            if (window.aeonState.dropSide === 'left' || window.aeonState.dropSide === 'right') {
+            const batch = writeBatch(db); const side = window.aeonState.dropSide;
+
+            if (side === 'left' || side === 'right') {
                 movedGroup.forEach(m => batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', m.id), { width: 48 }));
                 batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', targetId), { width: 48 });
-                if (window.aeonState.dropSide === 'right') targetIdx += 1;
+                if (side === 'right') targetIdx += 1;
             } else {
                 movedGroup.forEach(m => batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', m.id), { width: 100 }));
-                if (window.aeonState.dropSide === 'bottom') targetIdx += 1;
+                if (side === 'bottom') targetIdx += 1;
             }
+
             remaining.splice(targetIdx, 0, ...movedGroup);
             remaining.forEach((sec, i) => { batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', sec.id), { order: i }); }); 
-            await batch.commit(); draggedId = null; window.showToast("Lore Re-anchored");
+
+            await batch.commit(); window.aeonState.draggedId = null; window.showToast("Archive Structural Sync");
         };
 
-        window.dbUpdateSection = (id, field, val) => { if(window.aeonState.saveTimer) clearTimeout(window.aeonState.saveTimer); window.aeonState.saveTimer = setTimeout(async () => { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id), { [field]: val }); window.showToast("Data Sync"); }, 800); };
-        window.dbUpdateHeader = (field, val) => { if(window.aeonState.saveTimer) clearTimeout(window.aeonState.saveTimer); window.aeonState.saveTimer = setTimeout(async () => { try { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'loreHeader'), { [field]: val }, { merge: true }); window.showToast("Header Sync"); } catch(e) {} }, 800); };
-        window.updateTableCell = (id, type, rIdx, val, cIdx = null) => { if(window.aeonState.saveTimer) clearTimeout(window.aeonState.saveTimer); window.aeonState.saveTimer = setTimeout(async () => { const s = window.aeonState.manualSections.find(x => x.id === id); if(!s) return; if(type === 'headers') { const h = [...s.tableHeaders]; h[rIdx] = val; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id), { tableHeaders: h }); } else { const r = JSON.parse(s.tableRows); r[rIdx][cIdx] = val; await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id), { tableRows: JSON.stringify(r) }); } }, 800); };
+        // TABLE Logic
+        window.addRow = async (id) => {
+            const s = window.aeonState.loreSections.find(x => x.id === id); if (!s) return;
+            const rows = JSON.parse(s.tableRows || '[]'); rows.push(new Array((s.tableHeaders || ['Key','Val']).length).fill("..."));
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id), { tableRows: JSON.stringify(rows) });
+        };
+        window.remRow = async (id) => {
+            const s = window.aeonState.loreSections.find(x => x.id === id); if (s) {
+                const rows = JSON.parse(s.tableRows || '[]'); if (rows.length <= 1) return; rows.pop();
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id), { tableRows: JSON.stringify(rows) });
+            }
+        };
+        window.addCol = async (id) => {
+            const s = window.aeonState.loreSections.find(x => x.id === id); if (!s) return;
+            const headers = [...(s.tableHeaders || ['Key', 'Val'])]; headers.push("H" + (headers.length + 1));
+            const rows = JSON.parse(s.tableRows || '[]'); const updatedRows = rows.map(r => [...r, "..."]);
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id), { tableHeaders: headers, tableRows: JSON.stringify(updatedRows) });
+        };
+        window.remCol = async (id) => {
+            const s = window.aeonState.loreSections.find(x => x.id === id); if (!s) return;
+            const headers = [...(s.tableHeaders || ['Key', 'Val'])]; if (headers.length <= 1) return; headers.pop();
+            const rows = JSON.parse(s.tableRows || '[]'); const updatedRows = rows.map(r => { const newRow = [...r]; newRow.pop(); return newRow; });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id), { tableHeaders: headers, tableRows: JSON.stringify(updatedRows) });
+        };
 
-        window.addManualSection = async (type) => { const data = { title: type==='heading'?"NEW SUBJECT GROUP": "NEW ENTRY", content: type==='table'?"[]":"Inscribe details...", type, order: window.aeonState.manualSections.length, createdAt: Date.now(), width: 100, fontSize: 14, ySpacing: 0, align: 'left', tableHeaders: type==='table'?["Key","Val"]:null, tableRows: type==='table'?JSON.stringify([["Detail","Detail"]]):null, mediaUrl: "", mediaDescription: "" }; await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'loreSections'), data); };
-        window.triggerDelete = (id) => { window.openDelModal("Purge archival segment?", async () => { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id)); }); };
-        window.addRow = async (id) => { const s = window.aeonState.manualSections.find(x => x.id === id); if(!s) return; const r = JSON.parse(s.tableRows || '[]'); r.push(new Array((s.tableHeaders || ["Key", "Val"]).length).fill("...")); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id), { tableRows: JSON.stringify(r) }); };
-        window.remRow = async (id) => { const s = window.aeonState.manualSections.find(x => x.id === id); if(!s) return; const r = JSON.parse(s.tableRows || '[]'); if(r.length <= 1) return; r.pop(); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id), { tableRows: JSON.stringify(r) }); };
-        window.addCol = async (id) => { const s = window.aeonState.manualSections.find(x => x.id === id); if(!s) return; const h = [...(s.tableHeaders || ["Key", "Val"]), "New Col"]; const r = JSON.parse(s.tableRows || '[]').map(row => [...row, "..."]); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id), { tableHeaders: h, tableRows: JSON.stringify(r) }); };
-        window.remCol = async (id) => { const s = window.aeonState.manualSections.find(x => x.id === id); if(!s) return; const h = (s.tableHeaders || ["Key", "Val"]); if(h.length <= 1) return; const newH = h.slice(0, -1); const r = JSON.parse(s.tableRows || '[]').map(row => row.slice(0, -1)); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id), { tableHeaders: newH, tableRows: JSON.stringify(r) }); };
+        // FIRESTORE Operations (Targeting lore sections)
+        window.dbUpdateSection = (id, field, val) => {
+            if(window.aeonState.saveTimer) clearTimeout(window.aeonState.saveTimer);
+            window.aeonState.saveTimer = setTimeout(async () => {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id), { [field]: val });
+                window.showToast("Archival Sync");
+            }, 1000);
+        };
+        window.dbUpdateHeader = (field, val) => {
+            if(window.aeonState.saveTimer) clearTimeout(window.aeonState.saveTimer);
+            window.aeonState.saveTimer = setTimeout(async () => {
+                try { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreConfig', 'header'), { [field]: val }, { merge: true }); window.showToast("Header Sync"); } catch(e) {}
+            }, 1000);
+        };
+        window.updateTableCell = (id, type, rIdx, val, cIdx = null) => {
+            const s = window.aeonState.loreSections.find(x => x.id === id); if(!s) return;
+            if(type === 'headers') {
+                const h = [...s.tableHeaders]; h[rIdx] = val; window.dbUpdateSection(id, 'tableHeaders', h);
+            } else {
+                const r = JSON.parse(s.tableRows); r[rIdx][cIdx] = val; window.dbUpdateSection(id, 'tableRows', JSON.stringify(r));
+            }
+        };
+        window.triggerDelete = (id) => {
+            if(confirm("Purge archival segment?")) { deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id)); }
+        };
 
-        window.purgeAllEmbeds = async (id) => {
-            const s = window.aeonState.manualSections.find(x => x.id === id);
-            if (!s || !s.content) return;
-            window.openDelModal("Purge all embedded images from this block?", async () => {
-                const newC = s.content.replace(/\{\{[^}]+\}\}/g, '');
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id), { content: newC });
-                window.showToast("Assets Purged");
+        window.addLoreSection = async (type) => { 
+            const data = { title: "NEW ARCHIVE", content: "Inscribe details...", type, order: window.aeonState.loreSections.length, width: 100, align: 'left', tableHeaders: type==='table'?['Key','Value']:null, tableRows: type==='table'?'[["Data","Data"]]':null, mediaUrl: "", mediaDescription: "" }; 
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'loreSections'), data); 
+        };
+
+        // PARSING & RENDERING logic
+        window.parseAeonfallContent = (text, isDM, sectionId) => {
+            if (!text) return ''; if (isDM && window.aeonState.activeEditId === sectionId) return text;
+            let parsed = text;
+            parsed = parsed.replace(/\[\[([^|\]]+)\|([^\]]+)\]\]/g, '<span class="definition-word" data-definition="$2">$1</span>');
+            parsed = parsed.replace(/\{\{([^}|]+)(?:\|([^}]+))?\}\}/g, (m, url, desc) => {
+                const trimmedUrl = url.trim();
+                return `<div class="inline-img-wrapper"><img src="${trimmedUrl}" class="inline-arch-asset" onclick="window.openZoom(event, '${trimmedUrl}')">${desc ? `<div class="text-[10px] italic opacity-70 mt-1 text-center">${desc.trim()}</div>` : ''}</div>`;
             });
+            return parsed;
         };
 
         window.moveSlide = (id, dir) => {
-            const slides = document.querySelectorAll(`#slider-${id} .slide-container`);
-            if (!slides.length) return;
+            const slides = document.querySelectorAll(`#slider-${id} .slide-container`); if (!slides.length) return;
             let currentIdx = Array.from(slides).findIndex(s => s.classList.contains('active'));
             slides[currentIdx].classList.remove('active');
             let nextIdx = (currentIdx + dir + slides.length) % slides.length;
             slides[nextIdx].classList.add('active');
         };
 
-        window.purgeSpecificEmbed = async (id, tag) => {
-            const s = window.aeonState.manualSections.find(x => x.id === id); if(!s) return;
-            window.openDelModal("Purge specific asset?", async () => {
-                const newC = s.content.replace(tag, '');
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'loreSections', id), { content: newC });
-            });
-        };
-
-        window.parseAeonfallContent = (text, isDM, sectionId) => {
-            if (!text) return ''; if (isDM && window.aeonState.activeEditId !== null) return text;
-            let parsed = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*(?!\*)([^\*]+?)\*(?!\*)/g, '<i>$1</i>');
-            // Hyperlink Engine [[Text|URL]]
-            parsed = parsed.replace(/\[\[(.*?)\|(.*?)\]\]/g, '<a href="$2" target="_blank" class="arch-hyperlink">$1</a>');
-            // Embedded Image Engine {{URL|Desc}}
-            return parsed.replace(/\{\{([^}|]+)(?:\|([^}]+))?\}\}/g, (m, url, desc) => {
-                const trimmedUrl = url.trim();
-                const escapedTag = m.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-                return `<div class="inline-img-wrapper">${isDM ? `<div class="embed-purge-btn" onclick="window.purgeSpecificEmbed('${sectionId}', '${escapedTag}')">✕</div>` : ''}<img src="${trimmedUrl}" class="inline-arch-asset" onclick="window.openZoom(event, '${trimmedUrl}')">${desc ? `<div class="media-footnote">${desc.trim()}</div>` : ''}</div>`;
-            });
-        };
-
-        window.renderManual = () => {
+        window.renderLore = () => {
+            if (window.aeonState.lockedSelection) return; 
             const isDM = window.aeonState.activeRole === 'dm';
-            const container = document.getElementById('manual-sections-container'); if(!container) return;
+            const container = document.getElementById('manual-sections-container');
             const headerEl = document.getElementById('manual-header');
-            if (headerEl) headerEl.innerHTML = `<h1 class="manual-h1 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='h1'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateHeader('title', this.innerText)">${window.aeonState.activeEditId === 'h1' ? window.aeonState.manualHeader.title : window.parseAeonfallContent(window.aeonState.manualHeader.title, false, 'h1')}</h1><p class="manual-main-subtitle dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='h2'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateHeader('subtitle', this.innerText)">${window.aeonState.activeEditId === 'h2' ? window.aeonState.manualHeader.subtitle : window.parseAeonfallContent(window.aeonState.manualHeader.subtitle, false, 'h2')}</p>`;
-            document.getElementById('nav-list').innerHTML = window.aeonState.manualSections.filter(s => s.type === 'heading').map(s => `<div class="shelf-item" onclick="document.getElementById('section-${s.id}').scrollIntoView({behavior:'smooth'}); if(window.innerWidth <= 1024) window.toggleNav();">${s.title}</div>`).join('');
+            if(!container || !headerEl) return;
 
-            container.innerHTML = window.aeonState.manualSections.map(s => {
-                const style = `width: calc(${s.width ?? 100}% - 15px); margin-top: ${s.ySpacing ?? 0}px; text-align: ${s.align || 'left'};`;
-                return `<section id="section-${s.id}" class="manual-section-unit group relative" style="${style}" draggable="false" ondragstart="window.handleDragStart(event, '${s.id}')" ondragover="window.handleDragOver(event)" ondragleave="window.handleDragLeave(event)" ondrop="window.handleDrop(event, '${s.id}')">
+            headerEl.innerHTML = `
+                <h1 class="manual-h1 dm-editable" contenteditable="${isDM}" oninput="window.dbUpdateHeader('title', this.innerText)">${window.aeonState.loreHeader.title}</h1>
+                <p class="dm-editable italic opacity-40 font-bold uppercase text-[9px] tracking-widest" contenteditable="${isDM}" oninput="window.dbUpdateHeader('subtitle', this.innerText)">${window.aeonState.loreHeader.subtitle}</p>
+            `;
+
+            document.getElementById('nav-list').innerHTML = window.aeonState.loreSections.filter(s => s.type === 'heading').map(s => `
+                <div class="shelf-item" onclick="document.getElementById('section-${s.id}').scrollIntoView({behavior:'smooth'})">${s.title}</div>
+            `).join('');
+
+            container.innerHTML = window.aeonState.loreSections.map(s => {
+                const style = `width: calc(${s.width ?? 100}% - 15px); text-align: ${s.align || 'left'};`;
+                let contentHTML = '';
+                
+                if (s.type === 'table') {
+                    contentHTML = `<div class="table-wrap">
+                        ${isDM ? `<div class="flex gap-2 p-2 bg-gray-50 border-b"><button onclick="window.addRow('${s.id}')" class="format-tool-btn">+Row</button><button onclick="window.addCol('${s.id}')" class="format-tool-btn">+Col</button></div>` : ''}
+                        <table class="manual-table">
+                            <thead><tr>${(s.tableHeaders||['H1','H2']).map((h, i) => `<th contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}','headers',${i},this.innerText)">${h}</th>`).join('')}</tr></thead>
+                            <tbody>${JSON.parse(s.tableRows || '[]').map((row, rIdx) => `<tr>${row.map((c, cIdx) => `<td contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}','rows',${rIdx},this.innerText,${cIdx})">${c}</td>`).join('')}</tr>`).join('')}</tbody>
+                        </table>
+                    </div>`;
+                } else if (s.type === 'media') {
+                    const urls = (s.mediaUrl || "").split(',').filter(x => x.trim()); const descs = (s.mediaDescription || "").split(',');
+                    contentHTML = `<div class="slider-bubble" id="slider-${s.id}">
+                        <div class="slider-viewport">
+                            ${urls.length > 1 ? `<div class="slider-arrow arrow-left" onclick="window.moveSlide('${s.id}', -1)">←</div><div class="slider-arrow arrow-right" onclick="window.moveSlide('${s.id}', 1)">→</div>` : ''}
+                            ${urls.map((l, i) => {
+                                const url = l.trim(); const isVideo = url.toLowerCase().endsWith('.mp4');
+                                return `<div class="slide-container ${i===0?'active':''}">
+                                    ${isVideo ? `<video src="${url}" class="slide-asset" autoplay loop muted playsinline onclick="window.openZoom(event, '${url}')"></video>` : `<img src="${url}" class="slide-asset" onclick="window.openZoom(event, '${url}')">`}
+                                    <div class="text-[11px] mt-4 opacity-70 text-center italic">${(descs[i] || "").trim()}</div>
+                                </div>`;
+                            }).join('')}
+                        </div>
+                        ${isDM ? `<div class="mt-6 pt-4 border-t border-black/10 flex flex-col gap-2"><input type="text" class="w-full text-[10px] p-2 bg-black/5 border rounded" placeholder="Links" value="${s.mediaUrl || ''}" oninput="window.dbUpdateSection('${s.id}', 'mediaUrl', this.value)"><input type="text" class="w-full text-[10px] p-2 bg-black/5 border rounded" placeholder="Captions" value="${s.mediaDescription || ''}" oninput="window.dbUpdateSection('${s.id}', 'mediaDescription', this.value)"></div>` : ''}
+                    </div>`;
+                } else if (s.type === 'note' || s.type === 'info') {
+                    contentHTML = `<div class="${s.type === 'note' ? 'manual-note-box' : 'manual-info-box'}">
+                        <div class="text-[10px] font-bold uppercase mb-2 opacity-50">${s.type === 'note' ? '📑 Note' : '📊 Info'}</div>
+                        <div class="dm-editable ${s.type==='note'?'italic':''}" data-id="${s.id}" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}'" onblur="window.aeonState.activeEditId=null; window.renderLore()" oninput="window.dbUpdateSection('${s.id}','content',this.innerHTML)">${window.aeonState.activeEditId === s.id ? s.content : window.parseAeonfallContent(s.content, isDM, s.id)}</div>
+                    </div>`;
+                } else if (s.type === 'heading') {
+                    contentHTML = `<h2 class="manual-h2 dm-editable" contenteditable="${isDM}" oninput="window.dbUpdateSection('${s.id}','title',this.innerText)">${s.title}</h2>`;
+                } else if (s.type === 'subheading') {
+                    contentHTML = `<h3 class="manual-h3 dm-editable" contenteditable="${isDM}" oninput="window.dbUpdateSection('${s.id}','title',this.innerText)">${s.title}</h3>`;
+                } else {
+                    contentHTML = `<div class="dm-editable leading-relaxed" data-id="${s.id}" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}'" onblur="window.aeonState.activeEditId=null; window.renderLore()" oninput="window.dbUpdateSection('${s.id}','content',this.innerHTML)">${window.aeonState.activeEditId === s.id ? s.content : window.parseAeonfallContent(s.content, isDM, s.id)}</div>`;
+                }
+
+                return `<section id="section-${s.id}" class="manual-section-unit relative p-2" style="${style}" draggable="false" 
+                    ondragstart="window.handleDragStart(event, '${s.id}')" ondragover="window.handleDragOver(event)" ondragleave="window.handleDragLeave(event)" ondragend="window.handleDragEnd(event)" ondrop="window.handleDrop(event, '${s.id}')">
                     ${isDM ? `<div class="tuner-panel">
-                        <div class="drag-handle-anchor cursor-grab" onmousedown="window.handleHandleDown(event, '${s.id}')" onmouseup="window.handleHandleUp(event, '${s.id}')" onmouseleave="window.handleHandleUp(event, '${s.id}')">⠿</div>
-                        <div class="tuner-group"><span class="tuner-label">Width</span><input type="range" class="tuner-slider" min="10" max="100" value="${s.width ?? 100}" oninput="window.dbUpdateSection('${s.id}', 'width', parseInt(this.value))"></div>
-                        <div class="tuner-group"><span class="tuner-label">V-Space</span><input type="range" class="tuner-slider" min="0" max="150" value="${s.ySpacing ?? 0}" oninput="window.dbUpdateSection('${s.id}', 'ySpacing', parseInt(this.value))"></div>
-                        <div class="tuner-group"><span class="tuner-label">Align</span><div class="flex gap-1"><button class="align-btn ${s.align==='left'?'active':''}" onclick="window.dbUpdateSection('${s.id}', 'align', 'left')">L</button><button class="align-btn ${s.align==='center'?'active':''}" onclick="window.dbUpdateSection('${s.id}', 'align', 'center')">C</button><button class="align-btn ${s.align==='right'?'active':''}" onclick="window.dbUpdateSection('${s.id}', 'align', 'right')">R</button></div></div>
-                        <div class="tuner-group"><span class="tuner-label">Images</span><button class="align-btn purge-btn" onclick="window.purgeAllEmbeds('${s.id}')">✕</button></div>
-                        <button onclick="window.triggerDelete('${s.id}')" class="ml-auto text-red-700 font-black text-lg">✕</button>
+                        <div class="drag-handle-anchor" onmousedown="document.getElementById('section-${s.id}').setAttribute('draggable', 'true')" onmouseup="document.getElementById('section-${s.id}').setAttribute('draggable', 'false')">⠿</div>
+                        <div class="flex gap-1 border-r pr-2 mr-1"><button class="format-tool-btn ${s.align==='left'?'active':''}" onmousedown="event.preventDefault()" onclick="window.dbUpdateSection('${s.id}', 'align', 'left')">L</button><button class="format-tool-btn ${s.align==='center'?'active':''}" onmousedown="event.preventDefault()" onclick="window.dbUpdateSection('${s.id}', 'align', 'center')">C</button><button class="format-tool-btn ${s.align==='right'?'active':''}" onmousedown="event.preventDefault()" onclick="window.dbUpdateSection('${s.id}', 'align', 'right')">R</button></div>
+                        <div class="flex gap-1 border-r pr-2 mr-1"><button class="format-tool-btn" onmousedown="event.preventDefault()" onclick="window.execFormat('bold')">B</button><button class="format-tool-btn" onmousedown="event.preventDefault()" onclick="window.execFormat('italic')">I</button><button class="format-tool-btn" onmousedown="event.preventDefault()" onclick="window.execFormat('underline')">U</button></div>
+                        <div class="flex gap-1 border-r pr-2 mr-1"><button class="format-tool-btn" onmousedown="event.preventDefault()" title="Granular Indent" onclick="window.execGranularIndent('indent')">⇥</button><button class="format-tool-btn" onmousedown="event.preventDefault()" title="Granular Outdent" onclick="window.execGranularIndent('outdent')">⇤</button></div>
+                        <div class="flex gap-1 border-r pr-2 mr-1"><button class="format-tool-btn" onmousedown="event.preventDefault()" title="Image Template" onclick="window.insertTemplate('img')">IMG</button><button class="format-tool-btn" onmousedown="event.preventDefault()" title="Definition Template" onclick="window.insertTemplate('def')">DEF</button></div>
+                        <div class="flex items-center gap-1"><span class="text-[8px] font-bold">SIZE</span><input type="range" min="1" max="200" value="14" oninput="this.nextElementSibling.value=this.value; window.applySize(this.value)"><input type="number" class="tuner-num-input" value="14" oninput="this.previousElementSibling.value=this.value; window.applySize(this.value)"></div>
+                        <button onclick="window.triggerDelete('${s.id}')" class="ml-auto text-red-700 font-black">✕</button>
                     </div>` : ''}
-                    ${s.type==='heading'?`<h2 class="manual-h2 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-t'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','title',this.innerText)">${window.aeonState.activeEditId==='${s.id}-t'?s.title:window.parseAeonfallContent(s.title, false, s.id)}</h2>`:''}
-                    ${s.type==='subheading'?`<h3 class="manual-h3 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-t'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','title',this.innerText)">${window.aeonState.activeEditId==='${s.id}-t'?s.title:window.parseAeonfallContent(s.title, false, s.id)}</h3>`:''}
-                    ${s.type==='text'?`<div class="manual-p dm-editable leading-relaxed" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-c'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','content',this.innerHTML)">${window.aeonState.activeEditId==='${s.id}-c'?s.content:window.parseAeonfallContent(s.content, false, s.id)}</div>`:''}
-                    ${s.type==='note'?`<div class="manual-note-box"><div class="font-bold uppercase text-[9px] mb-2 opacity-50 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-t'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">📑 ${s.title}</div><div class="manual-p dm-editable italic" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-c'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${window.aeonState.activeEditId === '${s.id}-c' ? s.content : window.parseAeonfallContent(s.content, false, s.id)}</div></div>`:''}
-                    ${s.type==='info'?`<div class="manual-info-box"><div class="font-bold uppercase text-[9px] mb-2 opacity-50 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-t'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'title', this.innerText)">📊 ${s.title}</div><div class="manual-p dm-editable leading-relaxed" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}-c'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${window.aeonState.activeEditId === '${s.id}-c' ? s.content : window.parseAeonfallContent(s.content, false, s.id)}</div></div>`:''}
-                    ${s.type==='table'?`<div class="table-wrap">${isDM?`<div class="flex gap-2 p-2 border-b bg-white/50"><button onclick="window.addRow('${s.id}')" class="arch-btn arch-btn-tool !py-1 !px-3">+R</button><button onclick="window.remRow('${s.id}')" class="arch-btn arch-btn-tool !py-1 !px-3">-R</button><button onclick="window.addCol('${s.id}')" class="arch-btn arch-btn-tool !py-1 !px-3">+C</button><button onclick="window.remCol('${s.id}')" class="arch-btn arch-btn-tool !py-1 !px-3">-C</button></div>`:''}<table class="manual-table"><thead><tr>${(s.tableHeaders||["Key","Val"]).map((h,i)=>`<th contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}','headers',${i},this.innerText)">${h}</th>`).join('')}</tr></thead><tbody>${JSON.parse(s.tableRows||'[]').map((row,rIdx)=>`<tr>${row.map((c,cIdx)=>`<td contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}','rows',${rIdx},this.innerText,${cIdx})">${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`:''}
-                    ${s.type==='media'?`<div class="slider-bubble" id="slider-${s.id}"><div class="slider-viewport">${(s.mediaUrl || "").split(',').length > 1 ? `<div class="slider-arrow arrow-left" onclick="window.moveSlide('${s.id}', -1)">←</div><div class="slider-arrow arrow-right" onclick="window.moveSlide('${s.id}', 1)">→</div>` : ''}${(s.mediaUrl || "").split(',').map((l, i) => `<div class="slide-container ${i===0?'active':''}"><img src="${l.trim()}" class="slide-asset" onclick="window.openZoom(event, '${l.trim()}')"><div class="text-[10px] mt-4 opacity-70 text-center italic">${(s.mediaDescription || "").split(',')[i] || ''}</div></div>`).join('')}</div>${isDM ? `<div class="mt-6 border-t pt-4"><input type="text" class="w-full text-[9px] p-2 bg-black/5 border mb-2 rounded" value="${s.mediaUrl}" placeholder="Links" oninput="window.dbUpdateSection('${s.id}', 'mediaUrl', this.value)"><input type="text" class="w-full text-[9px] p-2 bg-black/5 border rounded" value="${s.mediaDescription}" placeholder="Footnotes" oninput="window.dbUpdateSection('${s.id}', 'mediaDescription', this.value)"></div>` : ''}</div>`:''}
-                </section>`;
+                    ${contentHTML}</section>`;
             }).join('');
         };
 
+        window.openZoom = (e, url) => { 
+            if (e) e.stopPropagation(); if (!url) return;
+            const modal = document.getElementById('lightbox-modal'); const content = document.getElementById('lightbox-content'); 
+            const isVideo = url.toLowerCase().endsWith('.mp4');
+            content.innerHTML = isVideo ? `<video src="${url}" class="max-w-[95vw] max-h-[85vh] object-contain border-2 border-white shadow-2xl" autoplay loop muted playsinline></video>` : `<img src="${url}" class="max-w-[95vw] max-h-[85vh] object-contain border-2 border-white shadow-2xl">`;
+            modal.classList.remove('hidden'); 
+        };
+
+        // Selection Bubble Handlers
+        document.addEventListener('mouseup', (e) => {
+            if (window.aeonState.activeRole !== 'dm') return;
+            const bubble = document.getElementById('selection-bubble'); if (e.target.closest('.tuner-panel') || e.target.closest('#selection-bubble')) return;
+            const sel = window.getSelection();
+            if (sel.toString().trim().length > 0) {
+                bubble.style.display = 'block'; bubble.style.top = (e.clientY - 60) + 'px'; bubble.style.left = (e.clientX + 10) + 'px'; bubble.style.opacity = '1';
+                if (window.aeonState.lockedSelection) { bubble.innerText = "Change Selection"; bubble.style.background = '#3b82f6'; } else { bubble.innerText = "Select"; bubble.style.background = 'var(--arch-burgundy)'; }
+            } else if (!window.aeonState.lockedSelection) { bubble.style.display = 'none'; }
+        });
+
+        // Lifecycle
+        const initAuth = async () => {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (err) { console.error("Auth failed:", err); }
+        };
+        initAuth();
+
         onAuthStateChanged(auth, u => { 
-            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'loreHeader'), d => { if (d.exists()) { window.aeonState.manualHeader = d.data(); window.renderManual(); } }); 
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'loreSections'), snap => { window.aeonState.manualSections = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (a.order ?? 0) - (b.order ?? 0)); window.renderManual(); }); 
+            if (!u) return;
+            const cinematic = document.getElementById('cinematic-overlay'); 
+            if (cinematic) { cinematic.style.opacity = '1'; setTimeout(() => cinematic.style.opacity = '0', 1000); }
+            
+            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'loreConfig', 'header'), d => { 
+                if (d.exists()) { window.aeonState.loreHeader = d.data(); window.renderLore(); } 
+            }); 
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'loreSections'), snap => { 
+                window.aeonState.loreSections = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (a.order ?? 0) - (b.order ?? 0)); 
+                window.renderLore(); 
+            }); 
             window.updateRoleUI(); 
         });
-        
-        const confirmBtn = document.getElementById('confirm-del-btn');
-        if (confirmBtn) { confirmBtn.onclick = async () => { if (window.aeonState.deleteCallback) await window.aeonState.deleteCallback(); document.getElementById('del-modal')?.classList.add('hidden'); }; }
-        signInAnonymously(auth);
     </script>
 </body>
 </html>
