@@ -93,7 +93,7 @@
         /* Selection Bubble */
         #selection-bubble {
             position: fixed;
-            z-index: 200000;
+            z-index: 210000;
             background: var(--arch-burgundy);
             color: white;
             padding: 8px 20px;
@@ -108,7 +108,7 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             user-select: none;
-            transition: all 0.3s ease;
+            transition: opacity 0.2s ease;
             pointer-events: auto;
         }
 
@@ -227,7 +227,7 @@
             transform: scale(1.02);
         }
 
-        .aeon-size-span { display: inline-block; transition: font-size: 0.05s ease-out; line-height: 1.1; }
+        .aeon-size-span { display: inline; transition: font-size 0.05s ease-out; }
 
         /* Carousel Styles */
         .slider-bubble { background: #fff; border: 2px solid var(--arch-gold); border-radius: 20px; padding: 20px; box-shadow: 0 15px 45px rgba(0,0,0,0.1); width: 100%; margin-bottom: 2.5rem; position: relative; overflow: hidden; }
@@ -427,33 +427,65 @@
             window.renderManual(); 
         };
 
-        // Precision Sizing
+        // Resilient Sizing Logic
         window.applySize = (size) => {
-            if (!window.aeonState.lockedSelection) return;
             const sel = window.getSelection();
+            
+            // If nothing is locked but user has text selected, auto-lock it to start sizing
+            if (!window.aeonState.lockedSelection) {
+                if (sel.rangeCount > 0 && sel.toString().trim().length > 0) {
+                    window.aeonState.lockedSelection = sel.getRangeAt(0).cloneRange();
+                    const bubble = document.getElementById('selection-bubble');
+                    if (bubble) {
+                        bubble.innerText = "Unselect";
+                        bubble.style.background = "#22c55e"; 
+                        bubble.style.display = "block";
+                    }
+                } else {
+                    return; // No text to size
+                }
+            }
+            
+            // Force focus back to the selection
             sel.removeAllRanges();
             sel.addRange(window.aeonState.lockedSelection);
+            
             if (sel.rangeCount === 0) return;
+            
             const range = sel.getRangeAt(0);
             let container = range.commonAncestorContainer;
             if (container.nodeType === 3) container = container.parentElement;
+            
+            // Check if we are updating an existing size span
             let targetSpan = container.closest('.aeon-size-span');
+            
             if (targetSpan) {
                 targetSpan.style.fontSize = size + 'px';
             } else {
+                // First-time wrapping the text
                 const span = document.createElement('span');
                 span.className = 'aeon-size-span';
                 span.style.fontSize = size + 'px';
-                span.appendChild(range.extractContents());
-                range.insertNode(span);
+                
+                try {
+                    // Try surrounding first to maintain text consistency
+                    range.surroundContents(span);
+                } catch(e) {
+                    // Fallback for complex selections (mixed tags)
+                    const content = range.extractContents();
+                    span.appendChild(content);
+                    range.insertNode(span);
+                }
+                
+                // Keep the selection active on the new contents
                 const newRange = document.createRange();
                 newRange.selectNodeContents(span);
-                window.aeonState.lockedSelection = newRange;
+                sel.removeAllRanges();
+                sel.addRange(newRange);
+                window.aeonState.lockedSelection = newRange.cloneRange();
             }
 
-            // Persistence update: re-clone for stackability
-            if (sel.rangeCount > 0) window.aeonState.lockedSelection = sel.getRangeAt(0).cloneRange();
-
+            // Sync update to Firestore immediately (debounced)
             const editBox = container.closest('.dm-editable');
             if (editBox) {
                 const id = editBox.getAttribute('data-id');
@@ -463,46 +495,48 @@
 
         window.execFormat = (cmd, val = null) => {
             const sel = window.getSelection();
+            
             if (window.aeonState.lockedSelection) {
                 sel.removeAllRanges();
                 sel.addRange(window.aeonState.lockedSelection);
             }
+
             document.execCommand(cmd, false, val);
             
-            // CRITICAL: Re-clone range after DOM modification to allow stacking
             if (sel.rangeCount > 0) {
                 window.aeonState.lockedSelection = sel.getRangeAt(0).cloneRange();
             }
 
             const focused = document.activeElement;
-            if (focused && focused.classList.contains('dm-editable')) {
-                const id = focused.getAttribute('data-id');
-                if (id) window.dbUpdateSection(id, 'content', focused.innerHTML);
+            if (focused && (focused.classList.contains('dm-editable') || focused.closest('.dm-editable'))) {
+                const box = focused.closest('.dm-editable') || focused;
+                const id = box.getAttribute('data-id');
+                if (id) window.dbUpdateSection(id, 'content', box.innerHTML);
             }
         };
 
         window.insertTemplate = (type) => {
-            const sel = window.getSelection();
-            if (window.aeonState.lockedSelection) {
-                sel.removeAllRanges();
-                sel.addRange(window.aeonState.lockedSelection);
-            }
-            
             const tpl = type === 'img' ? '{{URL | Caption}}' : '[[Text | definition]]';
-            window.execFormat('insertText', tpl);
+            window.execFormat('insertHTML', tpl);
         };
 
         window.toggleSelectionLock = (e) => {
             e.preventDefault(); e.stopPropagation();
             const bubble = document.getElementById('selection-bubble');
+            const sel = window.getSelection();
+            
             if (window.aeonState.lockedSelection) {
-                window.aeonState.lockedSelection = null;
-                bubble.innerText = "Select";
-                window.getSelection().removeAllRanges();
-                bubble.style.display = "none";
-                bubble.style.background = 'var(--arch-burgundy)';
+                if (sel.toString().trim().length > 0) {
+                    window.aeonState.lockedSelection = sel.getRangeAt(0).cloneRange();
+                    bubble.innerText = "Unselect";
+                    bubble.style.background = "#22c55e"; 
+                } else {
+                    window.aeonState.lockedSelection = null;
+                    bubble.innerText = "Select";
+                    bubble.style.background = 'var(--arch-burgundy)';
+                    bubble.style.display = "none";
+                }
             } else {
-                const sel = window.getSelection();
                 if (sel.rangeCount > 0 && sel.toString().trim().length > 0) {
                     window.aeonState.lockedSelection = sel.getRangeAt(0).cloneRange();
                     bubble.innerText = "Unselect";
@@ -543,7 +577,6 @@
             e.currentTarget.classList.remove('drop-zone-left', 'drop-zone-right', 'drop-zone-top', 'drop-zone-bottom'); 
             if (!window.aeonState.draggedId || window.aeonState.draggedId === targetId) return; 
 
-            // Find full group range if dragging a heading
             const getGroup = (id) => {
                 const idx = window.aeonState.manualSections.findIndex(s => s.id === id);
                 if (idx === -1) return [];
@@ -648,7 +681,6 @@
         };
 
         window.renderManual = () => {
-            // Guard: don't re-render while text is locked for stackable formatting
             if (window.aeonState.lockedSelection) return; 
 
             const isDM = window.aeonState.activeRole === 'dm';
@@ -715,22 +747,22 @@
                     ${isDM ? `<div class="tuner-panel">
                         <div class="drag-handle-anchor" onmousedown="document.getElementById('section-${s.id}').setAttribute('draggable', 'true')" onmouseup="document.getElementById('section-${s.id}').setAttribute('draggable', 'false')">⠿</div>
                         <div class="flex gap-1 border-r pr-2 mr-1">
-                            <button class="format-tool-btn ${s.align==='left'?'active':''}" onclick="window.dbUpdateSection('${s.id}', 'align', 'left')">L</button>
-                            <button class="format-tool-btn ${s.align==='center'?'active':''}" onclick="window.dbUpdateSection('${s.id}', 'align', 'center')">C</button>
-                            <button class="format-tool-btn ${s.align==='right'?'active':''}" onclick="window.dbUpdateSection('${s.id}', 'align', 'right')">R</button>
+                            <button class="format-tool-btn ${s.align==='left'?'active':''}" onmousedown="event.preventDefault()" onclick="window.dbUpdateSection('${s.id}', 'align', 'left')">L</button>
+                            <button class="format-tool-btn ${s.align==='center'?'active':''}" onmousedown="event.preventDefault()" onclick="window.dbUpdateSection('${s.id}', 'align', 'center')">C</button>
+                            <button class="format-tool-btn ${s.align==='right'?'active':''}" onmousedown="event.preventDefault()" onclick="window.dbUpdateSection('${s.id}', 'align', 'right')">R</button>
                         </div>
                         <div class="flex gap-1 border-r pr-2 mr-1">
-                            <button class="format-tool-btn" onclick="window.execFormat('bold')">B</button>
-                            <button class="format-tool-btn" onclick="window.execFormat('italic')">I</button>
-                            <button class="format-tool-btn" onclick="window.execFormat('underline')">U</button>
+                            <button class="format-tool-btn" onmousedown="event.preventDefault()" onclick="window.execFormat('bold')">B</button>
+                            <button class="format-tool-btn" onmousedown="event.preventDefault()" onclick="window.execFormat('italic')">I</button>
+                            <button class="format-tool-btn" onmousedown="event.preventDefault()" onclick="window.execFormat('underline')">U</button>
                         </div>
                         <div class="flex gap-1 border-r pr-2 mr-1">
-                            <button class="format-tool-btn" title="Indent" onclick="window.execFormat('indent')">⇥</button>
-                            <button class="format-tool-btn" title="Outdent" onclick="window.execFormat('outdent')">⇤</button>
+                            <button class="format-tool-btn" onmousedown="event.preventDefault()" title="Indent" onclick="window.execFormat('indent')">⇥</button>
+                            <button class="format-tool-btn" onmousedown="event.preventDefault()" title="Outdent" onclick="window.execFormat('outdent')">⇤</button>
                         </div>
                         <div class="flex gap-1 border-r pr-2 mr-1">
-                            <button class="format-tool-btn" title="Image Wrap" onclick="window.insertTemplate('img')">IMG</button>
-                            <button class="format-tool-btn" title="Definition Wrap" onclick="window.insertTemplate('def')">DEF</button>
+                            <button class="format-tool-btn" onmousedown="event.preventDefault()" title="Image Template" onclick="window.insertTemplate('img')">IMG</button>
+                            <button class="format-tool-btn" onmousedown="event.preventDefault()" title="Definition Template" onclick="window.insertTemplate('def')">DEF</button>
                         </div>
                         <div class="flex items-center gap-1">
                             <span class="text-[8px] font-bold">SIZE</span>
@@ -759,14 +791,25 @@
         document.addEventListener('mouseup', (e) => {
             if (window.aeonState.activeRole !== 'dm') return;
             const bubble = document.getElementById('selection-bubble');
-            // Allow bubble to persist if already locked or interacting with toolbar
-            if (window.aeonState.lockedSelection || e.target.closest('.tuner-panel') || e.target.closest('#selection-bubble')) return;
+            if (e.target.closest('.tuner-panel') || e.target.closest('#selection-bubble')) return;
+            
             const sel = window.getSelection();
             if (sel.toString().trim().length > 0) {
                 bubble.style.display = 'block';
                 bubble.style.top = (e.clientY - 60) + 'px';
                 bubble.style.left = (e.clientX + 10) + 'px';
-            } else { bubble.style.display = 'none'; }
+                bubble.style.opacity = '1';
+                
+                if (window.aeonState.lockedSelection) {
+                    bubble.innerText = "Change Selection";
+                    bubble.style.background = '#3b82f6';
+                } else {
+                    bubble.innerText = "Select";
+                    bubble.style.background = 'var(--arch-burgundy)';
+                }
+            } else if (!window.aeonState.lockedSelection) {
+                bubble.style.display = 'none'; 
+            }
         });
 
         onAuthStateChanged(auth, u => { 
