@@ -206,12 +206,13 @@
 
         .aeon-size-span { display: inline; transition: font-size 0.05s ease-out; }
 
-        /* Carousel Styles */
+        /* Carousel Styles - Strict Centering Applied */
         .slider-bubble { background: #fff; border: 2px solid var(--arch-gold); border-radius: 20px; padding: 20px; box-shadow: var(--carousel-shadow); width: 100%; margin-bottom: 2.5rem; position: relative; overflow: hidden; }
-        .slider-viewport { position: relative; display: flex; align-items: center; justify-content: center; min-height: 250px; }
+        .slider-viewport { position: relative; display: flex; align-items: center; justify-content: center; min-height: 0; width: 100%; }
         .slide-container { display: none; width: 100%; text-align: center; }
         .slide-container.active { display: block; animation: fadeIn 0.4s ease; }
-        .slide-asset { max-width: 100%; max-height: 600px; border-radius: 8px; cursor: zoom-in; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 1px solid rgba(0,0,0,0.05); }
+        /* Strict centering with block margin */
+        .slide-asset { display: block; margin: 0 auto; max-width: 100%; max-height: 600px; height: auto; border-radius: 8px; cursor: zoom-in; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 1px solid rgba(0,0,0,0.05); }
         .slider-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: var(--arch-burgundy); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; font-weight: bold; border: 1px solid var(--arch-gold); box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: 0.2s; }
         .arrow-left { left: 10px; }
         .arrow-right { right: 10px; }
@@ -251,7 +252,7 @@
     <div id="cinematic-overlay" class="fixed inset-0 bg-black z-[100000] flex items-center justify-center pointer-events-none opacity-0 transition-opacity duration-500"><div class="loading-text">Manifesting Archival Records...</div></div>
 
     <div id="pass-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[110000] hidden p-4">
-        <div class="bg-gray-800 p-10 rounded-2xl w-full max-w-sm border-2 border-amber-600 text-white text-center shadow-2xl" onclick="event.stopPropagation()">
+        <div class="bg-gray-800 p-10 rounded-2xl w-full max-sm border-2 border-amber-600 text-white text-center shadow-2xl" onclick="event.stopPropagation()">
             <h3 class="text-xl font-serif text-amber-500 font-bold mb-4 uppercase">Archive Authority</h3>
             <input type="password" id="dm-pass" class="w-full bg-gray-900 text-center text-2xl rounded-lg p-3 mb-8 border border-gray-700 text-amber-500 outline-none">
             <button onclick="window.authDm()" class="w-full bg-amber-600 hover:bg-amber-500 text-white py-4 rounded-xl font-bold uppercase text-xs">Verify Access</button>
@@ -442,8 +443,9 @@
             const tpl = type === 'img' ? '{{URL | Caption}}' : '[[Text | definition]]'; window.execFormat('insertHTML', tpl);
         };
 
-        window.toggleSelectionLock = (e) => {
-            e.preventDefault(); e.stopPropagation();
+        window.toggleSelectionLock = (item) => {
+            const event = window.event;
+            event.preventDefault(); event.stopPropagation();
             const bubble = document.getElementById('selection-bubble'); const sel = window.getSelection();
             if (window.aeonState.lockedSelection) {
                 if (sel.toString().trim().length > 0) {
@@ -698,11 +700,11 @@
             
             onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'loreConfig', 'header'), d => { 
                 if (d.exists()) { window.aeonState.loreHeader = d.data(); window.renderLore(); } 
-            }); 
+            }, err => console.error(err)); 
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'loreSections'), snap => { 
                 window.aeonState.loreSections = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (a.order ?? 0) - (b.order ?? 0)); 
                 window.renderLore(); 
-            }); 
+            }, err => console.error(err)); 
             window.updateRoleUI(); 
         });
     </script>
