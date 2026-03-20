@@ -9,18 +9,18 @@
     <style>
         :root {
             --arch-burgundy: #7a1d1d;
+            --arch-burgundy-light: #a32d2d;
             --arch-gold: #bba683;
             --arch-parchment: #f4edd8;
-            --arch-shadow: 0 10px 30px rgba(0,0,0,0.4);
             --charcoal-pencil: #262626; 
             --sage-note-bg: #cbd4ab; 
+            --sage-row-alt: #e2e9cb;
             --ui-pill-bg: #dbdbdb;
-            /* New Elevation Shadow */
             --pop-shadow: 0 15px 35px rgba(0,0,0,0.12), 0 5px 15px rgba(0,0,0,0.08);
             --carousel-shadow: 0 25px 50px rgba(0,0,0,0.18), 0 10px 20px rgba(0,0,0,0.1);
         }
 
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body { 
             font-family: 'Roboto Slab', serif; 
@@ -30,395 +30,174 @@
             min-height: 100vh;
             overflow-x: hidden;
             margin: 0;
-            -webkit-tap-highlight-color: transparent;
         }
 
-        .dm-editable { 
-            color: var(--charcoal-pencil) !important; 
-            outline: none; 
-            min-height: 1.2em;
-        }
-        .dm-editable * { color: inherit !important; background: transparent !important; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); }
+        ::-webkit-scrollbar-thumb { background: var(--arch-burgundy); border-radius: 10px; }
 
-        /* Blockquote / Indentation Styling */
-        .dm-editable blockquote {
-            border-left: 2px solid var(--arch-gold);
-            padding-left: 1.5rem;
-            margin-left: 1rem;
-            margin-top: 0.5rem;
-            margin-bottom: 0.5rem;
-            font-style: italic;
-            opacity: 0.9;
-        }
+        .dm-editable { outline: none; min-height: 1.2em; transition: background 0.2s ease; }
+        .dm-mode-active .dm-editable:hover { background: rgba(0,0,0,0.015); border-radius: 4px; }
+        .dm-editable:focus { background: rgba(255, 255, 255, 0.4) !important; box-shadow: inset 0 0 0 1px var(--arch-gold); border-radius: 8px; padding: 4px; }
 
-        /* Granular Indent Span */
-        .aeon-indent-span { 
-            display: inline-block; 
-            transition: margin-left 0.2s ease;
-            vertical-align: top;
-        }
+        .aeon-style-span { display: inline; line-height: 1.2; }
+        .aeon-indent-span { display: inline-block; vertical-align: top; }
 
-        /* Definitions & Inline Assets */
-        .definition-word {
-            color: var(--arch-burgundy);
-            border-bottom: 1px dashed var(--arch-burgundy);
-            cursor: help;
-            position: relative;
-            font-weight: 700;
-        }
-        .definition-word:hover::after {
-            content: attr(data-definition);
-            position: absolute;
-            bottom: 120%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #262626;
-            color: white;
-            padding: 8px 14px;
-            border-radius: 8px;
-            font-size: 11px;
-            width: max-content;
-            max-width: 200px;
-            z-index: 100;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-            font-family: 'Roboto Slab', serif;
-            font-weight: 400;
-            font-style: normal;
-            line-height: 1.4;
-            pointer-events: none;
-            white-space: normal;
-            text-align: center;
-        }
-
-        .inline-img-wrapper { margin: 20px 0; text-align: center; }
-        .inline-arch-asset { 
-            display: inline-block; 
-            max-width: 100%; 
-            border-radius: 8px; 
-            border: 1px solid rgba(0,0,0,0.1); 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            cursor: zoom-in;
-        }
-
-        /* Selection Bubble */
-        #selection-bubble {
-            position: fixed;
-            z-index: 210000;
-            background: var(--arch-burgundy);
-            color: white;
-            padding: 8px 20px;
-            border-radius: 40px;
-            font-family: 'Cinzel', serif;
-            font-size: 10px;
-            font-weight: 900;
-            cursor: pointer;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            display: none;
-            border: 2px solid var(--arch-gold);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            user-select: none;
-            transition: opacity 0.2s ease;
-            pointer-events: auto;
-        }
-
-        /* Sidebar & Layout */
-        #nav-toggle-btn {
-            display: none;
-            position: fixed; top: 20px; left: 20px; z-index: 2000;
-            background: var(--arch-burgundy); color: white; width: 44px; height: 44px;
-            border-radius: 50%; align-items: center; justify-content: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4); cursor: pointer; border: 2px solid var(--arch-gold);
-        }
-
-        #nav-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 999; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
-        #nav-overlay.active { opacity: 1; pointer-events: auto; }
+        .definition-word { color: var(--arch-burgundy); border-bottom: 2px dotted var(--arch-gold); cursor: help; position: relative; font-weight: 700; }
+        .definition-word:hover::after { content: attr(data-definition); position: absolute; bottom: 125%; left: 50%; transform: translateX(-50%); background: #262626; color: white; padding: 10px 15px; border-radius: 8px; font-size: 12px; width: max-content; max-width: 250px; z-index: 1000; box-shadow: 0 10px 25px rgba(0,0,0,0.4); font-family: 'Roboto Slab', serif; font-weight: 400; line-height: 1.4; pointer-events: none; text-align: center; }
+        .arch-link { color: var(--arch-burgundy); text-decoration: underline; text-decoration-style: double; text-decoration-color: var(--arch-gold); font-weight: 700; transition: 0.2s; }
+        .arch-link:hover { color: #000; background: rgba(187, 166, 131, 0.1); }
 
         .parchment-container {
-            max-width: 1400px; margin: 0 auto; background: var(--arch-parchment);
+            max-width: 1600px; margin: 0 auto; background: var(--arch-parchment);
             background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
-            box-shadow: 0 50px 100px rgba(0,0,0,0.8), inset 0 0 100px rgba(0,0,0,0.05);
-            position: relative; display: flex; min-height: 100vh; border: 1px solid #dcd1b2; overflow: hidden;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.8);
+            position: relative; display: flex; min-height: 100vh; border: 1px solid #dcd1b2;
         }
 
-        .manual-nav {
-            width: 300px; background: rgba(0,0,0,0.03); border-right: 1px solid rgba(0,0,0,0.1);
-            padding: 40px 0; flex-shrink: 0; display: flex; flex-direction: column;
-            transition: transform 0.3s ease; z-index: 1000; height: 100vh;
-        }
-        #nav-list { flex-grow: 1; overflow-y: auto; padding: 20px; scrollbar-width: thin; scrollbar-color: var(--arch-burgundy) transparent; }
-
-        @media (max-width: 1024px) { 
-            #nav-toggle-btn { display: flex; }
-            .manual-nav { position: fixed; left: 0; top: 0; bottom: 0; transform: translateX(-100%); background: var(--arch-parchment); } 
-            .manual-nav.open { transform: translateX(0); } 
-            .manual-body { padding: 80px 20px 140px 20px !important; }
-        }
-
-        .shelf-item { 
-            font-family: 'Cinzel', serif; font-size: 11px; font-weight: 900; text-transform: uppercase; 
-            color: var(--charcoal-pencil); padding: 12px 18px; margin-bottom: 6px; cursor: pointer; 
-            border-radius: 4px; transition: 0.3s; border-left: 4px solid transparent; background: rgba(0,0,0,0.03);
-            letter-spacing: 1px;
-        }
-        .shelf-item:hover { background: rgba(122, 29, 29, 0.05); border-left-color: var(--arch-burgundy); }
+        .manual-nav { width: 320px; background: rgba(0,0,0,0.04); border-right: 1px solid rgba(0,0,0,0.1); padding: 40px 0; flex-shrink: 0; display: flex; flex-direction: column; height: 100vh; position: sticky; top: 0; }
+        .shelf-item { font-family: 'Cinzel', serif; font-size: 11px; font-weight: 900; text-transform: uppercase; color: var(--charcoal-pencil); padding: 14px 20px; margin: 4px 15px; cursor: pointer; border-radius: 8px; transition: 0.2s; border-left: 4px solid transparent; background: rgba(0,0,0,0.02); letter-spacing: 1px; }
+        .shelf-item:hover { background: rgba(122, 29, 29, 0.05); border-left-color: var(--arch-burgundy); transform: translateX(5px); }
         .shelf-item.active { background: var(--arch-burgundy); color: white; border-left-color: var(--arch-gold); }
 
-        .manual-body { flex-grow: 1; padding: 60px 60px 140px 60px; height: 100vh; overflow-y: auto; scroll-behavior: smooth; position: relative; }
-        #manual-sections-container { display: flex; flex-direction: row; flex-wrap: wrap; align-items: flex-start; width: 100%; gap: 15px; }
+        .manual-body { flex-grow: 1; padding: 60px 80px 160px 80px; height: 100vh; overflow-y: auto; scroll-behavior: smooth; position: relative; }
+        .manual-h1 { font-family: 'Cinzel', serif; font-weight: 900; font-size: 72px; color: var(--arch-burgundy); text-transform: uppercase; line-height: 0.8; letter-spacing: -3px; }
+        .manual-h2 { font-family: 'Cinzel', serif; font-weight: 900; font-size: 2.5rem; border-bottom: 5px double var(--arch-burgundy); padding-bottom: 10px; text-transform: uppercase; margin: 40px 0 20px 0; color: var(--arch-burgundy); width: 100%; }
+        .manual-h3 { font-family: 'Cinzel', serif; font-weight: 700; font-size: 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 5px; text-transform: uppercase; margin: 25px 0 15px 0; color: var(--charcoal-pencil); width: 100%; }
 
-        /* DM Pill Orchestration Bar */
-        #dm-global-controls {
-            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
-            display: none !important; 
-            gap: 12px; padding: 12px 35px; background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(15px); border-radius: 100px; border: 1px solid rgba(122, 29, 29, 0.2);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3); z-index: 10000; align-items: center;
-        }
-        #dm-global-controls.dm-active { display: flex !important; }
+        .manual-note-box, .manual-info-box { border: 2px solid var(--arch-gold); border-radius: 24px; padding: 30px; margin-bottom: 30px; position: relative; background: white; box-shadow: var(--pop-shadow); }
+        .manual-note-box { background: var(--sage-note-bg) !important; border-color: rgba(0,0,0,0.1); }
 
-        .arch-btn { 
-            font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; text-transform: uppercase; 
-            padding: 8px 20px; border-radius: 30px; cursor: pointer; border: none; 
-            background: var(--arch-burgundy); color: white; white-space: nowrap; transition: 0.2s;
-            box-shadow: 0 4px 10px rgba(122, 29, 29, 0.2); display: flex; align-items: center; gap: 8px;
-        }
-        .arch-btn:hover { background: #5a1515; transform: translateY(-1px); }
-
-        /* Block Controls */
-        .tuner-panel { 
-            font-size: 8px; gap: 8px; padding: 10px 16px; flex-wrap: wrap; display: flex; align-items: center; 
-            background: white; border: 1px solid var(--arch-gold); border-radius: 30px; margin-bottom: 12px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08); 
+        /* Centered Inline Image Containers */
+        .inline-img-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; margin: 30px 0; }
+        .inline-img-container { position: relative; display: inline-block; max-width: 100%; }
+        .img-del-btn { 
+            position: absolute; top: -10px; right: -10px; background: #ef4444; color: white; 
+            width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+            font-weight: bold; font-size: 14px; cursor: pointer; border: 2px solid white; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 50; transition: 0.2s; 
         }
 
-        .tuner-num-input { border: 1px solid #ddd; width: 60px; text-align: center; border-radius: 6px; font-family: monospace; font-size: 13px; padding: 4px; color: var(--charcoal-pencil); }
-        .format-tool-btn { font-weight: 900; border: 1px solid #ddd; border-radius: 6px; padding: 4px 12px; cursor: pointer; font-size: 11px; transition: 0.2s; background: #fff; color: var(--charcoal-pencil); }
-        .format-tool-btn:hover { background: #f9f9f9; border-color: var(--arch-burgundy); }
-        .format-tool-btn.active { background: var(--arch-burgundy); color: white; border-color: var(--arch-gold); }
+        /* Role Swticher UI Enhancements */
+        .role-btn-active { background-color: var(--arch-burgundy) !important; color: white !important; box-shadow: 0 4px 12px rgba(122, 29, 29, 0.3) !important; }
+        .role-btn-inactive { background-color: transparent !important; color: #64748b !important; }
 
-        /* Components */
-        .manual-h1 { font-family: 'Cinzel', serif; font-weight: 900; font-size: 65px; color: var(--arch-burgundy); text-transform: uppercase; margin-bottom: 5px; line-height: 0.9; letter-spacing: -2px; }
-        .manual-h2 { font-family: 'Cinzel', serif; font-weight: 900; font-size: clamp(1.2rem, 4vw, 2.2rem); border-bottom: 4px double var(--arch-burgundy); padding-bottom: 8px; text-transform: uppercase; margin-bottom: 25px; width: 100%; letter-spacing: 2px; color: var(--arch-burgundy); }
-        .manual-h3 { font-family: 'Cinzel', serif; font-weight: 700; font-size: clamp(1rem, 3vw, 1.4rem); border-bottom: 1px solid rgba(93, 64, 55, 0.4); padding-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; width: 100%; color: var(--charcoal-pencil); }
+        /* CAROUSEL REDESIGN */
+        .adaptive-carousel { position: relative; width: 100%; background: white; border: 2px solid var(--arch-gold); border-radius: 24px; overflow: hidden; box-shadow: var(--carousel-shadow); margin: 30px 0; }
+        .carousel-viewport { position: relative; width: 100%; display: flex; align-items: center; justify-content: center; min-height: 250px; }
+        .carousel-slide { display: none; width: 100%; padding: 40px; text-align: center; }
+        .carousel-slide.active { display: flex; flex-direction: column; align-items: center; justify-content: center; animation: slideFade 0.4s ease; }
+        .carousel-img { max-width: 100%; max-height: 70vh; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); cursor: zoom-in; }
+        .carousel-nav { position: absolute; top: 50%; transform: translateY(-50%); background: var(--arch-burgundy); color: white; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid var(--arch-gold); z-index: 20; transition: 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+        .carousel-nav:hover { background: var(--arch-burgundy-light); transform: translateY(-50%) scale(1.1); }
+        .nav-prev { left: 15px; }
+        .nav-next { right: 15px; }
+        .slide-counter { position: absolute; bottom: 15px; right: 20px; font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; opacity: 0.4; pointer-events: none; }
+        .carousel-caption { margin-top: 20px; font-family: 'Roboto Slab', serif; font-style: italic; color: #64748b; font-size: 14px; max-width: 80%; }
+        .slide-del-btn { position: absolute; top: 15px; right: 15px; background: #ef4444; color: white; width: 24px; height: 24px; border-radius: 50%; font-size: 12px; font-weight: bold; border: 2px solid white; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 30; }
 
-        .manual-note-box, .manual-info-box { 
-            border: 2px solid var(--arch-gold); 
-            border-radius: 20px; 
-            padding: 25px; 
-            margin-bottom: 25px; 
-            position: relative; 
-            background: white; 
-            box-shadow: var(--pop-shadow); 
-            transition: transform 0.3s ease;
-        }
-        .manual-note-box { background: var(--sage-note-bg) !important; }
+        @keyframes slideFade { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
 
-        .toast { position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%); background: #1a0f0a; color: #f4edd8; padding: 12px 28px; border-radius: 40px; z-index: 2000000; opacity: 0; transition: opacity 0.3s; font-family: 'Cinzel'; font-size: 11px; font-weight: 900; border: 1px solid var(--arch-burgundy); pointer-events: none; }
-        
-        /* Prettier Role Pill Styling */
-        .role-pill-outer { 
-            background: var(--ui-pill-bg); 
-            border-radius: 50px; 
-            padding: 4px; 
-            display: inline-flex; 
-            border: 1px solid rgba(0,0,0,0.08); 
-            width: 180px; 
-            justify-content: space-between;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .role-tab { 
-            flex: 1; 
-            padding: 7px 0; 
-            cursor: pointer; 
-            border-radius: 50px; 
-            font-size: 11px; 
-            font-weight: 900; 
-            text-transform: uppercase; 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-            color: #5d4037; 
-            text-align: center;
-        }
-        .role-tab.active { 
-            background: var(--arch-burgundy); 
-            color: white; 
-            box-shadow: 0 4px 12px rgba(122,29,29,0.35);
-            transform: scale(1.02);
-        }
-
-        .aeon-size-span { display: inline; transition: font-size 0.05s ease-out; }
-
-        /* Carousel Styles */
-        .slider-bubble { 
-            background: #fff; 
-            border: 2px solid var(--arch-gold); 
-            border-radius: 20px; 
-            padding: 20px; 
-            box-shadow: var(--carousel-shadow); 
-            width: 100%; 
-            margin-bottom: 2.5rem; 
-            position: relative; 
-            overflow: hidden; 
-        }
-        .slider-viewport { position: relative; display: flex; align-items: center; justify-content: center; min-height: 250px; }
-        .slide-container { display: none; width: 100%; text-align: center; }
-        .slide-container.active { display: block; animation: fadeIn 0.4s ease; }
-        .slide-asset { max-width: 100%; max-height: 600px; border-radius: 8px; cursor: zoom-in; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 1px solid rgba(0,0,0,0.05); }
-        .slider-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: var(--arch-burgundy); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; font-weight: bold; border: 1px solid var(--arch-gold); box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: 0.2s; }
-        .arrow-left { left: 10px; }
-        .arrow-right { right: 10px; }
-        
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        .system-hub-link {
-            display: block;
-            text-align: center;
-            color: var(--arch-burgundy);
-            font-weight: 900;
-            text-transform: uppercase;
-            text-decoration: none;
-            font-size: 14px;
-            letter-spacing: -0.5px;
-            transition: 0.2s;
-            padding: 15px;
-            border-top: 1px solid rgba(0,0,0,0.05);
-            margin-top: auto;
-        }
-        .system-hub-link:hover { background: rgba(0,0,0,0.02); text-decoration: underline; }
-
-        /* Drag & Drop Styles */
-        .manual-section-unit { transition: opacity 0.2s, border 0.1s; }
-        .unit-dragging { opacity: 0.3 !important; }
-        .drop-zone-top { border-top: 5px solid var(--arch-burgundy) !important; }
-        .drop-zone-bottom { border-bottom: 5px solid var(--arch-burgundy) !important; }
-        .drop-zone-left { border-left: 5px solid var(--arch-burgundy) !important; }
-        .drop-zone-right { border-right: 5px solid var(--arch-burgundy) !important; }
-        .drag-handle-anchor { cursor: grab; padding: 6px; color: var(--arch-burgundy); font-size: 16px; opacity: 0.5; transition: 0.2s; user-select: none; }
-        .drag-handle-anchor:hover { opacity: 1; }
-        .drag-handle-anchor:active { cursor: grabbing; }
-
-        .table-wrap { 
-            width: 100%; 
-            overflow-x: auto; 
-            background: white; 
-            border: 2px solid var(--arch-gold); 
-            border-radius: 12px; 
-            box-shadow: var(--pop-shadow); 
-            margin-bottom: 30px; 
-        }
+        /* Tables */
+        .table-wrap { width: 100%; overflow-x: auto; background: white; border: 2px solid var(--arch-gold); border-radius: 16px; box-shadow: var(--pop-shadow); margin-bottom: 30px; }
         .manual-table { width: 100%; border-collapse: collapse; text-align: left; }
-        .manual-table th { background: rgba(0,0,0,0.05); padding: 14px; font-family: 'Cinzel', serif; border-bottom: 2px solid var(--arch-burgundy); font-size: 11px; }
-        .manual-table td { padding: 14px; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 13px; color: var(--charcoal-pencil); }
-        .manual-table tr:nth-child(even) { background-color: rgba(0,0,0,0.04); }
+        .manual-table th { background: rgba(0,0,0,0.05); padding: 16px; font-family: 'Cinzel', serif; border-bottom: 2px solid var(--arch-burgundy); font-weight: 900; font-size: 12px; }
+        .manual-table td { padding: 14px 16px; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 14px; }
+        .manual-table tr:nth-child(even) { background-color: var(--sage-row-alt); }
+
+        #dm-global-controls { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: none; gap: 8px; padding: 10px 20px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border-radius: 100px; border: 1px solid rgba(122, 29, 29, 0.2); box-shadow: 0 20px 50px rgba(0,0,0,0.4); z-index: 10000; align-items: center; }
+        #dm-global-controls.dm-active { display: flex; }
+        .arch-btn { font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 10px 18px; border-radius: 50px; cursor: pointer; border: none; background: var(--arch-burgundy); color: white; transition: 0.2s; box-shadow: 0 4px 10px rgba(122, 29, 29, 0.2); }
+        .arch-btn:hover { background: var(--arch-burgundy-light); transform: translateY(-2px); }
+
+        .tuner-panel { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; padding: 10px; background: white; border-radius: 14px; border: 1px solid #e5e7eb; box-shadow: 0 4px 12px rgba(0,0,0,0.08); position: relative; z-index: 10; }
+        .tuner-select { background: #f3f4f6; border: 1px solid #d1d5db; font-size: 10px; padding: 4px; border-radius: 6px; font-weight: 700; color: #374151; cursor: pointer; outline: none; }
+        .tuner-num-input { background: #f3f4f6; border: 1px solid #d1d5db; font-size: 10px; padding: 4px; border-radius: 6px; width: 55px; text-align: center; font-weight: 700; cursor: text; outline: none; }
+        .format-btn { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 8px; transition: 0.2s; font-weight: bold; cursor: pointer; border: 1px solid transparent; }
+        .format-btn:hover { background: #f3f4f6; border-color: #ddd; }
+        .format-btn.active { background: var(--arch-burgundy); color: white; }
+        .table-tool-btn { font-size: 9px; font-weight: 900; background: #f1f5f9; color: #475569; padding: 4px 8px; border-radius: 6px; border: 1px solid #e2e8f0; transition: 0.2s; }
+
+        /* Custom Modal UI */
+        .purge-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 200000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .purge-modal-card { background: white; border-radius: 24px; width: 100%; max-width: 480px; padding: 40px; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.3); transform: scale(1); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .purge-title { font-family: 'Cinzel', serif; font-weight: 900; font-size: 28px; color: var(--arch-burgundy); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 1px; }
+        .purge-prompt { font-family: 'Roboto Slab', serif; font-style: italic; color: #64748b; font-size: 15px; margin-bottom: 35px; }
+        .purge-confirm-btn { width: 100%; background: var(--arch-burgundy); color: white; padding: 20px; border-radius: 16px; font-family: 'Cinzel', serif; font-weight: 900; text-transform: uppercase; font-size: 13px; letter-spacing: 2px; border: none; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 12px rgba(122,29,29,0.2); margin-bottom: 10px; }
+        .purge-confirm-btn:hover { background: var(--arch-burgundy-light); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(122,29,29,0.3); }
+        .purge-cancel-btn { width: 100%; background: #f1f5f9; color: #94a3b8; padding: 16px; border-radius: 16px; font-family: 'Cinzel', serif; font-weight: 900; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; border: none; cursor: pointer; transition: 0.2s; }
+
+        @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        @media (max-width: 1024px) {
+            .manual-nav { position: fixed; left: 0; top: 0; bottom: 0; transform: translateX(-100%); z-index: 1000; background: var(--arch-parchment); }
+            .manual-nav.open { transform: translateX(0); }
+            .manual-body { padding: 80px 20px 140px 20px; }
+        }
     </style>
-    <script>
-        // GLOBAL STATE & FUNCTIONS
-        window.aeonState = {
-            manualSections: [],
-            manualHeader: { title: "OPERATIONS GUIDE", subtitle: "Archival sync." },
-            activeRole: localStorage.getItem('aeonfall_role') || 'player',
-            activeEditId: null,
-            lockedSelection: null,
-            saveTimer: null,
-            deleteCallback: null,
-            draggedId: null,
-            dropSide: null
-        };
-
-        window.closeAllDropdowns = () => {};
-        window.showToast = (m) => { 
-            const t = document.getElementById('toast'); 
-            if(t) { t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 3000); } 
-        };
-        window.toggleNav = () => { 
-            document.getElementById('sidebar')?.classList.toggle('open'); 
-            document.getElementById('nav-overlay')?.classList.toggle('active'); 
-        };
-        window.openDelModal = (text, callback) => {
-            const txt = document.getElementById('del-modal-text');
-            if (txt) txt.innerText = text;
-            window.aeonState.deleteCallback = callback;
-            document.getElementById('del-modal')?.classList.remove('hidden');
-        };
-        window.moveSlide = (id, dir) => {
-            const slides = document.querySelectorAll(`#slider-${id} .slide-container`);
-            if (!slides.length) return;
-            let currentIdx = Array.from(slides).findIndex(s => s.classList.contains('active'));
-            slides[currentIdx].classList.remove('active');
-            let nextIdx = (currentIdx + dir + slides.length) % slides.length;
-            slides[nextIdx].classList.add('active');
-        };
-    </script>
 </head>
-<body onclick="window.closeAllDropdowns()">
+<body onclick="window.clearSelectionState(event)">
 
-    <div id="toast" class="toast">Manual Synchronized</div>
-    <div id="selection-bubble" onmousedown="window.toggleSelectionLock(event)">Select</div>
+    <div id="toast" class="fixed bottom-32 left-1/2 -translate-x-1/2 bg-stone-900 text-amber-50 px-8 py-3 rounded-full opacity-0 transition-opacity duration-300 pointer-events-none z-[200000] font-bold text-xs uppercase tracking-widest border border-amber-900/50">Manual Synchronized</div>
+    
+    <div id="selection-bubble" onmousedown="window.lockSelection(event)">Select & Style</div>
 
-    <div id="nav-toggle-btn" onclick="window.toggleNav(); event.stopPropagation();">
+    <div id="nav-toggle-btn" class="fixed top-5 left-5 z-[5000] lg:hidden bg-[#7a1d1d] text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg border-2 border-[#bba683] cursor-pointer" onclick="document.getElementById('sidebar').classList.toggle('open')">
         <span>☰</span>
     </div>
 
-    <div id="nav-overlay" onclick="window.toggleNav()"></div>
+    <!-- PURGE MODAL -->
+    <div id="purge-modal" class="purge-modal-overlay hidden">
+        <div class="purge-modal-card">
+            <h3 class="purge-title">PURGE RECORD</h3>
+            <p id="purge-text" class="purge-prompt">Purge archival segment?</p>
+            <button id="purge-confirm" class="purge-confirm-btn">Confirm Erasure</button>
+            <button onclick="window.closePurgeModal()" class="purge-cancel-btn">Cancel</button>
+        </div>
+    </div>
 
     <!-- Auth Modal -->
-    <div id="pass-modal" class="fixed inset-0 bg-black/95 flex items-center justify-center z-[110000] hidden p-4 text-black">
-        <div class="bg-gray-800 p-8 rounded-2xl w-full max-w-sm border-2 border-amber-600 text-white text-center shadow-2xl" onclick="event.stopPropagation()">
-            <h3 class="text-xl font-serif text-amber-500 font-bold mb-4 uppercase">Archive Authority</h3>
-            <input type="password" id="dm-pass" class="w-full bg-gray-900 text-center text-2xl rounded-lg p-3 mb-8 border border-gray-700 text-amber-500 outline-none">
-            <button onclick="window.authDm()" class="w-full bg-amber-600 hover:bg-amber-500 text-white py-4 rounded-xl font-bold uppercase text-xs">Verify Access</button>
-            <button onclick="document.getElementById('pass-modal').classList.add('hidden')" class="text-[10px] text-gray-500 uppercase font-black mt-6 block w-full text-center">Cancel</button>
+    <div id="pass-modal" class="fixed inset-0 bg-black/90 flex items-center justify-center z-[110000] hidden p-4">
+        <div class="bg-stone-800 p-8 rounded-3xl w-full max-w-sm border-2 border-amber-600 text-center shadow-2xl">
+            <h3 class="text-xl font-serif text-amber-500 font-black mb-4 uppercase tracking-tighter">Archive Access</h3>
+            <input type="password" id="dm-pass" class="w-full bg-black text-center text-2xl rounded-xl p-4 mb-6 border border-amber-900 text-amber-500 outline-none">
+            <button onclick="window.authDm()" class="w-full bg-amber-600 hover:bg-amber-500 text-white py-4 rounded-xl font-black uppercase text-xs tracking-widest">Verify</button>
+            <button onclick="document.getElementById('pass-modal').classList.add('hidden')" class="text-[10px] text-gray-500 uppercase font-black mt-6 block w-full text-center">Abort</button>
         </div>
     </div>
 
-    <!-- Deletion Confirmation -->
-    <div id="del-modal" class="fixed inset-0 z-[110000] flex items-center justify-center p-4 hidden text-black">
-        <div class="absolute inset-0 bg-black/90" onclick="document.getElementById('del-modal').classList.add('hidden')"></div>
-        <div class="bg-white p-8 rounded-2xl w-full max-w-sm text-center relative z-10 shadow-2xl">
-            <h3 class="text-xl font-serif font-black text-red-700 uppercase mb-4">Purge Record</h3>
-            <p id="del-modal-text" class="text-xs text-slate-500 mb-8 italic">This entry will be lost.</p>
-            <button id="confirm-del-btn" class="w-full bg-red-700 text-white py-4 rounded-xl font-black text-xs uppercase shadow-lg">Confirm erasure</button>
-            <button onclick="document.getElementById('del-modal').classList.add('hidden')" class="w-full bg-gray-100 text-gray-400 py-3 rounded-xl font-bold uppercase text-[10px] mt-2">Cancel</button>
-        </div>
-    </div>
-
-    <div id="lightbox-modal" class="hidden fixed inset-0 z-[120000] bg-black/90 flex items-center justify-center" onclick="this.classList.add('hidden')">
+    <div id="lightbox-modal" class="hidden fixed inset-0 z-[120000] bg-black/95 flex items-center justify-center cursor-zoom-out" onclick="this.classList.add('hidden')">
         <div id="lightbox-content" class="p-4 flex items-center justify-center w-full h-full"></div>
     </div>
 
     <div class="parchment-container">
-        <!-- SIDEBAR -->
         <div class="manual-nav" id="sidebar">
-            <div class="sidebar-header text-center p-6 pb-2">
-                <h1 class="font-serif font-black text-4xl text-[#7a1d1d] uppercase leading-none tracking-tighter">Aeonfall</h1>
-                <p class="font-sans text-[9px] uppercase font-bold tracking-[0.2em] opacity-40 mt-2 mb-1">Operational Manual</p>
+            <div class="sidebar-header text-center p-8 pb-4">
+                <h1 class="font-serif font-black text-5xl text-[#7a1d1d] uppercase leading-none tracking-tighter">Aeonfall</h1>
+                <p class="font-sans text-[10px] uppercase font-bold tracking-[0.3em] opacity-50 mt-3">Operational Manual</p>
                 
-                <div class="role-pill-outer mt-6 mb-4">
-                    <div id="role-player" onclick="window.setRole('player')" class="role-tab active">Player</div>
-                    <div id="role-dm" onclick="window.setRole('dm')" class="role-tab">DM</div>
+                <div class="inline-flex bg-stone-200 p-1 rounded-full mt-8 border border-black/5 shadow-inner">
+                    <button id="role-player" onclick="window.setRole('player')" class="px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all">Player</button>
+                    <button id="role-dm" onclick="window.setRole('dm')" class="px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all">DM</button>
                 </div>
             </div>
-            
-            <div id="nav-list"></div>
-
-            <a href="playershandbook.html" class="system-hub-link">
-                ← SYSTEM HUB
-            </a>
+            <div id="nav-list" class="flex-grow overflow-y-auto mt-4 px-2"></div>
+            <div class="p-4 mt-auto border-t border-black/5">
+                <a href="playershandbook.html" class="block text-center py-4 text-[#7a1d1d] font-black text-xs uppercase tracking-widest hover:bg-black/5 rounded-xl transition-all">← System Hub</a>
+            </div>
         </div>
 
-        <!-- CONTENT -->
-        <div class="manual-body" id="content-pane" onclick="window.closeAllDropdowns()">
-            <div id="manual-header"></div>
-            <div id="manual-sections-container"></div>
-            
+        <div class="manual-body" id="content-pane">
+            <div id="manual-header" class="mb-12"></div>
+            <div id="manual-sections-container" class="flex flex-wrap items-start gap-4"></div>
             <div id="dm-global-controls">
-                <button onclick="window.addManualSection('heading')" class="arch-btn">🔗 GROUP</button>
-                <button onclick="window.addManualSection('subheading')" class="arch-btn">📑 SUB</button>
-                <button onclick="window.addManualSection('text')" class="arch-btn">✚ TEXT</button>
-                <button onclick="window.addManualSection('table')" class="arch-btn">✚ TBL</button>
-                <button onclick="window.addManualSection('note')" class="arch-btn">📑 NOTE</button>
-                <button onclick="window.addManualSection('info')" class="arch-btn">📊 INFO</button>
-                <button onclick="window.addManualSection('media')" class="arch-btn">🖼 CAROUSEL</button>
+                <button onclick="window.addManualSection('heading')" class="arch-btn">🔗 Group</button>
+                <button onclick="window.addManualSection('subheading')" class="arch-btn">📑 Sub</button>
+                <button onclick="window.addManualSection('text')" class="arch-btn">✚ Text</button>
+                <button onclick="window.addManualSection('table')" class="arch-btn">✚ Table</button>
+                <button onclick="window.addManualSection('note')" class="arch-btn">📑 Note</button>
+                <button onclick="window.addManualSection('info')" class="arch-btn">📊 Info</button>
+                <button onclick="window.addManualSection('media')" class="arch-btn">🖼 Carousel</button>
             </div>
         </div>
     </div>
@@ -426,536 +205,317 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, collection, doc, updateDoc, setDoc, onSnapshot, addDoc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        const firebaseConfig = { apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI", authDomain: "aeonfall-523c1.firebaseapp.com", projectId: "aeonfall-523c1", storageBucket: "aeonfall-523c1.firebasestorage.app", messagingSenderId: "716207733913", appId: "1:716207733913:web:7aac43906a70e2b5f50c08" };
+        const firebaseConfig = JSON.parse(__firebase_config);
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'aeonfall-manager-v2';
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'aeonfall-manual';
 
-        window.authDm = () => { 
-            if(document.getElementById('dm-pass')?.value === 'Rew4994') { 
-                window.aeonState.activeRole='dm'; 
-                localStorage.setItem('aeonfall_role', 'dm'); 
-                document.getElementById('pass-modal')?.classList.add('hidden'); 
-                window.updateRoleUI(); 
-            } else { 
-                window.showToast("Authority Refused"); 
-            } 
+        window.aeonState = {
+            sections: [],
+            header: { title: "OPERATIONS GUIDE", subtitle: "Archive access established." },
+            role: localStorage.getItem('aeon_role') || 'player',
+            activeEditId: null,
+            lockedSelection: null,
+            saveTimer: null,
+            draggedId: null,
+            dropSide: null,
+            activeSlides: {}
         };
 
-        window.setRole = (r) => { 
-            if(r === 'dm') document.getElementById('pass-modal')?.classList.remove('hidden'); 
-            else { 
-                window.aeonState.activeRole = 'player'; 
-                localStorage.setItem('aeonfall_role', 'player'); 
-                window.updateRoleUI(); 
-            } 
+        window.showToast = (msg) => {
+            const t = document.getElementById('toast');
+            if (t) { t.innerText = msg; t.style.opacity = 1; setTimeout(() => t.style.opacity = 0, 2500); }
         };
 
-        window.updateRoleUI = () => { 
-            const isDM = window.aeonState.activeRole === 'dm'; 
-            document.body.classList.toggle('dm-mode-active', isDM); 
-            const ctrl = document.getElementById('dm-global-controls');
-            if (ctrl) isDM ? ctrl.classList.add('dm-active') : ctrl.classList.remove('dm-active');
-            document.getElementById('role-dm')?.classList.toggle('active', isDM); 
-            document.getElementById('role-player')?.classList.toggle('active', !isDM); 
-            window.renderManual(); 
+        window.authDm = () => {
+            const pass = document.getElementById('dm-pass').value;
+            if (pass === 'Rew4994') { window.aeonState.role = 'dm'; localStorage.setItem('aeon_role', 'dm'); document.getElementById('pass-modal').classList.add('hidden'); window.updateRoleUI(); }
+            else { window.showToast("Authority Refused"); }
         };
 
-        // Resilient Sizing Logic
-        window.applySize = (size) => {
+        window.setRole = (r) => {
+            if (r === 'dm' && window.aeonState.role !== 'dm') document.getElementById('pass-modal').classList.remove('hidden');
+            else { window.aeonState.role = 'player'; localStorage.setItem('aeon_role', 'player'); window.updateRoleUI(); }
+        };
+
+        window.updateRoleUI = () => {
+            const isDM = window.aeonState.role === 'dm';
+            document.body.classList.toggle('dm-mode-active', isDM);
+            document.getElementById('dm-global-controls').classList.toggle('dm-active', isDM);
+            
+            // Visual Pill Update
+            document.getElementById('role-player').className = `px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all ${!isDM ? 'role-btn-active' : 'role-btn-inactive'}`;
+            document.getElementById('role-dm').className = `px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all ${isDM ? 'role-btn-active' : 'role-btn-inactive'}`;
+            
+            window.renderManual();
+        };
+
+        // STYLE ENGINE
+        window.applyStyle = (prop, val) => {
+            if (!val) return;
             const sel = window.getSelection();
-            
-            if (!window.aeonState.lockedSelection) {
-                if (sel.rangeCount > 0 && sel.toString().trim().length > 0) {
-                    window.aeonState.lockedSelection = sel.getRangeAt(0).cloneRange();
-                    const bubble = document.getElementById('selection-bubble');
-                    if (bubble) {
-                        bubble.innerText = "Unselect";
-                        bubble.style.background = "#22c55e"; 
-                        bubble.style.display = "block";
-                    }
-                } else {
-                    return;
-                }
-            }
-            
-            sel.removeAllRanges();
-            sel.addRange(window.aeonState.lockedSelection);
-            
-            if (sel.rangeCount === 0) return;
-            
+            if (window.aeonState.lockedSelection) { sel.removeAllRanges(); sel.addRange(window.aeonState.lockedSelection); }
+            if (!sel.rangeCount || sel.toString().length === 0) return;
             const range = sel.getRangeAt(0);
             let container = range.commonAncestorContainer;
             if (container.nodeType === 3) container = container.parentElement;
-            
-            let targetSpan = container.closest('.aeon-size-span');
-            
-            if (targetSpan) {
-                targetSpan.style.fontSize = size + 'px';
+            let existingSpan = container.closest('.aeon-style-span');
+            if (existingSpan && sel.toString().trim() === existingSpan.innerText.trim()) {
+                if (prop === 'fontSize') existingSpan.style.fontSize = val + 'px';
+                if (prop === 'fontFamily') existingSpan.style.fontFamily = val;
             } else {
                 const span = document.createElement('span');
-                span.className = 'aeon-size-span';
-                span.style.fontSize = size + 'px';
-                
+                span.className = 'aeon-style-span';
+                if (prop === 'fontSize') span.style.fontSize = val + 'px';
+                if (prop === 'fontFamily') span.style.fontFamily = val;
                 try {
-                    range.surroundContents(span);
-                } catch(e) {
-                    const content = range.extractContents();
-                    span.appendChild(content);
+                    const fragment = range.extractContents();
+                    span.appendChild(fragment);
                     range.insertNode(span);
-                }
-                
-                const newRange = document.createRange();
-                newRange.selectNodeContents(span);
-                sel.removeAllRanges();
-                sel.addRange(newRange);
-                window.aeonState.lockedSelection = newRange.cloneRange();
-            }
-
-            const editBox = container.closest('.dm-editable');
-            if (editBox) {
-                const id = editBox.getAttribute('data-id');
-                if (id) window.dbUpdateSection(id, 'content', editBox.innerHTML);
-            }
-        };
-
-        // Custom Granular Indentation
-        window.execGranularIndent = (dir) => {
-            const sel = window.getSelection();
-            
-            if (!window.aeonState.lockedSelection) {
-                if (sel.rangeCount > 0 && sel.toString().trim().length > 0) {
-                    window.aeonState.lockedSelection = sel.getRangeAt(0).cloneRange();
-                } else {
-                    return;
-                }
-            }
-            
-            sel.removeAllRanges();
-            sel.addRange(window.aeonState.lockedSelection);
-            
-            if (sel.rangeCount === 0) return;
-            
-            const range = sel.getRangeAt(0);
-            let container = range.commonAncestorContainer;
-            if (container.nodeType === 3) container = container.parentElement;
-            
-            let targetSpan = container.closest('.aeon-indent-span');
-            
-            if (dir === 'indent') {
-                if (targetSpan) {
-                    let current = parseInt(targetSpan.style.marginLeft) || 0;
-                    targetSpan.style.marginLeft = (current + 20) + 'px';
-                } else {
-                    const span = document.createElement('span');
-                    span.className = 'aeon-indent-span';
-                    span.style.marginLeft = '20px';
-                    try {
-                        range.surroundContents(span);
-                    } catch(e) {
-                        const content = range.extractContents();
-                        span.appendChild(content);
-                        range.insertNode(span);
-                    }
                     const newRange = document.createRange();
                     newRange.selectNodeContents(span);
                     sel.removeAllRanges();
                     sel.addRange(newRange);
                     window.aeonState.lockedSelection = newRange.cloneRange();
-                }
-            } else {
-                if (targetSpan) {
-                    let current = parseInt(targetSpan.style.marginLeft) || 0;
-                    if (current > 20) {
-                        targetSpan.style.marginLeft = (current - 20) + 'px';
-                    } else {
-                        const parent = targetSpan.parentNode;
-                        while (targetSpan.firstChild) {
-                            parent.insertBefore(targetSpan.firstChild, targetSpan);
-                        }
-                        parent.removeChild(targetSpan);
-                        window.aeonState.lockedSelection = null;
-                        const bubble = document.getElementById('selection-bubble');
-                        if (bubble) bubble.style.display = 'none';
-                    }
-                }
+                } catch (e) {}
             }
-
-            const editBox = container.closest('.dm-editable');
-            if (editBox) {
-                const id = editBox.getAttribute('data-id');
-                if (id) window.dbUpdateSection(id, 'content', editBox.innerHTML);
-            }
+            window.saveActiveContent();
         };
 
         window.execFormat = (cmd, val = null) => {
             const sel = window.getSelection();
-            
-            if (window.aeonState.lockedSelection) {
-                sel.removeAllRanges();
-                sel.addRange(window.aeonState.lockedSelection);
-            }
-
+            if (window.aeonState.lockedSelection) { sel.removeAllRanges(); sel.addRange(window.aeonState.lockedSelection); }
             document.execCommand(cmd, false, val);
-            
-            if (sel.rangeCount > 0) {
-                window.aeonState.lockedSelection = sel.getRangeAt(0).cloneRange();
-            }
-
-            const focused = document.activeElement;
-            if (focused && (focused.classList.contains('dm-editable') || focused.closest('.dm-editable'))) {
-                const box = focused.closest('.dm-editable') || focused;
-                const id = box.getAttribute('data-id');
-                if (id) window.dbUpdateSection(id, 'content', box.innerHTML);
-            }
+            if (sel.rangeCount > 0) window.aeonState.lockedSelection = sel.getRangeAt(0).cloneRange();
+            window.saveActiveContent();
         };
 
         window.insertTemplate = (type) => {
-            const tpl = type === 'img' ? '{{URL | Caption}}' : '[[Text | definition]]';
+            let tpl = type === 'img' ? '{{URL | Caption}}' : type === 'def' ? '[[Word | definition]]' : '((Text | URL))';
             window.execFormat('insertHTML', tpl);
         };
 
-        window.toggleSelectionLock = (e) => {
+        window.saveActiveContent = () => {
+            if (!window.aeonState.activeEditId) return;
+            const el = document.querySelector(`[data-id="${window.aeonState.activeEditId}"]`);
+            if (el) window.dbUpdateSection(window.aeonState.activeEditId, 'content', el.innerHTML);
+        };
+
+        window.lockSelection = (e) => {
             e.preventDefault(); e.stopPropagation();
-            const bubble = document.getElementById('selection-bubble');
             const sel = window.getSelection();
-            
             if (window.aeonState.lockedSelection) {
-                if (sel.toString().trim().length > 0) {
-                    window.aeonState.lockedSelection = sel.getRangeAt(0).cloneRange();
-                    bubble.innerText = "Unselect";
-                    bubble.style.background = "#22c55e"; 
-                } else {
-                    window.aeonState.lockedSelection = null;
-                    bubble.innerText = "Select";
-                    bubble.style.background = 'var(--arch-burgundy)';
-                    bubble.style.display = "none";
-                }
-            } else {
-                if (sel.rangeCount > 0 && sel.toString().trim().length > 0) {
-                    window.aeonState.lockedSelection = sel.getRangeAt(0).cloneRange();
-                    bubble.innerText = "Unselect";
-                    bubble.style.background = "#22c55e"; 
-                }
+                window.aeonState.lockedSelection = null;
+                document.getElementById('selection-bubble').innerText = "Select & Style";
+                document.getElementById('selection-bubble').style.background = "#262626";
+            } else if (sel.rangeCount && sel.toString().length > 0) {
+                window.aeonState.lockedSelection = sel.getRangeAt(0).cloneRange();
+                document.getElementById('selection-bubble').innerText = "Selection Locked";
+                document.getElementById('selection-bubble').style.background = "#7a1d1d";
             }
         };
 
-        // DRAG & DROP ENGINE
-        window.handleDragStart = function(e, id) { 
-            if (window.aeonState.activeRole !== 'dm') return; 
-            window.aeonState.draggedId = id; 
-            e.currentTarget.classList.add('unit-dragging'); 
-            e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/plain', id); 
+        window.clearSelectionState = (e) => {
+            if (e.target.closest('.tuner-panel') || e.target.closest('#selection-bubble') || e.target.closest('.adaptive-carousel')) return;
+            const sel = window.getSelection();
+            if (sel.toString().length === 0 && !window.aeonState.lockedSelection) document.getElementById('selection-bubble').style.display = 'none';
         };
 
-        window.handleDragOver = function(e) { 
-            if (!window.aeonState.draggedId) return; 
-            e.preventDefault(); 
-            const el = e.currentTarget; 
-            const rect = el.getBoundingClientRect(); 
-            const relX = e.clientX - rect.left; 
-            const relY = e.clientY - rect.top;
-
-            el.classList.remove('drop-zone-left', 'drop-zone-right', 'drop-zone-top', 'drop-zone-bottom');
-            if (relY < rect.height * 0.25) { window.aeonState.dropSide = 'top'; el.classList.add('drop-zone-top'); }
-            else if (relY > rect.height * 0.75) { window.aeonState.dropSide = 'bottom'; el.classList.add('drop-zone-bottom'); }
-            else if (relX < rect.width * 0.33) { window.aeonState.dropSide = 'left'; el.classList.add('drop-zone-left'); }
-            else if (relX > rect.width * 0.66) { window.aeonState.dropSide = 'right'; el.classList.add('drop-zone-right'); }
+        // CAROUSEL LOGIC
+        window.changeSlide = (sectionId, direction) => {
+            const current = window.aeonState.activeSlides[sectionId] || 0;
+            const s = window.aeonState.sections.find(x => x.id === sectionId);
+            const urls = (s.mediaUrl || "").split(',').filter(x => x.trim());
+            const nextIndex = (current + direction + urls.length) % urls.length;
+            window.aeonState.activeSlides[sectionId] = nextIndex;
+            window.renderManual();
         };
 
-        window.handleDragLeave = function(e) { e.currentTarget.classList.remove('drop-zone-left', 'drop-zone-right', 'drop-zone-top', 'drop-zone-bottom'); };
-        window.handleDragEnd = function(e) { e.currentTarget.classList.remove('unit-dragging'); };
-
-        window.handleDrop = async function(e, targetId) { 
-            e.preventDefault(); 
-            e.currentTarget.classList.remove('drop-zone-left', 'drop-zone-right', 'drop-zone-top', 'drop-zone-bottom'); 
-            if (!window.aeonState.draggedId || window.aeonState.draggedId === targetId) return; 
-
-            const getGroup = (id) => {
-                const idx = window.aeonState.manualSections.findIndex(s => s.id === id);
-                if (idx === -1) return [];
-                const section = window.aeonState.manualSections[idx];
-                if (section.type !== 'heading') return [section];
-                
-                const group = [section];
-                for (let i = idx + 1; i < window.aeonState.manualSections.length; i++) {
-                    if (window.aeonState.manualSections[i].type === 'heading') break;
-                    group.push(window.aeonState.manualSections[i]);
-                }
-                return group;
-            };
-
-            const movedGroup = getGroup(window.aeonState.draggedId);
-            const remaining = window.aeonState.manualSections.filter(s => !movedGroup.map(m => m.id).includes(s.id));
-            let targetIdx = remaining.findIndex(s => s.id === targetId);
-            
-            const batch = writeBatch(db);
-            const side = window.aeonState.dropSide;
-
-            if (side === 'left' || side === 'right') {
-                movedGroup.forEach(m => batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', m.id), { width: 48 }));
-                batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', targetId), { width: 48 });
-                if (side === 'right') targetIdx += 1;
-            } else {
-                movedGroup.forEach(m => batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', m.id), { width: 100 }));
-                if (side === 'bottom') targetIdx += 1;
-            }
-
-            remaining.splice(targetIdx, 0, ...movedGroup);
-            remaining.forEach((sec, i) => { batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', sec.id), { order: i }); }); 
-
-            await batch.commit(); 
-            window.aeonState.draggedId = null; 
-            window.showToast("Archive Structural Sync");
+        window.removeSlide = async (sectionId, index) => {
+            const s = window.aeonState.sections.find(x => x.id === sectionId);
+            if (!s) return;
+            let urls = (s.mediaUrl || "").split(',').filter(x => x.trim());
+            let descs = (s.mediaDescription || "").split(',');
+            urls.splice(index, 1);
+            descs.splice(index, 1);
+            if ((window.aeonState.activeSlides[sectionId] || 0) >= urls.length) window.aeonState.activeSlides[sectionId] = Math.max(0, urls.length - 1);
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', sectionId), { mediaUrl: urls.join(','), mediaDescription: descs.join(',') });
         };
 
-        // Table Ops (Row & Column Management)
+        // TABLE LOGIC
         window.addRow = async (id) => {
-            const s = window.aeonState.manualSections.find(x => x.id === id); if (!s) return;
+            const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
             const rows = JSON.parse(s.tableRows || '[]');
-            rows.push(new Array((s.tableHeaders || ['Key','Val']).length).fill("..."));
+            rows.push(new Array((s.tableHeaders || ['H1', 'H2']).length).fill("..."));
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { tableRows: JSON.stringify(rows) });
         };
         window.remRow = async (id) => {
-            const s = window.aeonState.manualSections.find(x => x.id === id); if (s) {
-                const rows = JSON.parse(s.tableRows || '[]'); if (rows.length <= 1) return;
-                rows.pop();
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { tableRows: JSON.stringify(rows) });
-            }
+            const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
+            const rows = JSON.parse(s.tableRows || '[]'); if (rows.length <= 1) return;
+            rows.pop();
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { tableRows: JSON.stringify(rows) });
         };
         window.addCol = async (id) => {
-            const s = window.aeonState.manualSections.find(x => x.id === id); if (!s) return;
-            const headers = [...(s.tableHeaders || ['Key', 'Val'])];
-            headers.push("H" + (headers.length + 1));
-            const rows = JSON.parse(s.tableRows || '[]');
-            const updatedRows = rows.map(r => [...r, "..."]);
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { 
-                tableHeaders: headers,
-                tableRows: JSON.stringify(updatedRows) 
-            });
+            const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
+            const h = [...(s.tableHeaders || ['H1', 'H2'])]; h.push("New Header");
+            const r = JSON.parse(s.tableRows || '[]');
+            const updatedRows = r.map(row => [...row, "..."]);
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { tableHeaders: h, tableRows: JSON.stringify(updatedRows) });
         };
         window.remCol = async (id) => {
-            const s = window.aeonState.manualSections.find(x => x.id === id); if (!s) return;
-            const headers = [...(s.tableHeaders || ['Key', 'Val'])];
-            if (headers.length <= 1) return;
-            headers.pop();
-            const rows = JSON.parse(s.tableRows || '[]');
-            const updatedRows = rows.map(r => {
-                const newRow = [...r];
-                newRow.pop();
-                return newRow;
-            });
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { 
-                tableHeaders: headers,
-                tableRows: JSON.stringify(updatedRows) 
-            });
+            const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
+            const h = [...(s.tableHeaders || ['H1', 'H2'])]; if (h.length <= 1) return;
+            h.pop();
+            const r = JSON.parse(s.tableRows || '[]');
+            const updatedRows = r.map(row => { const nr = [...row]; nr.pop(); return nr; });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { tableHeaders: h, tableRows: JSON.stringify(updatedRows) });
         };
 
-        // Firestore Sync
+        // IMAGE DELETION
+        window.removeInlineImage = (sectionId, imageUrl) => {
+            const section = window.aeonState.sections.find(s => s.id === sectionId);
+            if (!section) return;
+            const regex = new RegExp(`\\{\\{\\s*${imageUrl.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}\\s*(\\|[^}]*)?\\}\\}`, 'g');
+            const newContent = section.content.replace(regex, '');
+            window.dbUpdateSection(sectionId, 'content', newContent);
+        };
+
+        // DRAG ENGINE
+        window.initDrag = (e, id) => { if (window.aeonState.role === 'dm') { window.aeonState.draggedId = id; e.currentTarget.classList.add('unit-dragging'); } };
+        window.dragOver = (e) => {
+            if (!window.aeonState.draggedId) return; e.preventDefault();
+            const el = e.currentTarget; const rect = el.getBoundingClientRect(); const relX = e.clientX - rect.left; const relY = e.clientY - rect.top;
+            el.classList.remove('drop-zone-top', 'drop-zone-bottom', 'drop-zone-left', 'drop-zone-right');
+            const hT = rect.height * 0.25; const wT = rect.width * 0.25;
+            if (relY < hT) { window.aeonState.dropSide = 'top'; el.classList.add('drop-zone-top'); }
+            else if (relY > rect.height - hT) { window.aeonState.dropSide = 'bottom'; el.classList.add('drop-zone-bottom'); }
+            else if (relX < wT) { window.aeonState.dropSide = 'left'; el.classList.add('drop-zone-left'); }
+            else if (relX > rect.width - wT) { window.aeonState.dropSide = 'right'; el.classList.add('drop-zone-right'); }
+            else { window.aeonState.dropSide = 'bottom'; el.classList.add('drop-zone-bottom'); }
+        };
+
+        window.handleDrop = async (e, targetId) => {
+            e.preventDefault(); const draggedId = window.aeonState.draggedId; const side = window.aeonState.dropSide;
+            e.currentTarget.classList.remove('drop-zone-top', 'drop-zone-bottom', 'drop-zone-left', 'drop-zone-right');
+            if (!draggedId || draggedId === targetId) return;
+            const sections = [...window.aeonState.sections]; const draggedIdx = sections.findIndex(s => s.id === draggedId); const draggedSection = sections[draggedIdx];
+            let toMove = [draggedSection]; if (draggedSection.type === 'heading') { for (let i = draggedIdx + 1; i < sections.length; i++) { if (sections[i].type === 'heading') break; toMove.push(sections[i]); } }
+            const remaining = sections.filter(s => !toMove.map(m => m.id).includes(s.id)); let targetIdx = remaining.findIndex(s => s.id === targetId);
+            if (side === 'bottom' || side === 'right') targetIdx++;
+            remaining.splice(targetIdx, 0, ...toMove);
+            const batch = writeBatch(db);
+            if (side === 'left' || side === 'right') { toMove.forEach(m => batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', m.id), { width: 48 })); batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', targetId), { width: 48 }); }
+            else { toMove.forEach(m => batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', m.id), { width: 100 })); }
+            remaining.forEach((s, i) => { batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', s.id), { order: i }); });
+            await batch.commit(); window.aeonState.draggedId = null;
+        };
+
+        // DATABASE OPS
         window.dbUpdateSection = (id, field, val) => {
-            if(window.aeonState.saveTimer) clearTimeout(window.aeonState.saveTimer);
+            clearTimeout(window.aeonState.saveTimer);
             window.aeonState.saveTimer = setTimeout(async () => {
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { [field]: val });
-                window.showToast("Archival Sync");
+                window.showToast("Archive Updated");
             }, 1000);
         };
 
         window.dbUpdateHeader = (field, val) => {
-            if(window.aeonState.saveTimer) clearTimeout(window.aeonState.saveTimer);
+            clearTimeout(window.aeonState.saveTimer);
             window.aeonState.saveTimer = setTimeout(async () => {
-                try { await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'header'), { [field]: val }, { merge: true }); window.showToast("Header Sync"); } catch(e) {}
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'header'), { [field]: val }, { merge: true });
+                window.showToast("Header Synced");
             }, 1000);
         };
 
-        window.updateTableCell = (id, type, rIdx, val, cIdx = null) => {
-            const s = window.aeonState.manualSections.find(x => x.id === id); if(!s) return;
-            if(type === 'headers') {
-                const h = [...s.tableHeaders]; h[rIdx] = val;
-                window.dbUpdateSection(id, 'tableHeaders', h);
+        window.addManualSection = async (type) => {
+            const data = { type, order: window.aeonState.sections.length, width: 100, align: 'left', title: type.toUpperCase(), content: "Fragment initialization...", tableHeaders: type === 'table' ? ['Key', 'Value'] : null, tableRows: type === 'table' ? JSON.stringify([['...', '...']]) : null, mediaUrl: "", mediaDescription: "" };
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'manualSections'), data);
+        };
+
+        window.deleteSection = (id) => {
+            const section = window.aeonState.sections.find(s => s.id === id); if (!section) return;
+            const modal = document.getElementById('purge-modal'); const confirmBtn = document.getElementById('purge-confirm'); const promptText = document.getElementById('purge-text');
+            modal.classList.remove('hidden');
+            if (section.type === 'heading') {
+                const group = []; const idx = window.aeonState.sections.indexOf(section);
+                for (let i = idx + 1; i < window.aeonState.sections.length; i++) { if (window.aeonState.sections[i].type === 'heading') break; group.push(window.aeonState.sections[i].id); }
+                if (group.length > 0) {
+                    promptText.innerHTML = `Purge Group Anchor?<br><span class="text-[10px] text-red-800">This will also erase ${group.length} attached items.</span>`;
+                    confirmBtn.onmousedown = async (e) => { e.preventDefault(); const batch = writeBatch(db); [id, ...group].forEach(did => batch.delete(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', did))); await batch.commit(); window.closePurgeModal(); };
+                } else {
+                    promptText.innerText = "Purge group heading?";
+                    confirmBtn.onmousedown = async (e) => { e.preventDefault(); await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id)); window.closePurgeModal(); };
+                }
             } else {
-                const r = JSON.parse(s.tableRows); r[rIdx][cIdx] = val;
-                window.dbUpdateSection(id, 'tableRows', JSON.stringify(r));
+                promptText.innerText = "Purge archival segment?";
+                confirmBtn.onmousedown = async (e) => { e.preventDefault(); await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id)); window.closePurgeModal(); };
             }
         };
 
-        window.triggerManualDelete = (id) => {
-            window.openDelModal('Purge archival segment?', async () => {
-                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id));
-            });
-        };
+        window.closePurgeModal = () => { document.getElementById('purge-modal').classList.add('hidden'); };
 
-        window.addManualSection = async (type) => { 
-            const data = { title: "NEW ENTRY", content: "Inscribe details...", type, order: window.aeonState.manualSections.length, width: 100, align: 'left', tableHeaders: type==='table'?['Key','Value']:null, tableRows: type==='table'?'[["Data","Data"]]':null, mediaUrl: "", mediaDescription: "" }; 
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'manualSections'), data); 
-        };
-
-        window.parseAeonfallContent = (text, isDM, sectionId) => {
-            if (!text) return '';
-            if (isDM && window.aeonState.activeEditId !== null) return text;
-            let parsed = text;
-            parsed = parsed.replace(/\[\[([^|\]]+)\|([^\]]+)\]\]/g, '<span class="definition-word" data-definition="$2">$1</span>');
-            parsed = parsed.replace(/\{\{([^}|]+)(?:\|([^}]+))?\}\}/g, (m, url, desc) => {
+        // RENDERING
+        window.parseContent = (text, isDM, id) => {
+            if (!text) return ''; if (isDM && window.aeonState.activeEditId === id) return text;
+            let p = text;
+            p = p.replace(/\[\[([^|\]]+)\|([^\]]+)\]\]/g, '<span class="definition-word" data-definition="$2">$1</span>');
+            p = p.replace(/\(\(([^|)]+)\|([^)]+)\)\)/g, '<a href="$2" target="_blank" class="arch-link">$1</a>');
+            p = p.replace(/\{\{([^}|]+)(?:\|([^}]+))?\}\}/g, (m, url, desc) => {
                 const trimmedUrl = url.trim();
-                return `<div class="inline-img-wrapper"><img src="${trimmedUrl}" class="inline-arch-asset" onclick="window.openZoom(event, '${trimmedUrl}')">${desc ? `<div class="text-[10px] italic opacity-70 mt-1 text-center">${desc.trim()}</div>` : ''}</div>`;
+                return `<div class="inline-img-wrapper"><div class="inline-img-container">${isDM ? `<div class="img-del-btn" onmousedown="event.preventDefault(); window.removeInlineImage('${id}', '${trimmedUrl}')">✕</div>` : ''}<img src="${trimmedUrl}" class="inline-block max-w-full rounded-lg shadow-lg border border-black/10 cursor-zoom-in" onclick="window.openZoom('${trimmedUrl}')"></div>${desc ? `<div class="text-[11px] italic opacity-60 mt-2 text-center">${desc}</div>` : ''}</div>`;
             });
-            return parsed;
+            return p;
         };
 
         window.renderManual = () => {
-            if (window.aeonState.lockedSelection) return; 
-
-            const isDM = window.aeonState.activeRole === 'dm';
+            const isDM = window.aeonState.role === 'dm';
             const container = document.getElementById('manual-sections-container');
-            const headerEl = document.getElementById('manual-header');
-            if(!container) return;
-
-            if (headerEl) headerEl.innerHTML = `
-                <h1 class="manual-h1 dm-editable" contenteditable="${isDM}" oninput="window.dbUpdateHeader('title', this.innerText)">${window.aeonState.manualHeader.title}</h1>
-                <p class="dm-editable italic opacity-40 font-bold uppercase text-[9px] tracking-widest" contenteditable="${isDM}" oninput="window.dbUpdateHeader('subtitle', this.innerText)">${window.aeonState.manualHeader.subtitle}</p>
-            `;
-
-            document.getElementById('nav-list').innerHTML = window.aeonState.manualSections.filter(s => s.type === 'heading').map(s => `
-                <div class="shelf-item" onclick="document.getElementById('section-${s.id}').scrollIntoView({behavior:'smooth'})">${s.title}</div>
-            `).join('');
-
-            container.innerHTML = window.aeonState.manualSections.map(s => {
-                const style = `width: calc(${s.width ?? 100}% - 15px); text-align: ${s.align || 'left'};`;
-                let contentHTML = '';
-                
+            const header = document.getElementById('manual-header');
+            header.innerHTML = `<h1 class="manual-h1 dm-editable" contenteditable="${isDM}" oninput="window.dbUpdateHeader('title', this.innerText)">${window.aeonState.header.title}</h1><p class="text-[11px] font-black uppercase tracking-[0.4em] opacity-40 mt-2 dm-editable" contenteditable="${isDM}" oninput="window.dbUpdateHeader('subtitle', this.innerText)">${window.aeonState.header.subtitle}</p>`;
+            document.getElementById('nav-list').innerHTML = window.aeonState.sections.filter(s => s.type === 'heading').map(s => `<div class="shelf-item" onclick="document.getElementById('section-${s.id}').scrollIntoView({behavior:'smooth'})">${s.title}</div>`).join('');
+            
+            container.innerHTML = window.aeonState.sections.map(s => {
+                const width = s.width || 100;
+                let body = '';
                 if (s.type === 'table') {
-                    contentHTML = `<div class="table-wrap">
-                        ${isDM ? `<div class="flex gap-2 p-2 bg-gray-50 border-b">
-                            <button onclick="window.addRow('${s.id}')" class="format-tool-btn">+Row</button>
-                            <button onclick="window.remRow('${s.id}')" class="format-tool-btn">-Row</button>
-                            <button onclick="window.addCol('${s.id}')" class="format-tool-btn">+Col</button>
-                            <button onclick="window.remCol('${s.id}')" class="format-tool-btn">-Col</button>
-                        </div>` : ''}
-                        <table class="manual-table">
-                            <thead><tr>${(s.tableHeaders||['H1','H2']).map((h, i) => `<th contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}','headers',${i},this.innerText)">${h}</th>`).join('')}</tr></thead>
-                            <tbody>${JSON.parse(s.tableRows || '[]').map((row, rIdx) => `<tr>${row.map((c, cIdx) => `<td contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}','rows',${rIdx},this.innerText,${cIdx})">${c}</td>`).join('')}</tr>`).join('')}</tbody>
-                        </table>
-                    </div>`;
+                    const rows = JSON.parse(s.tableRows || '[["...","..."]]');
+                    body = `<div class="table-wrap">${isDM ? `<div class="bg-slate-50 border-b flex gap-2 p-2 justify-center"><button onmousedown="event.preventDefault(); window.addRow('${s.id}')" class="table-tool-btn">+Row</button><button onmousedown="event.preventDefault(); window.remRow('${s.id}')" class="table-tool-btn">-Row</button><button onmousedown="event.preventDefault(); window.addCol('${s.id}')" class="table-tool-btn">+Col</button><button onmousedown="event.preventDefault(); window.remCol('${s.id}')" class="table-tool-btn">-Col</button></div>` : ''}<table class="manual-table"><thead><tr>${(s.tableHeaders || ['H1', 'H2']).map((h, i) => `<th contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}','h',${i},this.innerText)">${h}</th>`).join('')}</tr></thead><tbody>${rows.map((r, ri) => `<tr>${r.map((c, ci) => `<td contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}','r',${ri},this.innerText,${ci})">${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
                 } else if (s.type === 'media') {
                     const urls = (s.mediaUrl || "").split(',').filter(x => x.trim());
                     const descs = (s.mediaDescription || "").split(',');
-                    contentHTML = `<div class="slider-bubble" id="slider-${s.id}">
-                        <div class="slider-viewport">
-                            ${urls.length > 1 ? `<div class="slider-arrow arrow-left" onclick="window.moveSlide('${s.id}', -1)">←</div><div class="slider-arrow arrow-right" onclick="window.moveSlide('${s.id}', 1)">→</div>` : ''}
-                            ${urls.map((l, i) => {
-                                const url = l.trim();
-                                const isVideo = url.toLowerCase().endsWith('.mp4');
-                                return `<div class="slide-container ${i===0?'active':''}">
-                                    ${isVideo ? `<video src="${url}" class="slide-asset" autoplay loop muted playsinline onclick="window.openZoom(event, '${url}')"></video>` : `<img src="${url}" class="slide-asset" onclick="window.openZoom(event, '${url}')">`}
-                                    <div class="text-[11px] mt-4 opacity-70 text-center italic">${(descs[i] || "").trim()}</div>
-                                </div>`;
-                            }).join('')}
-                        </div>
-                        ${isDM ? `<div class="mt-6 pt-4 border-t border-black/10 flex flex-col gap-2">
-                            <input type="text" class="w-full text-[10px] p-2 bg-black/5 border rounded" placeholder="Links (comma separated)" value="${s.mediaUrl || ''}" oninput="window.dbUpdateSection('${s.id}', 'mediaUrl', this.value)">
-                            <input type="text" class="w-full text-[10px] p-2 bg-black/5 border rounded" placeholder="Captions (comma separated)" value="${s.mediaDescription || ''}" oninput="window.dbUpdateSection('${s.id}', 'mediaDescription', this.value)">
-                        </div>` : ''}
-                    </div>`;
-                } else if (s.type === 'note' || s.type === 'info') {
-                    contentHTML = `<div class="${s.type === 'note' ? 'manual-note-box' : 'manual-info-box'}">
-                        <div class="text-[10px] font-bold uppercase mb-2 opacity-50">${s.type === 'note' ? '📑 Note' : '📊 Info'}</div>
-                        <div class="dm-editable ${s.type==='note'?'italic':''}" data-id="${s.id}" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','content',this.innerHTML)">${window.aeonState.activeEditId === s.id ? s.content : window.parseAeonfallContent(s.content, isDM, s.id)}</div>
-                    </div>`;
-                } else if (s.type === 'heading') {
-                    contentHTML = `<h2 class="manual-h2 dm-editable" contenteditable="${isDM}" oninput="window.dbUpdateSection('${s.id}','title',this.innerText)">${s.title}</h2>`;
-                } else if (s.type === 'subheading') {
-                    contentHTML = `<h3 class="manual-h3 dm-editable" contenteditable="${isDM}" oninput="window.dbUpdateSection('${s.id}','title',this.innerText)">${s.title}</h3>`;
+                    const activeIdx = window.aeonState.activeSlides[s.id] || 0;
+                    body = `<div class="adaptive-carousel"><div class="carousel-viewport">${urls.length > 1 ? `<div class="carousel-nav nav-prev" onmousedown="event.preventDefault(); window.changeSlide('${s.id}', -1)">←</div><div class="carousel-nav nav-next" onmousedown="event.preventDefault(); window.changeSlide('${s.id}', 1)">→</div>` : ''}${urls.map((url, idx) => `<div class="carousel-slide ${idx === activeIdx ? 'active' : ''}">${isDM ? `<div class="slide-del-btn" onmousedown="event.preventDefault(); window.removeSlide('${s.id}', ${idx})">✕</div>` : ''}<img src="${url.trim()}" class="carousel-img" onclick="window.openZoom('${url.trim()}')"><div class="carousel-caption">${(descs[idx] || "").trim()}</div></div>`).join('')}</div>${urls.length > 1 ? `<div class="slide-counter">${activeIdx + 1} / ${urls.length}</div>` : ''}</div>${isDM ? `<div class="flex flex-col gap-2 mt-4 bg-stone-100/50 p-4 rounded-xl border border-stone-200"><input class="w-full text-[10px] p-2 bg-white rounded border" placeholder="Slide URLs (comma separated)" value="${s.mediaUrl}" oninput="window.dbUpdateSection('${s.id}', 'mediaUrl', this.value)"><input class="w-full text-[10px] p-2 bg-white rounded border" placeholder="Slide Captions (comma separated)" value="${s.mediaDescription}" oninput="window.dbUpdateSection('${s.id}', 'mediaDescription', this.value)"></div>` : ''}`;
+                } else if (s.type === 'heading' || s.type === 'subheading') { 
+                    const tag = s.type === 'heading' ? 'h2' : 'h3';
+                    const cls = s.type === 'heading' ? 'manual-h2' : 'manual-h3';
+                    body = `<${tag} class="${cls} dm-editable" data-id="${s.id}" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${window.parseContent(s.content, isDM, s.id)}</${tag}>`; 
                 } else {
-                    contentHTML = `<div class="dm-editable leading-relaxed" data-id="${s.id}" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','content',this.innerHTML)">${window.aeonState.activeEditId === s.id ? s.content : window.parseAeonfallContent(s.content, isDM, s.id)}</div>`;
+                    const boxClass = s.type === 'note' ? 'manual-note-box' : s.type === 'info' ? 'manual-info-box' : '';
+                    body = `<div class="${boxClass}"><div class="dm-editable leading-relaxed text-[16px]" data-id="${s.id}" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','content',this.innerHTML)">${window.parseContent(s.content, isDM, s.id)}</div></div>`;
                 }
-
-                return `<section id="section-${s.id}" class="manual-section-unit relative p-2" style="${style}" draggable="false" 
-                    ondragstart="window.handleDragStart(event, '${s.id}')" ondragover="window.handleDragOver(event)" ondragleave="window.handleDragLeave(event)" ondragend="window.handleDragEnd(event)" ondrop="window.handleDrop(event, '${s.id}')">
-                    ${isDM ? `<div class="tuner-panel">
-                        <div class="drag-handle-anchor" onmousedown="document.getElementById('section-${s.id}').setAttribute('draggable', 'true')" onmouseup="document.getElementById('section-${s.id}').setAttribute('draggable', 'false')">⠿</div>
-                        <div class="flex gap-1 border-r pr-2 mr-1">
-                            <button class="format-tool-btn ${s.align==='left'?'active':''}" onmousedown="event.preventDefault()" onclick="window.dbUpdateSection('${s.id}', 'align', 'left')">L</button>
-                            <button class="format-tool-btn ${s.align==='center'?'active':''}" onmousedown="event.preventDefault()" onclick="window.dbUpdateSection('${s.id}', 'align', 'center')">C</button>
-                            <button class="format-tool-btn ${s.align==='right'?'active':''}" onmousedown="event.preventDefault()" onclick="window.dbUpdateSection('${s.id}', 'align', 'right')">R</button>
-                        </div>
-                        <div class="flex gap-1 border-r pr-2 mr-1">
-                            <button class="format-tool-btn" onmousedown="event.preventDefault()" onclick="window.execFormat('bold')">B</button>
-                            <button class="format-tool-btn" onmousedown="event.preventDefault()" onclick="window.execFormat('italic')">I</button>
-                            <button class="format-tool-btn" onmousedown="event.preventDefault()" onclick="window.execFormat('underline')">U</button>
-                        </div>
-                        <div class="flex gap-1 border-r pr-2 mr-1">
-                            <button class="format-tool-btn" onmousedown="event.preventDefault()" title="Granular Indent" onclick="window.execGranularIndent('indent')">⇥</button>
-                            <button class="format-tool-btn" onmousedown="event.preventDefault()" title="Granular Outdent" onclick="window.execGranularIndent('outdent')">⇤</button>
-                        </div>
-                        <div class="flex gap-1 border-r pr-2 mr-1">
-                            <button class="format-tool-btn" onmousedown="event.preventDefault()" title="Image Template" onclick="window.insertTemplate('img')">IMG</button>
-                            <button class="format-tool-btn" onmousedown="event.preventDefault()" title="Definition Template" onclick="window.insertTemplate('def')">DEF</button>
-                        </div>
-                        <div class="flex items-center gap-1">
-                            <span class="text-[8px] font-bold">SIZE</span>
-                            <input type="range" min="1" max="200" value="14" oninput="this.nextElementSibling.value=this.value; window.applySize(this.value)">
-                            <input type="number" class="tuner-num-input" value="14" oninput="this.previousElementSibling.value=this.value; window.applySize(this.value)">
-                        </div>
-                        <button onclick="window.triggerManualDelete('${s.id}')" class="ml-auto text-red-700 font-black">✕</button>
-                    </div>` : ''}
-                    ${contentHTML}
-                </section>`;
+                return `<section id="section-${s.id}" class="manual-section-unit relative transition-all duration-300 p-2" style="width: calc(${width}% - 1rem); text-align: ${s.align || 'left'}" draggable="false" ondragstart="window.initDrag(event, '${s.id}')" ondragover="window.dragOver(event)" ondragleave="this.classList.remove('drop-zone-top','drop-zone-bottom','drop-zone-left','drop-zone-right')" ondrop="window.handleDrop(event, '${s.id}')">${isDM ? `<div class="tuner-panel"><div class="cursor-grab p-1 text-stone-300" onmousedown="this.closest('section').setAttribute('draggable', 'true')" onmouseup="this.closest('section').setAttribute('draggable', 'false')">⠿</div><div class="flex items-center gap-1 bg-stone-50 p-1 rounded-lg border"><select class="tuner-select" onchange="window.applyStyle('fontFamily', this.value)"><option value="">Font</option><option value="Cinzel" style="font-family:Cinzel">Cinzel</option><option value="Roboto Slab" style="font-family:Roboto Slab">Roboto</option><option value="Special Elite" style="font-family:Special Elite">Elite</option><option value="MedievalSharp" style="font-family:MedievalSharp">Medieval</option><option value="Homemade Apple" style="font-family:Homemade Apple">Apple</option><option value="Pirata One" style="font-family:Pirata One">Pirata</option></select><input type="number" class="tuner-num-input" placeholder="Size" oninput="window.applyStyle('fontSize', this.value)"></div><div class="flex gap-1 border-r pr-1"><button class="format-btn font-bold" onmousedown="event.preventDefault(); window.execFormat('bold')">B</button><button class="format-btn italic" onmousedown="event.preventDefault(); window.execFormat('italic')">I</button><button class="format-btn underline" onmousedown="event.preventDefault(); window.execFormat('underline')">U</button></div><div class="flex gap-1 border-r pr-1"><button class="format-btn" onmousedown="event.preventDefault(); window.execIndent('in')">⇥</button><button class="format-btn" onmousedown="event.preventDefault(); window.execIndent('out')">⇤</button></div><div class="flex gap-1 border-r pr-1"><button class="format-btn" onmousedown="event.preventDefault(); window.dbUpdateSection('${s.id}', 'align', 'left')">L</button><button class="format-btn" onmousedown="event.preventDefault(); window.dbUpdateSection('${s.id}', 'align', 'center')">C</button><button class="format-btn" onmousedown="event.preventDefault(); window.dbUpdateSection('${s.id}', 'align', 'right')">R</button></div><div class="flex gap-1"><button class="px-2 h-7 text-[9px] font-black bg-blue-50 text-blue-800 rounded-md border border-blue-200" onmousedown="event.preventDefault(); window.insertTemplate('img')">IMG</button><button class="px-2 h-7 text-[9px] font-black bg-amber-50 text-amber-800 rounded-md border border-amber-200" onmousedown="event.preventDefault(); window.insertTemplate('def')">DEF</button><button class="px-2 h-7 text-[9px] font-black bg-emerald-50 text-emerald-800 rounded-md border border-emerald-200" onmousedown="event.preventDefault(); window.insertTemplate('link')">LINK</button></div><div class="h-6 w-px bg-stone-200 ml-auto"></div><button class="w-7 h-7 rounded-md flex items-center justify-center bg-stone-100 text-[10px] font-black" onmousedown="event.preventDefault(); window.dbUpdateSection('${s.id}','width', ${width === 100 ? 48 : 100})">${width === 100 ? '½' : '1'}</button><button class="w-7 h-7 flex items-center justify-center text-red-600 hover:bg-red-50 rounded-md transition-colors" onmousedown="event.preventDefault(); event.stopPropagation(); window.deleteSection('${s.id}')">✕</button></div>` : ''}${body}</section>`;
             }).join('');
         };
 
-        // UI Listeners
-        window.openZoom = (e, url) => { 
-            if (e) e.stopPropagation(); if (!url) return;
-            const modal = document.getElementById('lightbox-modal'); 
-            const content = document.getElementById('lightbox-content'); 
-            const isVideo = url.toLowerCase().endsWith('.mp4');
-            content.innerHTML = isVideo 
-                ? `<video src="${url}" class="max-w-[95vw] max-h-[85vh] object-contain border-2 border-white shadow-2xl" autoplay loop muted playsinline></video>`
-                : `<img src="${url}" class="max-w-[95vw] max-h-[85vh] object-contain border-2 border-white shadow-2xl">`;
-            modal.classList.remove('hidden'); 
-        };
+        window.openZoom = (url) => { const modal = document.getElementById('lightbox-modal'); const content = document.getElementById('lightbox-content'); content.innerHTML = `<img src="${url}" class="max-w-[95vw] max-h-[90vh] object-contain shadow-2xl border-4 border-white/10 rounded-lg">`; modal.classList.remove('hidden'); };
 
-        document.addEventListener('mouseup', (e) => {
-            if (window.aeonState.activeRole !== 'dm') return;
-            const bubble = document.getElementById('selection-bubble');
-            if (e.target.closest('.tuner-panel') || e.target.closest('#selection-bubble')) return;
-            
-            const sel = window.getSelection();
-            if (sel.toString().trim().length > 0) {
-                bubble.style.display = 'block';
-                bubble.style.top = (e.clientY - 60) + 'px';
-                bubble.style.left = (e.clientX + 10) + 'px';
-                bubble.style.opacity = '1';
-                
-                if (window.aeonState.lockedSelection) {
-                    bubble.innerText = "Change Selection";
-                    bubble.style.background = '#3b82f6';
-                } else {
-                    bubble.innerText = "Select";
-                    bubble.style.background = 'var(--arch-burgundy)';
-                }
-            } else if (!window.aeonState.lockedSelection) {
-                bubble.style.display = 'none'; 
-            }
+        window.updateTableCell = (id, type, r, val, c = 0) => { const s = window.aeonState.sections.find(x => x.id === id); if (type === 'h') { const h = [...s.tableHeaders]; h[r] = val; window.dbUpdateSection(id, 'tableHeaders', h); } else { const rows = JSON.parse(s.tableRows); rows[r][c] = val; window.dbUpdateSection(id, 'tableRows', JSON.stringify(rows)); } };
+
+        document.addEventListener('mouseup', (e) => { const sel = window.getSelection(); const bubble = document.getElementById('selection-bubble'); if (sel.toString().length > 0 && window.aeonState.role === 'dm' && !e.target.closest('.tuner-panel')) { bubble.style.display = 'block'; bubble.style.top = (e.clientY - 45) + 'px'; bubble.style.left = (e.clientX + 5) + 'px'; } });
+
+        onAuthStateChanged(auth, async u => {
+            if (!u) { if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token); else await signInAnonymously(auth); return; }
+            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'header'), d => { if (d.exists()) window.aeonState.header = d.data(); window.renderManual(); });
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'manualSections'), snap => {
+                const newSections = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (a.order||0) - (b.order||0));
+                window.aeonState.sections = newSections;
+                if (!window.aeonState.activeEditId) window.renderManual();
+            });
+            window.updateRoleUI();
         });
-
-        onAuthStateChanged(auth, u => { 
-            if (!u) return;
-            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'header'), d => { if (d.exists()) { window.aeonState.manualHeader = d.data(); window.renderManual(); } }); 
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'manualSections'), snap => { 
-                window.aeonState.manualSections = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (a.order ?? 0) - (b.order ?? 0)); 
-                window.renderManual(); 
-            }); 
-            window.updateRoleUI(); 
-        });
-
-        const confirmBtn = document.getElementById('confirm-del-btn');
-        if (confirmBtn) { confirmBtn.onclick = async () => { if (window.aeonState.deleteCallback) await window.aeonState.deleteCallback(); document.getElementById('del-modal')?.classList.add('hidden'); }; }
-
-        signInAnonymously(auth);
     </script>
 </body>
 </html>
