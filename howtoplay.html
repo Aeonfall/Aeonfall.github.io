@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -37,6 +36,23 @@
         ::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); }
         ::-webkit-scrollbar-thumb { background: var(--arch-burgundy); border-radius: 10px; }
 
+        /* COLOR PERSISTENCE - NEVER WHITE */
+        .dm-editable, 
+        .dm-editable *, 
+        .manual-h1, 
+        .manual-h2, 
+        .manual-h3, 
+        .carousel-caption,
+        .manual-table td,
+        .manual-table th {
+            color: var(--charcoal-pencil) !important;
+        }
+
+        /* Exception for links and definitions which have their own thematic colors */
+        .arch-link, .definition-word {
+            color: var(--arch-burgundy) !important;
+        }
+
         .dm-editable { outline: none; min-height: 1.2em; transition: background 0.2s ease; }
         .dm-mode-active .dm-editable:hover { background: rgba(0,0,0,0.015); border-radius: 4px; }
         .dm-editable:focus { background: rgba(255, 255, 255, 0.4) !important; box-shadow: inset 0 0 0 1px var(--arch-gold); border-radius: 8px; padding: 4px; }
@@ -44,10 +60,10 @@
         .aeon-style-span { display: inline; line-height: 1.2; }
         .aeon-indent-span { display: inline-block; vertical-align: top; }
 
-        .definition-word { color: var(--arch-burgundy); border-bottom: 2px dotted var(--arch-gold); cursor: help; position: relative; font-weight: 700; }
-        .definition-word:hover::after { content: attr(data-definition); position: absolute; bottom: 125%; left: 50%; transform: translateX(-50%); background: #262626; color: white; padding: 10px 15px; border-radius: 8px; font-size: 12px; width: max-content; max-width: 250px; z-index: 1000; box-shadow: 0 10px 25px rgba(0,0,0,0.4); font-family: 'Roboto Slab', serif; font-weight: 400; line-height: 1.4; pointer-events: none; text-align: center; }
-        .arch-link { color: var(--arch-burgundy); text-decoration: underline; text-decoration-style: double; text-decoration-color: var(--arch-gold); font-weight: 700; transition: 0.2s; }
-        .arch-link:hover { color: #000; background: rgba(187, 166, 131, 0.1); }
+        .definition-word { border-bottom: 2px dotted var(--arch-gold); cursor: help; position: relative; font-weight: 700; }
+        .definition-word:hover::after { content: attr(data-definition); position: absolute; bottom: 125%; left: 50%; transform: translateX(-50%); background: #262626; color: white !important; padding: 10px 15px; border-radius: 8px; font-size: 12px; width: max-content; max-width: 250px; z-index: 1000; box-shadow: 0 10px 25px rgba(0,0,0,0.4); font-family: 'Roboto Slab', serif; font-weight: 400; line-height: 1.4; pointer-events: none; text-align: center; }
+        .arch-link { text-decoration: underline; text-decoration-style: double; text-decoration-color: var(--arch-gold); font-weight: 700; transition: 0.2s; }
+        .arch-link:hover { color: #000 !important; background: rgba(187, 166, 131, 0.1); }
 
         .parchment-container {
             max-width: 1600px; margin: 0 auto; background: var(--arch-parchment);
@@ -57,21 +73,23 @@
         }
 
         .manual-nav { width: 320px; background: rgba(0,0,0,0.04); border-right: 1px solid rgba(0,0,0,0.1); padding: 40px 0; flex-shrink: 0; display: flex; flex-direction: column; height: 100vh; position: sticky; top: 0; }
-        .shelf-item { font-family: 'Cinzel', serif; font-size: 11px; font-weight: 900; text-transform: uppercase; color: var(--charcoal-pencil); padding: 14px 20px; margin: 4px 15px; cursor: pointer; border-radius: 8px; transition: 0.2s; border-left: 4px solid transparent; background: rgba(0,0,0,0.02); letter-spacing: 1px; }
+        .shelf-item { font-family: 'Cinzel', serif; font-size: 11px; font-weight: 900; text-transform: uppercase; padding: 14px 20px; margin: 4px 15px; cursor: pointer; border-radius: 8px; transition: 0.2s; border-left: 4px solid transparent; background: rgba(0,0,0,0.02); letter-spacing: 1px; }
         .shelf-item:hover { background: rgba(122, 29, 29, 0.05); border-left-color: var(--arch-burgundy); transform: translateX(5px); }
-        .shelf-item.active { background: var(--arch-burgundy); color: white; border-left-color: var(--arch-gold); }
+        .shelf-item.active { background: var(--arch-burgundy) !important; color: white !important; border-left-color: var(--arch-gold); }
+        /* Reset active shelf item color for white text visibility */
+        .shelf-item.active { color: white !important; }
 
         .manual-body { flex-grow: 1; padding: 60px 80px 160px 80px; height: 100vh; overflow-y: auto; scroll-behavior: smooth; position: relative; }
-        .manual-h1 { font-family: 'Cinzel', serif; font-weight: 900; font-size: 72px; color: var(--arch-burgundy); text-transform: uppercase; line-height: 0.8; letter-spacing: -3px; }
-        .manual-h2 { font-family: 'Cinzel', serif; font-weight: 900; font-size: 2.5rem; border-bottom: 5px double var(--arch-burgundy); padding-bottom: 10px; text-transform: uppercase; margin: 40px 0 20px 0; color: var(--arch-burgundy); width: 100%; }
-        .manual-h3 { font-family: 'Cinzel', serif; font-weight: 700; font-size: 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 5px; text-transform: uppercase; margin: 25px 0 15px 0; color: var(--charcoal-pencil); width: 100%; }
+        .manual-h1 { font-family: 'Cinzel', serif; font-weight: 900; font-size: 72px; text-transform: uppercase; line-height: 0.8; letter-spacing: -3px; }
+        .manual-h2 { font-family: 'Cinzel', serif; font-weight: 900; font-size: 2.5rem; border-bottom: 5px double var(--arch-burgundy); padding-bottom: 10px; text-transform: uppercase; margin: 40px 0 20px 0; width: 100%; }
+        .manual-h3 { font-family: 'Cinzel', serif; font-weight: 700; font-size: 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 5px; text-transform: uppercase; margin: 25px 0 15px 0; width: 100%; }
 
         .manual-note-box, .manual-info-box { border: 2px solid var(--arch-gold); border-radius: 24px; padding: 30px; margin-bottom: 30px; position: relative; background: white; box-shadow: var(--pop-shadow); }
         .manual-note-box { background: var(--sage-note-bg) !important; border-color: rgba(0,0,0,0.1); }
 
         .inline-img-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; margin: 30px 0; }
         .inline-img-container { position: relative; display: inline-block; max-width: 100%; }
-        .img-del-btn { position: absolute; top: -10px; right: -10px; background: #ef4444; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; cursor: pointer; border: 2px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 50; transition: 0.2s; }
+        .img-del-btn { position: absolute; top: -10px; right: -10px; background: #ef4444; color: white !important; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; cursor: pointer; border: 2px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 50; transition: 0.2s; }
 
         .role-btn-active { background-color: var(--arch-burgundy) !important; color: white !important; box-shadow: 0 4px 12px rgba(122, 29, 29, 0.3) !important; }
         .role-btn-inactive { background-color: transparent !important; color: #64748b !important; }
@@ -81,13 +99,13 @@
         .carousel-slide { display: none; width: 100%; padding: 40px; text-align: center; }
         .carousel-slide.active { display: flex; flex-direction: column; align-items: center; justify-content: center; animation: slideFade 0.4s ease; }
         .carousel-img { max-width: 100%; max-height: 70vh; height: auto; object-fit: contain; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); cursor: zoom-in; }
-        .carousel-nav { position: absolute; top: 50%; transform: translateY(-50%); background: var(--arch-burgundy); color: white; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid var(--arch-gold); z-index: 20; transition: 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+        .carousel-nav { position: absolute; top: 50%; transform: translateY(-50%); background: var(--arch-burgundy); color: white !important; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid var(--arch-gold); z-index: 20; transition: 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
         .carousel-nav:hover { background: var(--arch-burgundy-light); transform: translateY(-50%) scale(1.1); }
         .nav-prev { left: 15px; }
         .nav-next { right: 15px; }
         .slide-counter { position: absolute; bottom: 15px; right: 20px; font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; opacity: 0.4; pointer-events: none; }
-        .carousel-caption { margin-top: 20px; font-family: 'Roboto Slab', serif; font-style: italic; color: #64748b; font-size: 14px; max-width: 80%; }
-        .slide-del-btn { position: absolute; top: 15px; right: 15px; background: #ef4444; color: white; width: 24px; height: 24px; border-radius: 50%; font-size: 12px; font-weight: bold; border: 2px solid white; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 30; }
+        .carousel-caption { margin-top: 20px; font-family: 'Roboto Slab', serif; font-style: italic; font-size: 14px; max-width: 80%; }
+        .slide-del-btn { position: absolute; top: 15px; right: 15px; background: #ef4444; color: white !important; width: 24px; height: 24px; border-radius: 50%; font-size: 12px; font-weight: bold; border: 2px solid white; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 30; }
 
         @keyframes slideFade { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
 
@@ -99,25 +117,32 @@
 
         #dm-global-controls { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: none; gap: 8px; padding: 10px 20px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border-radius: 100px; border: 1px solid rgba(122, 29, 29, 0.2); box-shadow: 0 20px 50px rgba(0,0,0,0.4); z-index: 10000; align-items: center; }
         #dm-global-controls.dm-active { display: flex; }
-        .arch-btn { font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 10px 18px; border-radius: 50px; cursor: pointer; border: none; background: var(--arch-burgundy); color: white; transition: 0.2s; box-shadow: 0 4px 10px rgba(122, 29, 29, 0.2); }
-        .arch-btn:hover { background: var(--arch-burgundy-light); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(122, 29, 29, 0.3); }
+        .arch-btn { font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 10px 18px; border-radius: 50px; cursor: pointer; border: none; background: var(--arch-burgundy); color: white !important; transition: 0.2s; box-shadow: 0 4px 10px rgba(122, 29, 29, 0.2); }
+        .arch-btn:hover { background: var(--arch-burgundy-light); transform: translateY(-2px); }
 
         .tuner-panel { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; padding: 10px; background: white; border-radius: 14px; border: 1px solid #e5e7eb; box-shadow: 0 4px 12px rgba(0,0,0,0.08); position: relative; z-index: 10; }
-        .tuner-select { background: #f3f4f6; border: 1px solid #d1d5db; font-size: 10px; padding: 4px; border-radius: 6px; font-weight: 700; color: #374151; cursor: pointer; outline: none; }
+        .tuner-select { background: #f3f4f6; border: 1px solid #d1d5db; font-size: 10px; padding: 4px; border-radius: 6px; font-weight: 700; cursor: pointer; outline: none; }
         .tuner-num-input { background: #f3f4f6; border: 1px solid #d1d5db; font-size: 10px; padding: 4px; border-radius: 6px; width: 55px; text-align: center; font-weight: 700; cursor: text; outline: none; }
         .format-btn { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 8px; transition: 0.2s; font-weight: bold; cursor: pointer; border: 1px solid transparent; }
         .format-btn:hover { background: #f3f4f6; border-color: #ddd; }
-        .format-btn.active { background: var(--arch-burgundy); color: white; }
-        .table-tool-btn { font-size: 9px; font-weight: 900; background: #f1f5f9; color: #475569; padding: 4px 8px; border-radius: 6px; border: 1px solid #e2e8f0; transition: 0.2s; }
+        .format-btn.active { background: var(--arch-burgundy) !important; color: white !important; }
+        .table-tool-btn { font-size: 9px; font-weight: 900; background: #f1f5f9; color: #475569 !important; padding: 4px 8px; border-radius: 6px; border: 1px solid #e2e8f0; transition: 0.2s; }
+        
+        .insert-menu-btn { width: 30px; height: 30px; background: #f0fdf4; color: #166534 !important; border: 1px solid #bbf7d0; border-radius: 8px; display: flex; items-center justify-center; font-weight: 900; cursor: pointer; position: relative; }
+        .insert-menu-btn:hover { background: #dcfce7; }
+        .insert-dropdown { position: absolute; top: 110%; left: 0; background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: none; z-index: 100; min-width: 120px; }
+        .insert-menu-btn:focus-within .insert-dropdown { display: block; }
+        .insert-option { padding: 8px 12px; font-size: 9px; font-weight: 700; text-transform: uppercase; cursor: pointer; border-radius: 6px; text-align: left; }
+        .insert-option:hover { background: #f8fafc; color: var(--arch-burgundy) !important; }
 
         /* PURGE MODAL UI */
         .purge-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 200000; display: flex; align-items: center; justify-content: center; padding: 20px; }
         .purge-modal-card { background: white; border-radius: 24px; width: 100%; max-width: 480px; padding: 40px; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.3); transform: scale(1); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .purge-title { font-family: 'Cinzel', serif; font-weight: 900; font-size: 28px; color: var(--arch-burgundy); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 1px; }
-        .purge-prompt { font-family: 'Roboto Slab', serif; font-style: italic; color: #64748b; font-size: 15px; margin-bottom: 35px; }
-        .purge-confirm-btn { width: 100%; background: var(--arch-burgundy); color: white; padding: 20px; border-radius: 16px; font-family: 'Cinzel', serif; font-weight: 900; text-transform: uppercase; font-size: 13px; letter-spacing: 2px; border: none; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 12px rgba(122,29,29,0.2); margin-bottom: 10px; }
+        .purge-title { font-family: 'Cinzel', serif; font-weight: 900; font-size: 28px; color: var(--arch-burgundy) !important; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 1px; }
+        .purge-prompt { font-family: 'Roboto Slab', serif; font-style: italic; color: #64748b !important; font-size: 15px; margin-bottom: 35px; }
+        .purge-confirm-btn { width: 100%; background: var(--arch-burgundy); color: white !important; padding: 20px; border-radius: 16px; font-family: 'Cinzel', serif; font-weight: 900; text-transform: uppercase; font-size: 13px; letter-spacing: 2px; border: none; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 12px rgba(122,29,29,0.2); margin-bottom: 10px; }
         .purge-confirm-btn:hover { background: var(--arch-burgundy-light); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(122,29,29,0.3); }
-        .purge-cancel-btn { width: 100%; background: #f1f5f9; color: #94a3b8; padding: 16px; border-radius: 16px; font-family: 'Cinzel', serif; font-weight: 900; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; border: none; cursor: pointer; transition: 0.2s; }
+        .purge-cancel-btn { width: 100%; background: #f1f5f9; color: #94a3b8 !important; padding: 16px; border-radius: 16px; font-family: 'Cinzel', serif; font-weight: 900; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; border: none; cursor: pointer; transition: 0.2s; }
 
         @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
@@ -154,7 +179,7 @@
             <h3 class="text-xl font-serif text-amber-500 font-black mb-4 uppercase tracking-tighter">Archive Access</h3>
             <input type="password" id="dm-pass" class="w-full bg-black text-center text-2xl rounded-xl p-4 mb-6 border border-amber-900 text-amber-500 outline-none">
             <button onclick="window.authDm()" class="w-full bg-amber-600 hover:bg-amber-500 text-white py-4 rounded-xl font-black uppercase text-xs tracking-widest">Verify</button>
-            <button onclick="document.getElementById('pass-modal').classList.add('hidden')" class="text-[10px] text-gray-500 uppercase font-black mt-6 block w-full text-center">Abort</button>
+            <button onclick="document.getElementById('pass-modal').classList.add('hidden')" class="text-[10px] text-gray-500 uppercase font-black mt-6 block w-full text-center hover:text-gray-300">Abort</button>
         </div>
     </div>
 
@@ -167,7 +192,6 @@
             <div class="sidebar-header text-center p-8 pb-4">
                 <h1 class="font-serif font-black text-5xl text-[#7a1d1d] uppercase leading-none tracking-tighter">Aeonfall</h1>
                 <p class="font-sans text-[10px] uppercase font-bold tracking-[0.3em] opacity-50 mt-3">Operational Manual</p>
-                
                 <div class="inline-flex bg-stone-200 p-1 rounded-full mt-8 border border-black/5 shadow-inner">
                     <button id="role-player" onclick="window.setRole('player')" class="px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all">Player</button>
                     <button id="role-dm" onclick="window.setRole('dm')" class="px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all">DM</button>
@@ -183,13 +207,13 @@
             <div id="manual-header" class="mb-12"></div>
             <div id="manual-sections-container" class="flex flex-wrap items-start gap-4"></div>
             <div id="dm-global-controls">
-                <button onclick="window.addManualSection('heading')" class="arch-btn">🔗 Group</button>
-                <button onclick="window.addManualSection('subheading')" class="arch-btn">📑 Sub</button>
-                <button onclick="window.addManualSection('text')" class="arch-btn">✚ Text</button>
-                <button onclick="window.addManualSection('table')" class="arch-btn">✚ Table</button>
-                <button onclick="window.addManualSection('note')" class="arch-btn">📑 Note</button>
-                <button onclick="window.addManualSection('info')" class="arch-btn">📊 Info</button>
-                <button onclick="window.addManualSection('media')" class="arch-btn">🖼 Carousel</button>
+                <button onmousedown="event.preventDefault(); window.addManualSection('heading')" class="arch-btn">🔗 Group</button>
+                <button onmousedown="event.preventDefault(); window.addManualSection('subheading')" class="arch-btn">📑 Sub</button>
+                <button onmousedown="event.preventDefault(); window.addManualSection('text')" class="arch-btn">✚ Text</button>
+                <button onmousedown="event.preventDefault(); window.addManualSection('table')" class="arch-btn">✚ Table</button>
+                <button onmousedown="event.preventDefault(); window.addManualSection('note')" class="arch-btn">📑 Note</button>
+                <button onmousedown="event.preventDefault(); window.addManualSection('info')" class="arch-btn">📊 Info</button>
+                <button onmousedown="event.preventDefault(); window.addManualSection('media')" class="arch-btn">🖼 Carousel</button>
             </div>
         </div>
     </div>
@@ -250,7 +274,6 @@
             window.renderManual();
         };
 
-        // STYLE ENGINE
         window.applyStyle = (prop, val) => {
             if (!val) return;
             const sel = window.getSelection();
@@ -321,7 +344,6 @@
             if (sel.toString().length === 0 && !window.aeonState.lockedSelection) document.getElementById('selection-bubble').style.display = 'none';
         };
 
-        // CAROUSEL LOGIC
         window.changeSlide = (sectionId, direction) => {
             const current = window.aeonState.activeSlides[sectionId] || 0;
             const s = window.aeonState.sections.find(x => x.id === sectionId);
@@ -342,7 +364,6 @@
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', sectionId), { mediaUrl: urls.join(','), mediaDescription: descs.join(',') });
         };
 
-        // TABLE LOGIC
         window.addRow = async (id) => {
             const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
             const rows = JSON.parse(s.tableRows || '[]');
@@ -379,7 +400,6 @@
             window.dbUpdateSection(sectionId, 'content', newContent);
         };
 
-        // DRAG ENGINE
         window.initDrag = (e, id) => { if (window.aeonState.role === 'dm') { window.aeonState.draggedId = id; e.currentTarget.classList.add('unit-dragging'); } };
         window.dragOver = (e) => {
             if (!window.aeonState.draggedId) return; e.preventDefault();
@@ -409,7 +429,6 @@
             await batch.commit(); window.aeonState.draggedId = null;
         };
 
-        // DATABASE OPS
         window.dbUpdateSection = (id, field, val) => {
             clearTimeout(window.aeonState.saveTimer);
             window.aeonState.saveTimer = setTimeout(async () => {
@@ -426,9 +445,24 @@
             }, 1000);
         };
 
-        window.addManualSection = async (type) => {
-            const data = { type, order: window.aeonState.sections.length, width: 100, align: 'left', title: type.toUpperCase(), content: "Fragment initialization...", tableHeaders: type === 'table' ? ['Key', 'Value'] : null, tableRows: type === 'table' ? JSON.stringify([['...', '...']]) : null, mediaUrl: "", mediaDescription: "" };
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'manualSections'), data);
+        window.addManualSection = async (type, afterId = null) => {
+            const actualAfterId = afterId || window.aeonState.activeEditId;
+            const sections = [...window.aeonState.sections];
+            const batch = writeBatch(db);
+            const newDocRef = doc(collection(db, 'artifacts', appId, 'public', 'data', 'manualSections'));
+            
+            let newOrder;
+            if (actualAfterId) {
+                const idx = sections.findIndex(s => s.id === actualAfterId);
+                newOrder = sections[idx].order + 1;
+                for (let i = idx + 1; i < sections.length; i++) { batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', sections[i].id), { order: sections[i].order + 1 }); }
+            } else {
+                newOrder = sections.length ? Math.max(...sections.map(s => s.order || 0)) + 1 : 0;
+            }
+
+            const data = { type, order: newOrder, width: 100, align: 'left', title: type.toUpperCase(), content: "New segment initialized...", tableHeaders: type === 'table' ? ['Key', 'Value'] : null, tableRows: type === 'table' ? JSON.stringify([['...', '...']]) : null, mediaUrl: "", mediaDescription: "" };
+            batch.set(newDocRef, data);
+            await batch.commit();
         };
 
         window.deleteSection = (id) => {
@@ -491,7 +525,7 @@
                     const boxClass = s.type === 'note' ? 'manual-note-box' : s.type === 'info' ? 'manual-info-box' : '';
                     body = `<div class="${boxClass}"><div class="dm-editable leading-relaxed text-[16px]" data-id="${s.id}" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','content',this.innerHTML)">${window.parseContent(s.content, isDM, s.id)}</div></div>`;
                 }
-                return `<section id="section-${s.id}" class="manual-section-unit relative transition-all duration-300 p-2" style="width: calc(${width}% - 1rem); text-align: ${s.align || 'left'}" draggable="false" ondragstart="window.initDrag(event, '${s.id}')" ondragover="window.dragOver(event)" ondragleave="this.classList.remove('drop-zone-top','drop-zone-bottom','drop-zone-left','drop-zone-right')" ondrop="window.handleDrop(event, '${s.id}')">${isDM ? `<div class="tuner-panel"><div class="cursor-grab p-1 text-stone-300" onmousedown="this.closest('section').setAttribute('draggable', 'true')" onmouseup="this.closest('section').setAttribute('draggable', 'false')">⠿</div><div class="flex items-center gap-1 bg-stone-50 p-1 rounded-lg border"><select class="tuner-select" onchange="window.applyStyle('fontFamily', this.value)"><option value="">Font</option><option value="Cinzel" style="font-family:Cinzel">Cinzel</option><option value="Roboto Slab" style="font-family:Roboto Slab">Roboto</option><option value="Special Elite" style="font-family:Special Elite">Elite</option><option value="MedievalSharp" style="font-family:MedievalSharp">Medieval</option><option value="Homemade Apple" style="font-family:Homemade Apple">Apple</option><option value="Pirata One" style="font-family:Pirata One">Pirata</option></select><input type="number" class="tuner-num-input" placeholder="Size" oninput="window.applyStyle('fontSize', this.value)"></div><div class="flex gap-1 border-r pr-1"><button class="format-btn font-bold" onmousedown="event.preventDefault(); window.execFormat('bold')">B</button><button class="format-btn italic" onmousedown="event.preventDefault(); window.execFormat('italic')">I</button><button class="format-btn underline" onmousedown="event.preventDefault(); window.execFormat('underline')">U</button></div><div class="flex gap-1 border-r pr-1"><button class="format-btn" onmousedown="event.preventDefault(); window.execIndent('in')">⇥</button><button class="format-btn" onmousedown="event.preventDefault(); window.execIndent('out')">⇤</button></div><div class="flex gap-1 border-r pr-1"><button class="format-btn" onmousedown="event.preventDefault(); window.dbUpdateSection('${s.id}', 'align', 'left')">L</button><button class="format-btn" onmousedown="event.preventDefault(); window.dbUpdateSection('${s.id}', 'align', 'center')">C</button><button class="format-btn" onmousedown="event.preventDefault(); window.dbUpdateSection('${s.id}', 'align', 'right')">R</button></div><div class="flex gap-1"><button class="px-2 h-7 text-[9px] font-black bg-blue-50 text-blue-800 rounded-md border border-blue-200" onmousedown="event.preventDefault(); window.insertTemplate('img')">IMG</button><button class="px-2 h-7 text-[9px] font-black bg-amber-50 text-amber-800 rounded-md border border-amber-200" onmousedown="event.preventDefault(); window.insertTemplate('def')">DEF</button><button class="px-2 h-7 text-[9px] font-black bg-emerald-50 text-emerald-800 rounded-md border border-emerald-200" onmousedown="event.preventDefault(); window.insertTemplate('link')">LINK</button></div><div class="h-6 w-px bg-stone-200 ml-auto"></div><button class="w-7 h-7 rounded-md flex items-center justify-center bg-stone-100 text-[10px] font-black" onmousedown="event.preventDefault(); window.dbUpdateSection('${s.id}','width', ${width === 100 ? 48 : 100})">${width === 100 ? '½' : '1'}</button><button class="w-7 h-7 flex items-center justify-center text-red-600 hover:bg-red-50 rounded-md transition-colors" onmousedown="event.preventDefault(); event.stopPropagation(); window.deleteSection('${s.id}')">✕</button></div>` : ''}${body}</section>`;
+                return `<section id="section-${s.id}" class="manual-section-unit relative transition-all duration-300 p-2" style="width: calc(${width}% - 1rem); text-align: ${s.align || 'left'}" draggable="false" ondragstart="window.initDrag(event, '${s.id}')" ondragover="window.dragOver(event)" ondragleave="this.classList.remove('drop-zone-top','drop-zone-bottom','drop-zone-left','drop-zone-right')" ondrop="window.handleDrop(event, '${s.id}')">${isDM ? `<div class="tuner-panel"><div class="cursor-grab p-1 text-stone-300" onmousedown="this.closest('section').setAttribute('draggable', 'true')" onmouseup="this.closest('section').setAttribute('draggable', 'false')">⠿</div><div class="insert-menu-btn">✚<div class="insert-dropdown"><div class="insert-option" onmousedown="event.preventDefault(); window.addManualSection('heading', '${s.id}')">Group</div><div class="insert-option" onmousedown="event.preventDefault(); window.addManualSection('subheading', '${s.id}')">Sub</div><div class="insert-option" onmousedown="event.preventDefault(); window.addManualSection('text', '${s.id}')">Text</div><div class="insert-option" onmousedown="event.preventDefault(); window.addManualSection('table', '${s.id}')">Table</div><div class="insert-option" onmousedown="event.preventDefault(); window.addManualSection('note', '${s.id}')">Note</div><div class="insert-option" onmousedown="event.preventDefault(); window.addManualSection('info', '${s.id}')">Info</div><div class="insert-option" onmousedown="event.preventDefault(); window.addManualSection('media', '${s.id}')">Carousel</div></div></div><div class="flex items-center gap-1 bg-stone-50 p-1 rounded-lg border"><select class="tuner-select" onchange="window.applyStyle('fontFamily', this.value)"><option value="">Font</option><option value="Cinzel" style="font-family:Cinzel">Cinzel</option><option value="Roboto Slab" style="font-family:Roboto Slab">Roboto</option><option value="Special Elite" style="font-family:Special Elite">Elite</option><option value="MedievalSharp" style="font-family:MedievalSharp">Medieval</option><option value="Homemade Apple" style="font-family:Homemade Apple">Apple</option><option value="Pirata One" style="font-family:Pirata One">Pirata</option></select><input type="number" class="tuner-num-input" placeholder="Size" oninput="window.applyStyle('fontSize', this.value)"></div><div class="flex gap-1 border-r pr-1"><button class="format-btn font-bold" onmousedown="event.preventDefault(); window.execFormat('bold')">B</button><button class="format-btn italic" onmousedown="event.preventDefault(); window.execFormat('italic')">I</button><button class="format-btn underline" onmousedown="event.preventDefault(); window.execFormat('underline')">U</button></div><div class="flex gap-1 border-r pr-1"><button class="format-btn" onmousedown="event.preventDefault(); window.execIndent('in')">⇥</button><button class="format-btn" onmousedown="event.preventDefault(); window.execIndent('out')">⇤</button></div><div class="flex gap-1 border-r pr-1"><button class="format-btn" onmousedown="event.preventDefault(); window.dbUpdateSection('${s.id}', 'align', 'left')">L</button><button class="format-btn" onmousedown="event.preventDefault(); window.dbUpdateSection('${s.id}', 'align', 'center')">C</button><button class="format-btn" onmousedown="event.preventDefault(); window.dbUpdateSection('${s.id}', 'align', 'right')">R</button></div><div class="flex gap-1"><button class="px-2 h-7 text-[9px] font-black bg-blue-50 text-blue-800 rounded-md border border-blue-200" onmousedown="event.preventDefault(); window.insertTemplate('img')">IMG</button><button class="px-2 h-7 text-[9px] font-black bg-amber-50 text-amber-800 rounded-md border border-amber-200" onmousedown="event.preventDefault(); window.insertTemplate('def')">DEF</button><button class="px-2 h-7 text-[9px] font-black bg-emerald-50 text-emerald-800 rounded-md border border-emerald-200" onmousedown="event.preventDefault(); window.insertTemplate('link')">LINK</button></div><div class="h-6 w-px bg-stone-200 ml-auto"></div><button class="w-7 h-7 rounded-md flex items-center justify-center bg-stone-100 text-[10px] font-black" onmousedown="event.preventDefault(); window.dbUpdateSection('${s.id}','width', ${width === 100 ? 48 : 100})">${width === 100 ? '½' : '1'}</button><button class="w-7 h-7 flex items-center justify-center text-red-600 hover:bg-red-50 rounded-md transition-colors" onmousedown="event.preventDefault(); event.stopPropagation(); window.deleteSection('${s.id}')">✕</button></div>` : ''}${body}</section>`;
             }).join('');
         };
 
@@ -503,23 +537,13 @@
 
         onAuthStateChanged(auth, async u => {
             if (!u) {
-                try {
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                        await signInWithCustomToken(auth, __initial_auth_token);
-                    } else {
-                        await signInAnonymously(auth);
-                    }
-                } catch (e) {
-                    console.warn("Auth redirect/fallback logic triggered.");
-                    await signInAnonymously(auth);
-                }
+                try { if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token); else await signInAnonymously(auth); } catch (e) { await signInAnonymously(auth); }
                 return;
             }
             onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'header'), d => { if (d.exists()) window.aeonState.header = d.data(); window.renderManual(); });
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'manualSections'), snap => {
                 const newSections = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (a.order||0) - (b.order||0));
                 window.aeonState.sections = newSections;
-                // Only render if not actively editing a specific ID to prevent jump
                 if (!window.aeonState.activeEditId) window.renderManual();
             });
             window.updateRoleUI();
