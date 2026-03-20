@@ -37,7 +37,6 @@
         ::-webkit-scrollbar-thumb { background: var(--arch-burgundy); border-radius: 10px; }
 
         /* --- VISUAL CORE RULES --- */
-        /* Text Color Persistence - NEVER WHITE */
         .manual-body [contenteditable], 
         .manual-body [contenteditable] *, 
         .manual-h1, .manual-h2, .manual-h3, 
@@ -46,7 +45,6 @@
         }
         .arch-link, .definition-word { color: var(--arch-burgundy) !important; }
         
-        /* Heading Visual Identity */
         .manual-h1, .manual-h1 *, .manual-h2, .manual-h2 *, .manual-h3, .manual-h3 *, .shelf-item {
             font-family: 'Cinzel', serif !important;
         }
@@ -92,12 +90,10 @@
         .manual-note-box, .manual-info-box { border: 2px solid var(--arch-gold); border-radius: 24px; padding: 30px; margin-bottom: 30px; position: relative; background: white; box-shadow: var(--pop-shadow); }
         .manual-note-box { background: var(--sage-note-bg) !important; border-color: rgba(0,0,0,0.1); }
 
-        /* Centered Inline Assets */
         .inline-img-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; margin: 30px 0; }
         .inline-img-container { position: relative; display: inline-block; max-width: 100%; }
         .img-del-btn { position: absolute; top: -10px; right: -10px; background: #ef4444; color: white !important; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; cursor: pointer; border: 2px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 50; transition: 0.2s; }
 
-        /* SELECTION BUBBLE */
         #selection-bubble {
             position: fixed; z-index: 210000; background: #262626; color: white;
             padding: 8px 16px; border-radius: 8px; font-family: 'Cinzel', serif;
@@ -110,7 +106,6 @@
         .role-btn-active { background-color: var(--arch-burgundy) !important; color: white !important; box-shadow: 0 4px 12px rgba(122, 29, 29, 0.3) !important; }
         .role-btn-inactive { background-color: transparent !important; color: #64748b !important; }
 
-        /* Adaptive Carousel */
         .adaptive-carousel { position: relative; width: 100%; background: white; border: 2px solid var(--arch-gold); border-radius: 24px; overflow: hidden; box-shadow: var(--carousel-shadow); margin: 30px 0; }
         .carousel-viewport { position: relative; width: 100%; display: flex; align-items: center; justify-content: center; min-height: 250px; }
         .carousel-slide { display: none; width: 100%; padding: 40px; text-align: center; }
@@ -126,14 +121,12 @@
 
         @keyframes slideFade { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
 
-        /* Tables */
         .table-wrap { width: 100%; overflow-x: auto; background: white; border: 2px solid var(--arch-gold); border-radius: 16px; box-shadow: var(--pop-shadow); margin-bottom: 30px; }
         .manual-table { width: 100%; border-collapse: collapse; text-align: left; }
         .manual-table th { background: rgba(0,0,0,0.05); padding: 16px; border-bottom: 2px solid var(--arch-burgundy); font-weight: 900; font-size: 12px; }
         .manual-table td { padding: 14px 16px; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 14px; }
         .manual-table tr:nth-child(even) { background-color: var(--sage-row-alt); }
 
-        /* DM Panels */
         #dm-global-controls { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: none; gap: 8px; padding: 10px 20px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border-radius: 100px; border: 1px solid rgba(122, 29, 29, 0.2); box-shadow: 0 20px 50px rgba(0,0,0,0.4); z-index: 10000; align-items: center; }
         #dm-global-controls.dm-active { display: flex; }
         .arch-btn { font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 10px 18px; border-radius: 50px; cursor: pointer; border: none; background: var(--arch-burgundy); color: white !important; transition: 0.2s; box-shadow: 0 4px 10px rgba(122, 29, 29, 0.2); }
@@ -150,14 +143,12 @@
         .width-range { -webkit-appearance: none; width: 80px; height: 4px; border-radius: 5px; background: #e2e8f0; outline: none; cursor: pointer; }
         .width-range::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 12px; height: 12px; border-radius: 50%; background: var(--arch-burgundy); cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 
-        /* Drag & Drop Feedback */
         .manual-section-unit.unit-dragging { opacity: 0.2 !important; transform: scale(0.97); transition: 0.2s; }
         .drop-zone-top { border-top: 6px solid var(--arch-burgundy) !important; background: rgba(122,29,29,0.05); }
         .drop-zone-bottom { border-bottom: 6px solid var(--arch-burgundy) !important; background: rgba(122,29,29,0.05); }
         .drop-zone-left { border-left: 6px solid var(--arch-burgundy) !important; background: rgba(122,29,29,0.05); }
         .drop-zone-right { border-right: 6px solid var(--arch-burgundy) !important; background: rgba(122,29,29,0.05); }
 
-        /* Purge Modal UI */
         .purge-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 200000; display: flex; align-items: center; justify-content: center; padding: 20px; }
         .purge-modal-card { background: white; border-radius: 24px; width: 100%; max-width: 480px; padding: 40px; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.3); transform: scale(1); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .purge-title { font-family: 'Cinzel', serif; font-weight: 900; font-size: 28px; color: var(--arch-burgundy) !important; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 1px; }
@@ -246,7 +237,7 @@
         import { getFirestore, collection, doc, updateDoc, setDoc, onSnapshot, addDoc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // FIREBASE CONFIG
+        // FIREBASE SETUP
         const firebaseConfig = { 
             apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI", 
             authDomain: "aeonfall-523c1.firebaseapp.com", 
@@ -260,12 +251,13 @@
         const auth = getAuth(app);
         const appId = "aeonfall-manager-v2";
 
-        // --- GLOBAL STATE ---
+        // --- ATTACH GLOBALS IMMEDIATELY ---
         window.aeonState = {
             sections: [],
             header: { title: "OPERATIONS GUIDE", subtitle: "Archive access established." },
             role: localStorage.getItem('aeon_role') || 'player',
             activeEditId: null,
+            lastActiveId: null, // Tracks where to insert even if blurred
             lockedSelection: null,
             saveTimer: null,
             draggedId: null,
@@ -274,7 +266,6 @@
             activeSlides: {}
         };
 
-        // --- CORE FUNCTIONS ---
         window.showToast = (msg) => {
             const t = document.getElementById('toast');
             if (t) { t.innerText = msg; t.style.opacity = 1; setTimeout(() => t.style.opacity = 0, 2500); }
@@ -334,15 +325,22 @@
             clearTimeout(window.aeonState.saveTimer);
             window.aeonState.saveTimer = setTimeout(async () => {
                 await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'header'), { [field]: val }, { merge: true });
-            }, 800);
+            }, 300);
         };
 
         window.dbUpdateSection = (id, field, val) => {
             clearTimeout(window.aeonState.saveTimer);
             window.aeonState.saveTimer = setTimeout(async () => {
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { [field]: val });
+                const updateData = typeof field === 'object' ? field : { [field]: val };
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), updateData);
                 window.showToast("Record Synced");
-            }, 800);
+            }, 300);
+        };
+
+        window.saveActiveContent = () => {
+            if (!window.aeonState.activeEditId) return;
+            const el = document.querySelector(`[data-id="${window.aeonState.activeEditId}"]`);
+            if (el) window.dbUpdateSection(window.aeonState.activeEditId, 'content', el.innerHTML);
         };
 
         window.renderManual = () => {
@@ -352,8 +350,8 @@
             if (!header || !container) return;
 
             header.innerHTML = `
-                <h1 class="manual-h1 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='header-title'" oninput="window.dbUpdateHeader('title', this.innerText)">${window.aeonState.header.title}</h1>
-                <p class="text-[11px] font-black uppercase tracking-[0.4em] opacity-40 mt-2 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='header-subtitle'" oninput="window.dbUpdateHeader('subtitle', this.innerText)">${window.aeonState.header.subtitle}</p>
+                <h1 class="manual-h1 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='header-title'; window.aeonState.lastActiveId='header'" oninput="window.dbUpdateHeader('title', this.innerText)">${window.aeonState.header.title}</h1>
+                <p class="text-[11px] font-black uppercase tracking-[0.4em] opacity-40 mt-2 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='header-subtitle'; window.aeonState.lastActiveId='header'" oninput="window.dbUpdateHeader('subtitle', this.innerText)">${window.aeonState.header.subtitle}</p>
             `;
             
             window.renderNav();
@@ -363,19 +361,19 @@
                 let body = '';
                 if (s.type === 'table') {
                     const rows = JSON.parse(s.tableRows || '[["...","..."]]');
-                    body = `<div class="table-wrap">${isDM ? `<div class="bg-slate-50 border-b flex gap-2 p-2 justify-center"><button onmousedown="event.preventDefault(); window.addRow('${s.id}')" class="table-tool-btn">+Row</button><button onmousedown="event.preventDefault(); window.remRow('${s.id}')" class="table-tool-btn">-Row</button><button onmousedown="event.preventDefault(); window.addCol('${s.id}')" class="table-tool-btn">+Col</button><button onmousedown="event.preventDefault(); window.remCol('${s.id}')" class="table-tool-btn">-Col</button></div>` : ''}<table class="manual-table"><thead><tr>${(s.tableHeaders || ['H1', 'H2']).map((h, i) => `<th contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}','h',${i},this.innerText)" onpaste="window.handlePaste(event)">${h}</th>`).join('')}</tr></thead><tbody>${rows.map((r, ri) => `<tr>${r.map((c, ci) => `<td contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}','r',${ri},this.innerText,${ci})" onpaste="window.handlePaste(event)">${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+                    body = `<div class="table-wrap">${isDM ? `<div class="bg-slate-50 border-b flex gap-2 p-2 justify-center"><button onmousedown="event.preventDefault(); window.addRow('${s.id}')" class="table-tool-btn">+Row</button><button onmousedown="event.preventDefault(); window.remRow('${s.id}')" class="table-tool-btn">-Row</button><button onmousedown="event.preventDefault(); window.addCol('${s.id}')" class="table-tool-btn">+Col</button><button onmousedown="event.preventDefault(); window.remCol('${s.id}')" class="table-tool-btn">-Col</button></div>` : ''}<table class="manual-table"><thead><tr>${(s.tableHeaders || ['H1', 'H2']).map((h, i) => `<th contenteditable="${isDM}" onfocus="window.aeonState.lastActiveId='${s.id}'" oninput="window.updateTableCell('${s.id}','h',${i},this.innerText)" onpaste="window.handlePaste(event)">${h}</th>`).join('')}</tr></thead><tbody>${rows.map((r, ri) => `<tr>${r.map((c, ci) => `<td contenteditable="${isDM}" onfocus="window.aeonState.lastActiveId='${s.id}'" oninput="window.updateTableCell('${s.id}','r',${ri},this.innerText,${ci})" onpaste="window.handlePaste(event)">${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
                 } else if (s.type === 'media') {
                     const urls = (s.mediaUrl || "").split(',').filter(x => x.trim());
                     const descs = (s.mediaDescription || "").split(',');
                     const activeIdx = window.aeonState.activeSlides[s.id] || 0;
-                    body = `<div class="adaptive-carousel"><div class="carousel-viewport">${urls.length > 1 ? `<div class="carousel-nav nav-prev" onmousedown="event.preventDefault(); window.changeSlide('${s.id}', -1)">←</div><div class="carousel-nav nav-next" onmousedown="event.preventDefault(); window.changeSlide('${s.id}', 1)">→</div>` : ''}${urls.map((url, idx) => `<div class="carousel-slide ${idx === activeIdx ? 'active' : ''}">${isDM ? `<div class="slide-del-btn" onmousedown="event.preventDefault(); window.removeSlide('${s.id}', ${idx})">✕</div>` : ''}<img src="${url.trim()}" class="carousel-img" onclick="window.openZoom('${url.trim()}')"><div class="carousel-caption">${(descs[idx] || "").trim()}</div></div>`).join('')}</div>${urls.length > 1 ? `<div class="slide-counter">${activeIdx + 1} / ${urls.length}</div>` : ''}</div>${isDM ? `<div class="flex flex-col gap-2 mt-4 bg-stone-100/50 p-4 rounded-xl border border-stone-200"><input class="w-full text-[10px] p-2 bg-white rounded border" placeholder="Slide URLs" value="${s.mediaUrl}" oninput="window.dbUpdateSection('${s.id}', 'mediaUrl', this.value)"><input class="w-full text-[10px] p-2 bg-white rounded border" placeholder="Slide Captions" value="${s.mediaDescription}" oninput="window.dbUpdateSection('${s.id}', 'mediaDescription', this.value)"></div>` : ''}`;
+                    body = `<div class="adaptive-carousel" onmousedown="window.aeonState.lastActiveId='${s.id}'"><div class="carousel-viewport">${urls.length > 1 ? `<div class="carousel-nav nav-prev" onmousedown="event.preventDefault(); window.changeSlide('${s.id}', -1)">←</div><div class="carousel-nav nav-next" onmousedown="event.preventDefault(); window.changeSlide('${s.id}', 1)">→</div>` : ''}${urls.map((url, idx) => `<div class="carousel-slide ${idx === activeIdx ? 'active' : ''}">${isDM ? `<div class="slide-del-btn" onmousedown="event.preventDefault(); window.removeSlide('${s.id}', ${idx})">✕</div>` : ''}<img src="${url.trim()}" class="carousel-img" onclick="window.openZoom('${url.trim()}')"><div class="carousel-caption">${(descs[idx] || "").trim()}</div></div>`).join('')}</div>${urls.length > 1 ? `<div class="slide-counter">${activeIdx + 1} / ${urls.length}</div>` : ''}</div>${isDM ? `<div class="flex flex-col gap-2 mt-4 bg-stone-100/50 p-4 rounded-xl border border-stone-200"><input class="w-full text-[10px] p-2 bg-white rounded border" placeholder="Slide URLs" value="${s.mediaUrl}" oninput="window.dbUpdateSection('${s.id}', 'mediaUrl', this.value)"><input class="w-full text-[10px] p-2 bg-white rounded border" placeholder="Slide Captions" value="${s.mediaDescription}" oninput="window.dbUpdateSection('${s.id}', 'mediaDescription', this.value)"></div>` : ''}`;
                 } else if (s.type === 'heading' || s.type === 'subheading') { 
                     const tag = s.type === 'heading' ? 'h2' : 'h3';
                     const cls = s.type === 'heading' ? 'manual-h2' : 'manual-h3';
-                    body = `<${tag} class="${cls} dm-editable" data-id="${s.id}" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}'" onblur="window.aeonState.activeEditId=null" onpaste="window.handlePaste(event)" oninput="if('${s.type}'==='heading'){ window.aeonState.sections.find(x=>x.id==='${s.id}').title=this.innerText; window.renderNav(); } window.dbUpdateSection('${s.id}', 'content', this.innerHTML)">${window.parseContent(s.content, isDM, s.id)}</${tag}>`; 
+                    body = `<${tag} class="${cls} dm-editable" data-id="${s.id}" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}'; window.aeonState.lastActiveId='${s.id}'" onblur="window.aeonState.activeEditId=null" onpaste="window.handlePaste(event)" oninput="const val=this.innerText; if('${s.type}'==='heading'){ window.aeonState.sections.find(x=>x.id==='${s.id}').title=val; window.renderNav(); window.dbUpdateSection('${s.id}', {content: this.innerHTML, title: val}); } else { window.dbUpdateSection('${s.id}', 'content', this.innerHTML); }">${window.parseContent(s.content, isDM, s.id)}</${tag}>`; 
                 } else {
                     const boxClass = s.type === 'note' ? 'manual-note-box' : s.type === 'info' ? 'manual-info-box' : '';
-                    body = `<div class="${boxClass}"><div class="dm-editable leading-relaxed text-[16px]" data-id="${s.id}" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}'" onblur="window.aeonState.activeEditId=null" onpaste="window.handlePaste(event)" oninput="window.dbUpdateSection('${s.id}','content',this.innerHTML)">${window.parseContent(s.content, isDM, s.id)}</div></div>`;
+                    body = `<div class="${boxClass}"><div class="dm-editable leading-relaxed text-[16px]" data-id="${s.id}" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}'; window.aeonState.lastActiveId='${s.id}'" onblur="window.aeonState.activeEditId=null" onpaste="window.handlePaste(event)" oninput="window.dbUpdateSection('${s.id}','content',this.innerHTML)">${window.parseContent(s.content, isDM, s.id)}</div></div>`;
                 }
                 
                 return `<section id="section-${s.id}" class="manual-section-unit relative transition-all duration-300 p-2" 
@@ -425,20 +423,24 @@
             }).join('');
         };
 
-        window.addManualSection = async (type, afterId = null) => {
-            const actualAfterId = afterId || window.aeonState.activeEditId;
+        window.addManualSection = async (type) => {
+            const afterId = window.aeonState.lastActiveId;
             const sections = [...window.aeonState.sections];
             const batch = writeBatch(db);
             const newDocRef = doc(collection(db, 'artifacts', appId, 'public', 'data', 'manualSections'));
             let newOrder;
-            if (actualAfterId && !['header-title', 'header-subtitle', 'header'].includes(actualAfterId)) {
-                const idx = sections.findIndex(s => s.id === actualAfterId);
+            
+            if (afterId && !['header-title', 'header-subtitle', 'header'].includes(afterId)) {
+                const idx = sections.findIndex(s => s.id === afterId);
                 newOrder = (sections[idx]?.order || 0) + 1;
-                for (let i = idx + 1; i < sections.length; i++) { batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', sections[i].id), { order: (sections[i].order || 0) + 1 }); }
+                for (let i = idx + 1; i < sections.length; i++) { 
+                    batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', sections[i].id), { order: (sections[i].order || 0) + 1 }); 
+                }
             } else {
                 newOrder = sections.length ? Math.max(...sections.map(s => s.order || 0)) + 1 : 0;
             }
-            batch.set(newDocRef, { type, order: newOrder, width: 100, align: 'left', title: type.toUpperCase(), content: "Fragment initialization...", tableHeaders: type === 'table' ? ['Key', 'Value'] : null, tableRows: type === 'table' ? JSON.stringify([['...', '...']]) : null, mediaUrl: "", mediaDescription: "" });
+            
+            batch.set(newDocRef, { type, order: newOrder, width: 100, align: 'left', title: type.toUpperCase(), content: "Archival initialization...", tableHeaders: type === 'table' ? ['Key', 'Value'] : null, tableRows: type === 'table' ? JSON.stringify([['...', '...']]) : null, mediaUrl: "", mediaDescription: "" });
             await batch.commit();
         };
 
@@ -482,7 +484,15 @@
             span.className = 'aeon-style-span';
             if (prop === 'fontSize') span.style.fontSize = val + 'px';
             if (prop === 'fontFamily') span.style.fontFamily = val;
-            try { span.appendChild(range.extractContents()); range.insertNode(span); const nr = document.createRange(); nr.selectNodeContents(span); sel.removeAllRanges(); sel.addRange(nr); if (window.aeonState.lockedSelection) window.aeonState.lockedSelection = nr.cloneRange(); } catch (e) {}
+            try { 
+                span.appendChild(range.extractContents()); 
+                range.insertNode(span); 
+                const nr = document.createRange(); 
+                nr.selectNodeContents(span); 
+                sel.removeAllRanges(); 
+                sel.addRange(nr);
+                if (window.aeonState.lockedSelection) window.aeonState.lockedSelection = nr.cloneRange();
+            } catch (e) {}
             window.saveActiveContent();
         };
 
@@ -526,7 +536,7 @@
             if (sel.toString().length === 0 && !window.aeonState.lockedSelection) document.getElementById('selection-bubble').style.display = 'none';
         };
 
-        // --- INIT CHAIN ---
+        // --- AUTH & LISTENERS ---
         const initArchive = () => {
             onAuthStateChanged(auth, async u => {
                 if (!u) {
@@ -537,12 +547,17 @@
                 onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'manualSections'), snap => {
                     const ns = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (a.order||0) - (b.order||0));
                     window.aeonState.sections = ns;
-                    if (!window.aeonState.activeEditId && !window.aeonState.isInteracting) window.renderManual();
+                    if (!window.aeonState.activeEditId && !window.aeonState.isInteracting) {
+                        window.renderManual();
+                    } else {
+                        window.renderNav(); // Fast update sidebar even if main content redraw is paused
+                    }
                 });
                 window.updateRoleUI();
             });
         };
 
+        // Bubble trigger
         document.addEventListener('mouseup', (e) => {
             const sel = window.getSelection();
             const bubble = document.getElementById('selection-bubble');
@@ -553,6 +568,7 @@
             }
         });
 
+        // Start
         initArchive();
     </script>
 </body>
