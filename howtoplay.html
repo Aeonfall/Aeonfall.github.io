@@ -36,21 +36,20 @@
         ::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); }
         ::-webkit-scrollbar-thumb { background: var(--arch-burgundy); border-radius: 10px; }
 
-        /* COLOR PERSISTENCE - NEVER WHITE */
-        .dm-editable, 
-        .dm-editable *, 
-        .manual-h1, 
-        .manual-h2, 
-        .manual-h3, 
-        .carousel-caption,
-        .manual-table td,
-        .manual-table th {
+        /* STRICT COLOR GUARD - NEVER WHITE */
+        .dm-editable, .dm-editable *, .manual-h1, .manual-h2, .manual-h3, 
+        .carousel-caption, .manual-table td, .manual-table th {
             color: var(--charcoal-pencil) !important;
         }
+        .arch-link, .definition-word { color: var(--arch-burgundy) !important; }
+        .shelf-item.active, .shelf-item.active * { color: white !important; }
 
-        /* Exception for links and definitions which have their own thematic colors */
-        .arch-link, .definition-word {
-            color: var(--arch-burgundy) !important;
+        /* IMMUTABLE HEADER FONTS */
+        .manual-h1, .manual-h1 *,
+        .manual-h2, .manual-h2 *,
+        .manual-h3, .manual-h3 *,
+        .shelf-item {
+            font-family: 'Cinzel', serif !important;
         }
 
         .dm-editable { outline: none; min-height: 1.2em; transition: background 0.2s ease; }
@@ -63,7 +62,7 @@
         .definition-word { border-bottom: 2px dotted var(--arch-gold); cursor: help; position: relative; font-weight: 700; }
         .definition-word:hover::after { content: attr(data-definition); position: absolute; bottom: 125%; left: 50%; transform: translateX(-50%); background: #262626; color: white !important; padding: 10px 15px; border-radius: 8px; font-size: 12px; width: max-content; max-width: 250px; z-index: 1000; box-shadow: 0 10px 25px rgba(0,0,0,0.4); font-family: 'Roboto Slab', serif; font-weight: 400; line-height: 1.4; pointer-events: none; text-align: center; }
         .arch-link { text-decoration: underline; text-decoration-style: double; text-decoration-color: var(--arch-gold); font-weight: 700; transition: 0.2s; }
-        .arch-link:hover { color: #000 !important; background: rgba(187, 166, 131, 0.1); }
+        .arch-link:hover { background: rgba(187, 166, 131, 0.1); }
 
         .parchment-container {
             max-width: 1600px; margin: 0 auto; background: var(--arch-parchment);
@@ -73,16 +72,14 @@
         }
 
         .manual-nav { width: 320px; background: rgba(0,0,0,0.04); border-right: 1px solid rgba(0,0,0,0.1); padding: 40px 0; flex-shrink: 0; display: flex; flex-direction: column; height: 100vh; position: sticky; top: 0; }
-        .shelf-item { font-family: 'Cinzel', serif; font-size: 11px; font-weight: 900; text-transform: uppercase; padding: 14px 20px; margin: 4px 15px; cursor: pointer; border-radius: 8px; transition: 0.2s; border-left: 4px solid transparent; background: rgba(0,0,0,0.02); letter-spacing: 1px; }
+        .shelf-item { font-size: 11px; font-weight: 900; text-transform: uppercase; padding: 14px 20px; margin: 4px 15px; cursor: pointer; border-radius: 8px; transition: 0.2s; border-left: 4px solid transparent; background: rgba(0,0,0,0.02); letter-spacing: 1px; }
         .shelf-item:hover { background: rgba(122, 29, 29, 0.05); border-left-color: var(--arch-burgundy); transform: translateX(5px); }
-        .shelf-item.active { background: var(--arch-burgundy) !important; color: white !important; border-left-color: var(--arch-gold); }
-        /* Reset active shelf item color for white text visibility */
-        .shelf-item.active { color: white !important; }
+        .shelf-item.active { background: var(--arch-burgundy) !important; border-left-color: var(--arch-gold); }
 
         .manual-body { flex-grow: 1; padding: 60px 80px 160px 80px; height: 100vh; overflow-y: auto; scroll-behavior: smooth; position: relative; }
-        .manual-h1 { font-family: 'Cinzel', serif; font-weight: 900; font-size: 72px; text-transform: uppercase; line-height: 0.8; letter-spacing: -3px; }
-        .manual-h2 { font-family: 'Cinzel', serif; font-weight: 900; font-size: 2.5rem; border-bottom: 5px double var(--arch-burgundy); padding-bottom: 10px; text-transform: uppercase; margin: 40px 0 20px 0; width: 100%; }
-        .manual-h3 { font-family: 'Cinzel', serif; font-weight: 700; font-size: 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 5px; text-transform: uppercase; margin: 25px 0 15px 0; width: 100%; }
+        .manual-h1 { font-weight: 900; font-size: 72px; text-transform: uppercase; line-height: 0.8; letter-spacing: -3px; }
+        .manual-h2 { font-weight: 900; font-size: 2.5rem; border-bottom: 5px double var(--arch-burgundy); padding-bottom: 10px; text-transform: uppercase; margin: 40px 0 20px 0; width: 100%; }
+        .manual-h3 { font-weight: 700; font-size: 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 5px; text-transform: uppercase; margin: 25px 0 15px 0; width: 100%; }
 
         .manual-note-box, .manual-info-box { border: 2px solid var(--arch-gold); border-radius: 24px; padding: 30px; margin-bottom: 30px; position: relative; background: white; box-shadow: var(--pop-shadow); }
         .manual-note-box { background: var(--sage-note-bg) !important; border-color: rgba(0,0,0,0.1); }
@@ -103,7 +100,7 @@
         .carousel-nav:hover { background: var(--arch-burgundy-light); transform: translateY(-50%) scale(1.1); }
         .nav-prev { left: 15px; }
         .nav-next { right: 15px; }
-        .slide-counter { position: absolute; bottom: 15px; right: 20px; font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; opacity: 0.4; pointer-events: none; }
+        .slide-counter { position: absolute; bottom: 15px; right: 20px; font-size: 10px; font-weight: 900; opacity: 0.4; pointer-events: none; }
         .carousel-caption { margin-top: 20px; font-family: 'Roboto Slab', serif; font-style: italic; font-size: 14px; max-width: 80%; }
         .slide-del-btn { position: absolute; top: 15px; right: 15px; background: #ef4444; color: white !important; width: 24px; height: 24px; border-radius: 50%; font-size: 12px; font-weight: bold; border: 2px solid white; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 30; }
 
@@ -111,17 +108,17 @@
 
         .table-wrap { width: 100%; overflow-x: auto; background: white; border: 2px solid var(--arch-gold); border-radius: 16px; box-shadow: var(--pop-shadow); margin-bottom: 30px; }
         .manual-table { width: 100%; border-collapse: collapse; text-align: left; }
-        .manual-table th { background: rgba(0,0,0,0.05); padding: 16px; font-family: 'Cinzel', serif; border-bottom: 2px solid var(--arch-burgundy); font-weight: 900; font-size: 12px; }
+        .manual-table th { background: rgba(0,0,0,0.05); padding: 16px; border-bottom: 2px solid var(--arch-burgundy); font-weight: 900; font-size: 12px; }
         .manual-table td { padding: 14px 16px; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 14px; }
         .manual-table tr:nth-child(even) { background-color: var(--sage-row-alt); }
 
         #dm-global-controls { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: none; gap: 8px; padding: 10px 20px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border-radius: 100px; border: 1px solid rgba(122, 29, 29, 0.2); box-shadow: 0 20px 50px rgba(0,0,0,0.4); z-index: 10000; align-items: center; }
         #dm-global-controls.dm-active { display: flex; }
-        .arch-btn { font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 10px 18px; border-radius: 50px; cursor: pointer; border: none; background: var(--arch-burgundy); color: white !important; transition: 0.2s; box-shadow: 0 4px 10px rgba(122, 29, 29, 0.2); }
-        .arch-btn:hover { background: var(--arch-burgundy-light); transform: translateY(-2px); }
+        .arch-btn { font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 10px 18px; border-radius: 50px; cursor: pointer; border: none; background: var(--arch-burgundy); color: white !important; transition: 0.2s; box-shadow: 0 4px 10px rgba(122, 29, 29, 0.2); }
+        .arch-btn:hover { background: var(--arch-burgundy-light); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(122, 29, 29, 0.3); }
 
         .tuner-panel { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; padding: 10px; background: white; border-radius: 14px; border: 1px solid #e5e7eb; box-shadow: 0 4px 12px rgba(0,0,0,0.08); position: relative; z-index: 10; }
-        .tuner-select { background: #f3f4f6; border: 1px solid #d1d5db; font-size: 10px; padding: 4px; border-radius: 6px; font-weight: 700; cursor: pointer; outline: none; }
+        .tuner-select { background: #f3f4f6; border: 1px solid #d1d5db; font-size: 10px; padding: 4px; border-radius: 6px; font-weight: 700; color: #374151; cursor: pointer; outline: none; }
         .tuner-num-input { background: #f3f4f6; border: 1px solid #d1d5db; font-size: 10px; padding: 4px; border-radius: 6px; width: 55px; text-align: center; font-weight: 700; cursor: text; outline: none; }
         .format-btn { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 8px; transition: 0.2s; font-weight: bold; cursor: pointer; border: 1px solid transparent; }
         .format-btn:hover { background: #f3f4f6; border-color: #ddd; }
@@ -135,14 +132,22 @@
         .insert-option { padding: 8px 12px; font-size: 9px; font-weight: 700; text-transform: uppercase; cursor: pointer; border-radius: 6px; text-align: left; }
         .insert-option:hover { background: #f8fafc; color: var(--arch-burgundy) !important; }
 
-        /* PURGE MODAL UI */
+        .width-range { -webkit-appearance: none; width: 80px; height: 4px; border-radius: 5px; background: #e2e8f0; outline: none; cursor: pointer; }
+        .width-range::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 12px; height: 12px; border-radius: 50%; background: var(--arch-burgundy); cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+
+        .manual-section-unit.unit-dragging { opacity: 0.2 !important; transform: scale(0.97); transition: 0.2s; }
+        .drop-zone-top { border-top: 6px solid var(--arch-burgundy) !important; background: rgba(122,29,29,0.05); }
+        .drop-zone-bottom { border-bottom: 6px solid var(--arch-burgundy) !important; background: rgba(122,29,29,0.05); }
+        .drop-zone-left { border-left: 6px solid var(--arch-burgundy) !important; background: rgba(122,29,29,0.05); }
+        .drop-zone-right { border-right: 6px solid var(--arch-burgundy) !important; background: rgba(122,29,29,0.05); }
+
         .purge-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 200000; display: flex; align-items: center; justify-content: center; padding: 20px; }
         .purge-modal-card { background: white; border-radius: 24px; width: 100%; max-width: 480px; padding: 40px; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.3); transform: scale(1); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .purge-title { font-family: 'Cinzel', serif; font-weight: 900; font-size: 28px; color: var(--arch-burgundy) !important; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 1px; }
+        .purge-title { font-weight: 900; font-size: 28px; color: var(--arch-burgundy) !important; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 1px; }
         .purge-prompt { font-family: 'Roboto Slab', serif; font-style: italic; color: #64748b !important; font-size: 15px; margin-bottom: 35px; }
-        .purge-confirm-btn { width: 100%; background: var(--arch-burgundy); color: white !important; padding: 20px; border-radius: 16px; font-family: 'Cinzel', serif; font-weight: 900; text-transform: uppercase; font-size: 13px; letter-spacing: 2px; border: none; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 12px rgba(122,29,29,0.2); margin-bottom: 10px; }
+        .purge-confirm-btn { width: 100%; background: var(--arch-burgundy); color: white !important; padding: 20px; border-radius: 16px; font-weight: 900; text-transform: uppercase; font-size: 13px; letter-spacing: 2px; border: none; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 12px rgba(122,29,29,0.2); margin-bottom: 10px; }
         .purge-confirm-btn:hover { background: var(--arch-burgundy-light); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(122,29,29,0.3); }
-        .purge-cancel-btn { width: 100%; background: #f1f5f9; color: #94a3b8 !important; padding: 16px; border-radius: 16px; font-family: 'Cinzel', serif; font-weight: 900; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; border: none; cursor: pointer; transition: 0.2s; }
+        .purge-cancel-btn { width: 100%; background: #f1f5f9; color: #94a3b8 !important; padding: 16px; border-radius: 16px; font-weight: 900; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; border: none; cursor: pointer; transition: 0.2s; }
 
         @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
@@ -223,7 +228,7 @@
         import { getFirestore, collection, doc, updateDoc, setDoc, onSnapshot, addDoc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // LIVE SITE FIREBASE CONFIG
+        // FIREBASE CONFIG
         const firebaseConfig = { 
             apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI", 
             authDomain: "aeonfall-523c1.firebaseapp.com", 
@@ -400,7 +405,7 @@
             window.dbUpdateSection(sectionId, 'content', newContent);
         };
 
-        window.initDrag = (e, id) => { if (window.aeonState.role === 'dm') { window.aeonState.draggedId = id; e.currentTarget.classList.add('unit-dragging'); } };
+        window.initDrag = (e, id) => { if (window.aeonState.role === 'dm') { window.aeonState.draggedId = id; e.currentTarget.classList.add('unit-dragging'); e.dataTransfer.effectAllowed = "move"; } };
         window.dragOver = (e) => {
             if (!window.aeonState.draggedId) return; e.preventDefault();
             const el = e.currentTarget; const rect = el.getBoundingClientRect(); const relX = e.clientX - rect.left; const relY = e.clientY - rect.top;
@@ -450,7 +455,6 @@
             const sections = [...window.aeonState.sections];
             const batch = writeBatch(db);
             const newDocRef = doc(collection(db, 'artifacts', appId, 'public', 'data', 'manualSections'));
-            
             let newOrder;
             if (actualAfterId) {
                 const idx = sections.findIndex(s => s.id === actualAfterId);
@@ -459,7 +463,6 @@
             } else {
                 newOrder = sections.length ? Math.max(...sections.map(s => s.order || 0)) + 1 : 0;
             }
-
             const data = { type, order: newOrder, width: 100, align: 'left', title: type.toUpperCase(), content: "New segment initialized...", tableHeaders: type === 'table' ? ['Key', 'Value'] : null, tableRows: type === 'table' ? JSON.stringify([['...', '...']]) : null, mediaUrl: "", mediaDescription: "" };
             batch.set(newDocRef, data);
             await batch.commit();
@@ -503,7 +506,7 @@
             const isDM = window.aeonState.role === 'dm';
             const container = document.getElementById('manual-sections-container');
             const header = document.getElementById('manual-header');
-            header.innerHTML = `<h1 class="manual-h1" data-id="header-title" contenteditable="${isDM}" oninput="window.dbUpdateHeader('title', this.innerText)">${window.aeonState.header.title}</h1><p class="text-[11px] font-black uppercase tracking-[0.4em] opacity-40 mt-2" data-id="header-subtitle" contenteditable="${isDM}" oninput="window.dbUpdateHeader('subtitle', this.innerText)">${window.aeonState.header.subtitle}</p>`;
+            header.innerHTML = `<h1 class="manual-h1 dm-editable" contenteditable="${isDM}" oninput="window.dbUpdateHeader('title', this.innerText)">${window.aeonState.header.title}</h1><p class="text-[11px] font-black uppercase tracking-[0.4em] opacity-40 mt-2 dm-editable" contenteditable="${isDM}" oninput="window.dbUpdateHeader('subtitle', this.innerText)">${window.aeonState.header.subtitle}</p>`;
             document.getElementById('nav-list').innerHTML = window.aeonState.sections.filter(s => s.type === 'heading').map(s => `<div class="shelf-item" onclick="document.getElementById('section-${s.id}').scrollIntoView({behavior:'smooth'})">${s.title}</div>`).join('');
             
             container.innerHTML = window.aeonState.sections.map(s => {
@@ -525,7 +528,15 @@
                     const boxClass = s.type === 'note' ? 'manual-note-box' : s.type === 'info' ? 'manual-info-box' : '';
                     body = `<div class="${boxClass}"><div class="dm-editable leading-relaxed text-[16px]" data-id="${s.id}" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}'" onblur="window.aeonState.activeEditId=null; window.renderManual()" oninput="window.dbUpdateSection('${s.id}','content',this.innerHTML)">${window.parseContent(s.content, isDM, s.id)}</div></div>`;
                 }
-                return `<section id="section-${s.id}" class="manual-section-unit relative transition-all duration-300 p-2" style="width: calc(${width}% - 1rem); text-align: ${s.align || 'left'}" draggable="false" ondragstart="window.initDrag(event, '${s.id}')" ondragover="window.dragOver(event)" ondragleave="this.classList.remove('drop-zone-top','drop-zone-bottom','drop-zone-left','drop-zone-right')" ondrop="window.handleDrop(event, '${s.id}')">${isDM ? `<div class="tuner-panel"><div class="cursor-grab p-1 text-stone-300" onmousedown="this.closest('section').setAttribute('draggable', 'true')" onmouseup="this.closest('section').setAttribute('draggable', 'false')">⠿</div><div class="insert-menu-btn">✚<div class="insert-dropdown"><div class="insert-option" onmousedown="event.preventDefault(); window.addManualSection('heading', '${s.id}')">Group</div><div class="insert-option" onmousedown="event.preventDefault(); window.addManualSection('subheading', '${s.id}')">Sub</div><div class="insert-option" onmousedown="event.preventDefault(); window.addManualSection('text', '${s.id}')">Text</div><div class="insert-option" onmousedown="event.preventDefault(); window.addManualSection('table', '${s.id}')">Table</div><div class="insert-option" onmousedown="event.preventDefault(); window.addManualSection('note', '${s.id}')">Note</div><div class="insert-option" onmousedown="event.preventDefault(); window.addManualSection('info', '${s.id}')">Info</div><div class="insert-option" onmousedown="event.preventDefault(); window.addManualSection('media', '${s.id}')">Carousel</div></div></div><div class="flex items-center gap-1 bg-stone-50 p-1 rounded-lg border"><select class="tuner-select" onchange="window.applyStyle('fontFamily', this.value)"><option value="">Font</option><option value="Cinzel" style="font-family:Cinzel">Cinzel</option><option value="Roboto Slab" style="font-family:Roboto Slab">Roboto</option><option value="Special Elite" style="font-family:Special Elite">Elite</option><option value="MedievalSharp" style="font-family:MedievalSharp">Medieval</option><option value="Homemade Apple" style="font-family:Homemade Apple">Apple</option><option value="Pirata One" style="font-family:Pirata One">Pirata</option></select><input type="number" class="tuner-num-input" placeholder="Size" oninput="window.applyStyle('fontSize', this.value)"></div><div class="flex gap-1 border-r pr-1"><button class="format-btn font-bold" onmousedown="event.preventDefault(); window.execFormat('bold')">B</button><button class="format-btn italic" onmousedown="event.preventDefault(); window.execFormat('italic')">I</button><button class="format-btn underline" onmousedown="event.preventDefault(); window.execFormat('underline')">U</button></div><div class="flex gap-1 border-r pr-1"><button class="format-btn" onmousedown="event.preventDefault(); window.execIndent('in')">⇥</button><button class="format-btn" onmousedown="event.preventDefault(); window.execIndent('out')">⇤</button></div><div class="flex gap-1 border-r pr-1"><button class="format-btn" onmousedown="event.preventDefault(); window.dbUpdateSection('${s.id}', 'align', 'left')">L</button><button class="format-btn" onmousedown="event.preventDefault(); window.dbUpdateSection('${s.id}', 'align', 'center')">C</button><button class="format-btn" onmousedown="event.preventDefault(); window.dbUpdateSection('${s.id}', 'align', 'right')">R</button></div><div class="flex gap-1"><button class="px-2 h-7 text-[9px] font-black bg-blue-50 text-blue-800 rounded-md border border-blue-200" onmousedown="event.preventDefault(); window.insertTemplate('img')">IMG</button><button class="px-2 h-7 text-[9px] font-black bg-amber-50 text-amber-800 rounded-md border border-amber-200" onmousedown="event.preventDefault(); window.insertTemplate('def')">DEF</button><button class="px-2 h-7 text-[9px] font-black bg-emerald-50 text-emerald-800 rounded-md border border-emerald-200" onmousedown="event.preventDefault(); window.insertTemplate('link')">LINK</button></div><div class="h-6 w-px bg-stone-200 ml-auto"></div><button class="w-7 h-7 rounded-md flex items-center justify-center bg-stone-100 text-[10px] font-black" onmousedown="event.preventDefault(); window.dbUpdateSection('${s.id}','width', ${width === 100 ? 48 : 100})">${width === 100 ? '½' : '1'}</button><button class="w-7 h-7 flex items-center justify-center text-red-600 hover:bg-red-50 rounded-md transition-colors" onmousedown="event.preventDefault(); event.stopPropagation(); window.deleteSection('${s.id}')">✕</button></div>` : ''}${body}</section>`;
+                return `<section id="section-${s.id}" class="manual-section-unit relative transition-all duration-300 p-2" 
+                    style="width: calc(${width}% - 1rem); text-align: ${s.align || 'left'}" 
+                    draggable="false" 
+                    ondragstart="window.initDrag(event, '${s.id}')" 
+                    ondragover="window.dragOver(event)" 
+                    ondragleave="this.classList.remove('drop-zone-top','drop-zone-bottom','drop-zone-left','drop-zone-right')" 
+                    ondragend="this.setAttribute('draggable', 'false'); this.classList.remove('unit-dragging')" 
+                    ondrop="window.handleDrop(event, '${s.id}')">
+                    ${isDM ? `<div class="tuner-panel"><div class="cursor-grab p-1 text-stone-300" onmousedown="this.closest('section').setAttribute('draggable', 'true')">⠿</div><div class="insert-menu-btn">✚<div class="insert-dropdown"><div class="insert-option" onmousedown="event.preventDefault(); window.addManualSection('heading', '${s.id}')">Group</div><div class="insert-option" onmousedown="event.preventDefault(); window.addManualSection('subheading', '${s.id}')">Sub</div><div class="insert-option" onmousedown="event.preventDefault(); window.addManualSection('text', '${s.id}')">Text</div><div class="insert-option" onmousedown="event.preventDefault(); window.addManualSection('table', '${s.id}')">Table</div><div class="insert-option" onmousedown="event.preventDefault(); window.addManualSection('note', '${s.id}')">Note</div><div class="insert-option" onmousedown="event.preventDefault(); window.addManualSection('info', '${s.id}')">Info</div><div class="insert-option" onmousedown="event.preventDefault(); window.addManualSection('media', '${s.id}')">Carousel</div></div></div><div class="flex items-center gap-1 bg-stone-50 p-1 rounded-lg border ml-1"><span class="text-[8px] font-black opacity-30">WIDTH</span><input type="range" min="10" max="100" value="${width}" class="width-range" oninput="window.dbUpdateSection('${s.id}', 'width', parseInt(this.value))"></div><div class="flex items-center gap-1 bg-stone-50 p-1 rounded-lg border ml-1"><select class="tuner-select" onchange="window.applyStyle('fontFamily', this.value)"><option value="">Font</option><option value="Cinzel" style="font-family:Cinzel">Cinzel</option><option value="Roboto Slab" style="font-family:Roboto Slab">Roboto</option><option value="Special Elite" style="font-family:Special Elite">Elite</option><option value="MedievalSharp" style="font-family:MedievalSharp">Medieval</option><option value="Homemade Apple" style="font-family:Homemade Apple">Apple</option><option value="Pirata One" style="font-family:Pirata One">Pirata</option></select><input type="number" class="tuner-num-input" placeholder="Size" oninput="window.applyStyle('fontSize', this.value)"></div><div class="flex gap-1 border-r pr-1"><button class="format-btn font-bold" onmousedown="event.preventDefault(); window.execFormat('bold')">B</button><button class="format-btn italic" onmousedown="event.preventDefault(); window.execFormat('italic')">I</button><button class="format-btn underline" onmousedown="event.preventDefault(); window.execFormat('underline')">U</button></div><div class="flex gap-1 border-r pr-1"><button class="format-btn" onmousedown="event.preventDefault(); window.execIndent('in')">⇥</button><button class="format-btn" onmousedown="event.preventDefault(); window.execIndent('out')">⇤</button></div><div class="flex gap-1 border-r pr-1"><button class="format-btn" onmousedown="event.preventDefault(); window.dbUpdateSection('${s.id}', 'align', 'left')">L</button><button class="format-btn" onmousedown="event.preventDefault(); window.dbUpdateSection('${s.id}', 'align', 'center')">C</button><button class="format-btn" onmousedown="event.preventDefault(); window.dbUpdateSection('${s.id}', 'align', 'right')">R</button></div><div class="flex gap-1"><button class="px-2 h-7 text-[9px] font-black bg-blue-50 text-blue-800 rounded-md border border-blue-200" onmousedown="event.preventDefault(); window.insertTemplate('img')">IMG</button><button class="px-2 h-7 text-[9px] font-black bg-amber-50 text-amber-800 rounded-md border border-amber-200" onmousedown="event.preventDefault(); window.insertTemplate('def')">DEF</button><button class="px-2 h-7 text-[9px] font-black bg-emerald-50 text-emerald-800 rounded-md border border-emerald-200" onmousedown="event.preventDefault(); window.insertTemplate('link')">LINK</button></div><div class="h-6 w-px bg-stone-200 ml-auto"></div><button class="w-7 h-7 rounded-md flex items-center justify-center bg-stone-100 text-[10px] font-black" onmousedown="event.preventDefault(); window.dbUpdateSection('${s.id}','width', ${width === 100 ? 48 : 100})">${width === 100 ? '½' : '1'}</button><button class="w-7 h-7 flex items-center justify-center text-red-600 hover:bg-red-50 rounded-md transition-colors" onmousedown="event.preventDefault(); event.stopPropagation(); window.deleteSection('${s.id}')">✕</button></div>` : ''}${body}</section>`;
             }).join('');
         };
 
