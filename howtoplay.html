@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -68,21 +69,13 @@
         .manual-note-box, .manual-info-box { border: 2px solid var(--arch-gold); border-radius: 24px; padding: 30px; margin-bottom: 30px; position: relative; background: white; box-shadow: var(--pop-shadow); }
         .manual-note-box { background: var(--sage-note-bg) !important; border-color: rgba(0,0,0,0.1); }
 
-        /* Centered Inline Image Containers */
         .inline-img-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; margin: 30px 0; }
         .inline-img-container { position: relative; display: inline-block; max-width: 100%; }
-        .img-del-btn { 
-            position: absolute; top: -10px; right: -10px; background: #ef4444; color: white; 
-            width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; 
-            font-weight: bold; font-size: 14px; cursor: pointer; border: 2px solid white; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 50; transition: 0.2s; 
-        }
+        .img-del-btn { position: absolute; top: -10px; right: -10px; background: #ef4444; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; cursor: pointer; border: 2px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 50; transition: 0.2s; }
 
-        /* Role Swticher UI Enhancements */
         .role-btn-active { background-color: var(--arch-burgundy) !important; color: white !important; box-shadow: 0 4px 12px rgba(122, 29, 29, 0.3) !important; }
         .role-btn-inactive { background-color: transparent !important; color: #64748b !important; }
 
-        /* CAROUSEL REDESIGN */
         .adaptive-carousel { position: relative; width: 100%; background: white; border: 2px solid var(--arch-gold); border-radius: 24px; overflow: hidden; box-shadow: var(--carousel-shadow); margin: 30px 0; }
         .carousel-viewport { position: relative; width: 100%; display: flex; align-items: center; justify-content: center; min-height: 250px; }
         .carousel-slide { display: none; width: 100%; padding: 40px; text-align: center; }
@@ -98,7 +91,6 @@
 
         @keyframes slideFade { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
 
-        /* Tables */
         .table-wrap { width: 100%; overflow-x: auto; background: white; border: 2px solid var(--arch-gold); border-radius: 16px; box-shadow: var(--pop-shadow); margin-bottom: 30px; }
         .manual-table { width: 100%; border-collapse: collapse; text-align: left; }
         .manual-table th { background: rgba(0,0,0,0.05); padding: 16px; font-family: 'Cinzel', serif; border-bottom: 2px solid var(--arch-burgundy); font-weight: 900; font-size: 12px; }
@@ -108,7 +100,7 @@
         #dm-global-controls { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: none; gap: 8px; padding: 10px 20px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border-radius: 100px; border: 1px solid rgba(122, 29, 29, 0.2); box-shadow: 0 20px 50px rgba(0,0,0,0.4); z-index: 10000; align-items: center; }
         #dm-global-controls.dm-active { display: flex; }
         .arch-btn { font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 10px 18px; border-radius: 50px; cursor: pointer; border: none; background: var(--arch-burgundy); color: white; transition: 0.2s; box-shadow: 0 4px 10px rgba(122, 29, 29, 0.2); }
-        .arch-btn:hover { background: var(--arch-burgundy-light); transform: translateY(-2px); }
+        .arch-btn:hover { background: var(--arch-burgundy-light); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(122, 29, 29, 0.3); }
 
         .tuner-panel { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; padding: 10px; background: white; border-radius: 14px; border: 1px solid #e5e7eb; box-shadow: 0 4px 12px rgba(0,0,0,0.08); position: relative; z-index: 10; }
         .tuner-select { background: #f3f4f6; border: 1px solid #d1d5db; font-size: 10px; padding: 4px; border-radius: 6px; font-weight: 700; color: #374151; cursor: pointer; outline: none; }
@@ -118,7 +110,7 @@
         .format-btn.active { background: var(--arch-burgundy); color: white; }
         .table-tool-btn { font-size: 9px; font-weight: 900; background: #f1f5f9; color: #475569; padding: 4px 8px; border-radius: 6px; border: 1px solid #e2e8f0; transition: 0.2s; }
 
-        /* Custom Modal UI */
+        /* PURGE MODAL UI */
         .purge-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 200000; display: flex; align-items: center; justify-content: center; padding: 20px; }
         .purge-modal-card { background: white; border-radius: 24px; width: 100%; max-width: 480px; padding: 40px; text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.3); transform: scale(1); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .purge-title { font-family: 'Cinzel', serif; font-weight: 900; font-size: 28px; color: var(--arch-burgundy); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 1px; }
@@ -207,11 +199,19 @@
         import { getFirestore, collection, doc, updateDoc, setDoc, onSnapshot, addDoc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        const firebaseConfig = JSON.parse(__firebase_config);
+        // LIVE SITE FIREBASE CONFIG
+        const firebaseConfig = { 
+            apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI", 
+            authDomain: "aeonfall-523c1.firebaseapp.com", 
+            projectId: "aeonfall-523c1", 
+            storageBucket: "aeonfall-523c1.firebasestorage.app", 
+            messagingSenderId: "716207733913", 
+            appId: "1:716207733913:web:7aac43906a70e2b5f50c08" 
+        };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'aeonfall-manual';
+        const appId = "aeonfall-manager-v2";
 
         window.aeonState = {
             sections: [],
@@ -245,11 +245,8 @@
             const isDM = window.aeonState.role === 'dm';
             document.body.classList.toggle('dm-mode-active', isDM);
             document.getElementById('dm-global-controls').classList.toggle('dm-active', isDM);
-            
-            // Visual Pill Update
             document.getElementById('role-player').className = `px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all ${!isDM ? 'role-btn-active' : 'role-btn-inactive'}`;
             document.getElementById('role-dm').className = `px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all ${isDM ? 'role-btn-active' : 'role-btn-inactive'}`;
-            
             window.renderManual();
         };
 
@@ -374,7 +371,6 @@
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { tableHeaders: h, tableRows: JSON.stringify(updatedRows) });
         };
 
-        // IMAGE DELETION
         window.removeInlineImage = (sectionId, imageUrl) => {
             const section = window.aeonState.sections.find(s => s.id === sectionId);
             if (!section) return;
@@ -457,7 +453,6 @@
 
         window.closePurgeModal = () => { document.getElementById('purge-modal').classList.add('hidden'); };
 
-        // RENDERING
         window.parseContent = (text, isDM, id) => {
             if (!text) return ''; if (isDM && window.aeonState.activeEditId === id) return text;
             let p = text;
@@ -474,7 +469,7 @@
             const isDM = window.aeonState.role === 'dm';
             const container = document.getElementById('manual-sections-container');
             const header = document.getElementById('manual-header');
-            header.innerHTML = `<h1 class="manual-h1 dm-editable" contenteditable="${isDM}" oninput="window.dbUpdateHeader('title', this.innerText)">${window.aeonState.header.title}</h1><p class="text-[11px] font-black uppercase tracking-[0.4em] opacity-40 mt-2 dm-editable" contenteditable="${isDM}" oninput="window.dbUpdateHeader('subtitle', this.innerText)">${window.aeonState.header.subtitle}</p>`;
+            header.innerHTML = `<h1 class="manual-h1" data-id="header-title" contenteditable="${isDM}" oninput="window.dbUpdateHeader('title', this.innerText)">${window.aeonState.header.title}</h1><p class="text-[11px] font-black uppercase tracking-[0.4em] opacity-40 mt-2" data-id="header-subtitle" contenteditable="${isDM}" oninput="window.dbUpdateHeader('subtitle', this.innerText)">${window.aeonState.header.subtitle}</p>`;
             document.getElementById('nav-list').innerHTML = window.aeonState.sections.filter(s => s.type === 'heading').map(s => `<div class="shelf-item" onclick="document.getElementById('section-${s.id}').scrollIntoView({behavior:'smooth'})">${s.title}</div>`).join('');
             
             container.innerHTML = window.aeonState.sections.map(s => {
@@ -507,11 +502,24 @@
         document.addEventListener('mouseup', (e) => { const sel = window.getSelection(); const bubble = document.getElementById('selection-bubble'); if (sel.toString().length > 0 && window.aeonState.role === 'dm' && !e.target.closest('.tuner-panel')) { bubble.style.display = 'block'; bubble.style.top = (e.clientY - 45) + 'px'; bubble.style.left = (e.clientX + 5) + 'px'; } });
 
         onAuthStateChanged(auth, async u => {
-            if (!u) { if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token); else await signInAnonymously(auth); return; }
+            if (!u) {
+                try {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                } catch (e) {
+                    console.warn("Auth redirect/fallback logic triggered.");
+                    await signInAnonymously(auth);
+                }
+                return;
+            }
             onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'header'), d => { if (d.exists()) window.aeonState.header = d.data(); window.renderManual(); });
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'manualSections'), snap => {
                 const newSections = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (a.order||0) - (b.order||0));
                 window.aeonState.sections = newSections;
+                // Only render if not actively editing a specific ID to prevent jump
                 if (!window.aeonState.activeEditId) window.renderManual();
             });
             window.updateRoleUI();
