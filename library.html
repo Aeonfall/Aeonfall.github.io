@@ -184,6 +184,50 @@
         }
 
         .hidden { display: none !important; }
+
+        /* RESPONSIVE DESIGN FOR TABLET & MOBILE */
+        .mobile-nav-toggle { display: none; }
+
+        @media (max-width: 1024px) {
+            .manual-body { padding: 40px 30px; }
+            .parchment-container { margin: 10px; height: calc(100vh - 20px); }
+            #dm-global-controls { min-width: 0; width: 90%; }
+        }
+
+        @media (max-width: 768px) {
+            .parchment-container { flex-direction: column; margin: 0; height: 100vh; border-radius: 0; border: none; }
+            
+            .mobile-nav-toggle {
+                display: flex; justify-content: space-between; align-items: center;
+                background: var(--parchment-dark); padding: 15px 20px;
+                border-bottom: 2px solid var(--blood-ink); z-index: 50; width: 100%;
+            }
+            
+            .manual-nav {
+                position: absolute; top: 62px; left: -100%; width: 100%; height: calc(100vh - 62px);
+                z-index: 40; background: var(--parchment); transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                border-right: none; padding-bottom: 80px; box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+            }
+            .manual-nav.nav-open { left: 0; }
+            
+            .manual-body { padding: 20px 15px 120px 15px; }
+            
+            .guestbook-container { flex-direction: column; height: 95vh; max-height: 800px; overflow-y: auto; overflow-x: hidden; }
+            .guestbook-spine { display: none; }
+            .guestbook-page { padding: 30px 20px; flex: none; }
+            .page-left { border-right: none; border-bottom: 2px dashed rgba(0,0,0,0.1); background: transparent; }
+            .book-title { font-size: 22px; }
+            .sign-here-input { font-size: 26px; }
+            
+            #dm-global-controls { width: 95%; padding: 12px; bottom: 10px; gap: 8px; border-radius: 8px; }
+            .tuner-panel { flex-direction: column; align-items: flex-start; gap: 12px; }
+            .tuner-group { width: 100%; }
+            .tuner-slider { width: 100%; }
+            
+            .manual-h1 { font-size: 2.2rem !important; }
+            .manual-h2 { font-size: 1.5rem !important; }
+            #toast { width: 90%; text-align: center; }
+        }
     </style>
 </head>
 <body>
@@ -236,6 +280,14 @@
 
     <!-- MAIN PARCHMENT CONTAINER -->
     <div class="parchment-container">
+        <!-- MOBILE HEADER (Visible only on small screens) -->
+        <div class="mobile-nav-toggle">
+            <div class="font-serif font-black text-lg text-[#8a2525] uppercase tracking-widest">Aeonfall Archive</div>
+            <button onclick="document.querySelector('.manual-nav').classList.toggle('nav-open')" class="p-2 bg-black/5 rounded hover:bg-black/10 transition-colors">
+                <svg class="w-6 h-6 text-[#2c1e16]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+        </div>
+
         <!-- SIDEBAR -->
         <div class="manual-nav">
             <div class="mb-10 text-center">
@@ -318,7 +370,7 @@
 
     <!-- DM PASSWORD MODAL -->
     <div id="pass-modal" class="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center z-[120000] hidden p-4">
-        <div class="bg-[#1a1514] p-10 rounded-xl w-full max-w-sm border border-[#8a2525]/30 text-center shadow-2xl">
+        <div class="bg-[#1a1514] p-6 sm:p-10 rounded-xl w-full max-w-sm border border-[#8a2525]/30 text-center shadow-2xl">
             <h3 class="text-xl font-serif text-[#e8e2d2] font-bold mb-6 uppercase tracking-widest">Custodian Override</h3>
             <input type="password" id="dm-pass" class="w-full bg-black/50 text-center text-2xl rounded-lg p-4 mb-8 border border-white/10 text-[#e8e2d2] focus:outline-none focus:border-[#8a2525] transition-colors">
             <button onclick="authDm()" class="w-full arch-btn !py-4 text-sm mb-4">Unlock Archives</button>
@@ -328,7 +380,7 @@
 
     <!-- DELETE CONFIRMATION MODAL -->
     <div id="del-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-[120000] hidden p-4">
-        <div class="bg-[#fcfbf7] p-8 rounded-xl w-full max-w-sm text-center border border-red-900/20 shadow-2xl">
+        <div class="bg-[#fcfbf7] p-6 sm:p-8 rounded-xl w-full max-w-sm text-center border border-red-900/20 shadow-2xl">
             <h3 class="text-2xl font-serif font-black text-[#8a2525] uppercase mb-2">Purge Record</h3>
             <p id="del-modal-text" class="text-sm text-black/60 mb-8 italic font-serif">This entry will be permanently expunged from the archives.</p>
             <div class="flex flex-col gap-3">
@@ -1045,7 +1097,7 @@
                     const docTypeLabel = (s.effectiveDocType || 'Item').toUpperCase();
                     
                     return `
-                        <div class="shelf-item ${s.effectiveDocType || 'book'}" onclick="markAsSeen('${s.id}')">
+                        <div class="shelf-item ${s.effectiveDocType || 'book'}" onclick="markAsSeen('${s.id}'); document.querySelector('.manual-nav').classList.remove('nav-open');">
                             ${showBadge ? '<span class="new-badge">NEW</span>' : ''}
                             ${s.effectiveVisibility === 'personal' ? '<span class="personal-badge">Personal</span>' : ''}
                             <span class="opacity-60 pr-2">${docTypeLabel}:</span> ${s.title}
