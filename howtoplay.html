@@ -106,7 +106,6 @@
         .role-btn-active { background-color: var(--arch-burgundy) !important; color: white !important; box-shadow: 0 4px 12px rgba(122, 29, 29, 0.3) !important; }
         .role-btn-inactive { background-color: transparent !important; color: #64748b !important; }
 
-        /* Adaptive Carousel */
         .adaptive-carousel { position: relative; width: 100%; background: white; border: 2px solid var(--arch-gold); border-radius: 24px; overflow: hidden; box-shadow: var(--carousel-shadow); margin: 30px 0; }
         .carousel-viewport { position: relative; width: 100%; display: flex; align-items: center; justify-content: center; min-height: 250px; }
         .carousel-slide { display: none; width: 100%; padding: 40px; text-align: center; }
@@ -155,7 +154,7 @@
         .insert-option { padding: 8px 12px; font-size: 9px; font-weight: 700; text-transform: uppercase; cursor: pointer; border-radius: 6px; text-align: left; }
         .insert-option:hover { background: #f8fafc; color: var(--arch-burgundy) !important; }
 
-        /* Rebuilt Drag & Drop Feedback */
+        /* Rebuilt Drag & Drop Zones */
         .manual-section-unit.unit-dragging { opacity: 0.2 !important; transform: scale(0.97); transition: 0.2s; }
         .drop-zone-top { border-top: 6px solid var(--arch-burgundy) !important; background: rgba(122,29,29,0.05); }
         .drop-zone-bottom { border-bottom: 6px solid var(--arch-burgundy) !important; background: rgba(122,29,29,0.05); }
@@ -253,19 +252,12 @@
         import { getFirestore, collection, doc, updateDoc, setDoc, onSnapshot, addDoc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // FIREBASE CONFIG
-        const firebaseConfig = { 
-            apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI", 
-            authDomain: "aeonfall-523c1.firebaseapp.com", 
-            projectId: "aeonfall-523c1", 
-            storageBucket: "aeonfall-523c1.firebasestorage.app", 
-            messagingSenderId: "716207733913", 
-            appId: "1:716207733913:web:7aac43906a70e2b5f50c08" 
-        };
+        // --- PLATFORM CONFIG ---
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI", authDomain: "aeonfall-523c1.firebaseapp.com", projectId: "aeonfall-523c1", storageBucket: "aeonfall-523c1.firebasestorage.app", messagingSenderId: "716207733913", appId: "1:716207733913:web:7aac43906a70e2b5f50c08" };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
-        const appId = "aeonfall-manager-v2";
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'aeonfall-manager-v2';
 
         // --- GLOBAL STATE ---
         window.aeonState = {
@@ -282,16 +274,39 @@
             activeSlides: {}
         };
 
-        // --- GLOBAL FUNCTIONS REGISTRY (ATTACHED TO WINDOW FOR BUTTON ACCESS) ---
+        // --- CORE UI FUNCTIONS ---
         window.showToast = (msg) => {
             const t = document.getElementById('toast');
             if (t) { t.innerText = msg; t.style.opacity = 1; setTimeout(() => t.style.opacity = 0, 2500); }
         };
 
+        window.renderNav = () => {
+            const nav = document.getElementById('nav-list');
+            if (!nav) return;
+            nav.innerHTML = window.aeonState.sections.filter(s => s.type === 'heading').map(s => `
+                <div class="shelf-item" onclick="const el=document.getElementById('section-${s.id}'); if(el) el.scrollIntoView({behavior:'smooth'})">${s.title}</div>
+            `).join('');
+        };
+
+        window.updateRoleUI = () => {
+            const isDM = window.aeonState.role === 'dm';
+            document.body.classList.toggle('dm-mode-active', isDM);
+            const controls = document.getElementById('dm-global-controls');
+            if (controls) controls.classList.toggle('dm-active', isDM);
+            
+            const pBtn = document.getElementById('role-player');
+            const dBtn = document.getElementById('role-dm');
+            if (pBtn) pBtn.className = `px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all ${!isDM ? 'role-btn-active' : 'role-btn-inactive'}`;
+            if (dBtn) dBtn.className = `px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all ${isDM ? 'role-btn-active' : 'role-btn-inactive'}`;
+            
+            window.renderManual();
+        };
+
         window.authDm = () => {
             const pass = document.getElementById('dm-pass').value;
             if (pass === 'Rew4994') { 
-                window.aeonState.role = 'dm'; localStorage.setItem('aeon_role', 'dm'); 
+                window.aeonState.role = 'dm'; 
+                localStorage.setItem('aeon_role', 'dm'); 
                 document.getElementById('pass-modal').classList.add('hidden'); 
                 window.updateRoleUI(); 
             } else { window.showToast("Authority Refused"); }
@@ -308,71 +323,6 @@
             document.execCommand('insertText', false, text);
         };
 
-        window.dbUpdateHeader = (field, val) => {
-            clearTimeout(window.aeonState.saveTimer);
-            window.aeonState.saveTimer = setTimeout(async () => {
-                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'header'), { [field]: val }, { merge: true });
-            }, 300);
-        };
-
-        window.dbUpdateSection = (id, field, val) => {
-            clearTimeout(window.aeonState.saveTimer);
-            window.aeonState.saveTimer = setTimeout(async () => {
-                const updateData = typeof field === 'object' ? field : { [field]: val };
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), updateData);
-                window.showToast("Record Synced");
-            }, 300);
-        };
-
-        window.saveActiveContent = () => {
-            if (!window.aeonState.activeEditId) return;
-            const el = document.querySelector(`[data-id="${window.aeonState.activeEditId}"]`);
-            if (el) window.dbUpdateSection(window.aeonState.activeEditId, 'content', el.innerHTML);
-        };
-
-        window.addRow = async (id) => {
-            const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
-            const rows = JSON.parse(s.tableRows || '[]');
-            const hCount = (s.tableHeaders || ['H1', 'H2']).length;
-            rows.push(new Array(hCount).fill("..."));
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { tableRows: JSON.stringify(rows) });
-        };
-        
-        window.remRow = async (id) => {
-            const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
-            const rows = JSON.parse(s.tableRows || '[]'); if (rows.length <= 1) return;
-            rows.pop();
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { tableRows: JSON.stringify(rows) });
-        };
-        
-        window.addCol = async (id) => {
-            const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
-            const h = [...(s.tableHeaders || ['H1', 'H2'])]; h.push("NEW COL");
-            const r = JSON.parse(s.tableRows || '[]');
-            const updatedRows = r.map(row => [...row, "..."]);
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { tableHeaders: h, tableRows: JSON.stringify(updatedRows) });
-        };
-        
-        window.remCol = async (id) => {
-            const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
-            const h = [...(s.tableHeaders || ['H1', 'H2'])]; if (h.length <= 1) return;
-            h.pop();
-            const r = JSON.parse(s.tableRows || '[]');
-            const updatedRows = r.map(row => { const nr = [...row]; nr.pop(); return nr; });
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { tableHeaders: h, tableRows: JSON.stringify(updatedRows) });
-        };
-
-        window.updateTableCell = (id, type, r, val, c = 0) => {
-            const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
-            if (type === 'h') {
-                const h = [...s.tableHeaders]; h[r] = val;
-                window.dbUpdateSection(id, 'tableHeaders', h);
-            } else {
-                const rows = JSON.parse(s.tableRows); rows[r][c] = val;
-                window.dbUpdateSection(id, 'tableRows', JSON.stringify(rows));
-            }
-        };
-
         window.parseContent = (text, isDM, id) => {
             if (!text) return '';
             if (isDM && window.aeonState.activeEditId === id) return text;
@@ -386,14 +336,148 @@
             return p;
         };
 
-        window.renderNav = () => {
-            const nav = document.getElementById('nav-list');
-            if (!nav) return;
-            nav.innerHTML = window.aeonState.sections.filter(s => s.type === 'heading').map(s => `
-                <div class="shelf-item" onclick="const el=document.getElementById('section-${s.id}'); if(el) el.scrollIntoView({behavior:'smooth'})">${s.title}</div>
-            `).join('');
+        // --- DATABASE OPERATIONS ---
+        window.dbUpdateHeader = (field, val) => {
+            if (!auth.currentUser) return;
+            clearTimeout(window.aeonState.saveTimer);
+            window.aeonState.saveTimer = setTimeout(async () => {
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'header'), { [field]: val }, { merge: true });
+            }, 300);
         };
 
+        window.dbUpdateSection = (id, field, val) => {
+            if (!auth.currentUser) return;
+            clearTimeout(window.aeonState.saveTimer);
+            window.aeonState.saveTimer = setTimeout(async () => {
+                const updateData = typeof field === 'object' ? field : { [field]: val };
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), updateData);
+                window.showToast("Record Synced");
+            }, 300);
+        };
+
+        window.addRow = async (id) => {
+            if (!auth.currentUser) return;
+            const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
+            const rows = JSON.parse(s.tableRows || '[]');
+            const hCount = (s.tableHeaders || ['H1', 'H2']).length;
+            rows.push(new Array(hCount).fill("..."));
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { tableRows: JSON.stringify(rows) });
+        };
+        
+        window.remRow = async (id) => {
+            if (!auth.currentUser) return;
+            const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
+            const rows = JSON.parse(s.tableRows || '[]'); if (rows.length <= 1) return;
+            rows.pop();
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { tableRows: JSON.stringify(rows) });
+        };
+        
+        window.addCol = async (id) => {
+            if (!auth.currentUser) return;
+            const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
+            const h = [...(s.tableHeaders || ['H1', 'H2'])]; h.push("NEW COL");
+            const r = JSON.parse(s.tableRows || '[]');
+            const updatedRows = r.map(row => [...row, "..."]);
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { tableHeaders: h, tableRows: JSON.stringify(updatedRows) });
+        };
+        
+        window.remCol = async (id) => {
+            if (!auth.currentUser) return;
+            const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
+            const h = [...(s.tableHeaders || ['H1', 'H2'])]; if (h.length <= 1) return;
+            h.pop();
+            const r = JSON.parse(s.tableRows || '[]');
+            const updatedRows = r.map(row => { const nr = [...row]; nr.pop(); return nr; });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { tableHeaders: h, tableRows: JSON.stringify(updatedRows) });
+        };
+
+        window.updateTableCell = (id, type, r, val, c = 0) => {
+            if (!auth.currentUser) return;
+            const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
+            if (type === 'h') {
+                const h = [...s.tableHeaders]; h[r] = val;
+                window.dbUpdateSection(id, 'tableHeaders', h);
+            } else {
+                const rows = JSON.parse(s.tableRows); rows[r][c] = val;
+                window.dbUpdateSection(id, 'tableRows', JSON.stringify(rows));
+            }
+        };
+
+        window.addManualSection = async (type, afterIdOverride = null) => {
+            if (!auth.currentUser) return;
+            const afterId = afterIdOverride || window.aeonState.lastActiveId;
+            const sections = [...window.aeonState.sections];
+            const batch = writeBatch(db);
+            const primaryRef = doc(collection(db, 'artifacts', appId, 'public', 'data', 'manualSections'));
+            const textRef = doc(collection(db, 'artifacts', appId, 'public', 'data', 'manualSections'));
+            let newOrder;
+            if (afterId && !['header-title', 'header-subtitle', 'header'].includes(afterId)) {
+                const idx = sections.findIndex(s => s.id === afterId);
+                newOrder = (sections[idx]?.order || 0) + 1;
+                const shift = (type === 'heading' || type === 'subheading') ? 2 : 1;
+                for (let i = idx + 1; i < sections.length; i++) { batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', sections[i].id), { order: (sections[i].order || 0) + shift }); }
+            } else {
+                newOrder = sections.length ? Math.max(...sections.map(s => s.order || 0)) + 1 : 0;
+            }
+            batch.set(primaryRef, { type, order: newOrder, width: 100, align: 'left', title: type.toUpperCase(), content: "Initialization...", tableHeaders: type === 'table' ? ['Key', 'Value'] : null, tableRows: type === 'table' ? JSON.stringify([['...', '...']]) : null, mediaUrl: "", mediaDescription: "" });
+            if (type === 'heading' || type === 'subheading') {
+                batch.set(textRef, { type: 'text', order: newOrder + 1, width: 100, align: 'left', title: 'TEXT', content: "New segment initialized...", tableHeaders: null, tableRows: null, mediaUrl: "", mediaDescription: "" });
+            }
+            await batch.commit();
+            window.showToast("Archive Inserted");
+        };
+
+        window.forceSync = async () => {
+            if (!auth.currentUser) return;
+            clearTimeout(window.aeonState.saveTimer);
+            window.aeonState.isInteracting = false; 
+            const activeEl = document.querySelector(`[data-id="${window.aeonState.activeEditId}"]`);
+            if (activeEl) {
+                const val = activeEl.innerText;
+                const id = window.aeonState.activeEditId;
+                if (id === 'header-title' || id === 'header-subtitle') {
+                    await window.dbUpdateHeader(id === 'header-title' ? 'title' : 'subtitle', val);
+                } else {
+                    const section = window.aeonState.sections.find(x => x.id === id);
+                    if (section?.type === 'heading') await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { content: activeEl.innerHTML, title: val });
+                    else await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { content: activeEl.innerHTML });
+                }
+            }
+            window.aeonState.activeEditId = null; window.renderManual(); window.showToast("⚡ SYNC COMPLETE");
+        };
+
+        // --- DRAG ENGINE ---
+        window.initDrag = (e, id) => { if (window.aeonState.role === 'dm') { window.aeonState.draggedId = id; e.currentTarget.classList.add('unit-dragging'); } };
+        window.dragOver = (e) => {
+            if (!window.aeonState.draggedId) return; e.preventDefault();
+            const el = e.currentTarget; const rect = el.getBoundingClientRect();
+            const relX = e.clientX - rect.left; const relY = e.clientY - rect.top;
+            el.classList.remove('drop-zone-top', 'drop-zone-bottom', 'drop-zone-left', 'drop-zone-right');
+            
+            const hT = rect.height * 0.25; const wT = rect.width * 0.25;
+            if (relY < hT) { window.aeonState.dropSide = 'top'; el.classList.add('drop-zone-top'); }
+            else if (relY > rect.height - hT) { window.aeonState.dropSide = 'bottom'; el.classList.add('drop-zone-bottom'); }
+            else if (relX < wT) { window.aeonState.dropSide = 'left'; el.classList.add('drop-zone-left'); }
+            else if (relX > rect.width - wT) { window.aeonState.dropSide = 'right'; el.classList.add('drop-zone-right'); }
+            else { window.aeonState.dropSide = 'bottom'; el.classList.add('drop-zone-bottom'); }
+        };
+        window.handleDrop = async (e, tid) => {
+            if (!auth.currentUser) return;
+            e.preventDefault(); const did = window.aeonState.draggedId; const side = window.aeonState.dropSide; if (!did || did === tid) return;
+            const sections = [...window.aeonState.sections]; const di = sections.findIndex(x => x.id === did);
+            let toM = [sections[di]]; if (sections[di].type === 'heading') { for (let i = di + 1; i < sections.length; i++) { if (sections[i].type === 'heading') break; toM.push(sections[i]); } }
+            const rem = sections.filter(x => !toM.map(m => m.id).includes(x.id)); let ti = rem.findIndex(x => x.id === tid); if (side === 'bottom' || side === 'right') ti++; rem.splice(ti, 0, ...toM);
+            const b = writeBatch(db); 
+            if (side === 'left' || side === 'right') { 
+                toM.forEach(m => b.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', m.id), { width: 48 })); 
+                b.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', tid), { width: 48 }); 
+            } else { 
+                toM.forEach(m => b.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', m.id), { width: 100 })); 
+            }
+            rem.forEach((x, i) => b.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', x.id), { order: i })); await b.commit(); window.aeonState.draggedId = null;
+        };
+
+        // --- RENDERING ENGINE ---
         window.renderManual = () => {
             const isDM = window.aeonState.role === 'dm';
             const container = document.getElementById('manual-sections-container');
@@ -479,57 +563,9 @@
             }).join('');
         };
 
-        window.updateRoleUI = () => {
-            const isDM = window.aeonState.role === 'dm';
-            document.body.classList.toggle('dm-mode-active', isDM);
-            document.getElementById('dm-global-controls').classList.toggle('dm-active', isDM);
-            document.getElementById('role-player').className = `px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all ${!isDM ? 'role-btn-active' : 'role-btn-inactive'}`;
-            document.getElementById('role-dm').className = `px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all ${isDM ? 'role-btn-active' : 'role-btn-inactive'}`;
-            window.renderManual();
-        };
-
-        window.addManualSection = async (type, afterIdOverride = null) => {
-            const afterId = afterIdOverride || window.aeonState.lastActiveId;
-            const sections = [...window.aeonState.sections];
-            const batch = writeBatch(db);
-            const primaryRef = doc(collection(db, 'artifacts', appId, 'public', 'data', 'manualSections'));
-            const textRef = doc(collection(db, 'artifacts', appId, 'public', 'data', 'manualSections'));
-            let newOrder;
-            if (afterId && !['header-title', 'header-subtitle', 'header'].includes(afterId)) {
-                const idx = sections.findIndex(s => s.id === afterId);
-                newOrder = (sections[idx]?.order || 0) + 1;
-                const shift = (type === 'heading' || type === 'subheading') ? 2 : 1;
-                for (let i = idx + 1; i < sections.length; i++) { batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', sections[i].id), { order: (sections[i].order || 0) + shift }); }
-            } else {
-                newOrder = sections.length ? Math.max(...sections.map(s => s.order || 0)) + 1 : 0;
-            }
-            batch.set(primaryRef, { type, order: newOrder, width: 100, align: 'left', title: type.toUpperCase(), content: "Initialization...", tableHeaders: type === 'table' ? ['Key', 'Value'] : null, tableRows: type === 'table' ? JSON.stringify([['...', '...']]) : null, mediaUrl: "", mediaDescription: "" });
-            if (type === 'heading' || type === 'subheading') {
-                batch.set(textRef, { type: 'text', order: newOrder + 1, width: 100, align: 'left', title: 'TEXT', content: "New segment initialized...", tableHeaders: null, tableRows: null, mediaUrl: "", mediaDescription: "" });
-            }
-            await batch.commit();
-            window.showToast("Archive Inserted");
-        };
-
-        window.forceSync = async () => {
-            clearTimeout(window.aeonState.saveTimer);
-            window.aeonState.isInteracting = false; 
-            const activeEl = document.querySelector(`[data-id="${window.aeonState.activeEditId}"]`);
-            if (activeEl) {
-                const val = activeEl.innerText;
-                const id = window.aeonState.activeEditId;
-                if (id === 'header-title' || id === 'header-subtitle') {
-                    await window.dbUpdateHeader(id === 'header-title' ? 'title' : 'subtitle', val);
-                } else {
-                    const section = window.aeonState.sections.find(x => x.id === id);
-                    if (section?.type === 'heading') await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { content: activeEl.innerHTML, title: val });
-                    else await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { content: activeEl.innerHTML });
-                }
-            }
-            window.aeonState.activeEditId = null; window.renderManual(); window.showToast("⚡ SYNC COMPLETE");
-        };
-
+        // --- MISC UTILITIES ---
         window.deleteSection = (id) => {
+            if (!auth.currentUser) return;
             const section = window.aeonState.sections.find(s => s.id === id); if (!section) return;
             const modal = document.getElementById('purge-modal'); const confirmBtn = document.getElementById('purge-confirm'); const promptText = document.getElementById('purge-text');
             modal.classList.remove('hidden');
@@ -542,91 +578,50 @@
                 } else { confirmBtn.onmousedown = async (e) => { e.preventDefault(); await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id)); window.closePurgeModal(); }; }
             } else { confirmBtn.onmousedown = async (e) => { e.preventDefault(); await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id)); window.closePurgeModal(); }; }
         };
-
         window.closePurgeModal = () => { document.getElementById('purge-modal').classList.add('hidden'); };
-        
-        window.lockSelection = (e) => {
-            e.preventDefault(); e.stopPropagation();
-            const sel = window.getSelection();
-            if (window.aeonState.lockedSelection) {
-                window.aeonState.lockedSelection = null;
-                document.getElementById('selection-bubble').innerText = "Select & Style";
-                document.getElementById('selection-bubble').style.background = "#262626";
-            } else if (sel.rangeCount && sel.toString().length > 0) {
-                window.aeonState.lockedSelection = sel.getRangeAt(0).cloneRange();
-                document.getElementById('selection-bubble').innerText = "Selection Locked";
-                document.getElementById('selection-bubble').style.background = "#7a1d1d";
-            }
-        };
-
-        window.applyStyle = (prop, val) => {
-            if (!val) return;
-            const sel = window.getSelection();
-            if (window.aeonState.lockedSelection) { sel.removeAllRanges(); sel.addRange(window.aeonState.lockedSelection); }
-            if (!sel.rangeCount || sel.toString().length === 0) return;
-            const range = sel.getRangeAt(0);
-            const span = document.createElement('span'); span.className = 'aeon-style-span';
-            if (prop === 'fontSize') span.style.fontSize = val + 'px';
-            if (prop === 'fontFamily') span.style.fontFamily = val;
-            try { span.appendChild(range.extractContents()); range.insertNode(span); const nr = document.createRange(); nr.selectNodeContents(span); sel.removeAllRanges(); sel.addRange(nr); if (window.aeonState.lockedSelection) window.aeonState.lockedSelection = nr.cloneRange(); } catch (e) {}
-            window.saveActiveContent();
-        };
-
-        window.execFormat = (cmd, val = null) => {
-            const sel = window.getSelection();
-            if (window.aeonState.lockedSelection) { sel.removeAllRanges(); sel.addRange(window.aeonState.lockedSelection); }
-            document.execCommand(cmd, false, val); window.saveActiveContent();
-        };
-
+        window.lockSelection = (e) => { e.preventDefault(); e.stopPropagation(); const sel = window.getSelection(); if (window.aeonState.lockedSelection) { window.aeonState.lockedSelection = null; document.getElementById('selection-bubble').innerText = "Select & Style"; document.getElementById('selection-bubble').style.background = "#262626"; } else if (sel.rangeCount && sel.toString().length > 0) { window.aeonState.lockedSelection = sel.getRangeAt(0).cloneRange(); document.getElementById('selection-bubble').innerText = "Selection Locked"; document.getElementById('selection-bubble').style.background = "#7a1d1d"; } };
+        window.applyStyle = (prop, val) => { if (!val) return; const sel = window.getSelection(); if (window.aeonState.lockedSelection) { sel.removeAllRanges(); sel.addRange(window.aeonState.lockedSelection); } if (!sel.rangeCount || sel.toString().length === 0) return; const range = sel.getRangeAt(0); const span = document.createElement('span'); span.className = 'aeon-style-span'; if (prop === 'fontSize') span.style.fontSize = val + 'px'; if (prop === 'fontFamily') span.style.fontFamily = val; try { span.appendChild(range.extractContents()); range.insertNode(span); const nr = document.createRange(); nr.selectNodeContents(span); sel.removeAllRanges(); sel.addRange(nr); if (window.aeonState.lockedSelection) window.aeonState.lockedSelection = nr.cloneRange(); } catch (e) {} window.saveActiveContent(); };
+        window.execFormat = (cmd, val = null) => { const sel = window.getSelection(); if (window.aeonState.lockedSelection) { sel.removeAllRanges(); sel.addRange(window.aeonState.lockedSelection); } document.execCommand(cmd, false, val); window.saveActiveContent(); };
         window.insertTemplate = (type) => { window.execFormat('insertHTML', type === 'img' ? '{{URL | Caption}}' : type === 'def' ? '[[Word | definition]]' : '((Text | URL))'); };
         window.changeSlide = (sid, d) => { const s = window.aeonState.sections.find(x => x.id === sid); const u = (s.mediaUrl || "").split(',').filter(x => x.trim()); window.aeonState.activeSlides[sid] = ((window.aeonState.activeSlides[sid] || 0) + d + u.length) % u.length; window.renderManual(); };
-        window.removeSlide = async (sid, i) => { const s = window.aeonState.sections.find(x => x.id === sid); let u = (s.mediaUrl || "").split(',').filter(x => x.trim()); let ds = (s.mediaDescription || "").split(','); u.splice(i,1); ds.splice(i,1); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', sid), { mediaUrl: u.join(','), mediaDescription: ds.join(',') }); };
+        window.removeSlide = async (sid, i) => { if (!auth.currentUser) return; const s = window.aeonState.sections.find(x => x.id === sid); let u = (s.mediaUrl || "").split(',').filter(x => x.trim()); let ds = (s.mediaDescription || "").split(','); u.splice(i,1); ds.splice(i,1); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', sid), { mediaUrl: u.join(','), mediaDescription: ds.join(',') }); };
         window.removeInlineImage = (sid, url) => { const s = window.aeonState.sections.find(x => x.id === sid); const reg = new RegExp(`\\{\\{\\s*${url.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}\\s*(\\|[^}]*)?\\}\\}`, 'g'); window.dbUpdateSection(sid, 'content', s.content.replace(reg, '')); };
         window.openZoom = (url) => { const modal = document.getElementById('lightbox-modal'); const content = document.getElementById('lightbox-content'); content.innerHTML = `<img src="${url}" class="max-w-[95vw] max-h-[90vh] object-contain shadow-2xl border-4 border-white/10 rounded-lg">`; modal.classList.remove('hidden'); };
-
-        window.initDrag = (e, id) => { if (window.aeonState.role === 'dm') { window.aeonState.draggedId = id; e.currentTarget.classList.add('unit-dragging'); } };
-        window.dragOver = (e) => {
-            if (!window.aeonState.draggedId) return; e.preventDefault(); const el = e.currentTarget; const rect = el.getBoundingClientRect(); const rx = e.clientX - rect.left; const ry = e.clientY - rect.top;
-            el.classList.remove('drop-zone-top', 'drop-zone-bottom', 'drop-zone-left', 'drop-zone-right');
-            const hT = rect.height * 0.25; const wT = rect.width * 0.25;
-            if (ry < hT) { window.aeonState.dropSide = 'top'; el.classList.add('drop-zone-top'); }
-            else if (ry > rect.height - hT) { window.aeonState.dropSide = 'bottom'; el.classList.add('drop-zone-bottom'); }
-            else if (rx < wT) { window.aeonState.dropSide = 'left'; el.classList.add('drop-zone-left'); }
-            else if (rx > rect.width - wT) { window.aeonState.dropSide = 'right'; el.classList.add('drop-zone-right'); }
-            else { window.aeonState.dropSide = 'bottom'; el.classList.add('drop-zone-bottom'); }
-        };
-        window.handleDrop = async (e, tid) => {
-            e.preventDefault(); const did = window.aeonState.draggedId; const side = window.aeonState.dropSide; if (!did || did === tid) return;
-            const secs = [...window.aeonState.sections]; const di = secs.findIndex(x => x.id === did);
-            let toM = [secs[di]]; if (secs[di].type === 'heading') { for (let i = di + 1; i < secs.length; i++) { if (secs[i].type === 'heading') break; toM.push(secs[i]); } }
-            const rem = secs.filter(x => !toM.map(m => m.id).includes(x.id)); let ti = rem.findIndex(x => x.id === tid); if (side === 'bottom' || side === 'right') ti++; rem.splice(ti, 0, ...toM);
-            const b = writeBatch(db); if (side === 'left' || side === 'right') { toM.forEach(m => b.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', m.id), { width: 48 })); b.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', tid), { width: 48 }); }
-            else { toM.forEach(m => b.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', m.id), { width: 100 })); }
-            rem.forEach((x, i) => b.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', x.id), { order: i })); await b.commit(); window.aeonState.draggedId = null;
-        };
-
-        window.clearSelectionState = (e) => { 
-            if (e.target.closest('.tuner-panel') || e.target.closest('.adaptive-carousel') || e.target.closest('#selection-bubble')) return;
-            const sel = window.getSelection(); if (sel.toString().length === 0 && !window.aeonState.lockedSelection) document.getElementById('selection-bubble').style.display = 'none';
-        };
+        window.clearSelectionState = (e) => { if (e.target.closest('.tuner-panel') || e.target.closest('.adaptive-carousel') || e.target.closest('#selection-bubble')) return; const sel = window.getSelection(); if (sel.toString().length === 0 && !window.aeonState.lockedSelection) { const b = document.getElementById('selection-bubble'); if (b) b.style.display = 'none'; } };
 
         // --- AUTH & LISTENERS ---
-        const initArchive = () => {
-            onAuthStateChanged(auth, async u => {
-                if (!u) {
-                    try { if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token); else await signInAnonymously(auth); } catch (e) { await signInAnonymously(auth); }
-                    return;
+        const initArchive = async () => {
+            // RULE 3 - Auth FIRST
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
                 }
-                onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'header'), d => { if (d.exists()) { window.aeonState.header = d.data(); window.renderManual(); } });
+            } catch (e) {
+                await signInAnonymously(auth);
+            }
+
+            onAuthStateChanged(auth, user => {
+                if (!user) return;
+                
+                // Snapshots with error handlers
+                onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', 'header'), d => {
+                    if (d.exists()) { window.aeonState.header = d.data(); window.renderManual(); }
+                }, err => console.error("Header Listen Error:", err));
+
                 onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'manualSections'), snap => {
                     const ns = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (a.order||0) - (b.order||0));
                     window.aeonState.sections = ns;
-                    if (!window.aeonState.activeEditId && !window.aeonState.isInteracting) window.renderManual(); else window.renderNav(); 
-                });
+                    if (!window.aeonState.activeEditId && !window.aeonState.isInteracting) window.renderManual(); 
+                    else window.renderNav(); 
+                }, err => console.error("Sections Listen Error:", err));
+
                 window.updateRoleUI();
             });
         };
 
+        // Selection bubble trigger
         document.addEventListener('mouseup', (e) => {
             const sel = window.getSelection();
             const bubble = document.getElementById('selection-bubble');
