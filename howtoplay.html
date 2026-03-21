@@ -280,7 +280,7 @@
             activeSlides: {}
         };
 
-        // --- GLOBAL FUNCTIONS ATTACHED IMMEDIATELY ---
+        // --- CORE FUNCTIONS ---
         window.showToast = (msg) => {
             const t = document.getElementById('toast');
             if (t) { t.innerText = msg; t.style.opacity = 1; setTimeout(() => t.style.opacity = 0, 2500); }
@@ -292,6 +292,12 @@
             nav.innerHTML = window.aeonState.sections.filter(s => s.type === 'heading').map(s => `
                 <div class="shelf-item" onclick="document.getElementById('section-${s.id}').scrollIntoView({behavior:'smooth'})">${s.title}</div>
             `).join('');
+        };
+
+        window.handlePaste = (e) => {
+            e.preventDefault();
+            const text = (e.originalEvent || e).clipboardData.getData('text/plain');
+            document.execCommand('insertText', false, text);
         };
 
         window.updateRoleUI = () => {
@@ -359,8 +365,8 @@
             if (!header || !container) return;
 
             header.innerHTML = `
-                <h1 class="manual-h1 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='header-title'; window.aeonState.lastActiveId='header'" oninput="window.dbUpdateHeader('title', this.innerText)">${window.aeonState.header.title}</h1>
-                <p class="text-[11px] font-black uppercase tracking-[0.4em] opacity-40 mt-2 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='header-subtitle'; window.aeonState.lastActiveId='header'" oninput="window.dbUpdateHeader('subtitle', this.innerText)">${window.aeonState.header.subtitle}</p>
+                <h1 class="manual-h1 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='header-title'; window.aeonState.lastActiveId='header'" oninput="window.dbUpdateHeader('title', this.innerText)" onpaste="window.handlePaste(event)">${window.aeonState.header.title}</h1>
+                <p class="text-[11px] font-black uppercase tracking-[0.4em] opacity-40 mt-2 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='header-subtitle'; window.aeonState.lastActiveId='header'" oninput="window.dbUpdateHeader('subtitle', this.innerText)" onpaste="window.handlePaste(event)">${window.aeonState.header.subtitle}</p>
             `;
             
             window.renderNav();
@@ -370,7 +376,7 @@
                 let body = '';
                 if (s.type === 'table') {
                     const rows = JSON.parse(s.tableRows || '[["...","..."]]');
-                    body = `<div class="table-wrap">${isDM ? `<div class="bg-slate-50 border-b flex gap-2 p-2 justify-center"><button onmousedown="event.preventDefault(); window.addRow('${s.id}')" class="table-tool-btn">+Row</button><button onmousedown="event.preventDefault(); window.remRow('${s.id}')" class="table-tool-btn">-Row</button><button onmousedown="event.preventDefault(); window.addCol('${s.id}')" class="table-tool-btn">+Col</button><button onmousedown="event.preventDefault(); window.remCol('${s.id}')" class="table-tool-btn">-Col</button></div>` : ''}<table class="manual-table"><thead><tr>${(s.tableHeaders || ['H1', 'H2']).map((h, i) => `<th contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}','h',${i},this.innerText)">${h}</th>`).join('')}</tr></thead><tbody>${rows.map((r, ri) => `<tr>${r.map((c, ci) => `<td contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}','r',${ri},this.innerText,${ci})">${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+                    body = `<div class="table-wrap">${isDM ? `<div class="bg-slate-50 border-b flex gap-2 p-2 justify-center"><button onmousedown="event.preventDefault(); window.addRow('${s.id}')" class="table-tool-btn">+Row</button><button onmousedown="event.preventDefault(); window.remRow('${s.id}')" class="table-tool-btn">-Row</button><button onmousedown="event.preventDefault(); window.addCol('${s.id}')" class="table-tool-btn">+Col</button><button onmousedown="event.preventDefault(); window.remCol('${s.id}')" class="table-tool-btn">-Col</button></div>` : ''}<table class="manual-table"><thead><tr>${(s.tableHeaders || ['H1', 'H2']).map((h, i) => `<th contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}','h',${i},this.innerText)" onpaste="window.handlePaste(event)">${h}</th>`).join('')}</tr></thead><tbody>${rows.map((r, ri) => `<tr>${r.map((c, ci) => `<td contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}','r',${ri},this.innerText,${ci})" onpaste="window.handlePaste(event)">${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
                 } else if (s.type === 'media') {
                     const urls = (s.mediaUrl || "").split(',').filter(x => x.trim());
                     const descs = (s.mediaDescription || "").split(',');
@@ -379,10 +385,10 @@
                 } else if (s.type === 'heading' || s.type === 'subheading') { 
                     const tag = s.type === 'heading' ? 'h2' : 'h3';
                     const cls = s.type === 'heading' ? 'manual-h2' : 'manual-h3';
-                    body = `<${tag} class="${cls} dm-editable" data-id="${s.id}" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}'; window.aeonState.lastActiveId='${s.id}'" onblur="window.aeonState.activeEditId=null" oninput="const val=this.innerText; if('${s.type}'==='heading'){ window.aeonState.sections.find(x=>x.id==='${s.id}').title=val; window.renderNav(); window.dbUpdateSection('${s.id}', {content: this.innerHTML, title: val}); } else { window.dbUpdateSection('${s.id}', 'content', this.innerHTML); }">${window.parseContent(s.content, isDM, s.id)}</${tag}>`; 
+                    body = `<${tag} class="${cls} dm-editable" data-id="${s.id}" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}'; window.aeonState.lastActiveId='${s.id}'" onblur="window.aeonState.activeEditId=null" onpaste="window.handlePaste(event)" oninput="const val=this.innerText; if('${s.type}'==='heading'){ window.aeonState.sections.find(x=>x.id==='${s.id}').title=val; window.renderNav(); window.dbUpdateSection('${s.id}', {content: this.innerHTML, title: val}); } else { window.dbUpdateSection('${s.id}', 'content', this.innerHTML); }">${window.parseContent(s.content, isDM, s.id)}</${tag}>`; 
                 } else {
                     const boxClass = s.type === 'note' ? 'manual-note-box' : s.type === 'info' ? 'manual-info-box' : '';
-                    body = `<div class="${boxClass}"><div class="dm-editable leading-relaxed text-[16px]" data-id="${s.id}" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}'; window.aeonState.lastActiveId='${s.id}'" onblur="window.aeonState.activeEditId=null" oninput="window.dbUpdateSection('${s.id}','content',this.innerHTML)">${window.parseContent(s.content, isDM, s.id)}</div></div>`;
+                    body = `<div class="${boxClass}"><div class="dm-editable leading-relaxed text-[16px]" data-id="${s.id}" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}'; window.aeonState.lastActiveId='${s.id}'" onblur="window.aeonState.activeEditId=null" onpaste="window.handlePaste(event)" oninput="window.dbUpdateSection('${s.id}','content',this.innerHTML)">${window.parseContent(s.content, isDM, s.id)}</div></div>`;
                 }
                 
                 return `<section id="section-${s.id}" class="manual-section-unit relative transition-all duration-300 p-2" 
@@ -546,6 +552,7 @@
         window.removeInlineImage = (sid, url) => { const s = window.aeonState.sections.find(x => x.id === sid); const reg = new RegExp(`\\{\\{\\s*${url.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}\\s*(\\|[^}]*)?\\}\\}`, 'g'); window.dbUpdateSection(sid, 'content', s.content.replace(reg, '')); };
         window.updateTableCell = (id, t, r, v, c = 0) => { const s = window.aeonState.sections.find(x => x.id === id); if (t === 'h') { let h = [...s.tableHeaders]; h[r] = v; window.dbUpdateSection(id, 'tableHeaders', h); } else { let rs = JSON.parse(s.tableRows); rs[r][c] = v; window.dbUpdateSection(id, 'tableRows', JSON.stringify(rs)); } };
         window.openZoom = (url) => { const modal = document.getElementById('lightbox-modal'); const content = document.getElementById('lightbox-content'); content.innerHTML = `<img src="${url}" class="max-w-[95vw] max-h-[90vh] object-contain shadow-2xl border-4 border-white/10 rounded-lg">`; modal.classList.remove('hidden'); };
+
         window.initDrag = (e, id) => { if (window.aeonState.role === 'dm') { window.aeonState.draggedId = id; e.currentTarget.classList.add('unit-dragging'); } };
         window.dragOver = (e) => {
             if (!window.aeonState.draggedId) return; e.preventDefault(); const el = e.currentTarget; const rect = el.getBoundingClientRect(); const rx = e.clientX - rect.left; const ry = e.clientY - rect.top;
@@ -567,7 +574,7 @@
             const sel = window.getSelection(); if (sel.toString().length === 0 && !window.aeonState.lockedSelection) document.getElementById('selection-bubble').style.display = 'none';
         };
 
-        // --- AUTH & LISTENERS ---
+        // --- SNAPSHOT & INIT ---
         const initArchive = () => {
             onAuthStateChanged(auth, async u => {
                 if (!u) {
