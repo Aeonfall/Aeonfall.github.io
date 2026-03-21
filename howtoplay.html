@@ -155,7 +155,7 @@
         .insert-option { padding: 8px 12px; font-size: 9px; font-weight: 700; text-transform: uppercase; cursor: pointer; border-radius: 6px; text-align: left; }
         .insert-option:hover { background: #f8fafc; color: var(--arch-burgundy) !important; }
 
-        /* Drag & Drop Feedback */
+        /* Rebuilt Drag & Drop Feedback */
         .manual-section-unit.unit-dragging { opacity: 0.2 !important; transform: scale(0.97); transition: 0.2s; }
         .drop-zone-top { border-top: 6px solid var(--arch-burgundy) !important; background: rgba(122,29,29,0.05); }
         .drop-zone-bottom { border-bottom: 6px solid var(--arch-burgundy) !important; background: rgba(122,29,29,0.05); }
@@ -253,7 +253,7 @@
         import { getFirestore, collection, doc, updateDoc, setDoc, onSnapshot, addDoc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // FIREBASE SETUP
+        // FIREBASE CONFIG
         const firebaseConfig = { 
             apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI", 
             authDomain: "aeonfall-523c1.firebaseapp.com", 
@@ -282,27 +282,10 @@
             activeSlides: {}
         };
 
-        // --- GLOBAL FUNCTIONS REGISTRY ---
+        // --- GLOBAL FUNCTIONS REGISTRY (ATTACHED TO WINDOW FOR BUTTON ACCESS) ---
         window.showToast = (msg) => {
             const t = document.getElementById('toast');
             if (t) { t.innerText = msg; t.style.opacity = 1; setTimeout(() => t.style.opacity = 0, 2500); }
-        };
-
-        window.renderNav = () => {
-            const nav = document.getElementById('nav-list');
-            if (!nav) return;
-            nav.innerHTML = window.aeonState.sections.filter(s => s.type === 'heading').map(s => `
-                <div class="shelf-item" onclick="const el=document.getElementById('section-${s.id}'); if(el) el.scrollIntoView({behavior:'smooth'})">${s.title}</div>
-            `).join('');
-        };
-
-        window.updateRoleUI = () => {
-            const isDM = window.aeonState.role === 'dm';
-            document.body.classList.toggle('dm-mode-active', isDM);
-            document.getElementById('dm-global-controls').classList.toggle('dm-active', isDM);
-            document.getElementById('role-player').className = `px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all ${!isDM ? 'role-btn-active' : 'role-btn-inactive'}`;
-            document.getElementById('role-dm').className = `px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all ${isDM ? 'role-btn-active' : 'role-btn-inactive'}`;
-            window.renderManual();
         };
 
         window.authDm = () => {
@@ -350,22 +333,26 @@
         window.addRow = async (id) => {
             const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
             const rows = JSON.parse(s.tableRows || '[]');
-            rows.push(new Array((s.tableHeaders || ['H1', 'H2']).length).fill("..."));
+            const hCount = (s.tableHeaders || ['H1', 'H2']).length;
+            rows.push(new Array(hCount).fill("..."));
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { tableRows: JSON.stringify(rows) });
         };
+        
         window.remRow = async (id) => {
             const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
             const rows = JSON.parse(s.tableRows || '[]'); if (rows.length <= 1) return;
             rows.pop();
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { tableRows: JSON.stringify(rows) });
         };
+        
         window.addCol = async (id) => {
             const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
-            const h = [...(s.tableHeaders || ['H1', 'H2'])]; h.push("New Header");
+            const h = [...(s.tableHeaders || ['H1', 'H2'])]; h.push("NEW COL");
             const r = JSON.parse(s.tableRows || '[]');
             const updatedRows = r.map(row => [...row, "..."]);
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { tableHeaders: h, tableRows: JSON.stringify(updatedRows) });
         };
+        
         window.remCol = async (id) => {
             const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
             const h = [...(s.tableHeaders || ['H1', 'H2'])]; if (h.length <= 1) return;
@@ -376,14 +363,12 @@
         };
 
         window.updateTableCell = (id, type, r, val, c = 0) => {
-            const s = window.aeonState.sections.find(x => x.id === id);
-            if (!s) return;
+            const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
             if (type === 'h') {
                 const h = [...s.tableHeaders]; h[r] = val;
                 window.dbUpdateSection(id, 'tableHeaders', h);
             } else {
-                const rows = JSON.parse(s.tableRows);
-                rows[r][c] = val;
+                const rows = JSON.parse(s.tableRows); rows[r][c] = val;
                 window.dbUpdateSection(id, 'tableRows', JSON.stringify(rows));
             }
         };
@@ -399,6 +384,14 @@
                 return `<div class="inline-img-wrapper"><div class="inline-img-container">${isDM ? `<div class="img-del-btn" onmousedown="event.preventDefault(); window.removeInlineImage('${id}', '${trimmedUrl}')">✕</div>` : ''}<img src="${trimmedUrl}" class="inline-block max-w-full rounded-lg shadow-lg border border-black/10 cursor-zoom-in" onclick="window.openZoom('${trimmedUrl}')"></div>${desc ? `<div class="text-[11px] italic opacity-60 mt-2 text-center">${desc}</div>` : ''}</div>`;
             });
             return p;
+        };
+
+        window.renderNav = () => {
+            const nav = document.getElementById('nav-list');
+            if (!nav) return;
+            nav.innerHTML = window.aeonState.sections.filter(s => s.type === 'heading').map(s => `
+                <div class="shelf-item" onclick="const el=document.getElementById('section-${s.id}'); if(el) el.scrollIntoView({behavior:'smooth'})">${s.title}</div>
+            `).join('');
         };
 
         window.renderManual = () => {
@@ -475,7 +468,7 @@
                             <button class="format-btn" onmousedown="event.preventDefault(); window.dbUpdateSection('${s.id}', 'align', 'center')">C</button>
                             <button class="format-btn" onmousedown="event.preventDefault(); window.dbUpdateSection('${s.id}', 'align', 'right')">R</button>
                         </div>
-                        <div class="flex gap-1">
+                        <div class="flex gap-1 border-l pl-1">
                             <button class="px-2 h-7 text-[9px] font-black bg-blue-50 text-blue-800 rounded-md border border-blue-200" onmousedown="event.preventDefault(); window.insertTemplate('img')">IMG</button>
                             <button class="px-2 h-7 text-[9px] font-black bg-amber-50 text-amber-800 rounded-md border border-amber-200" onmousedown="event.preventDefault(); window.insertTemplate('def')">DEF</button>
                             <button class="px-2 h-7 text-[9px] font-black bg-emerald-50 text-emerald-800 rounded-md border border-emerald-200" onmousedown="event.preventDefault(); window.insertTemplate('link')">LINK</button>
@@ -484,6 +477,15 @@
                         <button class="w-7 h-7 flex items-center justify-center text-red-600 hover:bg-red-50 rounded-md transition-colors" onmousedown="event.preventDefault(); event.stopPropagation(); window.deleteSection('${s.id}')">✕</button>
                     </div>` : ''}${body}</section>`;
             }).join('');
+        };
+
+        window.updateRoleUI = () => {
+            const isDM = window.aeonState.role === 'dm';
+            document.body.classList.toggle('dm-mode-active', isDM);
+            document.getElementById('dm-global-controls').classList.toggle('dm-active', isDM);
+            document.getElementById('role-player').className = `px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all ${!isDM ? 'role-btn-active' : 'role-btn-inactive'}`;
+            document.getElementById('role-dm').className = `px-6 py-2 rounded-full text-[10px] font-black uppercase transition-all ${isDM ? 'role-btn-active' : 'role-btn-inactive'}`;
+            window.renderManual();
         };
 
         window.addManualSection = async (type, afterIdOverride = null) => {
@@ -516,17 +518,15 @@
             if (activeEl) {
                 const val = activeEl.innerText;
                 const id = window.aeonState.activeEditId;
-                if (id === 'header-title') await window.dbUpdateHeader('title', val);
-                else if (id === 'header-subtitle') await window.dbUpdateHeader('subtitle', val);
-                else {
+                if (id === 'header-title' || id === 'header-subtitle') {
+                    await window.dbUpdateHeader(id === 'header-title' ? 'title' : 'subtitle', val);
+                } else {
                     const section = window.aeonState.sections.find(x => x.id === id);
                     if (section?.type === 'heading') await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { content: activeEl.innerHTML, title: val });
                     else await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { content: activeEl.innerHTML });
                 }
             }
-            window.aeonState.activeEditId = null; 
-            window.renderManual();
-            window.showToast("⚡ SYNC COMPLETE");
+            window.aeonState.activeEditId = null; window.renderManual(); window.showToast("⚡ SYNC COMPLETE");
         };
 
         window.deleteSection = (id) => {
@@ -565,27 +565,17 @@
             if (window.aeonState.lockedSelection) { sel.removeAllRanges(); sel.addRange(window.aeonState.lockedSelection); }
             if (!sel.rangeCount || sel.toString().length === 0) return;
             const range = sel.getRangeAt(0);
-            const span = document.createElement('span');
-            span.className = 'aeon-style-span';
+            const span = document.createElement('span'); span.className = 'aeon-style-span';
             if (prop === 'fontSize') span.style.fontSize = val + 'px';
             if (prop === 'fontFamily') span.style.fontFamily = val;
-            try { 
-                span.appendChild(range.extractContents()); 
-                range.insertNode(span); 
-                const nr = document.createRange(); 
-                nr.selectNodeContents(span); 
-                sel.removeAllRanges(); 
-                sel.addRange(nr);
-                if (window.aeonState.lockedSelection) window.aeonState.lockedSelection = nr.cloneRange();
-            } catch (e) {}
+            try { span.appendChild(range.extractContents()); range.insertNode(span); const nr = document.createRange(); nr.selectNodeContents(span); sel.removeAllRanges(); sel.addRange(nr); if (window.aeonState.lockedSelection) window.aeonState.lockedSelection = nr.cloneRange(); } catch (e) {}
             window.saveActiveContent();
         };
 
         window.execFormat = (cmd, val = null) => {
             const sel = window.getSelection();
             if (window.aeonState.lockedSelection) { sel.removeAllRanges(); sel.addRange(window.aeonState.lockedSelection); }
-            document.execCommand(cmd, false, val);
-            window.saveActiveContent();
+            document.execCommand(cmd, false, val); window.saveActiveContent();
         };
 
         window.insertTemplate = (type) => { window.execFormat('insertHTML', type === 'img' ? '{{URL | Caption}}' : type === 'def' ? '[[Word | definition]]' : '((Text | URL))'); };
@@ -607,9 +597,9 @@
         };
         window.handleDrop = async (e, tid) => {
             e.preventDefault(); const did = window.aeonState.draggedId; const side = window.aeonState.dropSide; if (!did || did === tid) return;
-            const sections = [...window.aeonState.sections]; const di = sections.findIndex(x => x.id === did);
-            let toM = [sections[di]]; if (sections[di].type === 'heading') { for (let i = di + 1; i < sections.length; i++) { if (sections[i].type === 'heading') break; toM.push(sections[i]); } }
-            const rem = sections.filter(x => !toM.map(m => m.id).includes(x.id)); let ti = rem.findIndex(x => x.id === tid); if (side === 'bottom' || side === 'right') ti++; rem.splice(ti, 0, ...toM);
+            const secs = [...window.aeonState.sections]; const di = secs.findIndex(x => x.id === did);
+            let toM = [secs[di]]; if (secs[di].type === 'heading') { for (let i = di + 1; i < secs.length; i++) { if (secs[i].type === 'heading') break; toM.push(secs[i]); } }
+            const rem = secs.filter(x => !toM.map(m => m.id).includes(x.id)); let ti = rem.findIndex(x => x.id === tid); if (side === 'bottom' || side === 'right') ti++; rem.splice(ti, 0, ...toM);
             const b = writeBatch(db); if (side === 'left' || side === 'right') { toM.forEach(m => b.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', m.id), { width: 48 })); b.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', tid), { width: 48 }); }
             else { toM.forEach(m => b.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', m.id), { width: 100 })); }
             rem.forEach((x, i) => b.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', x.id), { order: i })); await b.commit(); window.aeonState.draggedId = null;
@@ -631,11 +621,7 @@
                 onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'manualSections'), snap => {
                     const ns = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (a.order||0) - (b.order||0));
                     window.aeonState.sections = ns;
-                    if (!window.aeonState.activeEditId && !window.aeonState.isInteracting) {
-                        window.renderManual();
-                    } else {
-                        window.renderNav(); 
-                    }
+                    if (!window.aeonState.activeEditId && !window.aeonState.isInteracting) window.renderManual(); else window.renderNav(); 
                 });
                 window.updateRoleUI();
             });
