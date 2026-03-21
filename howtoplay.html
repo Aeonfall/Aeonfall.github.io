@@ -155,7 +155,7 @@
         .insert-option { padding: 8px 12px; font-size: 9px; font-weight: 700; text-transform: uppercase; cursor: pointer; border-radius: 6px; text-align: left; }
         .insert-option:hover { background: #f8fafc; color: var(--arch-burgundy) !important; }
 
-        /* REBUILT DRAG FEEDBACK */
+        /* Drag & Drop Feedback */
         .manual-section-unit.unit-dragging { opacity: 0.2 !important; transform: scale(0.97); transition: 0.2s; }
         .drop-zone-top { border-top: 6px solid var(--arch-burgundy) !important; background: rgba(122,29,29,0.05); }
         .drop-zone-bottom { border-bottom: 6px solid var(--arch-burgundy) !important; background: rgba(122,29,29,0.05); }
@@ -277,12 +277,12 @@
             lockedSelection: null,
             saveTimer: null,
             draggedId: null,
-            dropSide: null, // top, bottom, left, right
+            dropSide: null,
             isInteracting: false,
             activeSlides: {}
         };
 
-        // --- CORE FUNCTIONS ATTACHED GLOBALLY ---
+        // --- GLOBAL FUNCTIONS REGISTRY ---
         window.showToast = (msg) => {
             const t = document.getElementById('toast');
             if (t) { t.innerText = msg; t.style.opacity = 1; setTimeout(() => t.style.opacity = 0, 2500); }
@@ -292,7 +292,7 @@
             const nav = document.getElementById('nav-list');
             if (!nav) return;
             nav.innerHTML = window.aeonState.sections.filter(s => s.type === 'heading').map(s => `
-                <div class="shelf-item" onclick="document.getElementById('section-${s.id}').scrollIntoView({behavior:'smooth'})">${s.title}</div>
+                <div class="shelf-item" onclick="const el=document.getElementById('section-${s.id}'); if(el) el.scrollIntoView({behavior:'smooth'})">${s.title}</div>
             `).join('');
         };
 
@@ -319,17 +319,10 @@
             else { window.aeonState.role = 'player'; localStorage.setItem('aeon_role', 'player'); window.updateRoleUI(); }
         };
 
-        window.parseContent = (text, isDM, id) => {
-            if (!text) return '';
-            if (isDM && window.aeonState.activeEditId === id) return text;
-            let p = text;
-            p = p.replace(/\[\[([^|\]]+)\|([^\]]+)\]\]/g, '<span class="definition-word" data-definition="$2">$1</span>');
-            p = p.replace(/\(\(([^|)]+)\|([^)]+)\)\)/g, '<a href="$2" target="_blank" class="arch-link">$1</a>');
-            p = p.replace(/\{\{([^}|]+)(?:\|([^}]+))?\}\}/g, (m, url, desc) => {
-                const trimmedUrl = url.trim();
-                return `<div class="inline-img-wrapper"><div class="inline-img-container">${isDM ? `<div class="img-del-btn" onmousedown="event.preventDefault(); window.removeInlineImage('${id}', '${trimmedUrl}')">✕</div>` : ''}<img src="${trimmedUrl}" class="inline-block max-w-full rounded-lg shadow-lg border border-black/10 cursor-zoom-in" onclick="window.openZoom('${trimmedUrl}')"></div>${desc ? `<div class="text-[11px] italic opacity-60 mt-2 text-center">${desc}</div>` : ''}</div>`;
-            });
-            return p;
+        window.handlePaste = (e) => {
+            e.preventDefault();
+            const text = (e.originalEvent || e).clipboardData.getData('text/plain');
+            document.execCommand('insertText', false, text);
         };
 
         window.dbUpdateHeader = (field, val) => {
@@ -348,6 +341,66 @@
             }, 300);
         };
 
+        window.saveActiveContent = () => {
+            if (!window.aeonState.activeEditId) return;
+            const el = document.querySelector(`[data-id="${window.aeonState.activeEditId}"]`);
+            if (el) window.dbUpdateSection(window.aeonState.activeEditId, 'content', el.innerHTML);
+        };
+
+        window.addRow = async (id) => {
+            const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
+            const rows = JSON.parse(s.tableRows || '[]');
+            rows.push(new Array((s.tableHeaders || ['H1', 'H2']).length).fill("..."));
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { tableRows: JSON.stringify(rows) });
+        };
+        window.remRow = async (id) => {
+            const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
+            const rows = JSON.parse(s.tableRows || '[]'); if (rows.length <= 1) return;
+            rows.pop();
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { tableRows: JSON.stringify(rows) });
+        };
+        window.addCol = async (id) => {
+            const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
+            const h = [...(s.tableHeaders || ['H1', 'H2'])]; h.push("New Header");
+            const r = JSON.parse(s.tableRows || '[]');
+            const updatedRows = r.map(row => [...row, "..."]);
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { tableHeaders: h, tableRows: JSON.stringify(updatedRows) });
+        };
+        window.remCol = async (id) => {
+            const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
+            const h = [...(s.tableHeaders || ['H1', 'H2'])]; if (h.length <= 1) return;
+            h.pop();
+            const r = JSON.parse(s.tableRows || '[]');
+            const updatedRows = r.map(row => { const nr = [...row]; nr.pop(); return nr; });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id), { tableHeaders: h, tableRows: JSON.stringify(updatedRows) });
+        };
+
+        window.updateTableCell = (id, type, r, val, c = 0) => {
+            const s = window.aeonState.sections.find(x => x.id === id);
+            if (!s) return;
+            if (type === 'h') {
+                const h = [...s.tableHeaders]; h[r] = val;
+                window.dbUpdateSection(id, 'tableHeaders', h);
+            } else {
+                const rows = JSON.parse(s.tableRows);
+                rows[r][c] = val;
+                window.dbUpdateSection(id, 'tableRows', JSON.stringify(rows));
+            }
+        };
+
+        window.parseContent = (text, isDM, id) => {
+            if (!text) return '';
+            if (isDM && window.aeonState.activeEditId === id) return text;
+            let p = text;
+            p = p.replace(/\[\[([^|\]]+)\|([^\]]+)\]\]/g, '<span class="definition-word" data-definition="$2">$1</span>');
+            p = p.replace(/\(\(([^|)]+)\|([^)]+)\)\)/g, '<a href="$2" target="_blank" class="arch-link">$1</a>');
+            p = p.replace(/\{\{([^}|]+)(?:\|([^}]+))?\}\}/g, (m, url, desc) => {
+                const trimmedUrl = url.trim();
+                return `<div class="inline-img-wrapper"><div class="inline-img-container">${isDM ? `<div class="img-del-btn" onmousedown="event.preventDefault(); window.removeInlineImage('${id}', '${trimmedUrl}')">✕</div>` : ''}<img src="${trimmedUrl}" class="inline-block max-w-full rounded-lg shadow-lg border border-black/10 cursor-zoom-in" onclick="window.openZoom('${trimmedUrl}')"></div>${desc ? `<div class="text-[11px] italic opacity-60 mt-2 text-center">${desc}</div>` : ''}</div>`;
+            });
+            return p;
+        };
+
         window.renderManual = () => {
             const isDM = window.aeonState.role === 'dm';
             const container = document.getElementById('manual-sections-container');
@@ -355,8 +408,8 @@
             if (!header || !container) return;
 
             header.innerHTML = `
-                <h1 class="manual-h1 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='header-title'; window.aeonState.lastActiveId='header'" oninput="window.dbUpdateHeader('title', this.innerText)">${window.aeonState.header.title}</h1>
-                <p class="text-[11px] font-black uppercase tracking-[0.4em] opacity-40 mt-2 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='header-subtitle'; window.aeonState.lastActiveId='header'" oninput="window.dbUpdateHeader('subtitle', this.innerText)">${window.aeonState.header.subtitle}</p>
+                <h1 class="manual-h1 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='header-title'; window.aeonState.lastActiveId='header'" oninput="window.dbUpdateHeader('title', this.innerText)" onpaste="window.handlePaste(event)">${window.aeonState.header.title}</h1>
+                <p class="text-[11px] font-black uppercase tracking-[0.4em] opacity-40 mt-2 dm-editable" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='header-subtitle'; window.aeonState.lastActiveId='header'" oninput="window.dbUpdateHeader('subtitle', this.innerText)" onpaste="window.handlePaste(event)">${window.aeonState.header.subtitle}</p>
             `;
             
             window.renderNav();
@@ -366,7 +419,7 @@
                 let body = '';
                 if (s.type === 'table') {
                     const rows = JSON.parse(s.tableRows || '[["...","..."]]');
-                    body = `<div class="table-wrap">${isDM ? `<div class="bg-slate-50 border-b flex gap-2 p-2 justify-center"><button onmousedown="event.preventDefault(); window.addRow('${s.id}')" class="table-tool-btn">+Row</button><button onmousedown="event.preventDefault(); window.remRow('${s.id}')" class="table-tool-btn">-Row</button><button onmousedown="event.preventDefault(); window.addCol('${s.id}')" class="table-tool-btn">+Col</button><button onmousedown="event.preventDefault(); window.remCol('${s.id}')" class="table-tool-btn">-Col</button></div>` : ''}<table class="manual-table"><thead><tr>${(s.tableHeaders || ['H1', 'H2']).map((h, i) => `<th contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}','h',${i},this.innerText)">${h}</th>`).join('')}</tr></thead><tbody>${rows.map((r, ri) => `<tr>${r.map((c, ci) => `<td contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}','r',${ri},this.innerText,${ci})">${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+                    body = `<div class="table-wrap">${isDM ? `<div class="bg-slate-50 border-b flex gap-2 p-2 justify-center"><button onmousedown="event.preventDefault(); window.addRow('${s.id}')" class="table-tool-btn">+Row</button><button onmousedown="event.preventDefault(); window.remRow('${s.id}')" class="table-tool-btn">-Row</button><button onmousedown="event.preventDefault(); window.addCol('${s.id}')" class="table-tool-btn">+Col</button><button onmousedown="event.preventDefault(); window.remCol('${s.id}')" class="table-tool-btn">-Col</button></div>` : ''}<table class="manual-table"><thead><tr>${(s.tableHeaders || ['H1', 'H2']).map((h, i) => `<th contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}','h',${i},this.innerText)" onpaste="window.handlePaste(event)">${h}</th>`).join('')}</tr></thead><tbody>${rows.map((r, ri) => `<tr>${r.map((c, ci) => `<td contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}','r',${ri},this.innerText,${ci})" onpaste="window.handlePaste(event)">${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
                 } else if (s.type === 'media') {
                     const urls = (s.mediaUrl || "").split(',').filter(x => x.trim());
                     const descs = (s.mediaDescription || "").split(',');
@@ -375,10 +428,10 @@
                 } else if (s.type === 'heading' || s.type === 'subheading') { 
                     const tag = s.type === 'heading' ? 'h2' : 'h3';
                     const cls = s.type === 'heading' ? 'manual-h2' : 'manual-h3';
-                    body = `<${tag} class="${cls} dm-editable" data-id="${s.id}" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}'; window.aeonState.lastActiveId='${s.id}'" onblur="window.aeonState.activeEditId=null" oninput="const val=this.innerText; if('${s.type}'==='heading'){ window.aeonState.sections.find(x=>x.id==='${s.id}').title=val; window.renderNav(); window.dbUpdateSection('${s.id}', {content: this.innerHTML, title: val}); } else { window.dbUpdateSection('${s.id}', 'content', this.innerHTML); }">${window.parseContent(s.content, isDM, s.id)}</${tag}>`; 
+                    body = `<${tag} class="${cls} dm-editable" data-id="${s.id}" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}'; window.aeonState.lastActiveId='${s.id}'" onblur="window.aeonState.activeEditId=null" onpaste="window.handlePaste(event)" oninput="const val=this.innerText; if('${s.type}'==='heading'){ window.aeonState.sections.find(x=>x.id==='${s.id}').title=val; window.renderNav(); window.dbUpdateSection('${s.id}', {content: this.innerHTML, title: val}); } else { window.dbUpdateSection('${s.id}', 'content', this.innerHTML); }">${window.parseContent(s.content, isDM, s.id)}</${tag}>`; 
                 } else {
                     const boxClass = s.type === 'note' ? 'manual-note-box' : s.type === 'info' ? 'manual-info-box' : '';
-                    body = `<div class="${boxClass}"><div class="dm-editable leading-relaxed text-[16px]" data-id="${s.id}" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}'; window.aeonState.lastActiveId='${s.id}'" onblur="window.aeonState.activeEditId=null" oninput="window.dbUpdateSection('${s.id}','content',this.innerHTML)">${window.parseContent(s.content, isDM, s.id)}</div></div>`;
+                    body = `<div class="${boxClass}"><div class="dm-editable leading-relaxed text-[16px]" data-id="${s.id}" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}'; window.aeonState.lastActiveId='${s.id}'" onblur="window.aeonState.activeEditId=null" onpaste="window.handlePaste(event)" oninput="window.dbUpdateSection('${s.id}','content',this.innerHTML)">${window.parseContent(s.content, isDM, s.id)}</div></div>`;
                 }
                 
                 return `<section id="section-${s.id}" class="manual-section-unit relative transition-all duration-300 p-2" 
@@ -392,7 +445,6 @@
                     ${isDM ? `<div class="tuner-panel" onmousedown="window.aeonState.isInteracting=true" onmouseup="window.aeonState.isInteracting=false">
                         <div class="cursor-grab p-1 text-stone-300" onmousedown="this.closest('section').setAttribute('draggable', 'true')">⠿</div>
                         
-                        <!-- UNIVERSAL INSERT MENU -->
                         <div class="insert-menu-btn" onmousedown="window.aeonState.lastActiveId='${s.id}'">✚<div class="insert-dropdown">
                             <div class="insert-option" onmousedown="event.preventDefault(); window.addManualSection('heading', '${s.id}')">🔗 GROUP</div>
                             <div class="insert-option" onmousedown="event.preventDefault(); window.addManualSection('subheading', '${s.id}')">📑 SUB</div>
@@ -434,6 +486,29 @@
             }).join('');
         };
 
+        window.addManualSection = async (type, afterIdOverride = null) => {
+            const afterId = afterIdOverride || window.aeonState.lastActiveId;
+            const sections = [...window.aeonState.sections];
+            const batch = writeBatch(db);
+            const primaryRef = doc(collection(db, 'artifacts', appId, 'public', 'data', 'manualSections'));
+            const textRef = doc(collection(db, 'artifacts', appId, 'public', 'data', 'manualSections'));
+            let newOrder;
+            if (afterId && !['header-title', 'header-subtitle', 'header'].includes(afterId)) {
+                const idx = sections.findIndex(s => s.id === afterId);
+                newOrder = (sections[idx]?.order || 0) + 1;
+                const shift = (type === 'heading' || type === 'subheading') ? 2 : 1;
+                for (let i = idx + 1; i < sections.length; i++) { batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', sections[i].id), { order: (sections[i].order || 0) + shift }); }
+            } else {
+                newOrder = sections.length ? Math.max(...sections.map(s => s.order || 0)) + 1 : 0;
+            }
+            batch.set(primaryRef, { type, order: newOrder, width: 100, align: 'left', title: type.toUpperCase(), content: "Initialization...", tableHeaders: type === 'table' ? ['Key', 'Value'] : null, tableRows: type === 'table' ? JSON.stringify([['...', '...']]) : null, mediaUrl: "", mediaDescription: "" });
+            if (type === 'heading' || type === 'subheading') {
+                batch.set(textRef, { type: 'text', order: newOrder + 1, width: 100, align: 'left', title: 'TEXT', content: "New segment initialized...", tableHeaders: null, tableRows: null, mediaUrl: "", mediaDescription: "" });
+            }
+            await batch.commit();
+            window.showToast("Archive Inserted");
+        };
+
         window.forceSync = async () => {
             clearTimeout(window.aeonState.saveTimer);
             window.aeonState.isInteracting = false; 
@@ -454,35 +529,6 @@
             window.showToast("⚡ SYNC COMPLETE");
         };
 
-        window.addManualSection = async (type, afterIdOverride = null) => {
-            const afterId = afterIdOverride || window.aeonState.lastActiveId;
-            const sections = [...window.aeonState.sections];
-            const batch = writeBatch(db);
-            const primaryRef = doc(collection(db, 'artifacts', appId, 'public', 'data', 'manualSections'));
-            const textRef = doc(collection(db, 'artifacts', appId, 'public', 'data', 'manualSections'));
-            
-            let startOrder;
-            if (afterId && !['header-title', 'header-subtitle', 'header'].includes(afterId)) {
-                const idx = sections.findIndex(s => s.id === afterId);
-                startOrder = (sections[idx]?.order || 0) + 1;
-                const shiftAmount = (type === 'heading' || type === 'subheading') ? 2 : 1;
-                for (let i = idx + 1; i < sections.length; i++) { 
-                    batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', sections[i].id), { order: (sections[i].order || 0) + shiftAmount }); 
-                }
-            } else {
-                startOrder = sections.length ? Math.max(...sections.map(s => s.order || 0)) + 1 : 0;
-            }
-            
-            batch.set(primaryRef, { type, order: startOrder, width: 100, align: 'left', title: type.toUpperCase(), content: "Initialization...", tableHeaders: type === 'table' ? ['Key', 'Value'] : null, tableRows: type === 'table' ? JSON.stringify([['...', '...']]) : null, mediaUrl: "", mediaDescription: "" });
-            
-            if (type === 'heading' || type === 'subheading') {
-                batch.set(textRef, { type: 'text', order: startOrder + 1, width: 100, align: 'left', title: 'TEXT', content: "New segment initialized...", tableHeaders: null, tableRows: null, mediaUrl: "", mediaDescription: "" });
-            }
-            
-            await batch.commit();
-            window.showToast(type === 'heading' || type === 'subheading' ? "Group Established" : "Segment Added");
-        };
-
         window.deleteSection = (id) => {
             const section = window.aeonState.sections.find(s => s.id === id); if (!section) return;
             const modal = document.getElementById('purge-modal'); const confirmBtn = document.getElementById('purge-confirm'); const promptText = document.getElementById('purge-text');
@@ -491,7 +537,7 @@
                 const group = []; const idx = window.aeonState.sections.indexOf(section);
                 for (let i = idx + 1; i < window.aeonState.sections.length; i++) { if (window.aeonState.sections[i].type === 'heading') break; group.push(window.aeonState.sections[i].id); }
                 if (group.length > 0) {
-                    promptText.innerHTML = `Purge Group Anchor?<br><span class="text-[10px] text-red-800">This will also erase ${group.length} attached items.</span>`;
+                    promptText.innerHTML = `Purge Group Anchor?<br><span class="text-[10px] text-red-800">This erases ${group.length} attached items.</span>`;
                     confirmBtn.onmousedown = async (e) => { e.preventDefault(); const b = writeBatch(db); [id, ...group].forEach(did => b.delete(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', did))); await b.commit(); window.closePurgeModal(); };
                 } else { confirmBtn.onmousedown = async (e) => { e.preventDefault(); await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id)); window.closePurgeModal(); }; }
             } else { confirmBtn.onmousedown = async (e) => { e.preventDefault(); await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', id)); window.closePurgeModal(); }; }
@@ -523,7 +569,15 @@
             span.className = 'aeon-style-span';
             if (prop === 'fontSize') span.style.fontSize = val + 'px';
             if (prop === 'fontFamily') span.style.fontFamily = val;
-            try { span.appendChild(range.extractContents()); range.insertNode(span); const nr = document.createRange(); nr.selectNodeContents(span); sel.removeAllRanges(); sel.addRange(nr); if (window.aeonState.lockedSelection) window.aeonState.lockedSelection = nr.cloneRange(); } catch (e) {}
+            try { 
+                span.appendChild(range.extractContents()); 
+                range.insertNode(span); 
+                const nr = document.createRange(); 
+                nr.selectNodeContents(span); 
+                sel.removeAllRanges(); 
+                sel.addRange(nr);
+                if (window.aeonState.lockedSelection) window.aeonState.lockedSelection = nr.cloneRange();
+            } catch (e) {}
             window.saveActiveContent();
         };
 
@@ -538,78 +592,27 @@
         window.changeSlide = (sid, d) => { const s = window.aeonState.sections.find(x => x.id === sid); const u = (s.mediaUrl || "").split(',').filter(x => x.trim()); window.aeonState.activeSlides[sid] = ((window.aeonState.activeSlides[sid] || 0) + d + u.length) % u.length; window.renderManual(); };
         window.removeSlide = async (sid, i) => { const s = window.aeonState.sections.find(x => x.id === sid); let u = (s.mediaUrl || "").split(',').filter(x => x.trim()); let ds = (s.mediaDescription || "").split(','); u.splice(i,1); ds.splice(i,1); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', sid), { mediaUrl: u.join(','), mediaDescription: ds.join(',') }); };
         window.removeInlineImage = (sid, url) => { const s = window.aeonState.sections.find(x => x.id === sid); const reg = new RegExp(`\\{\\{\\s*${url.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}\\s*(\\|[^}]*)?\\}\\}`, 'g'); window.dbUpdateSection(sid, 'content', s.content.replace(reg, '')); };
-        window.updateTableCell = (id, t, r, v, c = 0) => { const s = window.aeonState.sections.find(x => x.id === id); if (t === 'h') { let h = [...s.tableHeaders]; h[r] = v; window.dbUpdateSection(id, 'tableHeaders', h); } else { let rs = JSON.parse(s.tableRows); rs[r][c] = v; window.dbUpdateSection(id, 'tableRows', JSON.stringify(rs)); } };
         window.openZoom = (url) => { const modal = document.getElementById('lightbox-modal'); const content = document.getElementById('lightbox-content'); content.innerHTML = `<img src="${url}" class="max-w-[95vw] max-h-[90vh] object-contain shadow-2xl border-4 border-white/10 rounded-lg">`; modal.classList.remove('hidden'); };
 
-        // --- ENHANCED DRAG & DROP ENGINE ---
-        window.initDrag = (e, id) => { 
-            if (window.aeonState.role === 'dm') { 
-                window.aeonState.draggedId = id; 
-                e.currentTarget.classList.add('unit-dragging'); 
-                e.dataTransfer.effectAllowed = "move";
-            } 
-        };
-        
+        window.initDrag = (e, id) => { if (window.aeonState.role === 'dm') { window.aeonState.draggedId = id; e.currentTarget.classList.add('unit-dragging'); } };
         window.dragOver = (e) => {
-            if (!window.aeonState.draggedId) return; 
-            e.preventDefault(); 
-            const el = e.currentTarget; 
-            const rect = el.getBoundingClientRect(); 
-            const relX = e.clientX - rect.left; 
-            const relY = e.clientY - rect.top;
-            
+            if (!window.aeonState.draggedId) return; e.preventDefault(); const el = e.currentTarget; const rect = el.getBoundingClientRect(); const rx = e.clientX - rect.left; const ry = e.clientY - rect.top;
             el.classList.remove('drop-zone-top', 'drop-zone-bottom', 'drop-zone-left', 'drop-zone-right');
-            
-            // Proximity threshold (25% of element size)
-            const hT = rect.height * 0.25; 
-            const wT = rect.width * 0.25;
-            
-            if (relY < hT) { window.aeonState.dropSide = 'top'; el.classList.add('drop-zone-top'); }
-            else if (relY > rect.height - hT) { window.aeonState.dropSide = 'bottom'; el.classList.add('drop-zone-bottom'); }
-            else if (relX < wT) { window.aeonState.dropSide = 'left'; el.classList.add('drop-zone-left'); }
-            else if (relX > rect.width - wT) { window.aeonState.dropSide = 'right'; el.classList.add('drop-zone-right'); }
+            const hT = rect.height * 0.25; const wT = rect.width * 0.25;
+            if (ry < hT) { window.aeonState.dropSide = 'top'; el.classList.add('drop-zone-top'); }
+            else if (ry > rect.height - hT) { window.aeonState.dropSide = 'bottom'; el.classList.add('drop-zone-bottom'); }
+            else if (rx < wT) { window.aeonState.dropSide = 'left'; el.classList.add('drop-zone-left'); }
+            else if (rx > rect.width - wT) { window.aeonState.dropSide = 'right'; el.classList.add('drop-zone-right'); }
             else { window.aeonState.dropSide = 'bottom'; el.classList.add('drop-zone-bottom'); }
         };
-
-        window.handleDrop = async (e, targetId) => {
-            e.preventDefault(); 
-            const draggedId = window.aeonState.draggedId; 
-            const side = window.aeonState.dropSide;
-            e.currentTarget.classList.remove('drop-zone-top', 'drop-zone-bottom', 'drop-zone-left', 'drop-zone-right');
-            if (!draggedId || draggedId === targetId) return;
-
-            const sections = [...window.aeonState.sections]; 
-            const draggedIdx = sections.findIndex(s => s.id === draggedId); 
-            const draggedSection = sections[draggedIdx];
-            
-            // Collect the group if it's a heading
-            let toMove = [draggedSection]; 
-            if (draggedSection.type === 'heading') { 
-                for (let i = draggedIdx + 1; i < sections.length; i++) { 
-                    if (sections[i].type === 'heading') break; 
-                    toMove.push(sections[i]); 
-                } 
-            }
-
-            const remaining = sections.filter(s => !toMove.map(m => m.id).includes(s.id)); 
-            let targetIdx = remaining.findIndex(s => s.id === targetId);
-            if (side === 'bottom' || side === 'right') targetIdx++;
-            remaining.splice(targetIdx, 0, ...toMove);
-
-            const batch = writeBatch(db);
-            // Handle Width Logic for side-by-side
-            if (side === 'left' || side === 'right') { 
-                toMove.forEach(m => batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', m.id), { width: 48 })); 
-                batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', targetId), { width: 48 }); 
-            } else { 
-                // Reset to 100% when stacking top/bottom
-                toMove.forEach(m => batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', m.id), { width: 100 })); 
-            }
-
-            remaining.forEach((s, i) => { batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', s.id), { order: i }); });
-            await batch.commit(); 
-            window.aeonState.draggedId = null;
-            window.showToast("Archive Rearranged");
+        window.handleDrop = async (e, tid) => {
+            e.preventDefault(); const did = window.aeonState.draggedId; const side = window.aeonState.dropSide; if (!did || did === tid) return;
+            const sections = [...window.aeonState.sections]; const di = sections.findIndex(x => x.id === did);
+            let toM = [sections[di]]; if (sections[di].type === 'heading') { for (let i = di + 1; i < sections.length; i++) { if (sections[i].type === 'heading') break; toM.push(sections[i]); } }
+            const rem = sections.filter(x => !toM.map(m => m.id).includes(x.id)); let ti = rem.findIndex(x => x.id === tid); if (side === 'bottom' || side === 'right') ti++; rem.splice(ti, 0, ...toM);
+            const b = writeBatch(db); if (side === 'left' || side === 'right') { toM.forEach(m => b.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', m.id), { width: 48 })); b.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', tid), { width: 48 }); }
+            else { toM.forEach(m => b.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', m.id), { width: 100 })); }
+            rem.forEach((x, i) => b.update(doc(db, 'artifacts', appId, 'public', 'data', 'manualSections', x.id), { order: i })); await b.commit(); window.aeonState.draggedId = null;
         };
 
         window.clearSelectionState = (e) => { 
@@ -628,7 +631,11 @@
                 onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'manualSections'), snap => {
                     const ns = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (a.order||0) - (b.order||0));
                     window.aeonState.sections = ns;
-                    if (!window.aeonState.activeEditId && !window.aeonState.isInteracting) window.renderManual(); else window.renderNav(); 
+                    if (!window.aeonState.activeEditId && !window.aeonState.isInteracting) {
+                        window.renderManual();
+                    } else {
+                        window.renderNav(); 
+                    }
                 });
                 window.updateRoleUI();
             });
