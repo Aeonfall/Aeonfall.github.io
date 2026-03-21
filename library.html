@@ -271,7 +271,6 @@
 
                     <div class="flex flex-col gap-4 items-center mt-4">
                         <button onclick="registerCitizen()" class="arch-btn !px-16 !py-4 shadow-xl text-sm">Sign the Registry</button>
-                        <button onclick="toggleTerminalView('login')" class="text-[10px] font-black uppercase opacity-40 hover:opacity-100 tracking-wider">Return to Ledger</button>
                     </div>
                 </div>
             </div>
@@ -317,7 +316,12 @@
                 Synchronize Archive
             </button>
             
-            <div id="nav-list" class="flex-grow space-y-1"></div>
+            <div id="nav-list" class="flex-grow space-y-1 overflow-y-auto mb-6"></div>
+
+            <div class="mt-auto pt-6 border-t border-black/10 flex flex-col gap-3">
+                <a href="lore.html" class="block text-center font-serif uppercase font-black text-[10px] tracking-widest text-[#8a2525] hover:text-[#2c1e16] transition-colors">← RETURN BACK TO LORE</a>
+                <a href="playershandbook.html" class="block text-center font-serif uppercase font-black text-[10px] tracking-widest text-black/40 hover:text-[#2c1e16] transition-colors">← RETURN TO HUB</a>
+            </div>
         </div>
 
         <!-- CONTENT AREA -->
