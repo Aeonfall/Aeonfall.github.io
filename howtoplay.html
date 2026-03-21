@@ -245,7 +245,15 @@
         import { getFirestore, collection, doc, updateDoc, setDoc, onSnapshot, addDoc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "", authDomain: "", projectId: "", storageBucket: "", messagingSenderId: "", appId: "" };
+        // Restore verified Firebase Config
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { 
+            apiKey: "AIzaSyBLN0KhcnZFKZEYyR0O-Q2mZhKr-iyh7BI", 
+            authDomain: "aeonfall-523c1.firebaseapp.com", 
+            projectId: "aeonfall-523c1", 
+            storageBucket: "aeonfall-523c1.firebasestorage.app", 
+            messagingSenderId: "716207733913", 
+            appId: "1:716207733913:web:7aac43906a70e2b5f50c08" 
+        };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
@@ -452,6 +460,7 @@
             const wT = rect.width * 0.20; 
             const hT = rect.height * 0.20; 
 
+            // Priority given to Left/Right detection for easier side-by-side positioning
             if (relX < wT) { window.aeonState.dropSide = 'left'; el.classList.add('drop-zone-left'); }
             else if (relX > rect.width - wT) { window.aeonState.dropSide = 'right'; el.classList.add('drop-zone-right'); }
             else if (relY < hT) { window.aeonState.dropSide = 'top'; el.classList.add('drop-zone-top'); }
