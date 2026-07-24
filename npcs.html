@@ -13,13 +13,11 @@
             theme: {
                 extend: {
                     colors: {
-                        'parchment': '#f4ead5',
-                        'ink': '#2b1d12',
-                        'blood': '#8b1c1c',
-                        'gold': '#d4af37',
-                        'wood': '#3b2f28',
-                        'bg-base': '#d9ceb2',
-                        'card-bg': '#e6dabb'
+                        'parchment': '#f1e5c5',
+                        'ink': '#2c1e16',
+                        'blood': '#7a1b1b',
+                        'gold': '#c5a059',
+                        'wood': '#1a110b'
                     },
                     fontFamily: {
                         'serif': ['Lora', 'serif'],
@@ -31,104 +29,85 @@
     </script>
 
     <style>
-        /* Base Styling & Scrollbars */
+        /* Base Styling - Dark Brown Background */
         body { 
             font-family: 'Lora', serif; 
-            background-color: #d9ceb2; /* Restored original light brown background */
-            color: #2b1d12; 
+            background-color: #1a110b; /* The dark brown you requested */
+            color: #f1e5c5; /* Light text on the dark background */
             overflow-x: hidden;
-            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.08' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.15'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20.5V18H0v-2h20v-2H0v-2h20v-2H0V8h20V6H0V4h20V2H0V0h22v20h2V0h2v20h2V0h2v20h2V0h2v20h2V0h2v20h2v2H20v-1.5zM0 20h2v20H0V20zm4 0h2v20H4V20zm4 0h2v20H8V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 4h20v2H20v-2zm0 4h20v2H20v-2zm0 4h20v2H20v-2zm0 4h20v2H20v-2z' fill='%232c1e16' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E");
         }
         
-        /* Clean Parchment Box */
-        .parchment-paper {
-            background-color: #f4ead5;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(43, 29, 18, 0.15);
-            color: #2b1d12;
-            border-radius: 12px;
-            overflow: hidden;
-        }
+        /* Dashboard & Navigation */
+        .dashboard-header { border-bottom: 2px solid rgba(197, 160, 89, 0.3); padding-bottom: 1rem; margin-bottom: 2rem; }
+        
+        .nav-link { color: #c5a059; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; transition: all 0.2s; cursor: pointer; text-decoration: none; white-space: nowrap; font-family: 'Cinzel', serif; padding: 0.5rem 1rem; border-radius: 4px; opacity: 0.7; }
+        .nav-link.active { opacity: 1; background-color: rgba(197, 160, 89, 0.1); border-bottom: 2px solid #c5a059; }
+        .nav-link:hover:not(.active) { opacity: 1; background-color: rgba(197, 160, 89, 0.05); }
 
-        /* Simplified, Beautiful Cards */
+        .category-header { font-family: 'Cinzel', serif; font-size: 18px; font-weight: 700; border-bottom: 1px solid rgba(197, 160, 89, 0.3); padding-bottom: 8px; margin-top: 32px; margin-bottom: 20px; color: #c5a059; display: flex; justify-content: space-between; align-items: center; text-transform: uppercase;}
+
+        /* Clean Cards for Dark Theme */
         .card { 
             transition: all 0.2s ease-in-out; 
             cursor: pointer; 
-            background-color: #e6dabb; 
-            border: 1px solid rgba(43, 29, 18, 0.1);
+            background-color: #2c1e16; 
+            border: 1px solid rgba(197, 160, 89, 0.3);
             border-left-width: 4px;
-            color: #2b1d12;
-            border-radius: 8px;
+            border-left-color: #c5a059;
+            color: #f1e5c5;
+            border-radius: 6px;
             position: relative;
         }
-        .card:hover { 
-            transform: translateY(-3px); 
-            box-shadow: 0 12px 20px -8px rgba(0, 0, 0, 0.15); 
-            background-color: #f4ead5;
-        }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4); border-color: #c5a059; }
         
-        .status-badge { position: absolute; top: 12px; right: 12px; font-size: 9px; font-weight: 900; padding: 3px 8px; border-radius: 99px; text-transform: uppercase; z-index: 10; font-family: 'Cinzel', serif; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
+        .status-badge { position: absolute; top: 12px; right: 12px; font-size: 9px; font-weight: 900; padding: 3px 8px; border-radius: 99px; text-transform: uppercase; z-index: 10; font-family: 'Cinzel', serif; box-shadow: 0 2px 4px rgba(0,0,0,0.3);}
         .badge-coma { background: #f59e0b; color: #fff; }
-        .badge-dead { background: #8b1c1c; color: #fff; }
+        .badge-dead { background: #000; color: #fff; border: 1px solid rgba(255,255,255,0.2); }
 
         /* Elegant Buttons */
-        .fantasy-btn { 
-            background-color: #8b1c1c; 
-            color: #f4ead5 !important; 
-            border: none;
-            font-family: 'Cinzel', serif; 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
-            transition: all 0.2s ease; 
-            border-radius: 6px;
+        .fantasy-btn { background-color: #7a1b1b; color: #f1e5c5; border: 1px solid #c5a059; font-family: 'Cinzel', serif; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s ease; border-radius: 4px; }
+        .fantasy-btn:hover { background-color: #9a2222; transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
+        
+        .fantasy-btn-alt { background-color: transparent; color: #c5a059; border: 1px solid #c5a059; font-family: 'Cinzel', serif; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s ease; border-radius: 4px; }
+        .fantasy-btn-alt:hover { background-color: rgba(197, 160, 89, 0.1); color: #f1e5c5; }
+
+        /* Parchment Paper (Light background for the actual sheet) */
+        .parchment-paper {
+            background-color: #f1e5c5;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+            border: 2px solid #c5a059;
+            color: #2c1e16; /* Dark ink text */
+            border-radius: 8px;
+            overflow: hidden;
         }
-        .fantasy-btn:hover { background-color: #6b1515; transform: translateY(-1px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        
-        .fantasy-btn-alt { 
-            background-color: #f4ead5; 
-            color: #2b1d12 !important; 
-            border: 1px solid rgba(43, 29, 18, 0.2); 
-            font-family: 'Cinzel', serif; 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
-            transition: all 0.2s ease; 
-            border-radius: 6px;
-        }
-        .fantasy-btn-alt:hover { background-color: #e6dabb; border-color: #2b1d12; }
 
-        /* Clean Navigation */
-        .nav-link { color: #5a4b41; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; transition: all 0.2s; cursor: pointer; text-decoration: none; white-space: nowrap; font-family: 'Cinzel', serif; padding: 0.5rem 1rem; border-radius: 6px; }
-        .nav-link.active { color: #8b1c1c; background-color: rgba(139, 28, 28, 0.05); }
-        .nav-link:hover:not(.active) { color: #2b1d12; background-color: rgba(43, 29, 18, 0.05); }
-
-        .category-header { font-family: 'Cinzel', serif; font-size: 18px; font-weight: 700; border-bottom: 2px solid rgba(43, 29, 18, 0.1); padding-bottom: 8px; margin-top: 40px; margin-bottom: 20px; color: #2b1d12; display: flex; justify-content: space-between; align-items: center; text-transform: uppercase;}
-        .section-header { font-family: 'Cinzel', serif; font-weight: 700; font-size: 15px; color: #8b1c1c; border-bottom: 1px solid rgba(139, 28, 28, 0.2); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px; padding-bottom: 6px;}
+        .section-header { font-family: 'Cinzel', serif; font-weight: 700; font-size: 15px; color: #7a1b1b; border-bottom: 1px solid rgba(122, 27, 27, 0.2); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px; padding-bottom: 6px;}
         
-        /* Form Inputs */
-        .npc-name-main { font-family: 'Cinzel', serif; font-weight: 900; font-size: 42px; line-height: 1.2; color: #2b1d12; text-transform: uppercase; margin-bottom: 8px; width: 100%; border-bottom: 2px solid rgba(43,29,18,0.1) !important; background: transparent; text-align: center; transition: border-color 0.2s;}
-        .npc-name-main:focus { border-color: #8b1c1c !important; }
+        /* Form Inputs on Parchment */
+        .npc-name-main { font-family: 'Cinzel', serif; font-weight: 900; font-size: 36px; line-height: 1.2; color: #7a1b1b; text-transform: uppercase; margin-bottom: 8px; width: 100%; border-bottom: 2px solid #c5a059 !important; background: transparent; text-align: center; transition: border-color 0.2s;}
+        .npc-name-main:focus { border-color: #7a1b1b !important; }
         
-        .npc-summary-line { font-family: 'Cinzel', serif; font-weight: 700; font-size: 14px; color: #5a4b41; border-bottom: 1px dashed rgba(43, 29, 18, 0.2) !important; padding-bottom: 8px; margin-bottom: 32px; text-transform: uppercase; width: 100%; background: transparent; text-align: center; letter-spacing: 0.15em; transition: border-color 0.2s;}
-        .npc-summary-line:focus { border-color: #8b1c1c !important; }
+        .npc-summary-line { font-family: 'Cinzel', serif; font-weight: 700; font-size: 13px; color: #2c1e16; border-bottom: 1px dashed rgba(44, 30, 22, 0.3) !important; padding-bottom: 8px; margin-bottom: 32px; text-transform: uppercase; width: 100%; background: transparent; text-align: center; letter-spacing: 0.15em;}
 
-        .stat-box { background: rgba(255, 255, 255, 0.6); border: 1px solid rgba(43, 29, 18, 0.15); padding: 12px 8px; text-align: center; border-radius: 8px; transition: all 0.2s; }
-        .stat-box:hover { background: rgba(255, 255, 255, 0.9); border-color: rgba(43, 29, 18, 0.3); }
-        .stat-label { font-family: 'Cinzel', serif; font-weight: 700; font-size: 11px; color: #8b1c1c; margin-bottom: 4px; }
-        .stat-val { font-size: 22px; font-weight: 900; color: #2b1d12; background: transparent; border: none; text-align: center; width: 100%; font-family: 'Cinzel', serif;}
-        .stat-mod { font-size: 13px; font-weight: 400; color: #5a4b41; margin-top: 2px; }
+        .stat-box { background: rgba(255, 255, 255, 0.5); border: 1px solid rgba(44, 30, 22, 0.2); padding: 12px 8px; text-align: center; border-radius: 6px; }
+        .stat-label { font-family: 'Cinzel', serif; font-weight: 700; font-size: 11px; color: #7a1b1b; margin-bottom: 4px; }
+        .stat-val { font-size: 22px; font-weight: 900; color: #2c1e16; background: transparent; border: none; text-align: center; width: 100%; font-family: 'Cinzel', serif;}
+        .stat-mod { font-size: 13px; font-weight: 400; color: #2c1e16; margin-top: 2px; }
 
         /* Vitals */
-        .vital-container { aspect-ratio: 1/1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; margin: 0 auto; border: 3px solid #8b1c1c; border-radius: 50%; background: #fff; box-shadow: 0 4px 10px rgba(139, 28, 28, 0.15);}
-        .vital-input { width: 80%; text-align: center; font-size: 32px; font-weight: 900; background: transparent; border: none !important; color: #8b1c1c; font-family: 'Cinzel', serif;}
+        .vital-container { aspect-ratio: 1/1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; margin: 0 auto; border: 3px solid #7a1b1b; border-radius: 50%; background: rgba(255,255,255,0.7); box-shadow: 0 4px 10px rgba(122, 27, 27, 0.15);}
+        .vital-input { width: 80%; text-align: center; font-size: 32px; font-weight: 900; background: transparent; border: none !important; color: #7a1b1b; font-family: 'Cinzel', serif;}
 
-        input:focus, textarea:focus { outline: none; background-color: #fff; box-shadow: 0 0 0 2px rgba(139, 28, 28, 0.1); border-radius: 4px;}
-        input:disabled, textarea:disabled, select:disabled { background-color: transparent !important; color: #5a4b41 !important; border-bottom: 1px dashed rgba(43, 29, 18, 0.2) !important; cursor: not-allowed; box-shadow: none;}
+        input:focus, textarea:focus { outline: none; background-color: rgba(255,255,255,0.8); border-radius: 4px;}
+        input:disabled, textarea:disabled, select:disabled { background-color: transparent !important; color: #555 !important; border-bottom: 1px dashed rgba(44, 30, 22, 0.2) !important; cursor: not-allowed; box-shadow: none;}
         
-        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #2b1d12; border: 1px solid #d4af37; color: #f4ead5; padding: 12px 24px; border-radius: 8px; z-index: 1000; pointer-events: none; opacity: 0; transition: opacity 0.3s; font-family: 'Cinzel', serif; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);}
-        .modal-overlay { position: fixed; inset: 0; background: rgba(43,29,18,0.7); backdrop-filter: blur(2px); display: flex; align-items: center; justify-content: center; z-index: 800; padding: 20px; }
-        .modal-container { background: #f4ead5; border: 1px solid rgba(43, 29, 18, 0.2); border-radius: 12px; width: 100%; max-width: 480px; padding: 32px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); position: relative; color: #2b1d12; text-align: center;}
+        /* Modals & Toasts */
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #2c1e16; border: 1px solid #c5a059; color: #f1e5c5; padding: 12px 24px; border-radius: 4px; z-index: 1000; pointer-events: none; opacity: 0; transition: opacity 0.3s; font-family: 'Cinzel', serif; box-shadow: 0 10px 15px rgba(0,0,0,0.5);}
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(3px); display: flex; align-items: center; justify-content: center; z-index: 800; padding: 20px; }
+        .modal-container { background: #f1e5c5; border: 2px solid #c5a059; border-radius: 8px; width: 100%; max-width: 480px; padding: 32px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7); position: relative; color: #2c1e16; text-align: center;}
         
-        .dm-panel { background: rgba(139, 28, 28, 0.03); border: 1px border rgba(139, 28, 28, 0.2); padding: 20px; border-radius: 8px; margin-bottom: 32px; }
+        .dm-panel { background: rgba(122, 27, 27, 0.05); border: 1px solid rgba(122, 27, 27, 0.2); padding: 16px; border-radius: 6px; margin-bottom: 24px; }
 
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
@@ -139,34 +118,31 @@
 
     <div id="toast" class="toast">Message</div>
 
-    <!-- Initial Loading State -->
     <div id="initial-loading" class="flex flex-col items-center justify-center h-screen w-full text-center">
-        <i class="fa-solid fa-feather-pointed fa-spin text-5xl text-ink mb-6"></i>
-        <h2 class="font-heading text-2xl text-ink">Opening Archives...</h2>
+        <i class="fa-solid fa-compass fa-spin text-5xl text-gold mb-6"></i>
+        <h2 class="font-heading text-2xl text-parchment animate-pulse">Entering the Archives...</h2>
     </div>
 
-    <!-- MAIN DASHBOARD -->
     <div id="dashboard-screen" class="min-h-screen hidden-view">
-        
-        <!-- STICKY TOP NAVIGATION BAR -->
-        <header class="bg-parchment/90 backdrop-blur-md border-b border-ink/10 sticky top-0 z-50 shadow-sm">
-            <div class="max-w-7xl mx-auto px-4 md:px-8 py-3 flex flex-col md:flex-row justify-between items-center gap-4">
-                
-                <div class="flex items-center gap-4">
-                    <button onclick="try { window.location.href='campaigns.html' } catch(e) { window.showToast('Redirects disabled in preview.') }" class="text-ink/60 hover:text-blood transition-colors p-2">
-                        <i class="fa-solid fa-arrow-left text-lg"></i>
+        <div class="max-w-7xl mx-auto p-4 md:p-8">
+            
+            <!-- Header & Navigation -->
+            <header class="dashboard-header flex flex-col md:flex-row justify-between items-center gap-6 mt-4">
+                <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-start">
+                    <button onclick="try { window.location.href='campaigns.html' } catch(e) { window.showToast('Redirects disabled in preview.') }" class="fantasy-btn-alt px-3 py-2 text-xs flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-left"></i> Nexus
                     </button>
-                    <div>
-                        <h1 id="main-campaign-title" class="text-xl md:text-2xl text-ink font-bold font-heading leading-none">Chronicles</h1>
-                        <div class="flex items-center gap-2 mt-1">
-                            <span class="text-ink/60 text-[10px] uppercase tracking-widest font-heading">NPC Directory</span>
-                            <span class="text-ink/30">•</span>
-                            <span id="user-display-name" class="text-blood text-[10px] font-bold uppercase tracking-widest font-heading">Guest</span>
+                    <div class="text-right md:text-left">
+                        <h1 id="main-campaign-title" class="text-3xl md:text-4xl text-parchment font-bold font-heading leading-none">Chronicles</h1>
+                        <div class="flex items-center justify-end md:justify-start gap-2 mt-1">
+                            <span class="text-gold text-[10px] uppercase tracking-widest font-heading">NPC Directory</span>
+                            <span class="text-parchment/30">•</span>
+                            <span id="user-display-name" class="text-parchment text-[10px] font-bold uppercase tracking-widest font-heading bg-ink px-2 py-0.5 rounded">Guest</span>
                         </div>
                     </div>
                 </div>
 
-                <nav id="main-nav" class="flex gap-1 md:gap-2 items-center overflow-x-auto scrollbar-hide w-full md:w-auto pb-1 md:pb-0">
+                <nav id="main-nav" class="flex gap-2 items-center overflow-x-auto scrollbar-hide w-full md:w-auto pb-2 md:pb-0 justify-start md:justify-end">
                     <a href="#" onclick="window.routeTo('characters.html'); return false;" class="nav-link">Party</a>
                     <a href="#" onclick="window.routeTo('npcs.html'); return false;" class="nav-link active">NPCs</a>
                     <a href="#" onclick="window.routeTo('beasts.html'); return false;" class="nav-link">Bestiary</a>
@@ -174,138 +150,135 @@
                     <a href="#" onclick="window.routeTo('handbook.html'); return false;" class="nav-link">Handbook</a>
                     <a href="#" onclick="window.routeTo('graveyard.html'); return false;" class="nav-link">Graveyard</a>
                 </nav>
-            </div>
-        </header>
+            </header>
 
-        <div class="max-w-7xl mx-auto p-4 md:p-8">
-            <div class="flex flex-col sm:flex-row justify-between items-end mb-8 gap-4 mt-4">
-                <h2 class="text-2xl md:text-3xl font-heading text-ink uppercase font-bold tracking-widest">The Cast</h2>
+            <!-- Actions Row -->
+            <div class="flex flex-col sm:flex-row justify-between items-end mb-6 gap-4">
+                <h2 class="text-2xl font-heading text-gold uppercase font-bold tracking-widest">The Cast</h2>
                 
-                <div id="create-actions-dm" class="flex flex-wrap gap-3 hidden">
-                    <button onclick="window.createChar('NPC', 'public')" class="fantasy-btn px-4 py-2 text-xs font-bold shadow-sm"><i class="fa-solid fa-users mr-2"></i>New Public</button>
-                    <button onclick="window.createChar('NPC', 'unpublished')" class="bg-gray-200 text-gray-700 border border-gray-300 hover:bg-gray-300 px-4 py-2 rounded-md text-xs font-bold font-heading uppercase transition-colors shadow-sm"><i class="fa-solid fa-pen-ruler mr-2"></i>New Draft</button>
-                    <button onclick="window.openPrivateLinkModal()" class="bg-purple-100 text-purple-900 border border-purple-300 hover:bg-purple-200 px-4 py-2 rounded-md text-xs font-bold font-heading uppercase transition-colors shadow-sm"><i class="fa-solid fa-lock mr-2"></i>New Private</button>
+                <div id="create-actions-dm" class="flex flex-wrap gap-2 hidden">
+                    <button onclick="window.createChar('NPC', 'public')" class="fantasy-btn px-4 py-2 text-xs font-bold shadow-sm"><i class="fa-solid fa-globe mr-2"></i>New Public</button>
+                    <button onclick="window.createChar('NPC', 'unpublished')" class="bg-gray-700 text-gray-200 hover:bg-gray-600 px-4 py-2 rounded text-xs font-bold font-heading uppercase transition-colors shadow-sm"><i class="fa-solid fa-eye-slash mr-2"></i>New Draft</button>
+                    <button onclick="window.openPrivateLinkModal()" class="bg-purple-900 text-purple-200 border border-purple-700 hover:bg-purple-800 px-4 py-2 rounded text-xs font-bold font-heading uppercase transition-colors shadow-sm"><i class="fa-solid fa-lock mr-2"></i>New Private</button>
                 </div>
             </div>
 
-            <div id="npc-sections">
+            <div id="npc-sections" class="pb-12">
                 <div id="sec-public">
-                    <div class="category-header">Public Knowledge <span class="text-xs bg-ink/10 text-ink px-3 py-1 rounded-full font-bold" id="count-public">0</span></div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="grid-public"></div>
+                    <div class="category-header">Public Knowledge <span class="text-xs border border-gold text-gold w-6 h-6 flex items-center justify-center rounded-full font-bold" id="count-public">0</span></div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" id="grid-public"></div>
                 </div>
                 
-                <div id="sec-private" class="hidden mt-12">
-                    <div class="category-header !text-purple-900 border-purple-200">Personal Ties <span class="text-xs bg-purple-100 text-purple-900 px-3 py-1 rounded-full font-bold" id="count-private">0</span></div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="grid-private"></div>
+                <div id="sec-private" class="hidden mt-8">
+                    <div class="category-header !text-purple-400 !border-purple-800">Personal Ties <span class="text-xs border border-purple-500 text-purple-400 w-6 h-6 flex items-center justify-center rounded-full font-bold" id="count-private">0</span></div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" id="grid-private"></div>
                 </div>
                 
-                <div id="sec-unpublished" class="hidden mt-12">
-                    <div class="category-header !text-gray-600 border-gray-300">DM Drafts <span class="text-xs bg-gray-200 text-gray-700 px-3 py-1 rounded-full font-bold" id="count-unpublished">0</span></div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 opacity-75" id="grid-unpublished"></div>
+                <div id="sec-unpublished" class="hidden mt-8">
+                    <div class="category-header !text-gray-400 !border-gray-700">DM Drafts <span class="text-xs border border-gray-500 text-gray-400 w-6 h-6 flex items-center justify-center rounded-full font-bold" id="count-unpublished">0</span></div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 opacity-80" id="grid-unpublished"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- SHEET SCREEN -->
     <div id="sheet-screen" class="hidden-view pb-12">
         
-        <!-- Sheet Top Bar -->
-        <div class="bg-parchment border-b border-ink/10 sticky top-0 z-40 shadow-sm mb-8">
+        <!-- Sheet Top Bar (Dark) -->
+        <div class="bg-[#1a110b] border-b border-gold/30 sticky top-0 z-40 shadow-xl mb-8">
             <div class="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center">
-                <button onclick="window.closeSheet()" class="text-ink hover:text-blood font-heading font-bold text-sm uppercase tracking-widest transition-colors flex items-center">
+                <button onclick="window.closeSheet()" class="text-gold hover:text-parchment font-heading font-bold text-sm uppercase tracking-widest transition-colors flex items-center">
                     <i class="fa-solid fa-arrow-left mr-2"></i> Archives
                 </button>
                 <div class="flex items-center gap-4">
-                    <span id="sheet-visibility-badge" class="px-3 py-1 rounded text-[10px] font-bold uppercase tracking-widest border border-ink/20 bg-white shadow-sm">Visibility</span>
+                    <span id="sheet-visibility-badge" class="px-3 py-1 rounded text-[10px] font-bold uppercase tracking-widest border border-gray-600 bg-gray-800 text-gray-300 shadow-sm">Visibility</span>
                     <div class="flex gap-2" id="sheet-controls-dm">
-                        <button onclick="window.saveCurrentCharacter(true)" class="fantasy-btn px-4 py-1.5 text-[10px]"><i class="fa-solid fa-save mr-1"></i> Save</button>
-                        <button onclick="window.triggerDeleteModal()" class="text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-md text-[10px] font-bold uppercase border border-red-200 transition-colors shadow-sm"><i class="fa-solid fa-gear mr-1"></i> Manage</button>
+                        <button onclick="window.saveCurrentCharacter(true)" class="fantasy-btn px-4 py-1.5 text-[10px]"><i class="fa-solid fa-save mr-1"></i> Sync</button>
+                        <button onclick="window.triggerDeleteModal()" class="bg-transparent border border-blood text-blood hover:bg-blood hover:text-parchment px-3 py-1.5 rounded text-[10px] font-bold uppercase transition-colors shadow-sm"><i class="fa-solid fa-gear mr-1"></i> Manage</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div id="sheet-container" class="parchment-paper max-w-5xl mx-auto">
+        <!-- The Parchment Paper -->
+        <div id="sheet-container" class="parchment-paper max-w-5xl mx-auto mb-12">
             <div class="p-8 md:p-12">
                 
                 <div id="dm-oversight-panel" class="dm-panel hidden-view">
                     <div class="flex flex-col md:flex-row justify-between items-center gap-6 font-heading">
                         <div class="flex items-center gap-3">
                             <span class="text-xs font-bold text-blood uppercase tracking-widest">Visibility:</span>
-                            <div class="bg-white rounded-md shadow-sm border border-ink/10 p-1 flex gap-1">
-                                <button onclick="window.updateNpcVisibility('public')" class="hover:bg-gray-100 text-gray-700 px-3 py-1.5 rounded text-[10px] font-bold uppercase transition-colors">Public</button>
-                                <button onclick="window.updateNpcVisibility('unpublished')" class="hover:bg-gray-100 text-gray-700 px-3 py-1.5 rounded text-[10px] font-bold uppercase transition-colors">Draft</button>
-                                <button onclick="window.openPrivateLinkModal(true)" class="hover:bg-purple-50 text-purple-700 px-3 py-1.5 rounded text-[10px] font-bold uppercase transition-colors">Private</button>
+                            <div class="bg-white/50 rounded shadow-sm border border-ink/20 p-1 flex gap-1">
+                                <button onclick="window.updateNpcVisibility('public')" class="hover:bg-gold/20 text-ink px-3 py-1.5 rounded text-[10px] font-bold uppercase transition-colors">Public</button>
+                                <button onclick="window.updateNpcVisibility('unpublished')" class="hover:bg-gray-200 text-ink px-3 py-1.5 rounded text-[10px] font-bold uppercase transition-colors">Draft</button>
+                                <button onclick="window.openPrivateLinkModal(true)" class="hover:bg-purple-200 text-purple-900 px-3 py-1.5 rounded text-[10px] font-bold uppercase transition-colors">Private</button>
                             </div>
                         </div>
                         <div class="flex items-center gap-3">
                             <span class="text-xs font-bold text-blood uppercase tracking-widest">Status:</span>
-                            <div class="bg-white rounded-md shadow-sm border border-ink/10 p-1 flex gap-1">
-                                <button onclick="window.updateCharStatus('alive')" class="hover:bg-green-50 text-green-700 px-3 py-1.5 rounded text-[10px] font-bold uppercase transition-colors">Alive</button>
-                                <button onclick="window.updateCharStatus('coma')" class="hover:bg-amber-50 text-amber-700 px-3 py-1.5 rounded text-[10px] font-bold uppercase transition-colors">Coma</button>
-                                <button onclick="window.updateCharStatus('dead')" class="hover:bg-red-50 text-red-700 px-3 py-1.5 rounded text-[10px] font-bold uppercase transition-colors">Dead</button>
+                            <div class="bg-white/50 rounded shadow-sm border border-ink/20 p-1 flex gap-1">
+                                <button onclick="window.updateCharStatus('alive')" class="hover:bg-green-100 text-green-900 px-3 py-1.5 rounded text-[10px] font-bold uppercase transition-colors">Alive</button>
+                                <button onclick="window.updateCharStatus('coma')" class="hover:bg-amber-100 text-amber-900 px-3 py-1.5 rounded text-[10px] font-bold uppercase transition-colors">Coma</button>
+                                <button onclick="window.updateCharStatus('dead')" class="hover:bg-gray-300 text-ink px-3 py-1.5 rounded text-[10px] font-bold uppercase transition-colors">Dead</button>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Header Details -->
-                <div class="mb-12">
+                <div class="mb-10">
                     <input type="text" data-key="name" class="npc-name-main" placeholder="Character Name">
                     <input type="text" data-key="summary" class="npc-summary-line" placeholder="Race • Role • Alignment">
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-16">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-14">
                     
                     <!-- Left Column -->
                     <div class="lg:col-span-4 space-y-10">
                         
                         <!-- Portrait Area -->
                         <div class="flex flex-col items-center">
-                            <div class="w-56 h-56 bg-white border border-ink/15 rounded-lg overflow-hidden relative shadow-md p-1 group">
-                                <div id="portrait-media-display" class="w-full h-full bg-gray-50 rounded"></div>
-                                <div id="portrait-placeholder" class="absolute inset-0 flex flex-col items-center justify-center text-ink/30 bg-gray-50 m-1 rounded">
-                                    <i class="fa-regular fa-image text-5xl mb-3"></i>
+                            <div class="w-56 h-56 bg-white border border-ink/20 rounded overflow-hidden relative shadow-md p-1">
+                                <div id="portrait-media-display" class="w-full h-full bg-gray-100 rounded"></div>
+                                <div id="portrait-placeholder" class="absolute inset-0 flex flex-col items-center justify-center text-ink/30 bg-gray-100 m-1 rounded">
+                                    <i class="fa-solid fa-user text-6xl mb-3"></i>
                                     <span class="text-[10px] uppercase font-heading tracking-widest">No Portrait</span>
                                 </div>
                             </div>
-                            <div id="dm-media-controls" class="w-full mt-4 hidden">
-                                <label class="text-[10px] font-bold font-heading text-ink/60 uppercase ml-1">Media URL</label>
-                                <input type="text" data-key="imageSrc" id="portrait-url-input" class="w-full text-xs border border-ink/20 bg-white p-2 rounded-md text-center mt-1 shadow-sm" placeholder="Paste image link..." onchange="window.saveCurrentCharacter()">
+                            <div id="dm-media-controls" class="w-full mt-4 hidden text-center">
+                                <label class="text-[10px] font-bold font-heading text-blood uppercase">Media URL</label>
+                                <input type="text" data-key="imageSrc" id="portrait-url-input" class="w-full text-xs border border-ink/20 bg-white/50 p-2 rounded text-center mt-1 shadow-inner" placeholder="Paste image link..." onchange="window.saveCurrentCharacter()">
                             </div>
                         </div>
 
                         <!-- Vitals -->
                         <div class="flex justify-center">
                             <div class="vital-container w-32 h-32">
-                                <div class="text-[10px] font-bold uppercase text-ink/60 absolute top-4 font-heading tracking-widest">HP</div>
+                                <div class="text-[10px] font-bold uppercase text-ink/70 absolute top-4 font-heading tracking-widest">HP</div>
                                 <input type="number" class="vital-input mt-2" data-key="hpCurrent" placeholder="10">
-                                <div class="text-[10px] font-bold uppercase text-ink/60 absolute bottom-4 font-heading border-t border-ink/10 pt-1 w-2/3 text-center">Max: <input type="number" class="w-10 text-center bg-transparent border-none text-ink p-0" data-key="hpMax"></div>
+                                <div class="text-[10px] font-bold uppercase text-ink/70 absolute bottom-4 font-heading border-t border-ink/20 pt-1 w-2/3 text-center">Max: <input type="number" class="w-10 text-center bg-transparent border-none text-ink p-0" data-key="hpMax"></div>
                             </div>
                         </div>
 
                         <!-- Skills -->
-                        <div class="bg-white/40 p-5 rounded-lg border border-ink/10 shadow-sm">
+                        <div>
                             <div class="section-header">Key Skills</div>
                             <div id="skills-list" class="space-y-2 mb-4"></div>
                             <div class="flex gap-2" id="skill-add-ui">
-                                <input type="text" id="skill-name-in" class="border border-ink/20 rounded-md p-2 text-xs bg-white flex-grow shadow-inner" placeholder="Skill Name...">
-                                <input type="text" id="skill-val-in" class="border border-ink/20 rounded-md p-2 text-xs w-12 text-center bg-white shadow-inner" placeholder="+0">
-                                <button onclick="window.addSkillItem()" class="bg-ink text-parchment px-3 rounded-md text-[10px] font-bold uppercase hover:bg-wood transition-colors">Add</button>
+                                <input type="text" id="skill-name-in" class="border border-ink/20 rounded p-2 text-xs bg-white/50 flex-grow shadow-inner" placeholder="Skill Name...">
+                                <input type="text" id="skill-val-in" class="border border-ink/20 rounded p-2 text-xs w-12 text-center bg-white/50 shadow-inner" placeholder="+0">
+                                <button onclick="window.addSkillItem()" class="bg-ink text-parchment px-3 rounded text-[10px] font-bold uppercase hover:bg-[#1a110b] transition-colors font-heading">Add</button>
                             </div>
                         </div>
 
                     </div>
 
-                    <!-- Right Column -->
-                    <div class="lg:col-span-8 space-y-10">
+                    <div class="lg:col-span-8 space-y-8">
                         
                         <!-- Stats -->
                         <div>
-                            <div class="flex justify-between items-end border-b border-ink/10 pb-2 mb-4">
-                                <h3 class="font-heading text-sm font-bold text-ink uppercase tracking-widest">Attributes</h3>
-                                <button id="main-gen-btn" onclick="window.openScoreGenModal()" class="text-xs text-blood hover:text-red-600 hover:underline font-heading font-bold uppercase tracking-widest hidden-view transition-colors"><i class="fa-solid fa-dice-d20 mr-1"></i> Roll Stats</button>
+                            <div class="flex justify-between items-end border-b border-ink/20 pb-2 mb-4">
+                                <h3 class="font-heading text-sm font-bold text-blood uppercase tracking-widest">Attributes</h3>
+                                <button id="main-gen-btn" onclick="window.openScoreGenModal()" class="text-xs text-ink hover:text-blood hover:underline font-heading font-bold uppercase tracking-widest hidden-view transition-colors"><i class="fa-solid fa-dice-d20 mr-1"></i> Roll Stats</button>
                             </div>
                             <div class="grid grid-cols-3 sm:grid-cols-6 gap-3" id="stats-grid"></div>
                         </div>
@@ -313,17 +286,17 @@
                         <!-- Text Areas -->
                         <div>
                             <div class="section-header">Personality & Traits</div>
-                            <textarea data-key="personality" class="w-full min-h-[120px] text-sm bg-white/50 border border-ink/15 p-4 rounded-lg text-ink leading-relaxed shadow-inner" placeholder="Traits, ideals, bonds, flaws..."></textarea>
+                            <textarea data-key="personality" class="w-full min-h-[120px] text-sm bg-white/40 border border-ink/20 p-4 rounded text-ink leading-relaxed shadow-inner" placeholder="Traits, ideals, bonds, flaws..."></textarea>
                         </div>
 
                         <div>
                             <div class="section-header">Description & Lore</div>
-                            <textarea data-key="description" class="w-full min-h-[200px] text-sm bg-white/50 border border-ink/15 p-4 rounded-lg text-ink leading-relaxed shadow-inner" placeholder="Physical appearance, history, connections in the world..."></textarea>
+                            <textarea data-key="description" class="w-full min-h-[220px] text-sm bg-white/40 border border-ink/20 p-4 rounded text-ink leading-relaxed shadow-inner" placeholder="Physical appearance, history, connections in the world..."></textarea>
                         </div>
 
-                        <div id="sec-dm-notes" class="hidden-view mt-12">
-                            <div class="section-header !text-blood !border-blood/30 bg-blood/5 px-4 py-2 rounded-t-lg mb-0 flex items-center gap-2"><i class="fa-solid fa-eye-slash"></i> DM Secrets</div>
-                            <textarea data-key="dmNotes" class="w-full min-h-[150px] text-sm bg-red-50/30 border border-red-200 border-t-0 p-4 rounded-b-lg text-ink leading-relaxed shadow-inner" placeholder="Hidden motives, true alignments, secret stats... (Players cannot see this)"></textarea>
+                        <div id="sec-dm-notes" class="hidden-view mt-8">
+                            <div class="section-header !text-white !border-blood bg-blood px-4 py-2 rounded-t mb-0 flex items-center gap-2"><i class="fa-solid fa-eye-slash"></i> DM Secrets</div>
+                            <textarea data-key="dmNotes" class="w-full min-h-[150px] text-sm bg-[#fff5f5] border border-blood border-t-0 p-4 rounded-b text-ink leading-relaxed shadow-inner" placeholder="Hidden motives, true alignments, secret stats... (Players cannot see this)"></textarea>
                         </div>
 
                     </div>
@@ -332,15 +305,14 @@
         </div>
     </div>
 
-    <!-- MODALS -->
     
     <!-- SCORE GENERATOR MODAL -->
     <div id="score-gen-modal" class="modal-overlay hidden">
         <div class="modal-container">
-            <h2 class="text-2xl font-heading font-bold text-ink mb-6 border-b border-ink/10 pb-4">Generate Attributes</h2>
+            <h2 class="text-2xl font-heading font-bold text-ink mb-6 border-b border-gold pb-4 uppercase tracking-widest">Generate Attributes</h2>
             
             <div id="gen-controls" class="space-y-4">
-                <button onclick="window.generateScores('standard')" class="w-full py-4 bg-white border border-ink/20 hover:border-ink hover:bg-gray-50 rounded-lg shadow-sm text-sm font-heading font-bold uppercase transition-all tracking-widest">
+                <button onclick="window.generateScores('standard')" class="w-full py-4 bg-transparent border border-ink hover:bg-ink hover:text-parchment rounded text-sm font-heading font-bold uppercase transition-all tracking-widest">
                     Standard Array
                 </button>
                 <button onclick="window.generateScores('heroic')" class="w-full py-4 fantasy-btn shadow-sm text-sm tracking-widest">
@@ -349,7 +321,7 @@
             </div>
 
             <div id="gen-results-area" class="hidden space-y-6 mt-4">
-                <div id="gen-numbers-display" class="flex justify-center flex-wrap gap-3 p-4 bg-white/60 rounded-lg border border-ink/10 shadow-inner"></div>
+                <div id="gen-numbers-display" class="flex justify-center flex-wrap gap-3 p-4 bg-white/50 rounded border border-ink/20 shadow-inner"></div>
                 
                 <div id="heroic-reroll-area" class="hidden text-center">
                     <button onclick="window.generateScores('heroic', true)" class="text-xs font-bold text-blood uppercase hover:underline font-heading tracking-widest"><i class="fa-solid fa-rotate-right mr-1"></i> Reroll Once</button>
@@ -357,7 +329,7 @@
 
                 <div id="assign-grid" class="grid grid-cols-2 gap-3 text-left"></div>
                 
-                <div class="flex justify-between items-center px-2 pt-2 border-t border-ink/10 mt-4">
+                <div class="flex justify-between items-center px-2 pt-2 border-t border-ink/20 mt-4">
                     <button onclick="window.randomizeAssignment()" class="text-[10px] font-bold text-ink uppercase hover:text-blood transition-colors font-heading tracking-widest"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Auto Fill</button>
                     <button onclick="window.openScoreGenModal()" class="text-[10px] font-bold text-ink uppercase hover:text-blood transition-colors font-heading tracking-widest"><i class="fa-solid fa-arrow-rotate-left mr-1"></i> Reset</button>
                 </div>
@@ -366,230 +338,44 @@
             </div>
 
             <div class="mt-6 pt-4">
-                <button onclick="document.getElementById('score-gen-modal').classList.add('hidden')" class="text-xs font-heading font-bold text-ink/50 hover:text-ink uppercase tracking-widest transition-colors">Cancel</button>
+                <button onclick="document.getElementById('score-gen-modal').classList.add('hidden')" class="text-xs font-heading font-bold text-ink/60 hover:text-ink uppercase tracking-widest transition-colors underline">Cancel</button>
             </div>
         </div>
     </div>
 
     <!-- PRIVATE LINK MODAL -->
     <div id="private-link-modal" class="modal-overlay hidden">
-        <div class="modal-container !max-w-md">
-            <h3 class="font-heading text-xl font-bold text-purple-900 mb-3 border-b border-purple-200 pb-3"><i class="fa-solid fa-link mr-2"></i> Link Player</h3>
-            <p class="text-sm text-ink/70 mb-6 font-serif">Enter the exact username of the player who should have exclusive viewing rights to this NPC.</p>
-            <input type="text" id="private-target-user" class="w-full border border-purple-300 rounded-lg p-3 mb-6 text-center text-sm focus:border-purple-600 focus:ring-2 focus:ring-purple-200 outline-none transition-all shadow-inner" placeholder="Player Username">
+        <div class="modal-container">
+            <h3 class="font-heading text-xl font-bold text-purple-900 mb-3 border-b border-purple-300 pb-3 uppercase tracking-widest"><i class="fa-solid fa-lock mr-2"></i> Link Player</h3>
+            <p class="text-sm text-ink/80 mb-6 font-serif">Enter the exact username of the player who should have exclusive viewing rights.</p>
+            <input type="text" id="private-target-user" class="w-full border border-purple-400 bg-white/70 rounded p-3 mb-6 text-center text-sm focus:border-purple-800 focus:bg-white outline-none transition-all shadow-inner font-bold uppercase" placeholder="Player Username">
             <div class="flex gap-3 font-heading">
-                <button onclick="document.getElementById('private-link-modal').classList.add('hidden')" class="flex-1 bg-gray-100 text-gray-700 hover:bg-gray-200 font-bold uppercase text-xs rounded-lg py-3 transition-colors">Cancel</button>
-                <button onclick="window.confirmCreatePrivateNpc()" class="flex-1 bg-purple-700 text-white hover:bg-purple-800 font-bold uppercase text-xs rounded-lg py-3 shadow-sm transition-colors">Confirm Link</button>
+                <button onclick="document.getElementById('private-link-modal').classList.add('hidden')" class="flex-1 bg-transparent border border-ink text-ink hover:bg-ink hover:text-parchment font-bold uppercase text-xs rounded py-3 transition-colors">Cancel</button>
+                <button onclick="window.confirmCreatePrivateNpc()" class="flex-1 bg-purple-900 text-purple-100 hover:bg-purple-800 font-bold uppercase text-xs rounded py-3 shadow-sm transition-colors border border-purple-900">Confirm Link</button>
             </div>
         </div>
     </div>
 
     <!-- DELETE MODAL -->
     <div id="delete-modal" class="modal-overlay hidden">
-        <div class="modal-container !max-w-sm">
-            <h2 class="font-heading text-xl font-bold text-blood mb-6 border-b border-blood/10 pb-3"><i class="fa-solid fa-triangle-exclamation mr-2"></i> Manage NPC</h2>
+        <div class="modal-container">
+            <h2 class="font-heading text-xl font-bold text-blood mb-6 border-b border-blood/30 pb-3 uppercase tracking-widest"><i class="fa-solid fa-triangle-exclamation mr-2"></i> Manage NPC</h2>
             
-            <div id="delete-stage-1" class="space-y-3 font-heading">
-                <button id="archive-btn" onclick="window.archiveCharacter()" class="w-full py-3 bg-white border border-ink/20 hover:bg-gray-50 rounded-lg font-bold uppercase text-xs shadow-sm transition-colors">Retire to Graveyard</button>
-                <button id="restore-btn" onclick="window.restoreCharacter()" class="hidden w-full py-3 bg-green-50 text-green-800 border border-green-200 hover:bg-green-100 rounded-lg font-bold uppercase text-xs shadow-sm transition-colors">Restore NPC</button>
-                <button onclick="window.showPermDeleteConfirm()" class="w-full py-3 bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 rounded-lg font-bold uppercase text-xs shadow-sm transition-colors mt-6">Delete Permanently</button>
+            <div id="delete-stage-1" class="space-y-4 font-heading">
+                <button id="archive-btn" onclick="window.archiveCharacter()" class="w-full py-3 bg-transparent border border-ink hover:bg-ink hover:text-parchment rounded font-bold uppercase text-xs transition-colors">Retire to Graveyard</button>
+                <button id="restore-btn" onclick="window.restoreCharacter()" class="hidden w-full py-3 bg-green-900 text-green-100 border border-green-700 hover:bg-green-800 rounded font-bold uppercase text-xs transition-colors">Restore NPC</button>
+                <button onclick="window.showPermDeleteConfirm()" class="w-full py-3 bg-transparent text-blood border border-blood hover:bg-blood hover:text-parchment rounded font-bold uppercase text-xs transition-colors mt-4">Delete Permanently</button>
                 
-                <div class="pt-4 mt-4 text-center">
-                    <button onclick="document.getElementById('delete-modal').classList.add('hidden')" class="text-xs font-bold text-ink/50 hover:text-ink uppercase tracking-widest transition-colors">Cancel</button>
+                <div class="pt-4 text-center">
+                    <button onclick="document.getElementById('delete-modal').classList.add('hidden')" class="text-xs font-bold text-ink/60 hover:text-ink uppercase tracking-widest transition-colors underline">Cancel</button>
                 </div>
             </div>
 
             <div id="delete-stage-confirm" class="hidden space-y-6 font-heading">
-                <p class="text-sm font-bold text-blood bg-red-50 p-4 rounded-lg border border-red-100">Are you absolutely sure? This will erase the NPC permanently.</p>
+                <p class="text-sm font-bold text-blood uppercase border-b border-blood/20 pb-3">Are you absolutely sure?<br>This will erase the NPC permanently.</p>
                 <div class="flex gap-3">
-                    <button onclick="window.resetDeleteModal()" class="flex-1 py-3 bg-gray-100 hover:bg-gray-200 rounded-lg text-xs font-bold transition-colors">Cancel</button>
-                    <button onclick="window.executePermDelete()" class="flex-1 py-3 bg-blood text-white hover:bg-red-800 rounded-lg text-xs font-bold shadow-sm transition-colors">Delete</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- SHEET SCREEN -->
-    <div id="sheet-screen" class="hidden-view bg-bg-base min-h-screen pt-4 pb-12 px-2 md:px-6">
-        
-        <div class="max-w-5xl mx-auto flex justify-between items-center mb-4 px-2">
-            <button onclick="window.closeSheet()" class="text-ink hover:text-blood font-heading font-bold text-xs uppercase tracking-widest transition-colors">
-                <i class="fa-solid fa-arrow-left mr-1"></i> Back
-            </button>
-            <div class="flex items-center gap-3">
-                <span id="sheet-visibility-badge" class="px-2 py-1 rounded text-[9px] font-bold uppercase tracking-widest border border-ink/20">Visibility</span>
-                <div class="flex gap-2" id="sheet-controls-dm">
-                    <button onclick="window.saveCurrentCharacter(true)" class="fantasy-btn-alt px-3 py-1 text-[10px] rounded"><i class="fa-solid fa-save"></i> Save</button>
-                    <button onclick="window.triggerDeleteModal()" class="text-red-700 bg-red-100 hover:bg-red-200 px-2 py-1 rounded text-[10px] font-bold uppercase border border-red-200 transition-colors">Manage</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="sheet-container" class="parchment-paper max-w-5xl mx-auto">
-            <div class="p-6 md:p-10">
-                <div id="dm-oversight-panel" class="dm-panel hidden-view mb-6">
-                    <div class="flex flex-col md:flex-row justify-between items-center gap-4 font-heading">
-                        <div class="flex items-center gap-2">
-                            <span class="text-[10px] font-bold text-blood uppercase">Visibility:</span>
-                            <button onclick="window.updateNpcVisibility('public')" class="bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 px-2 py-1 rounded text-[10px] font-bold uppercase">Public</button>
-                            <button onclick="window.updateNpcVisibility('unpublished')" class="bg-gray-200 border border-gray-400 text-gray-700 hover:bg-gray-300 px-2 py-1 rounded text-[10px] font-bold uppercase">Draft</button>
-                            <button onclick="window.openPrivateLinkModal(true)" class="bg-purple-100 border border-purple-300 text-purple-800 hover:bg-purple-200 px-2 py-1 rounded text-[10px] font-bold uppercase">Private</button>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="text-[10px] font-bold text-blood uppercase">Status:</span>
-                            <button onclick="window.updateCharStatus('alive')" class="bg-green-100 border border-green-300 text-green-800 hover:bg-green-200 px-2 py-1 rounded text-[10px] font-bold uppercase">Alive</button>
-                            <button onclick="window.updateCharStatus('coma')" class="bg-amber-100 border border-amber-300 text-amber-800 hover:bg-amber-200 px-2 py-1 rounded text-[10px] font-bold uppercase">Coma</button>
-                            <button onclick="window.updateCharStatus('dead')" class="bg-red-100 border border-red-300 text-red-800 hover:bg-red-200 px-2 py-1 rounded text-[10px] font-bold uppercase">Dead</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Header Details -->
-                <div class="mb-8">
-                    <input type="text" data-key="name" class="npc-name-main" placeholder="Character Name">
-                    <input type="text" data-key="summary" class="npc-summary-line" placeholder="Race • Role • Alignment">
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                    
-                    <!-- Left Column -->
-                    <div class="lg:col-span-4 space-y-6">
-                        
-                        <!-- Portrait Area -->
-                        <div class="flex flex-col items-center">
-                            <div class="w-48 h-48 bg-white border-2 border-ink/10 rounded overflow-hidden relative shadow-sm mx-auto p-1">
-                                <div id="portrait-media-display" class="w-full h-full bg-gray-100"></div>
-                                <div id="portrait-placeholder" class="absolute inset-0 flex flex-col items-center justify-center text-ink/40 bg-gray-50">
-                                    <i class="fa-regular fa-image text-4xl mb-2"></i>
-                                    <span class="text-[10px] uppercase font-heading">No Image</span>
-                                </div>
-                            </div>
-                            <div id="dm-media-controls" class="w-full mt-2 hidden">
-                                <input type="text" data-key="imageSrc" id="portrait-url-input" class="w-full text-[10px] italic border border-ink/20 bg-white p-1.5 rounded text-center" placeholder="Image URL..." onchange="window.saveCurrentCharacter()">
-                            </div>
-                        </div>
-
-                        <!-- Vitals -->
-                        <div class="flex justify-center">
-                            <div class="vital-container w-28 h-28 shadow-sm">
-                                <div class="text-[9px] font-bold uppercase text-ink/70 absolute top-3 font-heading">HP</div>
-                                <input type="number" class="vital-input mt-1" data-key="hpCurrent" placeholder="10">
-                                <div class="text-[9px] font-bold uppercase text-ink/70 absolute bottom-3 font-heading border-t border-ink/20 pt-1 w-3/4 text-center">Max: <input type="number" class="w-8 text-center bg-transparent border-none text-ink p-0" data-key="hpMax"></div>
-                            </div>
-                        </div>
-
-                        <!-- Skills -->
-                        <div class="bg-white/50 p-4 rounded border border-ink/10">
-                            <div class="section-header !text-ink !border-ink/20">Skills</div>
-                            <div id="skills-list" class="space-y-1 mb-3"></div>
-                            <div class="flex gap-1" id="skill-add-ui">
-                                <input type="text" id="skill-name-in" class="border border-ink/20 rounded p-1 text-xs bg-white flex-grow" placeholder="Skill...">
-                                <input type="text" id="skill-val-in" class="border border-ink/20 rounded p-1 text-xs w-10 text-center bg-white" placeholder="+0">
-                                <button onclick="window.addSkillItem()" class="bg-ink text-white px-2 rounded text-[9px] font-bold uppercase hover:bg-wood">Add</button>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <!-- Right Column -->
-                    <div class="lg:col-span-8 space-y-6">
-                        
-                        <!-- Stats -->
-                        <div>
-                            <div class="flex justify-between items-end border-b border-ink/20 pb-1 mb-3">
-                                <h3 class="font-heading text-sm font-bold text-ink uppercase tracking-widest">Attributes</h3>
-                                <button id="main-gen-btn" onclick="window.openScoreGenModal()" class="text-xs text-blood hover:underline font-heading font-bold hidden-view">Roll Stats</button>
-                            </div>
-                            <div class="grid grid-cols-3 sm:grid-cols-6 gap-2" id="stats-grid"></div>
-                        </div>
-
-                        <!-- Text Areas -->
-                        <div>
-                            <div class="section-header !text-ink !border-ink/20">Personality</div>
-                            <textarea data-key="personality" class="w-full min-h-[100px] text-sm bg-white/50 border border-ink/10 p-3 rounded text-ink leading-relaxed" placeholder="Traits, ideals, flaws..."></textarea>
-                        </div>
-
-                        <div>
-                            <div class="section-header !text-ink !border-ink/20">Description & History</div>
-                            <textarea data-key="description" class="w-full min-h-[150px] text-sm bg-white/50 border border-ink/10 p-3 rounded text-ink leading-relaxed" placeholder="Appearance, lore, background..."></textarea>
-                        </div>
-
-                        <div id="sec-dm-notes" class="hidden-view">
-                            <div class="section-header !text-blood !border-blood/30 bg-blood/5 px-2 py-1 rounded-t">DM Notes (Hidden)</div>
-                            <textarea data-key="dmNotes" class="w-full min-h-[120px] text-sm bg-red-50/50 border border-red-200 border-t-0 p-3 rounded-b text-ink leading-relaxed" placeholder="Secrets, motives, hidden stats..."></textarea>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- MODALS -->
-    <!-- SCORE GENERATOR MODAL -->
-    <div id="score-gen-modal" class="modal-overlay hidden">
-        <div class="modal-container">
-            <h2 class="text-xl font-heading font-bold text-ink mb-4 border-b border-ink/20 pb-2">Generate Scores</h2>
-            
-            <div id="gen-controls" class="space-y-4">
-                <button onclick="window.generateScores('standard')" class="w-full py-3 bg-white border border-ink/20 hover:border-ink rounded shadow-sm text-sm font-heading font-bold uppercase transition-colors">
-                    Standard Array
-                </button>
-                <button onclick="window.generateScores('heroic')" class="w-full py-3 fantasy-btn shadow-sm text-sm">
-                    Roll Stats
-                </button>
-            </div>
-
-            <div id="gen-results-area" class="hidden space-y-4 mt-4">
-                <div id="gen-numbers-display" class="flex justify-center flex-wrap gap-2 p-3 bg-white/50 rounded border border-ink/10"></div>
-                
-                <div id="heroic-reroll-area" class="hidden text-center">
-                    <button onclick="window.generateScores('heroic', true)" class="text-[10px] font-bold text-blood uppercase hover:underline font-heading">Reroll Once</button>
-                </div>
-
-                <div id="assign-grid" class="grid grid-cols-2 gap-2 text-left"></div>
-                
-                <div class="flex justify-between items-center px-1">
-                    <button onclick="window.randomizeAssignment()" class="text-[10px] font-bold text-ink uppercase hover:underline font-heading">Auto Fill</button>
-                    <button onclick="window.openScoreGenModal()" class="text-[10px] font-bold text-ink uppercase hover:underline font-heading">Reset</button>
-                </div>
-
-                <button id="gen-apply-area" onclick="window.applyScores()" class="hidden fantasy-btn w-full py-2 mt-2">Apply</button>
-            </div>
-
-            <div class="mt-4 pt-2 border-t border-ink/10">
-                <button onclick="document.getElementById('score-gen-modal').classList.add('hidden')" class="text-xs font-heading font-bold text-ink/60 hover:text-ink uppercase">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- PRIVATE LINK MODAL -->
-    <div id="private-link-modal" class="modal-overlay hidden">
-        <div class="modal-container !max-w-sm">
-            <h3 class="font-heading text-lg font-bold text-purple-900 mb-2 border-b border-purple-200 pb-1">Link Player</h3>
-            <p class="text-xs text-ink/70 mb-4">Enter username for exclusive access.</p>
-            <input type="text" id="private-target-user" class="w-full border border-purple-300 rounded p-2 mb-4 text-center text-sm focus:border-purple-500" placeholder="Username">
-            <div class="flex gap-2 font-heading">
-                <button onclick="document.getElementById('private-link-modal').classList.add('hidden')" class="flex-1 bg-gray-100 text-gray-700 font-bold uppercase text-xs rounded py-2">Cancel</button>
-                <button onclick="window.confirmCreatePrivateNpc()" class="flex-1 bg-purple-700 text-white font-bold uppercase text-xs rounded py-2">Confirm</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- DELETE MODAL -->
-    <div id="delete-modal" class="modal-overlay hidden">
-        <div class="modal-container !max-w-sm">
-            <h2 class="font-heading text-lg font-bold text-blood mb-4 border-b border-blood/20 pb-1">Manage NPC</h2>
-            <div id="delete-stage-1" class="space-y-2 font-heading">
-                <button id="archive-btn" onclick="window.archiveCharacter()" class="w-full py-2 bg-white border border-ink/20 hover:bg-gray-50 rounded font-bold uppercase text-xs">Retire to Graveyard</button>
-                <button id="restore-btn" onclick="window.restoreCharacter()" class="hidden w-full py-2 bg-green-50 text-green-800 border border-green-200 hover:bg-green-100 rounded font-bold uppercase text-xs">Restore NPC</button>
-                <button onclick="window.showPermDeleteConfirm()" class="w-full py-2 bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 rounded font-bold uppercase text-xs">Delete Permanently</button>
-                <button onclick="document.getElementById('delete-modal').classList.add('hidden')" class="w-full text-xs font-bold text-ink/60 hover:text-ink pt-2">Cancel</button>
-            </div>
-            <div id="delete-stage-confirm" class="hidden space-y-4 font-heading">
-                <p class="text-sm font-bold text-blood">Confirm permanent deletion?</p>
-                <div class="flex gap-2">
-                    <button onclick="window.resetDeleteModal()" class="flex-1 py-2 bg-gray-100 rounded text-xs font-bold">Cancel</button>
-                    <button onclick="window.executePermDelete()" class="flex-1 py-2 bg-blood text-white rounded text-xs font-bold">Delete</button>
+                    <button onclick="window.resetDeleteModal()" class="flex-1 py-3 bg-transparent border border-ink hover:bg-ink hover:text-parchment rounded text-xs font-bold transition-colors">Cancel</button>
+                    <button onclick="window.executePermDelete()" class="flex-1 py-3 bg-blood text-white hover:bg-[#5a1111] rounded text-xs font-bold shadow-sm transition-colors border border-[#5a1111]">Delete</button>
                 </div>
             </div>
         </div>
@@ -645,7 +431,7 @@
             if (!src) return ''; 
             const srcLower = src.toLowerCase(); const isVideo = srcLower.endsWith('.mp4') || srcLower.endsWith('.webm') || srcLower.includes('mp4');
             if (isVideo) return `<video src="${src}" class="${className}" style="${style}" autoplay loop muted playsinline></video>`;
-            return `<img src="${src}" class="${className}" style="${style}" onerror="this.parentElement.innerHTML='<div class=\\'flex items-center justify-center text-[10px] text-ink/40 h-full w-full bg-gray-50\\'>Broken Link</div>'">`;
+            return `<img src="${src}" class="${className}" style="${style}" onerror="this.parentElement.innerHTML='<div class=\\'flex items-center justify-center text-[10px] font-bold text-ink/40 h-full w-full bg-white/50\\'>Broken Link</div>'">`;
         }
 
         window.renderDashboard = () => {
@@ -669,26 +455,27 @@
         function createNpcCard(c) {
             const d = document.createElement('div');
             let vis = c.visibility || 'public';
-            let borderCol = vis === 'private' ? 'border-purple-400' : (vis === 'unpublished' ? 'border-gray-400' : 'border-gold');
+            let borderCol = vis === 'private' ? 'border-purple-600' : (vis === 'unpublished' ? 'border-gray-500' : 'border-gold');
             let statusBadge = "";
             if (c.status === 'dead') statusBadge = `<span class="status-badge badge-dead">Dead</span>`;
             else if (c.status === 'coma') statusBadge = `<span class="status-badge badge-coma">Coma</span>`;
             
-            d.className = `p-4 card ${borderCol}`;
+            d.className = `p-4 card`;
+            d.style.borderLeftColor = vis === 'private' ? '#9333ea' : (vis === 'unpublished' ? '#6b7280' : '#c5a059');
             d.onclick = () => window.openSheet(c.id);
             
-            const mediaSrc = c.imageSrc ? renderMedia(c.imageSrc, "w-full h-full object-cover") : `<div class="w-full h-full flex items-center justify-center text-2xl text-ink/20 bg-white"><i class="fa-solid fa-user"></i></div>`;
+            const mediaSrc = c.imageSrc ? renderMedia(c.imageSrc, "w-full h-full object-cover") : `<div class="w-full h-full flex items-center justify-center text-2xl text-parchment/30 bg-ink"><i class="fa-solid fa-user"></i></div>`;
             
-            let visLabel = vis === 'private' ? `<span class="text-purple-600"><i class="fa-solid fa-lock mr-1"></i>Private</span>` : (vis === 'unpublished' ? 'Draft' : 'Public');
+            let visLabel = vis === 'private' ? `<span class="text-purple-400"><i class="fa-solid fa-lock mr-1"></i>Private</span>` : (vis === 'unpublished' ? '<span class="text-gray-400">Draft</span>' : '<span class="text-gold">Public</span>');
 
             d.innerHTML = `
                 ${statusBadge}
                 <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-full overflow-hidden shrink-0 bg-white border border-ink/10 shadow-sm">${mediaSrc}</div>
+                    <div class="w-12 h-12 rounded bg-ink border border-gold/30 overflow-hidden shrink-0 shadow-sm">${mediaSrc}</div>
                     <div class="min-w-0">
-                        <h5 class="font-heading font-bold text-base truncate text-ink">${c.name || 'Unnamed'}</h5>
+                        <h5 class="font-heading font-bold text-base truncate text-parchment drop-shadow-sm">${c.name || 'Unnamed'}</h5>
                         <div class="flex flex-col justify-start items-start mt-0.5">
-                            <p class="text-[10px] text-ink/70 uppercase tracking-widest font-heading truncate w-full">${c.summary || ''}</p>
+                            <p class="text-[10px] text-parchment/60 uppercase tracking-widest font-heading truncate w-full">${c.summary || ''}</p>
                             <p class="text-[9px] uppercase tracking-widest font-heading whitespace-nowrap mt-1">${visLabel}</p>
                         </div>
                     </div>
@@ -729,23 +516,23 @@
             const badge = document.getElementById('sheet-visibility-badge');
             const vis = char.visibility || 'public';
             badge.textContent = vis;
-            if(vis === 'private') badge.className = 'px-3 py-1 rounded text-[10px] font-bold uppercase tracking-widest border bg-purple-100 text-purple-800 border-purple-300 shadow-sm';
-            else if(vis === 'unpublished') badge.className = 'px-3 py-1 rounded text-[10px] font-bold uppercase tracking-widest border bg-gray-200 text-gray-700 border-gray-400 shadow-sm';
-            else badge.className = 'px-3 py-1 rounded text-[10px] font-bold uppercase tracking-widest border bg-green-50 text-green-800 border-green-200 shadow-sm';
+            if(vis === 'private') badge.className = 'px-3 py-1 rounded text-[10px] font-bold uppercase tracking-widest border bg-purple-900 text-purple-200 border-purple-500 shadow-sm';
+            else if(vis === 'unpublished') badge.className = 'px-3 py-1 rounded text-[10px] font-bold uppercase tracking-widest border bg-gray-800 text-gray-300 border-gray-600 shadow-sm';
+            else badge.className = 'px-3 py-1 rounded text-[10px] font-bold uppercase tracking-widest border bg-green-900 text-green-100 border-green-700 shadow-sm';
 
             document.querySelectorAll('#sheet-screen [data-key]').forEach(el => { el.value = char[el.dataset.key] || (el.type === 'number' ? 0 : ''); });
             
             const sL = document.getElementById('skills-list'); sL.innerHTML = '';
             if(!char.skills || char.skills.length === 0) {
-                sL.innerHTML = `<p class="text-[11px] italic text-ink/50 py-2">No notable skills.</p>`;
+                sL.innerHTML = `<p class="text-[11px] italic text-ink/60 py-2">No notable skills.</p>`;
             } else {
                 char.skills.forEach((sk, i) => { 
                     sL.innerHTML += `
-                    <div class="flex justify-between items-center border-b border-ink/10 py-2 text-sm text-ink">
+                    <div class="flex justify-between items-center border-b border-ink/20 py-2 text-sm text-ink">
                         <span class="font-bold">${sk.name}</span>
                         <div class="flex items-center gap-3">
-                            <span class="font-bold text-blood bg-white px-2 py-0.5 rounded border border-ink/10 shadow-sm">${sk.val}</span>
-                            ${isDM ? `<button onclick="window.removeSkill(${i})" class="text-ink/30 hover:text-red-500 transition-colors p-1"><i class="fa-solid fa-times"></i></button>` : ''}
+                            <span class="font-bold text-blood bg-white/50 px-2 py-0.5 rounded border border-ink/20 shadow-sm">${sk.val}</span>
+                            ${isDM ? `<button onclick="window.removeSkill(${i})" class="text-ink/40 hover:text-blood transition-colors p-1"><i class="fa-solid fa-times"></i></button>` : ''}
                         </div>
                     </div>`; 
                 });
@@ -753,7 +540,7 @@
 
             const pDisplay = document.getElementById('portrait-media-display');
             if (pDisplay) {
-                if (char.imageSrc) { pDisplay.innerHTML = renderMedia(char.imageSrc, "w-full h-full object-cover", char.status === 'dead' ? 'filter: grayscale(1)' : ''); document.getElementById('portrait-placeholder')?.classList.add('hidden'); } 
+                if (char.imageSrc) { pDisplay.innerHTML = renderMedia(char.imageSrc, "w-full h-full object-cover rounded", char.status === 'dead' ? 'filter: grayscale(1)' : ''); document.getElementById('portrait-placeholder')?.classList.add('hidden'); } 
                 else { pDisplay.innerHTML = ''; document.getElementById('portrait-placeholder')?.classList.remove('hidden'); }
             }
 
@@ -768,10 +555,10 @@
             if (method === 'standard') { lastGeneratedScores = [15, 14, 13, 12, 10, 8]; } 
             else { if (isReroll) sessionRerollUsed = true; lastGeneratedScores = Array.from({length: 6}, () => { const r = [getRoll(6), getRoll(6), getRoll(6), getRoll(6)].sort((a,b)=>b-a); return r[0]+r[1]+r[2]; }).sort((a,b)=>b-a); } 
             
-            document.getElementById('gen-numbers-display').innerHTML = lastGeneratedScores.map(n => `<span class="font-bold w-10 h-10 flex items-center justify-center bg-white border border-ink/20 rounded-md shadow-sm text-ink font-serif text-lg">${n}</span>`).join(''); 
+            document.getElementById('gen-numbers-display').innerHTML = lastGeneratedScores.map(n => `<span class="font-bold w-10 h-10 flex items-center justify-center bg-white border border-ink/30 rounded-md shadow-sm text-ink font-serif text-lg">${n}</span>`).join(''); 
             
             document.getElementById('assign-grid').innerHTML = STATS.map(s => `
-                <div class="bg-white p-3 rounded-lg flex justify-between items-center border border-ink/10 shadow-sm">
+                <div class="bg-white/50 p-3 rounded-lg flex justify-between items-center border border-ink/20 shadow-sm">
                     <span class="font-bold text-xs uppercase text-ink/70 font-heading">${s}</span>
                     <select data-assign-stat="${s}" class="text-sm font-bold border-none bg-transparent focus:outline-none text-ink cursor-pointer">
                         <option value="">-</option>
@@ -842,7 +629,7 @@
 
         onAuthStateChanged(auth, async (u) => {
             if (!u) {
-                try { window.location.href = "index.html"; } catch(e) { document.getElementById('initial-loading').innerHTML = `<p class="font-heading text-blood">Auth Required</p>`; }
+                try { window.location.href = "index.html"; } catch(e) { document.getElementById('initial-loading').innerHTML = `<p class="font-heading text-gold">Auth Required</p>`; }
                 return;
             }
             try {
