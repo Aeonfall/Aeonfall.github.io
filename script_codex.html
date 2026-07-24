@@ -31,7 +31,7 @@
 
     <style>
         body { font-family: 'Lora', serif; background-color: #1a110b; color: #2c1e16; overflow-x: hidden; 
-            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20.5V18H0v-2h20v-2H0v-2h20v-2H0V8h20V6H0V4h20V2H0V0h22v20h2V0h2v20h2V0h2v20h2V0h2v20h2V0h2v20h2v2H20v-1.5zM0 20h2v20H0V20zm4 0h2v20H4V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 4h20v2H20v-2zm0 4h20v2H20v-2zm0 4h20v2H20v-2zm0 4h20v2H20v-2z' fill='%232c1e16' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20.5V18H0v-2h20v-2H0v-2h20v-2H0V8h20V6H0V4h20V2H0V0h22v20h2V0h2v20h2V0h2v20h2V0h2v20h2v2H20v-1.5zM0 20h2v20H0V20zm4 0h2v20H4V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 4h20v2H20v-2zm0 4h20v2H20v-2zm0 4h20v2H20v-2zm0 4h20v2H20v-2z' fill='%232c1e16' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E");
         }
         
         .dashboard-bg { background-color: transparent; }
@@ -216,6 +216,19 @@
             
             <div class="space-y-8">
                 <div>
+                    <h3 class="font-heading text-sm font-bold text-ink uppercase mb-3 border-b border-gray-300 pb-1">Codex System Configuration</h3>
+                    <div class="mb-2">
+                        <label class="tiny-label">Active Systems</label>
+                        <select id="term-codex_mode" class="form-input bg-white/70">
+                            <option value="both">Hybrid (Both Features & Scripts)</option>
+                            <option value="features_only">Features Only (No Scriptcasting)</option>
+                            <option value="scripts_only">Scripts Only (No Combat Features)</option>
+                        </select>
+                        <p class="text-[10px] text-gray-500 italic mt-1">This governs what options are available throughout the Codex.</p>
+                    </div>
+                </div>
+
+                <div>
                     <h3 class="font-heading text-sm font-bold text-ink uppercase mb-3 border-b border-gray-300 pb-1">Core Classifications</h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div><label class="tiny-label">All Records</label><input type="text" id="term-nav_all_records" class="form-input" placeholder="All Records"></div>
@@ -234,30 +247,9 @@
 
                 <div>
                     <h3 class="font-heading text-sm font-bold text-ink uppercase mb-3 border-b border-gray-300 pb-1">Vocations (Classes)</h3>
-                    
-                    <h4 class="text-[10px] font-bold text-gray-500 uppercase font-heading mb-2">Combat & Strategy (Features Only)</h4>
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
-                        <div><label class="tiny-label">Barbarian</label><input type="text" id="term-class_vanguard" class="form-input" placeholder="Vanguard"></div>
-                        <div><label class="tiny-label">Fighter</label><input type="text" id="term-class_warrior" class="form-input" placeholder="Warrior"></div>
-                        <div><label class="tiny-label">Monk</label><input type="text" id="term-class_peacemaker" class="form-input" placeholder="Peacemaker"></div>
-                        <div><label class="tiny-label">Rogue</label><input type="text" id="term-class_scavenger" class="form-input" placeholder="Scavenger"></div>
-                    </div>
-
-                    <h4 class="text-[10px] font-bold text-gray-500 uppercase font-heading mb-2">Hybrid Paths (Features & Scripts)</h4>
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
-                        <div><label class="tiny-label">Paladin</label><input type="text" id="term-class_heartbound" class="form-input" placeholder="Heartbound"></div>
-                        <div><label class="tiny-label">Ranger</label><input type="text" id="term-class_nomad" class="form-input" placeholder="Nomad"></div>
-                    </div>
-
-                    <h4 class="text-[10px] font-bold text-gray-500 uppercase font-heading mb-2">Pure Scriptcasting</h4>
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                        <div><label class="tiny-label">Druid</label><input type="text" id="term-class_warden" class="form-input" placeholder="Wilderness Warden"></div>
-                        <div><label class="tiny-label">Cleric</label><input type="text" id="term-class_chronicler" class="form-input" placeholder="Chronicler"></div>
-                        <div><label class="tiny-label">Bard</label><input type="text" id="term-class_orator" class="form-input" placeholder="Orator"></div>
-                        <div><label class="tiny-label">Sorcerer</label><input type="text" id="term-class_scriptweaver" class="form-input" placeholder="Scriptweaver"></div>
-                        <div><label class="tiny-label">Warlock</label><input type="text" id="term-class_wartouched" class="form-input" placeholder="War-Touched"></div>
-                        <div><label class="tiny-label">Wizard</label><input type="text" id="term-class_archivist" class="form-input" placeholder="Archivist"></div>
-                        <div><label class="tiny-label">Artificer</label><input type="text" id="term-class_fabricator" class="form-input" placeholder="Fabricator"></div>
+                    <p class="text-[10px] font-serif text-gray-500 italic mb-4">Set the name and which codex systems each vocation uses. Mark as "Hidden" to remove them from your campaign entirely.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="vocation-settings-grid">
+                        <!-- Populated by JS to allow fully customizable type mapping -->
                     </div>
                 </div>
             </div>
@@ -398,8 +390,8 @@
             </div>
 
             <div class="flex justify-center gap-4 font-heading">
-                <button onclick="document.getElementById('create-pack-modal').classList.add('hidden')" class="text-xs font-bold text-gray-500 uppercase tracking-widest hover:text-white px-4">Cancel</button>
-                <button onclick="window.savePack()" class="fantasy-btn px-6 py-2 rounded text-xs shadow-lg">Publish Bundle</button>
+                <button onclick="document.getElementById('pack-update-modal').classList.add('hidden')" class="text-xs font-bold text-gray-500 uppercase tracking-widest hover:text-white px-4">Cancel</button>
+                <button onclick="window.executePackUpdate()" class="fantasy-btn px-6 py-2 rounded text-xs shadow-lg">Publish Bundle</button>
             </div>
         </div>
     </div>
@@ -571,6 +563,39 @@
             </div>
         </div>
     </div>
+
+    <!-- CREATE PACK MODAL (DM ONLY) -->
+    <div id="create-pack-modal" class="modal-overlay hidden z-[980]">
+        <div class="modal-container max-w-lg text-center bg-wood !border-gray-600 shadow-2xl max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <h2 class="font-heading text-xl font-black text-gold uppercase tracking-widest mb-2 border-b-2 border-gray-700 pb-4">Publish Codex Pack</h2>
+            <p class="text-xs font-serif text-gray-400 italic mb-6 mt-4">Bundle your custom content into an archive that other Game Masters can import into their own campaigns.</p>
+            
+            <div class="space-y-4 text-left mb-8">
+                <div>
+                    <label class="tiny-label text-gray-400">Pack Name</label>
+                    <input type="text" id="pack-name" class="form-input text-white bg-black/50 border-gray-600 focus:border-gold" placeholder="E.g. Tome of the Dark Arts">
+                </div>
+                <div>
+                    <label class="tiny-label text-gray-400 mt-2">Description</label>
+                    <textarea id="pack-desc" class="form-input text-white bg-black/50 border-gray-600 focus:border-gold h-20 resize-none" placeholder="What kind of knowledge does this archive hold?"></textarea>
+                </div>
+                <div>
+                    <label class="tiny-label text-gray-400 mt-2">Pack Icon</label>
+                    <div class="flex flex-wrap gap-2 justify-start mt-2" id="pack-icon-selectors">
+                        <button class="icon-selector-btn active" data-icon="fa-solid fa-book-journal-whills" onclick="window.selectPackIcon(this, 'pack-selected-icon')"><i class="fa-solid fa-book-journal-whills"></i></button>
+                        <button class="icon-selector-btn" data-icon="fa-solid fa-dragon" onclick="window.selectPackIcon(this, 'pack-selected-icon')"><i class="fa-solid fa-dragon"></i></button>
+                        <button class="icon-selector-btn" data-icon="fa-solid fa-wand-sparkles" onclick="window.selectPackIcon(this, 'pack-selected-icon')"><i class="fa-solid fa-wand-sparkles"></i></button>
+                        <button class="icon-selector-btn" data-icon="fa-brands fa-jedi-order" onclick="window.selectPackIcon(this, 'pack-selected-icon')"><i class="fa-brands fa-jedi-order"></i></button>
+                        <button class="icon-selector-btn" data-icon="fa-solid fa-khanda" onclick="window.selectPackIcon(this, 'pack-selected-icon')"><i class="fa-solid fa-khanda"></i></button>
+                        <button class="icon-selector-btn" data-icon="fa-solid fa-flask" onclick="window.selectPackIcon(this, 'pack-selected-icon')"><i class="fa-solid fa-flask"></i></button>
+                        <button class="icon-selector-btn" data-icon="fa-solid fa-skull" onclick="window.selectPackIcon(this, 'pack-selected-icon')"><i class="fa-solid fa-skull"></i></button>
+                        <button class="icon-selector-btn" data-icon="fa-solid fa-shield-halved" onclick="window.selectPackIcon(this, 'pack-selected-icon')"><i class="fa-solid fa-shield-halved"></i></button>
+                        <button class="icon-selector-btn" data-icon="fa-solid fa-scroll" onclick="window.selectPackIcon(this, 'pack-selected-icon')"><i class="fa-solid fa-scroll"></i></button>
+                        <button class="icon-selector-btn" data-icon="fa-solid fa-fire-flame-curved" onclick="window.selectPackIcon(this, 'pack-selected-icon')"><i class="fa-solid fa-fire-flame-curved"></i></button>
+                    </div>
+                    <input type="hidden" id="pack-selected-icon" value="fa-solid fa-book-journal-whills">
+                </div>
+                <div>
                     <label class="tiny-label text-gray-400 mt-2">Visibility</label>
                     <select id="pack-vis" class="form-input text-white bg-black/50 border-gray-600 focus:border-gold">
                         <option value="private">Private (Only usable in your own realms)</option>
@@ -599,6 +624,40 @@
             </div>
 
             <div class="flex justify-center gap-4 font-heading">
+                <button onclick="document.getElementById('create-pack-modal').classList.add('hidden')" class="text-xs font-bold text-gray-600 uppercase tracking-widest hover:text-white px-4">Cancel</button>
+                <button onclick="window.savePack()" class="fantasy-btn px-6 py-2 rounded text-xs shadow-lg">Publish Bundle</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TRANSFER MODAL -->
+    <div id="transfer-modal" class="modal-overlay hidden z-[990]">
+        <div class="modal-container !max-w-sm text-center !p-8">
+            <h2 class="font-heading text-2xl font-black text-blood uppercase tracking-widest mb-2 border-b-2 border-gold pb-2">Transfer Knowledge</h2>
+            <p class="text-xs font-serif text-ink italic mb-6">Imprint this record directly into a character's personal ledger or a vocation's terminal.</p>
+            
+            <div class="space-y-4 text-left">
+                <div>
+                    <label class="tiny-label">Select Character Ledger</label>
+                    <select id="transfer-char-select" class="form-input bg-white/70">
+                        <option value="">Select Target...</option>
+                    </select>
+                </div>
+                
+                <div class="transfer-or-divider text-center hidden">
+                    <span class="text-[9px] font-heading font-bold text-gray-400 uppercase tracking-widest">- OR -</span>
+                </div>
+
+                <div class="transfer-voc-container hidden">
+                    <label class="tiny-label text-blood">Select Vocation Terminal (DM Only)</label>
+                    <select id="transfer-voc-select" class="form-input bg-red-900/10 border-red-900/30">
+                        <option value="">Select Target...</option>
+                    </select>
+                    <p class="text-[9px] text-gray-500 italic mt-1 leading-tight">This will permanently add the script to this class's feature or spell list across the campaign.</p>
+                </div>
+            </div>
+
+            <div class="flex justify-center gap-4 font-heading mt-8 pt-4 border-t border-gold">
                 <button onclick="document.getElementById('transfer-modal').classList.add('hidden')" class="text-xs font-bold text-gray-600 uppercase tracking-widest hover:text-ink px-4">Cancel</button>
                 <button onclick="window.executeTransfer()" class="fantasy-btn px-6 py-2 rounded text-xs shadow-lg">Inject Record</button>
             </div>
@@ -807,6 +866,7 @@
             enableDraggableHScroll('vocation-tabs-container'); enableDraggableHScroll('main-nav');
         }
 
+        // --- STREAMING_CHUNK:Configuring State variables and Vocations... ---
         // --- FIREBASE SETUP ---
         const firebaseConfig = {
             apiKey: "AIzaSyCKRN5dfi4og69_D8ZAvV1BQfwCK_f2uis",
@@ -900,6 +960,7 @@
             { id: 'class_fabricator', default: 'Fabricator', type: 'scripts' }
         ];
 
+        // --- STREAMING_CHUNK:Building render and filter functions... ---
         // --- RENDER AND FILTER LOGIC ---
         window.selectPackIcon = (btn, hiddenInputId) => {
             const container = btn.parentElement;
@@ -924,8 +985,9 @@
             if (currentVocationFilter !== 'All') {
                 const voc = VOC_KEYS.find(v => v.id === currentVocationFilter);
                 if (voc) {
-                    if (type === 'features' && voc.type === 'scripts') currentVocationFilter = 'All';
-                    if (type === 'scriptcasting' && voc.type === 'features') currentVocationFilter = 'All';
+                    const vType = campaignSettings?.terms?.[`${voc.id}_type`] || voc.type;
+                    if (type === 'features' && vType === 'scripts') currentVocationFilter = 'All';
+                    if (type === 'scriptcasting' && vType === 'features') currentVocationFilter = 'All';
                 }
             }
             
@@ -941,7 +1003,10 @@
             let isFeatureMode = mainTypeFilter === 'features';
             if (currentVocationFilter !== 'All') {
                 const voc = VOC_KEYS.find(v => v.id === currentVocationFilter);
-                if (voc && voc.type === 'features') isFeatureMode = true;
+                if (voc) {
+                    const vType = campaignSettings?.terms?.[`${voc.id}_type`] || voc.type;
+                    if (vType === 'features') isFeatureMode = true;
+                }
             }
 
             let html = '';
@@ -996,7 +1061,7 @@
                     if (voc) prefixTxt = campaignSettings?.terms?.[voc.id] || voc.default;
                 }
                 
-                let isFeatureMode = mainTypeFilter === 'features' || (currentVocationFilter !== 'All' && VOC_KEYS.find(v => v.id === currentVocationFilter)?.type === 'features');
+                let isFeatureMode = mainTypeFilter === 'features' || (currentVocationFilter !== 'All' && (campaignSettings?.terms?.[currentVocationFilter + '_type'] || VOC_KEYS.find(v => v.id === currentVocationFilter)?.type) === 'features');
 
                 let lvlTxt = "";
                 if (isFeatureMode) {
@@ -1016,8 +1081,9 @@
             if (vocId !== 'All') {
                 const voc = VOC_KEYS.find(v => v.id === vocId);
                 if (voc) {
-                    if (voc.type === 'features' && mainTypeFilter !== 'features') window.setMainTypeFilter('features');
-                    if (voc.type === 'scripts' && mainTypeFilter !== 'scriptcasting') window.setMainTypeFilter('scriptcasting');
+                    const vType = campaignSettings?.terms?.[`${voc.id}_type`] || voc.type;
+                    if (vType === 'features' && mainTypeFilter !== 'features') window.setMainTypeFilter('features');
+                    if (vType === 'scripts' && mainTypeFilter !== 'scriptcasting') window.setMainTypeFilter('scriptcasting');
                 }
             }
 
@@ -1042,8 +1108,11 @@
             let html = `<button onclick="window.setVocationFilter('All')" class="vocation-tab ${currentVocationFilter === 'All' ? 'active' : ''}" id="tab-voc-All">ALL</button>`;
             
             VOC_KEYS.forEach(v => {
-                if (mainTypeFilter === 'features' && v.type === 'scripts') return;
-                if (mainTypeFilter === 'scriptcasting' && v.type === 'features') return;
+                const vType = campaignSettings?.terms?.[`${v.id}_type`] || v.type;
+                if (vType === 'none') return; // Skip hidden vocations
+                
+                if (mainTypeFilter === 'features' && vType === 'scripts') return;
+                if (mainTypeFilter === 'scriptcasting' && vType === 'features') return;
 
                 const displayName = campaignSettings?.terms?.[v.id] || v.default;
                 html += `<button onclick="window.setVocationFilter('${v.id}')" class="vocation-tab ${currentVocationFilter === v.id ? 'active' : ''}" id="tab-voc-${v.id}">${displayName.toUpperCase()}</button>`;
@@ -1051,6 +1120,7 @@
             container.innerHTML = html;
         };
 
+        // --- STREAMING_CHUNK:Adding text parsing and view handlers... ---
         window.parseAeonfallContent = (text) => {
             if (!text) return '';
             let html = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
@@ -1205,6 +1275,36 @@ Every Script belongs to a **Tier** from 0 to 9. A Script's Tier represents the c
             }
         };
 
+        // --- STREAMING_CHUNK:Setting up Customizable Campaign Systems... ---
+        window.applyCodexMode = (mode) => {
+            mode = mode || 'both';
+            const featuresBtn = document.getElementById('type-toggle-features');
+            const scriptsBtn = document.getElementById('type-toggle-scriptcasting');
+            const inscribeFeatureBtn = document.getElementById('btn-form-feature');
+            const inscribeScriptBtn = document.getElementById('btn-form-script');
+
+            if (mode === 'features_only') {
+                if (scriptsBtn) scriptsBtn.classList.add('hidden');
+                if (featuresBtn) featuresBtn.classList.remove('hidden');
+                if (inscribeScriptBtn) inscribeScriptBtn.classList.add('hidden');
+                if (inscribeFeatureBtn) inscribeFeatureBtn.classList.remove('hidden');
+                if (mainTypeFilter === 'scriptcasting') window.setMainTypeFilter('features');
+                if (document.getElementById('script-form-type')?.value === 'scriptcasting') window.setScriptFormType('features');
+            } else if (mode === 'scripts_only') {
+                if (featuresBtn) featuresBtn.classList.add('hidden');
+                if (scriptsBtn) scriptsBtn.classList.remove('hidden');
+                if (inscribeFeatureBtn) inscribeFeatureBtn.classList.add('hidden');
+                if (inscribeScriptBtn) inscribeScriptBtn.classList.remove('hidden');
+                if (mainTypeFilter === 'features') window.setMainTypeFilter('scriptcasting');
+                if (document.getElementById('script-form-type')?.value === 'features') window.setScriptFormType('scriptcasting');
+            } else {
+                if (featuresBtn) featuresBtn.classList.remove('hidden');
+                if (scriptsBtn) scriptsBtn.classList.remove('hidden');
+                if (inscribeFeatureBtn) inscribeFeatureBtn.classList.remove('hidden');
+                if (inscribeScriptBtn) inscribeScriptBtn.classList.remove('hidden');
+            }
+        };
+
         // --- CAMPAIGN TERMINOLOGY (DM ONLY) ---
         window.openCampaignSettings = () => {
             try {
@@ -1215,6 +1315,8 @@ Every Script belongs to a **Tier** from 0 to 9. A Script's Tier represents the c
                     if (el) el.value = val || defaultVal || '';
                 };
                 
+                safeSetVal('term-codex_mode', terms.codex_mode, 'both');
+
                 safeSetVal('term-nav_all_records', terms.nav_all_records, 'All Records');
                 safeSetVal('term-nav_features', terms.nav_features, 'Combat Features');
                 safeSetVal('term-nav_scripts', terms.nav_scripts, 'Scriptcasting');
@@ -1222,19 +1324,25 @@ Every Script belongs to a **Tier** from 0 to 9. A Script's Tier represents the c
                 safeSetVal('term-prog_combat', terms.prog_combat, 'Features Progression');
                 safeSetVal('term-prog_scripts', terms.prog_scripts, 'Features Progression');
 
-                safeSetVal('term-class_vanguard', terms.class_vanguard, 'Vanguard');
-                safeSetVal('term-class_warrior', terms.class_warrior, 'Warrior');
-                safeSetVal('term-class_peacemaker', terms.class_peacemaker, 'Peacemaker');
-                safeSetVal('term-class_scavenger', terms.class_scavenger, 'Scavenger');
-                safeSetVal('term-class_heartbound', terms.class_heartbound, 'Heartbound');
-                safeSetVal('term-class_nomad', terms.class_nomad, 'Nomad');
-                safeSetVal('term-class_warden', terms.class_warden, 'Wilderness Warden');
-                safeSetVal('term-class_chronicler', terms.class_chronicler, 'Chronicler');
-                safeSetVal('term-class_orator', terms.class_orator, 'Orator');
-                safeSetVal('term-class_scriptweaver', terms.class_scriptweaver, 'Scriptweaver');
-                safeSetVal('term-class_wartouched', terms.class_wartouched, 'War-Touched');
-                safeSetVal('term-class_archivist', terms.class_archivist, 'Archivist');
-                safeSetVal('term-class_fabricator', terms.class_fabricator, 'Fabricator');
+                const vocGrid = document.getElementById('vocation-settings-grid');
+                vocGrid.innerHTML = '';
+                VOC_KEYS.forEach(v => {
+                    const currentName = terms[v.id] || v.default;
+                    const currentType = terms[`${v.id}_type`] || v.type;
+                    
+                    vocGrid.innerHTML += `
+                        <div class="flex flex-col gap-1 bg-black/5 p-3 rounded border border-gray-300/50 shadow-inner">
+                            <label class="tiny-label">${v.default} Slot</label>
+                            <input type="text" id="term-${v.id}" class="form-input text-xs font-bold" value="${currentName}" placeholder="${v.default}">
+                            <select id="type-${v.id}" class="form-input text-xs mt-1 bg-white/70">
+                                <option value="both" ${currentType==='both'?'selected':''}>Hybrid (Both)</option>
+                                <option value="features" ${currentType==='features'?'selected':''}>Features Only</option>
+                                <option value="scripts" ${currentType==='scripts'?'selected':''}>Scripts Only</option>
+                                <option value="none" ${currentType==='none'?'selected':''}>Hidden / Unused</option>
+                            </select>
+                        </div>
+                    `;
+                });
 
                 document.getElementById('campaign-settings-modal').classList.remove('hidden');
             } catch (e) {
@@ -1254,27 +1362,19 @@ Every Script belongs to a **Tier** from 0 to 9. A Script's Tier represents the c
             };
             
             const newTerms = {
+                codex_mode: getVal('term-codex_mode') || 'both',
                 nav_all_records: getVal('term-nav_all_records') || 'All Records',
                 nav_features: getVal('term-nav_features') || 'Combat Features',
                 nav_scripts: getVal('term-nav_scripts') || 'Scriptcasting',
                 
                 prog_combat: getVal('term-prog_combat') || 'Features Progression',
-                prog_scripts: getVal('term-prog_scripts') || 'Features Progression',
-
-                class_vanguard: getVal('term-class_vanguard') || 'Vanguard',
-                class_warrior: getVal('term-class_warrior') || 'Warrior',
-                class_peacemaker: getVal('term-class_peacemaker') || 'Peacemaker',
-                class_scavenger: getVal('term-class_scavenger') || 'Scavenger',
-                class_heartbound: getVal('term-class_heartbound') || 'Heartbound',
-                class_nomad: getVal('term-class_nomad') || 'Nomad',
-                class_warden: getVal('term-class_warden') || 'Wilderness Warden',
-                class_chronicler: getVal('term-class_chronicler') || 'Chronicler',
-                class_orator: getVal('term-class_orator') || 'Orator',
-                class_scriptweaver: getVal('term-class_scriptweaver') || 'Scriptweaver',
-                class_wartouched: getVal('term-class_wartouched') || 'War-Touched',
-                class_archivist: getVal('term-class_archivist') || 'Archivist',
-                class_fabricator: getVal('term-class_fabricator') || 'Fabricator'
+                prog_scripts: getVal('term-prog_scripts') || 'Features Progression'
             };
+
+            VOC_KEYS.forEach(v => {
+                newTerms[v.id] = getVal(`term-${v.id}`) || v.default;
+                newTerms[`${v.id}_type`] = getVal(`type-${v.id}`) || v.type;
+            });
 
             try {
                 await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'campaignConfig', 'settings'), {
@@ -1289,6 +1389,7 @@ Every Script belongs to a **Tier** from 0 to 9. A Script's Tier represents the c
             }
         };
 
+        // --- STREAMING_CHUNK:Building script data rendering functionality... ---
         window.renderScripts = () => {
             const isDM = activeRole === 'dm';
             const grid = document.getElementById('scripts-grid');
@@ -1302,7 +1403,7 @@ Every Script belongs to a **Tier** from 0 to 9. A Script's Tier represents the c
                 visibleScripts = visibleScripts.filter(s => s.entryType !== 'features');
             }
 
-            let isFeatureMode = mainTypeFilter === 'features' || (currentVocationFilter !== 'All' && VOC_KEYS.find(v => v.id === currentVocationFilter)?.type === 'features');
+            let isFeatureMode = mainTypeFilter === 'features' || (currentVocationFilter !== 'All' && (campaignSettings?.terms?.[currentVocationFilter + '_type'] || VOC_KEYS.find(v => v.id === currentVocationFilter)?.type) === 'features');
 
             if (isFeatureMode) {
                 const parts = currentLevelFilter.split('-');
@@ -1479,6 +1580,7 @@ Every Script belongs to a **Tier** from 0 to 9. A Script's Tier represents the c
 
         window.closeScriptModal = () => document.getElementById('script-modal').classList.add('hidden');
 
+        // --- STREAMING_CHUNK:Implementing Database Interaction logic... ---
         window.saveScript = async () => {
             if (activeRole !== 'dm') return;
             const entryType = document.getElementById('script-form-type').value;
@@ -1643,12 +1745,13 @@ Every Script belongs to a **Tier** from 0 to 9. A Script's Tier represents the c
                 .replace(/'/g, '&#039;');
         };
 
+        // --- STREAMING_CHUNK:Adding logic for interactive progression tables... ---
         window.openProgressionModal = () => {
             if (currentVocationFilter === 'All') return window.showToast("Select a specific vocation first.");
             
             const voc = VOC_KEYS.find(v => v.id === currentVocationFilter);
             const displayName = campaignSettings?.terms?.[voc.id] || voc.default;
-            const isCaster = voc && (voc.type === 'scripts' || voc.type === 'both');
+            const isCaster = voc && ((campaignSettings?.terms?.[voc.id + '_type'] || voc.type) === 'scripts' || (campaignSettings?.terms?.[voc.id + '_type'] || voc.type) === 'both');
             
             document.getElementById('progression-subtitle').innerText = displayName;
             
@@ -1839,7 +1942,7 @@ Every Script belongs to a **Tier** from 0 to 9. A Script's Tier represents the c
             const container = document.getElementById(`prog-r${rowIdx}-links`);
             if (input && container) {
                 const voc = VOC_KEYS.find(v => v.id === currentVocationFilter);
-                const isCaster = voc && (voc.type === 'scripts' || voc.type === 'both');
+                const isCaster = voc && ((campaignSettings?.terms?.[voc.id + '_type'] || voc.type) === 'scripts' || (campaignSettings?.terms?.[voc.id + '_type'] || voc.type) === 'both');
                 container.innerHTML = window.generateFeatureLinks(input.value, currentVocationFilter, rowIdx, isCaster);
             }
         };
@@ -1918,7 +2021,7 @@ Every Script belongs to a **Tier** from 0 to 9. A Script's Tier represents the c
             window.showToast("Saving Progression...");
             
             const voc = VOC_KEYS.find(v => v.id === currentVocationFilter);
-            const isCaster = voc && (voc.type === 'scripts' || voc.type === 'both');
+            const isCaster = voc && ((campaignSettings?.terms?.[voc.id + '_type'] || voc.type) === 'scripts' || (campaignSettings?.terms?.[voc.id + '_type'] || voc.type) === 'both');
             
             let maxSlots = 0;
             if (isCaster) {
@@ -1974,6 +2077,7 @@ Every Script belongs to a **Tier** from 0 to 9. A Script's Tier represents the c
             }
         };
 
+        // --- STREAMING_CHUNK:Implementing Codex Import & Pack logic... ---
         // --- COMPENDIUM IMPORT & UPDATES ---
         window.openImportModal = async () => {
             if (activeRole !== 'dm') return;
@@ -2489,6 +2593,7 @@ Every Script belongs to a **Tier** from 0 to 9. A Script's Tier represents the c
             }
         };
 
+        // --- STREAMING_CHUNK:Finalizing auth state observer and sync listeners... ---
         // --- AUTH & LISTENERS ---
         onAuthStateChanged(auth, async (u) => {
             if (!u) {
@@ -2580,6 +2685,7 @@ Every Script belongs to a **Tier** from 0 to 9. A Script's Tier represents the c
                         const titleEl = document.getElementById('main-campaign-title-label');
                         if (titleEl) titleEl.innerText = t.book_scriptcodex || 'Records Codex';
                         
+                        window.applyCodexMode(t.codex_mode);
                         window.renderVocationTabs();
                         window.setLevelFilter(currentLevelFilter);
                     }
