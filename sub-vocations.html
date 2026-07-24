@@ -526,6 +526,137 @@
         let vocId = urlParams.get('vocId');
         const isPreviewEnv = window.location.href.startsWith('blob:') || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
         
+        if (!appId) {
+            if (isPreviewEnv) appId = "demo_campaign";
+            else { try { window.location.href = "campaigns.html"; } catch(e) {} }
+        }
+
+        const DB_COLLECTION = `handbookVocations_${appId}`; 
+
+        let vocation = null;
+        let currentUser = null;
+        let activeRole = 'player';
+        let campaignName = "Chronicles";
+        let campaignSettings = { terms: {} };
+        let isUserTyping = false;
+
+        document.addEventListener('focusin', (e) => {
+            if(e.target && e.target.classList && e.target.classList.contains('dm-editable')) isUserTyping = true;
+        });
+        document.addEventListener('focusout', (e) => {
+            if(e.target && e.target.classList && e.target.classList.contains('dm-editable')) {
+                isUserTyping = false;
+                window.renderAll();
+            }
+        });
+
+        const debounce = (func, wait) => {
+            let timeout;
+            return (...args) => {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func(...args), wait);
+            };
+        };
+
+        const performUpdate = async (payload) => {
+            if (!currentUser || !vocId || activeRole !== 'dm') return;
+            try {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION, vocId), payload);
+            } catch (e) {
+                console.error("Save failed:", e);
+                window.showToast("Network Sync Failed");
+            }
+        };
+        const debouncedUpdate = debounce(performUpdate, 800);
+
+        window.dbUp = (field, val) => {
+            if(activeRole === 'dm') debouncedUpdate({ [field]: val });
+        };
+
+        window.updateSubclassData = (subIdx, subField, val) => {
+            if(activeRole !== 'dm') return;
+            const subs = JSON.parse(vocation.subclasses || '[]');
+            if(subs[subIdx]) {
+                subs[subIdx][subField] = val;
+                debouncedUpdate({ subclasses: JSON.stringify(subs) });
+            }
+        };
+
+        window.updateSubclassDeepData = (subIdx, arrayName, itemIdx, field, val) => {
+            if(activeRole !== 'dm') return;
+            const subs = JSON.parse(vocation.subclasses || '[]');
+            if(subs[subIdx] && subs[subIdx][arrayName] && subs[subIdx][arrayName][itemIdx]) {
+                subs[subIdx][arrayName][itemIdx][field] = val;
+                debouncedUpdate({ subclasses: JSON.stringify(subs) });
+            }
+        };
+
+        window.addDeepItem = (subIdx, arrayName, template) => {
+            if(activeRole !== 'dm') return;
+            const subs = JSON.parse(vocation.subclasses || '[]');
+            if(subs[subIdx]) {
+                if(!subs[subIdx][arrayName]) subs[subIdx][arrayName] = [];
+                subs[subIdx][arrayName].push(template);
+                performUpdate({ subclasses: JSON.stringify(subs) });
+                setTimeout(window.renderAll, 100);
+            }
+        };
+
+        window.removeDeepItem = (subIdx, arrayName, itemIdx) => {
+            if(activeRole !== 'dm') return;
+            const subs = JSON.parse(vocation.subclasses || '[]');
+            if(subs[subIdx] && subs[subIdx][arrayName]) {
+                subs[subIdx][arrayName].splice(itemIdx, 1);
+                performUpdate({ subclasses: JSON.stringify(subs) });
+                setTimeout(window.renderAll, 100);
+            }
+        };
+
+        window.openCampaignSettings = () => {
+            if (activeRole !== 'dm') return;
+            const terms = campaignSettings?.terms || {};
+            const safeSetVal = (id, val, defaultVal) => {
+                const el = document.getElementById(id);
+                if (el) el.value = val || defaultVal || '';
+            };
+            
+            safeSetVal('term-nav_vocations', terms.nav_vocations, 'Vocations');
+            safeSetVal('term-nav_subvocations', terms.nav_subvocations, 'Paths');
+            
+            const vKeys = ['vanguard', 'warrior', 'peacemaker', 'scavenger', 'heartbound', 'nomad', 'warden', 'chronicler', 'orator', 'scriptweaver', 'wartouched', 'archivist', 'fabricator'];
+            vKeys.forEach(k => safeSetVal(`term-class_${k}`, terms[`class_${k}`], k.charAt(0).toUpperCase() + k.slice(1)));
+
+            document.getElementById('campaign-settings-modal').classList.remove('hidden');
+        };
+
+        window.closeCampaignSettings = () => {
+            const modal = document.getElementById('campaign-settings-modal');
+            if(modal) modal.classList.add('hidden');
+        };
+
+        window.saveCampaignSettings = async () => {
+            if (activeRole !== 'dm') return;
+            const getVal = (id) => document.getElementById(id) ? document.getElementById(id).value.trim() : '';
+            
+            const newTerms = { ...campaignSettings.terms };
+            newTerms.nav_vocations = getVal('term-nav_vocations') || 'Vocations';
+            newTerms.nav_subvocations = getVal('term-nav_subvocations') || 'Paths';
+            
+            const vKeys = ['vanguard', 'warrior', 'peacemaker', 'scavenger', 'heartbound', 'nomad', 'warden', 'chronicler', 'orator', 'scriptweaver', 'wartouched', 'archivist', 'fabricator'];
+            vKeys.forEach(k => newTerms[`class_${k}`] = getVal(`term-class_${k}`) || k.charAt(0).toUpperCase() + k.slice(1));
+
+            try {
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'campaignConfig', 'settings'), {
+                    terms: newTerms, updatedAt: Date.now()
+                }, { merge: true });
+                window.showToast("Terminology updated.");
+                window.closeCampaignSettings();
+            } catch (err) {
+                console.error(err);
+                window.showToast("Error saving terminology.");
+            }
+        };
+
         window.renderAll = () => {
             if(!vocation) return;
             const isDM = activeRole === 'dm';
