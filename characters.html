@@ -1,4 +1,3 @@
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -355,7 +354,7 @@
                                     <hr class="ornamental-hr">
                                     <div id="stats-container" class="space-y-3"></div>
                                 </div>
-                                <div class="sheet-card">
+                                <div class="sheet-card" id="sheet-card-saves">
                                     <h3 id="label-term-saves">Saves</h3>
                                     <div class="row-header">
                                         <div class="w-4 header-item">Prof</div>
@@ -365,7 +364,7 @@
                                     </div>
                                     <div id="saves-container" class="space-y-0.5"></div>
                                 </div>
-                                <div class="sheet-card">
+                                <div class="sheet-card" id="sheet-card-skills">
                                     <h3 id="label-term-skills">Skills</h3>
                                     <div class="row-header">
                                         <div class="w-4 header-item">Prof</div>
@@ -379,7 +378,7 @@
                             
                             <div class="space-y-6">
                                 <div class="grid grid-cols-4 gap-2">
-                                    <div class="vital-container vital-inspiration-frame">
+                                    <div class="vital-container vital-inspiration-frame" id="vital-insp">
                                         <div id="label-term-insp" class="vital-label">Insp</div>
                                         <input type="text" data-key="heroicInspiration" class="vital-input" placeholder="0">
                                     </div>
@@ -424,7 +423,7 @@
                                     </div>
                                 </div>
                                 
-                                <div class="sheet-card">
+                                <div class="sheet-card" id="sheet-card-death">
                                     <h3 id="death-coma-header">Death & Coma</h3>
                                     <div class="text-center space-y-4">
                                         <button id="death-save-roll-btn" onclick="window.rollDeathSave()" class="w-full bg-blood hover:bg-red-800 text-parchment py-2 rounded font-bold uppercase text-[10px] mb-2 shadow read-only-hide transition-all border border-gold font-heading">Roll Death Save</button>
@@ -450,7 +449,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="sheet-card">
+                                <div class="sheet-card" id="sheet-card-stress">
                                     <h3 id="label-term-stress-header">Stress & Trauma</h3>
                                     <div class="flex justify-around items-center mb-4 mt-2">
                                         <div class="text-center"><input type="number" data-key="currentStress" class="text-3xl font-bold text-center w-20 text-blood font-heading border-b border-dashed border-gray-400" value="0"><label class="tiny-label mt-1">Current</label></div>
@@ -511,30 +510,30 @@
                                         <div id="attacks-list" class="space-y-1 mb-4"></div>
                                         <button id="add-attack-btn" onclick="window.addAttackItem()" class="w-full py-2 border-2 border-dashed border-[rgba(139,90,43,0.4)] text-[10px] font-bold text-ink uppercase rounded hover:border-blood transition-colors font-heading">+ Add Weapon</button>
                                         
-                                        <div id="label-term-defenses" class="beyond-header">Defenses</div>
-                                        <div class="bg-[rgba(255,255,255,0.3)] border border-[rgba(139,90,43,0.3)] rounded p-4 shadow-inner space-y-3 mb-4">
-                                            <div>
-                                                <label class="prof-label">Damage Resistances</label>
-                                                <input type="text" data-key="defResistances" class="prof-list-text w-full italic" placeholder="Fire, Poison...">
-                                            </div>
-                                            <div>
-                                                <label class="prof-label">Damage Immunities</label>
-                                                <input type="text" data-key="defImmunities" class="prof-list-text w-full italic" placeholder="Mortis, Piercing...">
-                                            </div>
-                                            <div>
-                                                <label class="prof-label">Damage Vulnerabilities</label>
-                                                <input type="text" data-key="defVulnerabilities" class="prof-list-text w-full italic" placeholder="Radiant, Bludgeoning...">
+                                        <div id="section-defenses">
+                                            <div id="label-term-defenses" class="beyond-header">Defenses</div>
+                                            <div class="bg-[rgba(255,255,255,0.3)] border border-[rgba(139,90,43,0.3)] rounded p-4 shadow-inner space-y-3 mb-4">
+                                                <div>
+                                                    <label class="prof-label">Damage Resistances</label>
+                                                    <input type="text" data-key="defResistances" class="prof-list-text w-full italic" placeholder="Fire, Poison...">
+                                                </div>
+                                                <div>
+                                                    <label class="prof-label">Damage Immunities</label>
+                                                    <input type="text" data-key="defImmunities" class="prof-list-text w-full italic" placeholder="Mortis, Piercing...">
+                                                </div>
+                                                <div>
+                                                    <label class="prof-label">Damage Vulnerabilities</label>
+                                                    <input type="text" data-key="defVulnerabilities" class="prof-list-text w-full italic" placeholder="Radiant, Bludgeoning...">
+                                                </div>
                                             </div>
                                         </div>
 
-                                        <div id="label-term-conditions" class="beyond-header">Conditions & Exhaustion</div>
-                                        <div class="bg-[rgba(255,255,255,0.3)] border border-[rgba(139,90,43,0.3)] rounded p-4 shadow-inner mb-4">
-                                            <div class="mb-4">
-                                                <label class="prof-label">Exhaustion Level (0-6)</label>
-                                                <div class="flex items-center gap-3">
-                                                    <input type="number" data-key="exhaustion" min="0" max="6" class="w-12 text-xl font-black text-center bg-parchment border border-gold rounded p-1 text-blood font-heading" value="0">
-                                                    <div class="text-[9px] text-ink font-bold uppercase italic leading-none border-l-2 border-blood pl-2">
-                                                        1: Disadv Ability Checks | 2: Speed Halved | 3: Disadv Attacks/Saves<br>
+                                        <div id="section-conditions">
+                                            <div id="label-term-conditions" class="beyond-header">Conditions & Exhaustion</div>
+                                            <div class="bg-[rgba(255,255,255,0.3)] border border-[rgba(139,90,43,0.3)] rounded p-4 shadow-inner mb-4">
+                                                <div class="mb-4">
+                                                    <label class="prof-label">Exhaustion Level (0-6)</label>
+                                                    <div class="flex items-center gap-3">
                                                         4: HP Max Halved | 5: Speed 0 | 6: Death
                                                     </div>
                                                 </div>
@@ -556,6 +555,7 @@
                                                 <label class="cond-row"><input type="checkbox" data-key="cond_stunned"> Stunned</label>
                                                 <label class="cond-row"><input type="checkbox" data-key="cond_unconscious"> Unconscious</label>
                                             </div>
+                                        </div>
                                         </div>
 
                                         <div id="label-term-proficiencies" class="beyond-header">Proficiencies & Training</div>
@@ -584,12 +584,14 @@
                                     </div>
 
                                     <div id="tab-content-inventory" class="tab-pane hidden">
-                                        <div id="label-term-currency" class="beyond-header">Currency</div>
-                                        <div class="grid grid-cols-4 gap-4 mb-8">
-                                            <div class="char-box text-center"><label class="char-label">CP</label><input type="text" data-key="currencyCP" class="char-val text-center text-lg font-heading font-bold" placeholder="0"></div>
-                                            <div class="char-box text-center"><label class="char-label">SP</label><input type="text" data-key="currencySP" class="char-val text-center text-lg font-heading font-bold" placeholder="0"></div>
-                                            <div class="char-box text-center"><label class="char-label">GP</label><input type="text" data-key="currencyGP" class="char-val text-center text-lg font-heading font-bold text-gold" placeholder="0"></div>
-                                            <div class="char-box text-center"><label class="char-label">PP</label><input type="text" data-key="currencyPP" class="char-val text-center text-lg font-heading font-bold" placeholder="0"></div>
+                                        <div id="section-currency">
+                                            <div id="label-term-currency" class="beyond-header">Currency</div>
+                                            <div class="grid grid-cols-4 gap-4 mb-8">
+                                                <div class="char-box text-center"><label class="char-label">CP</label><input type="text" data-key="currencyCP" class="char-val text-center text-lg font-heading font-bold" placeholder="0"></div>
+                                                <div class="char-box text-center"><label class="char-label">SP</label><input type="text" data-key="currencySP" class="char-val text-center text-lg font-heading font-bold" placeholder="0"></div>
+                                                <div class="char-box text-center"><label class="char-label">GP</label><input type="text" data-key="currencyGP" class="char-val text-center text-lg font-heading font-bold text-gold" placeholder="0"></div>
+                                                <div class="char-box text-center"><label class="char-label">PP</label><input type="text" data-key="currencyPP" class="char-val text-center text-lg font-heading font-bold" placeholder="0"></div>
+                                            </div>
                                         </div>
                                         
                                         <div id="dynamic-class-equip-section" class="hidden mb-6 mt-6">
@@ -1000,6 +1002,24 @@
                         <div><label class="text-[9px] font-black text-gray-500 uppercase tracking-widest font-heading mb-1 block">Notes (Tab)</label><input type="text" id="term-sheet_notes" class="w-full bg-black/50 border border-gray-700 rounded p-2 text-sm text-gold focus:border-gold outline-none"></div>
                     </div>
                 </div>
+
+                <div class="mt-8 pt-6 border-t border-gold/30">
+                    <h3 class="font-heading text-blood font-bold border-b border-blood/30 pb-1 mb-4">Active Modules (Show/Hide)</h3>
+                    <p class="text-[10px] text-gray-400 font-serif italic mb-4">Disable features your campaign doesn't use to declutter the character sheet.</p>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                        <label class="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest font-heading cursor-pointer"><input type="checkbox" id="mod_skills" class="accent-gold w-4 h-4" checked> Skills</label>
+                        <label class="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest font-heading cursor-pointer"><input type="checkbox" id="mod_saves" class="accent-gold w-4 h-4" checked> Saving Throws</label>
+                        <label class="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest font-heading cursor-pointer"><input type="checkbox" id="mod_insp" class="accent-gold w-4 h-4" checked> Inspiration</label>
+                        <label class="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest font-heading cursor-pointer"><input type="checkbox" id="mod_death" class="accent-gold w-4 h-4" checked> Death & Coma</label>
+                        <label class="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest font-heading cursor-pointer"><input type="checkbox" id="mod_stress" class="accent-gold w-4 h-4" checked> Stress & Trauma</label>
+                        <label class="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest font-heading cursor-pointer"><input type="checkbox" id="mod_conditions" class="accent-gold w-4 h-4" checked> Conditions / Exhaust</label>
+                        <label class="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest font-heading cursor-pointer"><input type="checkbox" id="mod_defenses" class="accent-gold w-4 h-4" checked> Defenses (Resist/Immune)</label>
+                        <label class="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest font-heading cursor-pointer"><input type="checkbox" id="mod_currency" class="accent-gold w-4 h-4" checked> Currency</label>
+                        <label class="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest font-heading cursor-pointer"><input type="checkbox" id="mod_inventory" class="accent-gold w-4 h-4" checked> Inventory Tab</label>
+                        <label class="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest font-heading cursor-pointer"><input type="checkbox" id="mod_background" class="accent-gold w-4 h-4" checked> Background Tab</label>
+                        <label class="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-widest font-heading cursor-pointer"><input type="checkbox" id="mod_companion" class="accent-gold w-4 h-4" checked> Companion Tab</label>
+                    </div>
+                </div>
             </div>
 
             <div class="flex gap-4 mt-6 pt-4 border-t border-gold/30 shrink-0 font-heading">
@@ -1407,6 +1427,12 @@
 
         const getRoll = (sides) => Math.floor(Math.random() * sides) + 1;
 
+        const DEFAULT_MODULES = {
+            mod_skills: true, mod_saves: true, mod_insp: true, mod_death: true,
+            mod_stress: true, mod_conditions: true, mod_defenses: true,
+            mod_currency: true, mod_inventory: true, mod_background: true, mod_companion: true
+        };
+
         window.switchSheetTab = (tabId) => {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
@@ -1416,6 +1442,8 @@
 
         window.openSettingsModal = () => {
             const t = campaignSettings.terms || {};
+            const mods = campaignSettings.modules || DEFAULT_MODULES;
+
             document.getElementById('term-nav_party').value = t.nav_party || 'Party';
             document.getElementById('term-nav_npcs').value = t.nav_npcs || 'NPCs';
             document.getElementById('term-nav_beasts').value = t.nav_beasts || 'Bestiary';
@@ -1451,6 +1479,11 @@
             Object.keys(SHEET_LABELS).forEach(k => {
                 const el = document.getElementById(`term-sheet_${k}`);
                 if(el) el.value = t[`sheet_${k}`] || SHEET_LABELS[k];
+            });
+
+            Object.keys(DEFAULT_MODULES).forEach(k => {
+                const el = document.getElementById(k);
+                if (el) el.checked = mods[k] !== false; // defaults to true
             });
 
             document.getElementById('settings-modal').classList.remove('hidden');
@@ -1491,23 +1524,32 @@
                 class_fabricator: document.getElementById('term-class_fabricator').value.trim() || 'Fabricator'
             };
 
+            const modules = {};
+            Object.keys(DEFAULT_MODULES).forEach(k => {
+                const el = document.getElementById(k);
+                if (el) modules[k] = el.checked;
+            });
+
             Object.keys(SHEET_LABELS).forEach(k => {
                 const el = document.getElementById(`term-sheet_${k}`);
                 if(el) terms[`sheet_${k}`] = el.value.trim() || SHEET_LABELS[k];
             });
 
             try {
-                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'campaignConfig', 'settings'), { terms }, { merge: true });
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'campaignConfig', 'settings'), { terms, modules }, { merge: true });
                 document.getElementById('settings-modal').classList.add('hidden');
-                window.showToast("Terminology Updated!");
+                window.showToast("Settings Updated!");
             } catch (err) {
                 console.error(err);
-                window.showToast("Failed to save terminology");
+                window.showToast("Failed to save settings");
             }
         };
 
-        const applyTerminology = (terms) => {
-            if (!terms) return;
+        const applyCampaignSettings = (settings) => {
+            if (!settings) return;
+            const terms = settings.terms || {};
+            const mods = settings.modules || DEFAULT_MODULES;
+
             const safeSet = (id, val) => { const el = document.getElementById(id); if (el && val) el.innerText = val; };
             
             safeSet('nav-party', terms.nav_party);
@@ -1534,6 +1576,23 @@
                     vt.innerText = terms.nav_party || 'The Party';
                 }
             }
+
+            const toggleEl = (id, show) => { const el = document.getElementById(id); if (el) el.style.display = show ? '' : 'none'; };
+            toggleEl('sheet-card-skills', mods.mod_skills !== false);
+            toggleEl('sheet-card-saves', mods.mod_saves !== false);
+            toggleEl('vital-insp', mods.mod_insp !== false);
+            toggleEl('sheet-card-death', mods.mod_death !== false);
+            toggleEl('sheet-card-stress', mods.mod_stress !== false);
+            toggleEl('section-conditions', mods.mod_conditions !== false);
+            toggleEl('section-defenses', mods.mod_defenses !== false);
+            toggleEl('section-currency', mods.mod_currency !== false);
+            toggleEl('tab-btn-inventory', mods.mod_inventory !== false);
+            toggleEl('tab-btn-background', mods.mod_background !== false);
+            toggleEl('tab-btn-companion', mods.mod_companion !== false);
+            
+            if (mods.mod_inventory === false && document.getElementById('tab-btn-inventory')?.classList.contains('active')) window.switchSheetTab('actions');
+            if (mods.mod_background === false && document.getElementById('tab-btn-background')?.classList.contains('active')) window.switchSheetTab('actions');
+            if (mods.mod_companion === false && document.getElementById('tab-btn-companion')?.classList.contains('active')) window.switchSheetTab('actions');
         };
 
         window.switchSubFilter = (filterId) => {
@@ -1613,7 +1672,7 @@
             if (c.companionId) {
                 const pet = characters.find(p => p.id === c.companionId && !p.isDeleted);
                 if (pet) {
-                    const petMedia = pet.imageSrc ? `<img src="${pet.imageSrc}" class="w-8 h-8 rounded-full object-cover border border-gold">` : `<div class="w-8 h-8 rounded-full bg-gray-900 border border-gold flex items-center justify-center text-[10px]">🐾</div>`;
+                    const petMedia = pet.imageSrc ? `<img src="${pet.imageSrc}" class="w-8 h-8 rounded-full object-cover border-gold">` : `<div class="w-8 h-8 rounded-full bg-gray-900 border border-gold flex items-center justify-center text-[10px]">🐾</div>`;
                     innerHtml += `
                         <div class="bg-black/90 border-t border-gray-700 p-3 flex items-center gap-3 hover:bg-gray-900 transition-colors cursor-pointer" onclick="window.openCompanionSheet(event, '${pet.id}')">
                             ${petMedia}
@@ -2516,16 +2575,19 @@
             
             try {
                 if (u.isAnonymous) {
-                    currentUser = { uid: u.uid, username: "Guest Traveler", role: 'player' };
+                    currentUser = { uid: u.uid, email: null, username: "Guest Traveler", role: 'player' };
                 } else {
                     const userDoc = await getDoc(doc(db, 'users', u.uid));
                     if (userDoc.exists()) {
-                        currentUser = { uid: u.uid, ...userDoc.data() };
+                        currentUser = { uid: u.uid, email: u.email, ...userDoc.data() };
                     } else {
-                        currentUser = { uid: u.uid, username: u.displayName || 'Traveler', role: 'player' };
+                        currentUser = { uid: u.uid, email: u.email, username: u.displayName || 'Traveler', role: 'player' };
                     }
                 }
 
+                if (u.email === 'admin@chronicles.com') {
+                    currentUser.role = 'dm';
+                }
                 activeRole = currentUser.role || 'player';
 
                 if (appId !== "demo_campaign") {
@@ -2552,7 +2614,7 @@
                 onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'campaignConfig', 'settings'), (docSnap) => {
                     if (docSnap.exists()) {
                         campaignSettings = docSnap.data();
-                        applyTerminology(campaignSettings.terms);
+                        applyCampaignSettings(campaignSettings);
                         if (activeCharId) {
                             window.calcMods();
                             window.renderMovesGrid();
