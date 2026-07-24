@@ -381,6 +381,10 @@
                             <div class="px-3 py-1.5 border border-gray-600 rounded bg-wood text-gray-500 peer-checked:bg-blood peer-checked:text-parchment peer-checked:border-gold group-hover:border-gray-400 peer-checked:group-hover:border-stone text-[10px] font-bold uppercase tracking-widest font-heading transition-all select-none shadow-sm whitespace-nowrap">Vocations</div>
                         </label>
                         <label class="cursor-pointer group">
+                            <input type="checkbox" id="upd-inc-subvocations" checked class="peer hidden">
+                            <div class="px-3 py-1.5 border border-gray-600 rounded bg-wood text-gray-500 peer-checked:bg-blood peer-checked:text-parchment peer-checked:border-gold group-hover:border-gray-400 peer-checked:group-hover:border-stone text-[10px] font-bold uppercase tracking-widest font-heading transition-all select-none shadow-sm whitespace-nowrap">Sub-Vocations</div>
+                        </label>
+                        <label class="cursor-pointer group">
                             <input type="checkbox" id="upd-inc-lineages" checked class="peer hidden">
                             <div class="px-3 py-1.5 border border-gray-600 rounded bg-wood text-gray-500 peer-checked:bg-blood peer-checked:text-parchment peer-checked:border-gold group-hover:border-gray-400 peer-checked:group-hover:border-stone text-[10px] font-bold uppercase tracking-widest font-heading transition-all select-none shadow-sm whitespace-nowrap">Lineages</div>
                         </label>
@@ -652,6 +656,10 @@
                         <label class="cursor-pointer group">
                             <input type="checkbox" id="inc-vocations" checked class="peer hidden">
                             <div class="px-3 py-1.5 border border-gray-600 rounded bg-wood text-gray-500 peer-checked:bg-blood peer-checked:text-parchment peer-checked:border-gold group-hover:border-gray-400 peer-checked:group-hover:border-stone text-[10px] font-bold uppercase tracking-widest font-heading transition-all select-none shadow-sm whitespace-nowrap">Vocations</div>
+                        </label>
+                        <label class="cursor-pointer group">
+                            <input type="checkbox" id="inc-subvocations" checked class="peer hidden">
+                            <div class="px-3 py-1.5 border border-gray-600 rounded bg-wood text-gray-500 peer-checked:bg-blood peer-checked:text-parchment peer-checked:border-gold group-hover:border-gray-400 peer-checked:group-hover:border-stone text-[10px] font-bold uppercase tracking-widest font-heading transition-all select-none shadow-sm whitespace-nowrap">Sub-Vocations</div>
                         </label>
                         <label class="cursor-pointer group">
                             <input type="checkbox" id="inc-lineages" checked class="peer hidden">
@@ -2374,6 +2382,7 @@ Every Script belongs to a **Tier** from 0 to 9. A Script's Tier represents the c
                     injectData(currentViewingPack.bestiary, ['artifacts', appId, 'public', 'data', 'characters']);
                     injectData(currentViewingPack.npcs, ['artifacts', appId, 'public', 'data', 'characters']);
                     injectData(currentViewingPack.vocations, ['artifacts', appId, 'public', 'data', `handbookVocations_${appId}`]);
+                    injectData(currentViewingPack.subvocations, ['artifacts', appId, 'public', 'data', `handbookVocations_${appId}`]);
                     injectData(currentViewingPack.lineages, ['artifacts', appId, 'public', 'data', `handbookLineages_${appId}`]);
                     injectData(currentViewingPack.howtoplay, ['artifacts', appId, 'public', 'data', 'manualSections_howtoplay']);
                     
@@ -2437,6 +2446,7 @@ Every Script belongs to a **Tier** from 0 to 9. A Script's Tier represents the c
             const setChecked = (id, arr) => { document.getElementById(id).checked = arr && arr.length > 0; };
             setChecked('upd-inc-scripts', currentViewingPack.scripts);
             setChecked('upd-inc-vocations', currentViewingPack.vocations);
+            setChecked('upd-inc-subvocations', currentViewingPack.subvocations);
             setChecked('upd-inc-lineages', currentViewingPack.lineages);
             setChecked('upd-inc-backgrounds', currentViewingPack.backgrounds);
             setChecked('upd-inc-bestiary', currentViewingPack.bestiary);
@@ -2456,6 +2466,7 @@ Every Script belongs to a **Tier** from 0 to 9. A Script's Tier represents the c
             return {
                 scripts: document.getElementById(`${prefix}scripts`).checked ? cleanArray(packData.scripts) : [],
                 vocations: document.getElementById(`${prefix}vocations`).checked ? cleanArray(packData.vocations) : [],
+                subvocations: document.getElementById(`${prefix}subvocations`).checked ? cleanArray(packData.vocations) : [],
                 progressionTables: document.getElementById(`${prefix}vocations`).checked ? cleanArray(packData.progressionTables) : [],
                 lineages: document.getElementById(`${prefix}lineages`).checked ? cleanArray(packData.lineages) : [],
                 backgrounds: document.getElementById(`${prefix}backgrounds`).checked ? cleanArray(packData.backgrounds) : [],
@@ -2639,7 +2650,7 @@ Every Script belongs to a **Tier** from 0 to 9. A Script's Tier represents the c
             document.getElementById('pack-vis').value = 'private';
             
             // Check all by default on new pack
-            const prefixes = ['scripts', 'vocations', 'lineages', 'backgrounds', 'bestiary', 'npcs', 'gear', 'worldlore', 'howtoplay', 'archlibrary', 'custodians', 'maps', 'landmarks'];
+            const prefixes = ['scripts', 'vocations', 'subvocations', 'lineages', 'backgrounds', 'bestiary', 'npcs', 'gear', 'worldlore', 'howtoplay', 'archlibrary', 'custodians', 'maps', 'landmarks'];
             prefixes.forEach(p => {
                 const el = document.getElementById(`inc-${p}`);
                 if (el) el.checked = true;
