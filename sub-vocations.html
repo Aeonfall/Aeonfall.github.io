@@ -28,8 +28,8 @@
                         'heading': ['Cinzel', 'serif'],
                     },
                     boxShadow: {
-                        'parchment': '0 0 40px rgba(0,0,0,0.6), inset 0 0 60px rgba(139, 90, 43, 0.15)',
-                        'card': '0 4px 15px rgba(0,0,0,0.1), inset 0 0 0 1px rgba(212, 175, 55, 0.3)',
+                        'parchment': '0 10px 40px rgba(0,0,0,0.15), inset 0 0 60px rgba(139, 90, 43, 0.08)',
+                        'card': '0 4px 15px rgba(0,0,0,0.05), inset 0 0 0 1px rgba(212, 175, 55, 0.2)',
                     }
                 }
             }
@@ -37,19 +37,19 @@
     </script>
 
     <style>
-        body { font-family: 'Lora', serif; background-color: #120c08; color: #2c1e16; overflow-x: hidden; 
+        body { font-family: 'Lora', serif; background-color: #e8e0cd; color: #2c1e16; overflow-x: hidden; 
             background-image: 
-                radial-gradient(circle at center, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 100%),
-                url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20.5V18H0v-2h20v-2H0v-2h20v-2H0V8h20V6H0V4h20V2H0V0h22v20h2V0h2v20h2V0h2v20h2V0h2v20h2V0h2v20h2v2H20v-1.5zM0 20h2v20H0V20zm4 0h2v20H4V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 4h20v2H20v-2zm0 4h20v2H20v-2zm0 4h20v2H20v-2zm0 4h20v2H20v-2z' fill='%231a110b' fill-opacity='0.8' fill-rule='evenodd'/%3E%3C/svg%3E");
+                radial-gradient(circle at center, rgba(255,255,255,0.5) 0%, rgba(200, 180, 150, 0.3) 100%),
+                url("data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.02' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
             background-attachment: fixed;
         }
         
         .parchment-paper {
             background-color: #f4ebd8;
-            background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.015' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.015' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
             color: #2c1e16;
             border-radius: 8px;
-            border: 1px solid #d4af37;
+            border: 1px solid rgba(212, 175, 55, 0.6);
         }
 
         .drop-cap::first-letter {
@@ -61,7 +61,7 @@
             line-height: 0.8;
             margin-right: 0.75rem;
             margin-top: 0.1rem;
-            text-shadow: 2px 2px 0px rgba(212, 175, 55, 0.3);
+            text-shadow: 2px 2px 0px rgba(212, 175, 55, 0.2);
         }
 
         .book-divider {
@@ -81,64 +81,55 @@
             color: #8a2b2b;
             margin: 0 1.5rem;
             font-size: 1rem;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
         }
         
-        .fantasy-btn { background: linear-gradient(to bottom, #8a2b2b, #5a1111); color: #f4ebd8 !important; border: 1px solid #d4af37 !important; font-family: 'Cinzel', serif; text-transform: uppercase; letter-spacing: 1.5px; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.5), inset 0 1px 3px rgba(255,255,255,0.2) !important; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); }
-        .fantasy-btn:hover { background: linear-gradient(to bottom, #a33232, #7a1b1b); transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.6) !important; border-color: #f4ebd8 !important; }
+        .fantasy-btn { background: linear-gradient(to bottom, #8a2b2b, #6b1b1b); color: #f4ebd8 !important; border: 1px solid #d4af37 !important; font-family: 'Cinzel', serif; text-transform: uppercase; letter-spacing: 1.5px; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.2), inset 0 1px 3px rgba(255,255,255,0.2) !important; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
+        .fantasy-btn:hover { background: linear-gradient(to bottom, #a33232, #8a2b2b); transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.3) !important; border-color: #f4ebd8 !important; }
         
-        .fantasy-btn-alt { background: linear-gradient(to bottom, #2c1e16, #1a110b); color: #d4af37 !important; border: 1px solid #aa8c2c !important; font-family: 'Cinzel', serif; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease; }
-        .fantasy-btn-alt:hover { background: linear-gradient(to bottom, #3d2a1f, #2c1e16); color: #f4ebd8 !important; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.6) !important; border-color: #d4af37 !important; }
+        .fantasy-btn-alt { background: linear-gradient(to bottom, #f4ebd8, #e2d4b7); color: #2c1e16 !important; border: 1px solid #aa8c2c !important; font-family: 'Cinzel', serif; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .fantasy-btn-alt:hover { background: linear-gradient(to bottom, #ffffff, #f4ebd8); color: #8a2b2b !important; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important; border-color: #d4af37 !important; }
 
-        .nav-link { color: #888; font-weight: 900; font-size: 13px; text-transform: uppercase; letter-spacing: 0.15em; transition: all 0.3s; cursor: pointer; text-decoration: none; white-space: nowrap; font-family: 'Cinzel', serif; position: relative; }
-        .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 50%; background-color: #d4af37; transition: all 0.3s ease; transform: translateX(-50%); }
-        .nav-link.active { color: #d4af37; text-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }
+        .nav-link { color: #4a3628; font-weight: 900; font-size: 13px; text-transform: uppercase; letter-spacing: 0.15em; transition: all 0.3s; cursor: pointer; text-decoration: none; white-space: nowrap; font-family: 'Cinzel', serif; position: relative; }
+        .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 50%; background-color: #8a2b2b; transition: all 0.3s ease; transform: translateX(-50%); }
+        .nav-link.active { color: #8a2b2b; text-shadow: 0 0 1px rgba(138, 43, 43, 0.2); }
         .nav-link.active::after { width: 100%; }
-        .nav-link:hover { color: #f4ebd8; }
-        .nav-link:hover::after { width: 80%; background-color: #f4ebd8; }
+        .nav-link:hover { color: #8a2b2b; }
+        .nav-link:hover::after { width: 80%; background-color: #d4af37; }
 
-        .sidebar-link { display: block; padding: 14px 18px; margin-bottom: 8px; border-radius: 6px; font-family: 'Cinzel', serif; font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1.5px; color: #a19a8f; background: rgba(26, 17, 11, 0.6); border: 1px solid transparent; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .sidebar-link:hover { background: rgba(44, 30, 22, 0.8); border-color: #aa8c2c; color: #d4af37; transform: translateX(6px); }
-        .sidebar-link.active-page { background: linear-gradient(90deg, #8a2b2b, rgba(138,43,43,0)); border-left: 3px solid #d4af37; color: #f4ebd8; }
+        .sidebar-link { display: block; padding: 14px 18px; margin-bottom: 8px; border-radius: 6px; font-family: 'Cinzel', serif; font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1.5px; color: #4a3628; background: rgba(255, 255, 255, 0.4); border: 1px solid transparent; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+        .sidebar-link:hover { background: rgba(255, 255, 255, 0.9); border-color: #d4af37; color: #8a2b2b; transform: translateX(6px); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .sidebar-link.active-page { background: linear-gradient(90deg, rgba(212,175,55,0.15), transparent); border-left: 3px solid #8a2b2b; color: #8a2b2b; font-weight: 900; }
 
-        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px); background: #1a110b; border: 1px solid #d4af37; color: #f4ebd8; padding: 14px 28px; border-radius: 8px; z-index: 100000; pointer-events: none; opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); font-family: 'Cinzel', serif; box-shadow: 0 15px 30px rgba(0,0,0,0.9); font-weight: bold; letter-spacing: 1px; }
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px); background: #1a110b; border: 1px solid #d4af37; color: #f4ebd8; padding: 14px 28px; border-radius: 8px; z-index: 100000; pointer-events: none; opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); font-family: 'Cinzel', serif; box-shadow: 0 15px 30px rgba(0,0,0,0.4); font-weight: bold; letter-spacing: 1px; }
         
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 200000; padding: 20px; backdrop-filter: blur(8px); }
-        .modal-container { background: #f4ebd8; border: 2px solid #d4af37; border-radius: 8px; width: 100%; max-width: 650px; padding: 40px; box-shadow: inset 0 0 50px rgba(139, 90, 43, 0.15), 0 30px 60px -12px rgba(0, 0, 0, 0.9); position: relative; color: #2c1e16; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(26, 17, 11, 0.6); display: flex; align-items: center; justify-content: center; z-index: 200000; padding: 20px; backdrop-filter: blur(8px); }
+        .modal-container { background: #f4ebd8; border: 2px solid #d4af37; border-radius: 8px; width: 100%; max-width: 650px; padding: 40px; box-shadow: inset 0 0 50px rgba(139, 90, 43, 0.05), 0 30px 60px -12px rgba(0, 0, 0, 0.4); position: relative; color: #2c1e16; }
         
         /* Elegant Scrollbar */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #1a110b; }
-        ::-webkit-scrollbar-thumb { background: #4a3628; border-radius: 4px; border: 1px solid #1a110b; }
+        ::-webkit-scrollbar-track { background: rgba(26, 17, 11, 0.05); }
+        ::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.4); border-radius: 4px; border: 1px solid rgba(244, 235, 216, 1); }
         ::-webkit-scrollbar-thumb:hover { background: #aa8c2c; }
         
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
-        .form-input { background: rgba(0,0,0,0.5); border: 1px solid rgba(212, 175, 55, 0.4); padding: 10px 14px; border-radius: 6px; transition: all 0.3s; color: white; width: 100%; font-family: 'Lora', serif; font-size: 14px; }
-        .form-input:focus { border-color: #d4af37; outline: none; box-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
-        .tiny-label { font-size: 10px; text-transform: uppercase; color: #888; font-weight: 900; display: block; margin-bottom: 6px; font-family: 'Cinzel', serif; letter-spacing: 1px;}
+        .form-input { background: rgba(255,255,255,0.6); border: 1px solid rgba(212, 175, 55, 0.6); padding: 10px 14px; border-radius: 6px; transition: all 0.3s; color: #2c1e16; width: 100%; font-family: 'Lora', serif; font-size: 14px; }
+        .form-input:focus { border-color: #8a2b2b; outline: none; box-shadow: 0 0 10px rgba(138, 43, 43, 0.1); background: white; }
+        .tiny-label { font-size: 10px; text-transform: uppercase; color: #4a3628; font-weight: 900; display: block; margin-bottom: 6px; font-family: 'Cinzel', serif; letter-spacing: 1px;}
 
         /* Improved DM Edit Styling */
         .dm-active-edit .dm-editable { 
-            background: rgba(255, 255, 255, 0.05); 
-            outline: 1px dashed rgba(212, 175, 55, 0.4); 
+            background: rgba(212, 175, 55, 0.05); 
+            outline: 1px dashed rgba(212, 175, 55, 0.6); 
             border-radius: 4px; padding: 2px 4px; 
             transition: all 0.3s;
             min-height: 1.2em;
             position: relative;
         }
-        .dm-active-edit .parchment-paper .dm-editable {
-            background: rgba(212, 175, 55, 0.05);
-            outline-color: rgba(212, 175, 55, 0.6);
-        }
         .dm-active-edit .dm-editable:focus {
-            background: rgba(255, 255, 255, 0.15);
-            outline: 2px solid #d4af37;
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
-        }
-        .dm-active-edit .parchment-paper .dm-editable:focus {
-            background: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.8);
             outline: 2px solid #8a2b2b;
             box-shadow: 0 0 10px rgba(138, 43, 43, 0.1);
         }
@@ -155,12 +146,12 @@
         .pairing-table .pt-val { color: #2c1e16; font-weight: 500; }
         
         /* Compare Table */
-        .compare-table { width: 100%; border-collapse: separate; border-spacing: 0; font-family: 'Lora', serif; font-size: 13px; background: rgba(255,255,255,0.4); border-radius: 8px; overflow: hidden; border: 1px solid rgba(212, 175, 55, 0.3); }
+        .compare-table { width: 100%; border-collapse: separate; border-spacing: 0; font-family: 'Lora', serif; font-size: 13px; background: rgba(255,255,255,0.6); border-radius: 8px; overflow: hidden; border: 1px solid rgba(212, 175, 55, 0.4); box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
         .compare-table th { color: #f4ebd8; font-family: 'Cinzel', serif; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; padding: 16px; text-align: left; background: #2c1e16; position: sticky; top: 0; z-index: 10; font-weight: 900; }
         .compare-table th:first-child { background: #1a110b; color: #d4af37; border-right: 1px solid #4a3628; }
         .compare-table td { padding: 14px 16px; border-bottom: 1px solid rgba(212, 175, 55, 0.2); color: #2c1e16; }
         .compare-table td:first-child { font-family: 'Cinzel', serif; font-weight: 900; font-size: 11px; letter-spacing: 1px; color: #8a2b2b; border-right: 1px solid rgba(212, 175, 55, 0.2); background: rgba(212, 175, 55, 0.05); }
-        .compare-table tr:nth-child(even) td { background-color: rgba(255,255,255,0.3); }
+        .compare-table tr:nth-child(even) td { background-color: rgba(255,255,255,0.4); }
         .compare-table tr:nth-child(even) td:first-child { background-color: rgba(212, 175, 55, 0.08); }
         .compare-table tr:last-child td { border-bottom: none; }
         
@@ -172,7 +163,7 @@
             background: #f4ebd8;
             background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.015' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
             border-bottom: 2px solid #d4af37;
-            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             padding: 0.5rem 1rem;
             display: flex;
             gap: 1.5rem;
@@ -223,15 +214,15 @@
             border-radius: 12px;
             z-index: 50;
             letter-spacing: 1px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         .section-hidden-player {
             display: none !important;
         }
         
         .dm-toggle-btn {
-            background: rgba(26, 17, 11, 0.8);
-            color: #d4af37;
+            background: rgba(255, 255, 255, 0.9);
+            color: #4a3628;
             border: 1px solid #d4af37;
             padding: 4px 8px;
             border-radius: 4px;
@@ -244,6 +235,7 @@
             font-family: 'Cinzel', serif;
             text-transform: uppercase;
             letter-spacing: 1px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
         .dm-toggle-btn:hover {
             background: #d4af37;
@@ -252,6 +244,7 @@
         .dm-toggle-btn.is-hidden {
             color: #8a2b2b;
             border-color: #8a2b2b;
+            background: rgba(255, 255, 255, 0.95);
         }
         .dm-toggle-btn.is-hidden:hover {
             background: #8a2b2b;
@@ -264,32 +257,32 @@
     <div id="toast" class="toast">Message</div>
 
     <div id="initial-loading" class="flex flex-col items-center justify-center h-screen fade-in w-full text-center">
-        <i class="fa-solid fa-compass fa-spin text-7xl text-gold mb-8 filter drop-shadow-[0_0_15px_rgba(212,175,55,0.5)]"></i>
-        <h2 class="font-heading text-3xl text-parchment animate-pulse tracking-widest uppercase font-black">Navigating the Paths...</h2>
+        <i class="fa-solid fa-compass fa-spin text-7xl text-gold mb-8 filter drop-shadow-md"></i>
+        <h2 class="font-heading text-3xl text-ink animate-pulse tracking-widest uppercase font-black">Navigating the Paths...</h2>
     </div>
 
     <!-- MAIN DASHBOARD -->
     <div id="dashboard-screen" class="min-h-screen p-4 md:p-8 hidden w-full">
         <div class="max-w-[1500px] mx-auto">
             
-            <header class="flex flex-col items-center md:items-start md:flex-row justify-between mb-10 border-b border-gray-800 pb-8 gap-6 relative">
-                <div class="absolute -bottom-1.5 left-0 w-full h-[3px] bg-gradient-to-r from-transparent via-gold-dark to-transparent opacity-30"></div>
+            <header class="flex flex-col md:flex-row items-center md:items-start justify-between mb-10 border-b border-gold/30 pb-8 gap-6 relative">
+                <div class="absolute -bottom-1.5 left-0 w-full h-[3px] bg-gradient-to-r from-transparent via-gold-dark/40 to-transparent"></div>
                 
                 <div class="text-center md:text-left w-full md:w-auto">
-                    <h1 id="main-campaign-title" class="text-5xl md:text-6xl text-gray-200 font-black mb-2 font-heading tracking-tight leading-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">Chronicles</h1>
+                    <h1 id="main-campaign-title" class="text-5xl md:text-6xl text-ink font-black mb-2 font-heading tracking-tight leading-none drop-shadow-[0_1px_2px_rgba(0,0,0,0.1)]">Chronicles</h1>
                     <div class="flex flex-col md:flex-row items-center gap-4 mt-3">
-                        <p class="text-gold-dark text-sm uppercase tracking-[0.25em] font-bold font-heading">Campaign Library</p>
-                        <div class="bg-black/60 border border-gray-700/50 px-4 py-1.5 rounded-full flex items-center gap-2 shadow-inner backdrop-blur-sm">
-                            <span class="w-2 h-2 rounded-full bg-green-600 shadow-[0_0_5px_rgba(22,163,74,0.6)]"></span>
-                            <span id="user-display-name" class="text-[11px] font-black text-gray-300 uppercase tracking-widest font-heading">Guest</span>
-                            <button id="btn-campaign-settings" onclick="window.openCampaignSettings()" class="hidden ml-3 text-gray-500 hover:text-gold transition-colors" title="Campaign Terminology"><i class="fa-solid fa-gear"></i></button>
+                        <p class="text-blood text-sm uppercase tracking-[0.25em] font-bold font-heading">Campaign Library</p>
+                        <div class="bg-white/60 border border-gold/40 px-4 py-1.5 rounded-full flex items-center gap-2 shadow-sm backdrop-blur-sm">
+                            <span class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_4px_rgba(34,197,94,0.4)]"></span>
+                            <span id="user-display-name" class="text-[11px] font-black text-ink uppercase tracking-widest font-heading">Guest</span>
+                            <button id="btn-campaign-settings" onclick="window.openCampaignSettings()" class="hidden ml-3 text-ink-light hover:text-blood transition-colors" title="Campaign Terminology"><i class="fa-solid fa-gear"></i></button>
                         </div>
                     </div>
                 </div>
 
                 <div class="flex flex-col items-center md:items-end gap-6 w-full md:w-auto mt-4 md:mt-0">
                     <div class="flex items-center gap-4">
-                        <button onclick="try { window.location.href='campaigns.html' } catch(e) { window.showToast('Redirects disabled in preview.') }" class="fantasy-btn-alt px-5 py-2 text-xs rounded-md shadow-lg"><i class="fa-solid fa-arrow-left mr-2"></i>Nexus</button>
+                        <button onclick="try { window.location.href='campaigns.html' } catch(e) { window.showToast('Redirects disabled in preview.') }" class="fantasy-btn-alt px-5 py-2 text-xs rounded-md shadow-md"><i class="fa-solid fa-arrow-left mr-2"></i>Nexus</button>
                     </div>
 
                     <nav id="main-nav" class="flex gap-6 md:gap-8 items-center w-full overflow-x-auto scrollbar-hide pb-2 px-2 md:px-0 md:pb-0 justify-start md:justify-end mt-2">
@@ -303,7 +296,7 @@
                 </div>
             </header>
 
-            <div id="content-error" class="hidden text-center py-24 text-red-500 font-serif italic border border-red-900/50 bg-black/60 rounded-xl shadow-2xl backdrop-blur-md max-w-2xl mx-auto">
+            <div id="content-error" class="hidden text-center py-24 text-blood font-serif italic border border-red-900/30 bg-white/60 rounded-xl shadow-lg backdrop-blur-md max-w-2xl mx-auto">
                 <i class="fa-solid fa-triangle-exclamation text-4xl mb-4 text-red-700"></i>
                 <p class="text-xl">Vocation archives not found or corrupted.</p>
             </div>
@@ -312,8 +305,8 @@
                 
                 <!-- LEFT SIDEBAR: Library Navigation -->
                 <div class="w-full lg:w-72 flex-shrink-0">
-                    <div class="bg-black/40 border border-gray-800/80 rounded-xl p-5 sticky top-6 shadow-2xl backdrop-blur-sm">
-                        <h2 class="text-gold font-heading font-black text-xl mb-5 text-center border-b border-gray-800 pb-3 tracking-widest uppercase">The Archives</h2>
+                    <div class="bg-parchment/60 border border-gold/40 rounded-xl p-5 sticky top-6 shadow-xl backdrop-blur-md">
+                        <h2 class="text-blood font-heading font-black text-xl mb-5 text-center border-b border-gold/30 pb-3 tracking-widest uppercase">The Archives</h2>
                         <nav id="library-nav" class="flex flex-col gap-1">
                             <a href="#" onclick="window.routeTo('handbook.html'); return false;" class="sidebar-link">Main Index</a>
                             <a href="#" onclick="window.routeTo('howtoplay.html'); return false;" class="sidebar-link">How to Play</a>
@@ -332,7 +325,7 @@
                 <!-- RIGHT AREA: The Unified Master Parchment Document -->
                 <div class="flex-grow w-full relative max-w-full">
                     <div class="mb-6 flex justify-between items-end">
-                        <button onclick="window.goBackToVocations()" class="text-[12px] font-heading font-black uppercase tracking-[0.2em] text-gray-400 hover:text-gold transition-colors flex items-center gap-2 bg-black/40 px-4 py-2 rounded-full border border-gray-800/50 backdrop-blur-sm">
+                        <button onclick="window.goBackToVocations()" class="text-[12px] font-heading font-black uppercase tracking-[0.2em] text-ink hover:text-blood transition-colors flex items-center gap-2 bg-white/60 px-4 py-2 rounded-full border border-gold/40 backdrop-blur-sm shadow-sm">
                             <i class="fa-solid fa-arrow-left"></i> Return to Vocations
                         </button>
                     </div>
