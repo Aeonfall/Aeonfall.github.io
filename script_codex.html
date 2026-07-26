@@ -238,9 +238,9 @@
                     <div class="mb-2">
                         <label class="tiny-label">Active Systems</label>
                         <select id="term-codex_mode" class="form-input bg-white/70">
-                            <option value="both">Hybrid (Both Features & Scripts)</option>
-                            <option value="features_only">Features Only (No Scriptcasting)</option>
-                            <option value="scripts_only">Scripts Only (No Combat Features)</option>
+                            <option value="both">Hybrid (Both Features & Spells)</option>
+                            <option value="features_only">Features Only (No Spellcasting)</option>
+                            <option value="scripts_only">Spells Only (No Combat Features)</option>
                         </select>
                         <p class="text-[10px] text-gray-500 italic mt-1">This governs what options are available throughout the Codex.</p>
                     </div>
@@ -256,11 +256,11 @@
                 </div>
 
                 <div>
-                    <h3 class="font-heading text-sm font-bold text-ink uppercase mb-3 border-b border-gray-300 pb-1">Scriptcasting Customization</h3>
+                    <h3 class="font-heading text-sm font-bold text-ink uppercase mb-3 border-b border-gray-300 pb-1">Spellcasting Customization</h3>
                     <div>
-                        <label class="tiny-label">Script Types (Comma Separated)</label>
+                        <label class="tiny-label">Spell Types (Comma Separated)</label>
                         <input type="text" id="term-script_types" class="form-input" placeholder="E.g. Ritual">
-                        <p class="text-[10px] text-gray-500 italic mt-1">Customize the script categories available in the inscription dropdown menu.</p>
+                        <p class="text-[10px] text-gray-500 italic mt-1">Customize the spells categories available in the inscription dropdown menu.</p>
                     </div>
                 </div>
                 
@@ -268,13 +268,13 @@
                     <h3 class="font-heading text-sm font-bold text-ink uppercase mb-3 border-b border-gray-300 pb-1">Progression Tables</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div><label class="tiny-label">Combat Table Title</label><input type="text" id="term-prog_combat" class="form-input" placeholder="Features Progression"></div>
-                        <div><label class="tiny-label">Scriptcasting Table Title</label><input type="text" id="term-prog_scripts" class="form-input" placeholder="Features Progression"></div>
+                        <div><label class="tiny-label">Spellcasting Table Title</label><input type="text" id="term-prog_scripts" class="form-input" placeholder="Features Progression"></div>
                     </div>
                 </div>
 
                 <div>
-                    <h3 class="font-heading text-sm font-bold text-ink uppercase mb-3 border-b border-gray-300 pb-1">Vocations (Classes)</h3>
-                    <p class="text-[10px] font-serif text-gray-500 italic mb-4">Set the name and which codex systems each vocation uses. Mark as "Hidden" to remove them from your campaign entirely.</p>
+                    <h3 class="font-heading text-sm font-bold text-ink uppercase mb-3 border-b border-gray-300 pb-1">Classes</h3>
+                    <p class="text-[10px] font-serif text-gray-500 italic mb-4">Set the name and which codex systems each class uses. Mark as "Hidden" to remove them from your campaign entirely.</p>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="vocation-settings-grid">
                         <!-- Populated by JS -->
                     </div>
@@ -292,7 +292,7 @@
     <div id="import-modal" class="modal-overlay hidden z-[960]">
         <div class="modal-container max-w-5xl text-center bg-wood !border-gray-600 shadow-2xl max-h-[85vh] overflow-y-auto scrollbar-hide">
             <h2 class="font-heading text-3xl font-black text-gold uppercase tracking-widest mb-2 border-b-2 border-gray-700 pb-4">Codex Archives</h2>
-            <p class="text-sm font-serif text-gray-400 italic mb-8 mt-4">Browse and import script packs crafted by masters across the realms. <br>Warning: Importing a pack will add its contents to your current codex.</p>
+            <p class="text-sm font-serif text-gray-400 italic mb-8 mt-4">Browse and import packs crafted by masters across the realms. <br>Warning: Importing a pack will add its contents to your current codex.</p>
             
             <div id="import-loading" class="hidden text-gold mb-8"><i class="fa-solid fa-spinner fa-spin text-3xl"></i></div>
             <div id="import-packs-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 text-left">
