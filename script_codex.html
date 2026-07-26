@@ -236,6 +236,15 @@
                         <div><label class="tiny-label">Spellcasting</label><input type="text" id="term-nav_scripts" class="form-input" placeholder="Scriptcasting"></div>
                     </div>
                 </div>
+
+                <div>
+                    <h3 class="font-heading text-sm font-bold text-ink uppercase mb-3 border-b border-gray-300 pb-1">Script Types</h3>
+                    <div>
+                        <label class="tiny-label">Available Types (Comma Separated)</label>
+                        <input type="text" id="term-script_types" class="form-input" placeholder="Concord, Anomaly, Gravitic, Temporal, Techno, Ancestral, Resonant, Voidscript">
+                        <p class="text-[10px] text-gray-500 italic mt-1">Customize the available options in the Script Type dropdown when inscribing or editing scripts.</p>
+                    </div>
+                </div>
                 
                 <div>
                     <h3 class="font-heading text-sm font-bold text-ink uppercase mb-3 border-b border-gray-300 pb-1">Progression Tables</h3>
@@ -505,7 +514,12 @@
                 </div>
 
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div id="field-type"><label class="tiny-label">Script Types (Optional)</label><input type="text" id="script-type" class="form-input" placeholder="Ritual"></div>
+                    <div id="field-type">
+                        <label class="tiny-label">Script Types (Optional)</label>
+                        <select id="script-type" class="form-input bg-white/70 font-serif">
+                            <!-- Populated dynamically from settings -->
+                        </select>
+                    </div>
                     <div><label id="label-activation" class="tiny-label">Activation</label><input type="text" id="script-activation" class="form-input" placeholder="1 Action"></div>
                     <div><label class="tiny-label">Range</label><input type="text" id="script-range" class="form-input" placeholder="60 feet"></div>
                     <div><label class="tiny-label">Duration</label><input type="text" id="script-duration" class="form-input" placeholder="Instantaneous"></div>
@@ -582,7 +596,7 @@
             <div class="sticky top-0 bg-[#f1e5c5] p-6 border-b-2 border-gold z-10 flex justify-between items-center shadow-md">
                 <div>
                     <h2 class="font-heading text-2xl font-black text-blood uppercase tracking-widest leading-none">Codex Definitions</h2>
-                    <p class="text-xs font-serif text-ink italic mt-1">Foundational rules of magic and spellcasting.</p>
+                    <p class="text-xs font-serif text-ink italic mt-1">Foundational rules of your world.</p>
                 </div>
                 <div class="flex items-center gap-4">
                     <button id="btn-edit-definitions" onclick="window.toggleDefinitionsEditMode(true)" class="hidden text-xs font-bold text-gray-600 uppercase tracking-widest hover:text-ink"><i class="fa-solid fa-pen mr-1"></i>Edit</button>
@@ -1030,6 +1044,17 @@
         let currentViewingPack = null;
         let packMessagesUnsubscribe = null;
 
+        const DEFAULT_SCRIPT_TYPES = [
+            "Concord",
+            "Anomaly",
+            "Gravitic",
+            "Temporal",
+            "Techno",
+            "Ancestral",
+            "Resonant",
+            "Voidscript"
+        ];
+
         const VOC_KEYS = [
             { id: 'class_vanguard', default: 'Vanguard', type: 'features' },
             { id: 'class_warrior', default: 'Warrior', type: 'features' },
@@ -1292,20 +1317,7 @@
         };
 
         // --- DEFINITIONS HANDLING ---
-        const DEFAULT_DEFINITIONS = `**Scriptcasting**
-The Eternal Heart saturates Aeonfall with unseen energies. Across the world, these energies can be shaped into precise patterns known as **Scripts**.
-
-### What Is a Script?
-A Script is a structured expression of Heart-energy.
-
-When a Scriptcaster uses a Script, they shape the invisible currents of the Eternal Heart into a specific pattern that produces a desired effect.
-
-### Script Tier
-Every Script belongs to a **Tier** from 0 to 9. A Script's Tier represents the complexity and power required to shape Heart-energy into that effect.
-- **Tier 0:** Tricks
-- **Tier 1–3:** Basic Scripts
-- **Tier 4–6:** Advanced Scripts
-- **Tier 7–9:** Master Scripts`;
+        const DEFAULT_DEFINITIONS = "";
 
         window.parseMarkdown = (text) => {
             if (!text) return '';
@@ -1328,7 +1340,12 @@ Every Script belongs to a **Tier** from 0 to 9. A Script's Tier represents the c
 
         window.renderDefinitions = () => {
             const container = document.getElementById('definitions-view');
-            if (container) container.innerHTML = window.parseMarkdown(customDefinitions || DEFAULT_DEFINITIONS);
+            if (!container) return;
+            if (customDefinitions && customDefinitions.trim() !== "") {
+                container.innerHTML = window.parseMarkdown(customDefinitions);
+            } else {
+                container.innerHTML = `<div class="py-12 text-center text-gray-500 font-serif italic"><i class="fa-solid fa-book-open text-3xl mb-3 opacity-50 block"></i>No codex definitions have been inscribed for this campaign yet.</div>`;
+            }
         };
 
         window.toggleDefinitionsEditMode = (editMode) => {
@@ -1338,7 +1355,7 @@ Every Script belongs to a **Tier** from 0 to 9. A Script's Tier represents the c
             if (editMode) {
                 viewDiv.classList.add('hidden');
                 editDiv.classList.remove('hidden');
-                document.getElementById('definitions-textarea').value = customDefinitions || DEFAULT_DEFINITIONS;
+                document.getElementById('definitions-textarea').value = customDefinitions || '';
             } else {
                 viewDiv.classList.remove('hidden');
                 editDiv.classList.add('hidden');
@@ -1406,6 +1423,7 @@ Every Script belongs to a **Tier** from 0 to 9. A Script's Tier represents the c
                 safeSetVal('term-nav_all_records', terms.nav_all_records, 'All Records');
                 safeSetVal('term-nav_features', terms.nav_features, 'Combat Features');
                 safeSetVal('term-nav_scripts', terms.nav_scripts, 'Scriptcasting');
+                safeSetVal('term-script_types', terms.script_types, DEFAULT_SCRIPT_TYPES.join(', '));
                 
                 safeSetVal('term-prog_combat', terms.prog_combat, 'Features Progression');
                 safeSetVal('term-prog_scripts', terms.prog_scripts, 'Features Progression');
@@ -1452,6 +1470,7 @@ Every Script belongs to a **Tier** from 0 to 9. A Script's Tier represents the c
                 nav_all_records: getVal('term-nav_all_records') || 'All Records',
                 nav_features: getVal('term-nav_features') || 'Combat Features',
                 nav_scripts: getVal('term-nav_scripts') || 'Scriptcasting',
+                script_types: getVal('term-script_types') || DEFAULT_SCRIPT_TYPES.join(', '),
                 
                 prog_combat: getVal('term-prog_combat') || 'Features Progression',
                 prog_scripts: getVal('term-prog_scripts') || 'Features Progression'
@@ -1473,6 +1492,27 @@ Every Script belongs to a **Tier** from 0 to 9. A Script's Tier represents the c
                 console.error(err);
                 window.showToast("Error saving terminology.");
             }
+        };
+
+        window.renderScriptTypeSelect = (selectedValue = '') => {
+            const selectEl = document.getElementById('script-type');
+            if (!selectEl) return;
+
+            const rawTypes = campaignSettings?.terms?.script_types || DEFAULT_SCRIPT_TYPES.join(', ');
+            const typeList = rawTypes.split(',').map(t => t.trim()).filter(t => t.length > 0);
+
+            let optionsHtml = `<option value="">-- None / Standard --</option>`;
+            typeList.forEach(t => {
+                optionsHtml += `<option value="${t}">${t}</option>`;
+            });
+
+            // If selected value exists but isn't in the preset list, add it dynamically so it isn't lost
+            if (selectedValue && !typeList.includes(selectedValue)) {
+                optionsHtml += `<option value="${selectedValue}">${selectedValue}</option>`;
+            }
+
+            selectEl.innerHTML = optionsHtml;
+            selectEl.value = selectedValue;
         };
 
         // --- STREAMING_CHUNK:Building script data rendering functionality... ---
@@ -1616,7 +1656,9 @@ Every Script belongs to a **Tier** from 0 to 9. A Script's Tier represents the c
                 document.getElementById('script-name').value = s.name || '';
                 document.getElementById('script-level').value = s.level || '0';
                 document.getElementById('script-school').value = s.school || '';
-                document.getElementById('script-type').value = s.sType || '';
+                
+                window.renderScriptTypeSelect(s.sType || '');
+
                 document.getElementById('script-activation').value = s.activation || '';
                 document.getElementById('script-range').value = s.range || '';
                 document.getElementById('script-comp').value = s.comp || '';
@@ -1644,7 +1686,9 @@ Every Script belongs to a **Tier** from 0 to 9. A Script's Tier represents the c
                 document.getElementById('script-level').value = defaultLvl;
                 
                 document.getElementById('script-school').value = '';
-                document.getElementById('script-type').value = '';
+                
+                window.renderScriptTypeSelect('');
+
                 document.getElementById('script-activation').value = '';
                 document.getElementById('script-range').value = '';
                 document.getElementById('script-comp').value = '';
