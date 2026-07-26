@@ -1501,7 +1501,7 @@
             const rawTypes = campaignSettings?.terms?.script_types || DEFAULT_SCRIPT_TYPES.join(', ');
             const typeList = rawTypes.split(',').map(t => t.trim()).filter(t => t.length > 0);
 
-            let optionsHtml = `<option value="">-- None / Standard --</option>`;
+            let optionsHtml = `<option value=""> None</option>`;
             typeList.forEach(t => {
                 optionsHtml += `<option value="${t}">${t}</option>`;
             });
