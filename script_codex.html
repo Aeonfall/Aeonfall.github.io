@@ -238,8 +238,8 @@
                     <div class="mb-2">
                         <label class="tiny-label">Active Systems</label>
                         <select id="term-codex_mode" class="form-input bg-white/70">
-                            <option value="both">Hybrid (Both Features & Spells)</option>
-                            <option value="features_only">Features Only (No Spellcasting)</option>
+                            <option value="both">Hybrid (Both Features & Scripts)</option>
+                            <option value="features_only">Features Only (No Scriptcasting)</option>
                             <option value="scripts_only">Scripts Only (No Combat Features)</option>
                         </select>
                         <p class="text-[10px] text-gray-500 italic mt-1">This governs what options are available throughout the Codex.</p>
@@ -259,8 +259,8 @@
                     <h3 class="font-heading text-sm font-bold text-ink uppercase mb-3 border-b border-gray-300 pb-1">Scriptcasting Customization</h3>
                     <div>
                         <label class="tiny-label">Script Types (Comma Separated)</label>
-                        <input type="text" id="term-script_types" class="form-input" placeholder="Ritual">
-                        <p class="text-[10px] text-gray-500 italic mt-1">Customize the spell categories available in the inscription dropdown menu.</p>
+                        <input type="text" id="term-script_types" class="form-input" placeholder="E.g. Concord, Anomaly, Gravitic, Temporal, Techno, Ancestral, Resonant, Voidscript">
+                        <p class="text-[10px] text-gray-500 italic mt-1">Customize the script categories available in the inscription dropdown menu.</p>
                     </div>
                 </div>
                 
@@ -268,13 +268,13 @@
                     <h3 class="font-heading text-sm font-bold text-ink uppercase mb-3 border-b border-gray-300 pb-1">Progression Tables</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div><label class="tiny-label">Combat Table Title</label><input type="text" id="term-prog_combat" class="form-input" placeholder="Features Progression"></div>
-                        <div><label class="tiny-label">Spellcasting Table Title</label><input type="text" id="term-prog_scripts" class="form-input" placeholder="Features Progression"></div>
+                        <div><label class="tiny-label">Scriptcasting Table Title</label><input type="text" id="term-prog_scripts" class="form-input" placeholder="Features Progression"></div>
                     </div>
                 </div>
 
                 <div>
-                    <h3 class="font-heading text-sm font-bold text-ink uppercase mb-3 border-b border-gray-300 pb-1">Classes</h3>
-                    <p class="text-[10px] font-serif text-gray-500 italic mb-4">Set the name and which codex systems each calles uses. Mark as "Hidden" to remove them from your campaign entirely.</p>
+                    <h3 class="font-heading text-sm font-bold text-ink uppercase mb-3 border-b border-gray-300 pb-1">Vocations (Classes)</h3>
+                    <p class="text-[10px] font-serif text-gray-500 italic mb-4">Set the name and which codex systems each vocation uses. Mark as "Hidden" to remove them from your campaign entirely.</p>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="vocation-settings-grid">
                         <!-- Populated by JS -->
                     </div>
@@ -292,7 +292,7 @@
     <div id="import-modal" class="modal-overlay hidden z-[960]">
         <div class="modal-container max-w-5xl text-center bg-wood !border-gray-600 shadow-2xl max-h-[85vh] overflow-y-auto scrollbar-hide">
             <h2 class="font-heading text-3xl font-black text-gold uppercase tracking-widest mb-2 border-b-2 border-gray-700 pb-4">Codex Archives</h2>
-            <p class="text-sm font-serif text-gray-400 italic mb-8 mt-4">Browse and import packs crafted by masters across the realms. <br>Warning: Importing a pack will add its contents to your current codex.</p>
+            <p class="text-sm font-serif text-gray-400 italic mb-8 mt-4">Browse and import script packs crafted by masters across the realms. <br>Warning: Importing a pack will add its contents to your current codex.</p>
             
             <div id="import-loading" class="hidden text-gold mb-8"><i class="fa-solid fa-spinner fa-spin text-3xl"></i></div>
             <div id="import-packs-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 text-left">
@@ -1065,22 +1065,22 @@
         let packMessagesUnsubscribe = null;
 
         const VOC_KEYS = [
-            { id: 'class_vanguard', default: 'Vanguard', type: 'features' },
-            { id: 'class_warrior', default: 'Warrior', type: 'features' },
-            { id: 'class_peacemaker', default: 'Peacemaker', type: 'features' },
-            { id: 'class_scavenger', default: 'Scavenger', type: 'features' },
-            { id: 'class_heartbound', default: 'Heartbound', type: 'both' },
-            { id: 'class_nomad', default: 'Nomad', type: 'both' },
-            { id: 'class_warden', default: 'Wilderness Warden', type: 'scripts' },
-            { id: 'class_chronicler', default: 'Chronicler', type: 'scripts' },
-            { id: 'class_orator', default: 'Orator', type: 'scripts' },
-            { id: 'class_scriptweaver', default: 'Scriptweaver', type: 'scripts' },
-            { id: 'class_wartouched', default: 'War-Touched', type: 'scripts' },
-            { id: 'class_archivist', default: 'Archivist', type: 'scripts' },
-            { id: 'class_fabricator', default: 'Fabricator', type: 'scripts' }
+            { id: 'class_vanguard', default: 'Barbarian', dndName: 'Barbarian', customAlias: 'Vanguard', type: 'features' },
+            { id: 'class_warrior', default: 'Fighter', dndName: 'Fighter', customAlias: 'Warrior', type: 'features' },
+            { id: 'class_peacemaker', default: 'Monk', dndName: 'Monk', customAlias: 'Peacemaker', type: 'features' },
+            { id: 'class_scavenger', default: 'Rogue', dndName: 'Rogue', customAlias: 'Scavenger', type: 'features' },
+            { id: 'class_heartbound', default: 'Paladin', dndName: 'Paladin', customAlias: 'Heartbound', type: 'both' },
+            { id: 'class_nomad', default: 'Ranger', dndName: 'Ranger', customAlias: 'Nomad', type: 'both' },
+            { id: 'class_warden', default: 'Druid', dndName: 'Druid', customAlias: 'Wilderness Warden', type: 'scripts' },
+            { id: 'class_chronicler', default: 'Cleric', dndName: 'Cleric', customAlias: 'Chronicler', type: 'scripts' },
+            { id: 'class_orator', default: 'Bard', dndName: 'Bard', customAlias: 'Orator', type: 'scripts' },
+            { id: 'class_scriptweaver', default: 'Sorcerer', dndName: 'Sorcerer', customAlias: 'Scriptweaver', type: 'scripts' },
+            { id: 'class_wartouched', default: 'Warlock', dndName: 'Warlock', customAlias: 'War-Touched', type: 'scripts' },
+            { id: 'class_archivist', default: 'Wizard', dndName: 'Wizard', customAlias: 'Archivist', type: 'scripts' },
+            { id: 'class_fabricator', default: 'Artificer', dndName: 'Artificer', customAlias: 'Fabricator', type: 'scripts' }
         ];
 
-        // --- ONBOARDING FOR NEW CAMPAIGNS ---
+        // --- ONBOARDING FOR NEW CAMPAIGN ---
         window.checkNewCampaignOnboarding = (isDM) => {
             if (!isDM) return;
             const campaignKey = `seen_onboarding_${appId}`;
@@ -1108,7 +1108,7 @@
             const select = document.getElementById('script-type');
             if (!select) return;
 
-            let typesList = DEFAULT_SCRIPT_TYPES;
+            let typesList = [];
             if (campaignSettings?.terms?.script_types) {
                 typesList = campaignSettings.terms.script_types.split(',').map(s => s.trim()).filter(Boolean);
             }
@@ -1119,7 +1119,7 @@
             });
 
             if (selectedVal && !typesList.includes(selectedVal)) {
-                html += `<option value="${selectedVal}" selected>${selectedVal} (Custom)</option>`;
+                html += `<option value="${selectedVal}" selected>${selectedVal}</option>`;
             }
 
             select.innerHTML = html;
@@ -1471,7 +1471,7 @@
                 safeSetVal('term-nav_features', terms.nav_features, 'Combat Features');
                 safeSetVal('term-nav_scripts', terms.nav_scripts, 'Scriptcasting');
                 
-                safeSetVal('term-script_types', terms.script_types, DEFAULT_SCRIPT_TYPES.join(', '));
+                safeSetVal('term-script_types', terms.script_types, '');
 
                 safeSetVal('term-prog_combat', terms.prog_combat, 'Features Progression');
                 safeSetVal('term-prog_scripts', terms.prog_scripts, 'Features Progression');
@@ -1484,7 +1484,7 @@
                     
                     vocGrid.innerHTML += `
                         <div class="flex flex-col gap-1 bg-black/5 p-3 rounded border border-gray-300/50 shadow-inner">
-                            <label class="tiny-label">${v.default} Slot</label>
+                            <label class="tiny-label">${v.dndName.toUpperCase()} SLOT (${v.customAlias.toUpperCase()})</label>
                             <input type="text" id="term-${v.id}" class="form-input text-xs font-bold" value="${currentName}" placeholder="${v.default}">
                             <select id="type-${v.id}" class="form-input text-xs mt-1 bg-white/70">
                                 <option value="both" ${currentType==='both'?'selected':''}>Hybrid (Both)</option>
@@ -1518,7 +1518,7 @@
                 nav_all_records: getVal('term-nav_all_records') || 'All Records',
                 nav_features: getVal('term-nav_features') || 'Combat Features',
                 nav_scripts: getVal('term-nav_scripts') || 'Scriptcasting',
-                script_types: getVal('term-script_types') || DEFAULT_SCRIPT_TYPES.join(', '),
+                script_types: getVal('term-script_types'),
                 prog_combat: getVal('term-prog_combat') || 'Features Progression',
                 prog_scripts: getVal('term-prog_scripts') || 'Features Progression'
             };
@@ -1575,9 +1575,10 @@
                 const targetVoc = VOC_KEYS.find(v => v.id === currentVocationFilter);
                 if (targetVoc) {
                     const searchName = (campaignSettings?.terms?.[targetVoc.id] || targetVoc.default).toLowerCase();
+                    const aliasName = (targetVoc.customAlias || '').toLowerCase();
                     visibleScripts = visibleScripts.filter(s => {
                         const lists = (s.lists || '').toLowerCase();
-                        return lists.includes(searchName);
+                        return lists.includes(searchName) || (aliasName && lists.includes(aliasName));
                     });
                 }
             }
