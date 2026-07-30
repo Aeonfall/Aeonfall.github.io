@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -916,58 +916,7 @@
                 return window.showToast("No spells found in the codex.");
             }
 
-            // Sort spells alphabetically, then by level
-            spellList.sort((a, b) => {
-                const lvlA = parseInt(a.level) || 0;
-                const lvlB = parseInt(b.level) || 0;
-                if (lvlA !== lvlB) return lvlA - lvlB;
-                return (a.name || '').localeCompare(b.name || '');
-            });
-
             const campaignName = document.title.split(' - ')[0] || "Campaign";
-
-            // Prepare table data
-            const tableColumns = [
-                { header: 'Spell Name', dataKey: 'name' },
-                { header: 'School', dataKey: 'school' },
-                { header: 'Casting Time', dataKey: 'time' },
-                { header: 'Range', dataKey: 'range' },
-                { header: 'Duration', dataKey: 'duration' },
-                { header: 'Components', dataKey: 'comp' }
-            ];
-
-            const tableData = spellList.map(s => {
-                let lvlTxt = s.level === '0' ? 'Trick' : `Level ${s.level}`;
-                
-                // Extract base components (V, S, M)
-                let compRaw = s.comp || '';
-                let compShort = [];
-                if (compRaw.toLowerCase().includes('v')) compShort.push('V');
-                if (compRaw.toLowerCase().includes('s')) compShort.push('S');
-                if (compRaw.toLowerCase().includes('m')) compShort.push('M');
-                let finalComp = compShort.length > 0 ? compShort.join(', ') : '';
-                
-                // Truncate casting time to fit table better
-                let shortTime = s.activation || '';
-                shortTime = shortTime.replace(/1 Action/gi, '1 Action');
-                shortTime = shortTime.replace(/1 Bonus Action/gi, '1 B.Action');
-                shortTime = shortTime.replace(/1 Reaction/gi, '1 Reaction');
-
-                // Add Ritual tag if present
-                let namePrefix = s.name || 'Unnamed';
-                if (s.sType && s.sType.toLowerCase().includes('ritual')) {
-                    namePrefix += ' (R)';
-                }
-
-                return {
-                    name: namePrefix,
-                    school: s.school || 'Universal',
-                    time: shortTime,
-                    range: s.range || '--',
-                    duration: s.duration || '--',
-                    comp: finalComp || '--'
-                };
-            });
 
             // Set up document properties
             doc.setProperties({
@@ -980,48 +929,126 @@
             const headerBgColor = [156, 126, 75]; // Gold/Brown
             const rowAltBgColor = [245, 245, 245]; // Light gray zebra striping
 
-            // Generate Table
-            doc.autoTable({
-                columns: tableColumns,
-                body: tableData,
-                theme: 'grid',
-                headStyles: { 
-                    fillColor: headerBgColor, 
-                    textColor: [255, 255, 255], 
-                    fontStyle: 'bold', 
-                    fontSize: 9,
-                    halign: 'left',
-                    lineWidth: 0
-                },
-                bodyStyles: { 
-                    fontSize: 8, 
-                    textColor: [50, 50, 50],
-                    cellPadding: {top: 2, right: 2, bottom: 2, left: 2}
-                },
-                alternateRowStyles: { 
-                    fillColor: rowAltBgColor 
-                },
-                columnStyles: {
-                    name: { cellWidth: 40, fontStyle: 'bold' },
-                    school: { cellWidth: 25 },
-                    time: { cellWidth: 25 },
-                    range: { cellWidth: 25 },
-                    duration: { cellWidth: 40 },
-                    comp: { cellWidth: 'auto', halign: 'center' }
-                },
-                margin: { top: 15, left: 10, right: 10 },
-                didDrawPage: function (data) {
-                    // Header text on each page
-                    doc.setFontSize(14);
-                    doc.setTextColor(100, 100, 100);
-                    doc.text(`${campaignName} - Spell Codex`, data.settings.margin.left, 10);
+            // Prepare table configuration
+            const tableColumns = [
+                { header: 'Spell Name', dataKey: 'name' },
+                { header: 'School', dataKey: 'school' },
+                { header: 'Casting Time', dataKey: 'time' },
+                { header: 'Range', dataKey: 'range' },
+                { header: 'Duration', dataKey: 'duration' },
+                { header: 'Components', dataKey: 'comp' }
+            ];
+
+            let currentY = 15;
+
+            // Iterate through levels 0 (Tricks) to 9
+            for (let lvl = 0; lvl <= 9; lvl++) {
+                let levelSpells = spellList.filter(s => (parseInt(s.level) || 0) === lvl);
+                
+                if (levelSpells.length === 0) continue; // Skip levels with no spells
+
+                // Sort spells alphabetically within the level
+                levelSpells.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+                const tableData = levelSpells.map(s => {
+                    // Extract base components (V, S, M)
+                    let compRaw = s.comp || '';
+                    let compShort = [];
+                    if (compRaw.toLowerCase().includes('v')) compShort.push('V');
+                    if (compRaw.toLowerCase().includes('s')) compShort.push('S');
+                    if (compRaw.toLowerCase().includes('m')) compShort.push('M');
+                    let finalComp = compShort.length > 0 ? compShort.join(', ') : '';
                     
-                    // Footer pagination
-                    doc.setFontSize(8);
-                    const str = 'Page ' + doc.internal.getNumberOfPages();
-                    doc.text(str, data.settings.margin.left, doc.internal.pageSize.height - 10);
+                    // Truncate casting time to fit table better
+                    let shortTime = s.activation || '';
+                    shortTime = shortTime.replace(/1 Action/gi, '1 Action');
+                    shortTime = shortTime.replace(/1 Bonus Action/gi, '1 B.Action');
+                    shortTime = shortTime.replace(/1 Reaction/gi, '1 Reaction');
+
+                    // Add Ritual tag if present
+                    let namePrefix = s.name || 'Unnamed';
+                    if (s.sType && s.sType.toLowerCase().includes('ritual')) {
+                        namePrefix += ' (R)';
+                    }
+
+                    return {
+                        name: namePrefix,
+                        school: s.school || 'Universal',
+                        time: shortTime,
+                        range: s.range || '--',
+                        duration: s.duration || '--',
+                        comp: finalComp || '--'
+                    };
+                });
+
+                let levelTitle = lvl === 0 ? "Tricks (Level 0)" : `Level ${lvl} Spells`;
+
+                // Add a new page if the remaining space is too small for a header and at least one row
+                if (currentY > doc.internal.pageSize.height - 35) {
+                    doc.addPage();
+                    currentY = 15;
                 }
-            });
+
+                // Draw Section Header
+                doc.setFontSize(14);
+                doc.setTextColor(156, 126, 75); // Gold/Brown to match header
+                doc.setFont("helvetica", "bold");
+                doc.text(levelTitle, 10, currentY + 5);
+                currentY += 8;
+
+                // Generate Table for this specific level
+                doc.autoTable({
+                    startY: currentY,
+                    columns: tableColumns,
+                    body: tableData,
+                    theme: 'grid',
+                    headStyles: { 
+                        fillColor: headerBgColor, 
+                        textColor: [255, 255, 255], 
+                        fontStyle: 'bold', 
+                        fontSize: 9,
+                        halign: 'left',
+                        lineWidth: 0
+                    },
+                    bodyStyles: { 
+                        fontSize: 8, 
+                        textColor: [50, 50, 50],
+                        cellPadding: {top: 2, right: 2, bottom: 2, left: 2}
+                    },
+                    alternateRowStyles: { 
+                        fillColor: rowAltBgColor 
+                    },
+                    columnStyles: {
+                        name: { cellWidth: 40, fontStyle: 'bold' },
+                        school: { cellWidth: 25 },
+                        time: { cellWidth: 25 },
+                        range: { cellWidth: 25 },
+                        duration: { cellWidth: 40 },
+                        comp: { cellWidth: 'auto', halign: 'center' }
+                    },
+                    margin: { left: 10, right: 10 }
+                });
+
+                // Update Y position for the next table
+                currentY = doc.lastAutoTable.finalY + 12;
+            }
+
+            // Apply Headers and Footers to all pages at the end
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                
+                // Header text
+                doc.setFontSize(10);
+                doc.setTextColor(150, 150, 150);
+                doc.setFont("helvetica", "normal");
+                doc.text(`${campaignName} - Spell Codex`, 10, 10);
+                
+                // Footer pagination
+                doc.setFontSize(8);
+                const str = `Page ${i} of ${pageCount}`;
+                doc.text(str, 10, doc.internal.pageSize.height - 8);
+            }
 
             // Download PDF
             doc.save(`${campaignName.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_spells.pdf`);
