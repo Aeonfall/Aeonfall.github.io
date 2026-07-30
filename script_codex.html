@@ -7,6 +7,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    
+    <!-- jsPDF and AutoTable for PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
     <script>
         tailwind.config = {
@@ -31,7 +35,7 @@
 
     <style>
         body { font-family: 'Lora', serif; background-color: #1a110b; color: #2c1e16; overflow-x: hidden; 
-            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20.5V18H0v-2h20v-2H0v-2h20v-2H0V8h20V6H0V4h20V2H0V0h22v20h2V0h2v20h2V0h2v20h2V0h2v20h2v2H20v-1.5zM0 20h2v20H0V20zm4 0h2v20H4V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 4h20v2H20v-2zm0 4h20v2H20v-2zm0 4h20v2H20v-2zm0 4h20v2H20v-2z' fill='%232c1e16' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20.5V18H0v-2h20v-2H0v-2h20v-2H0V8h20V6H0V4h20V2H0V0h22v20h2V0h2v20h2V0h2v20h2V0h2v20h2V0h2v20h2v2H20v-1.5zM0 20h2v20H0V20zm4 0h2v20H4V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 4h20v2H20v-2zm0 4h20v2H20v-2zm0 4h20v2H20v-2zm0 4h20v2H20v-2z' fill='%232c1e16' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E");
         }
         
         .dashboard-bg { background-color: transparent; }
@@ -188,6 +192,7 @@
                     <h2 id="view-title" class="text-2xl md:text-3xl font-heading text-gold font-bold uppercase tracking-widest drop-shadow text-center lg:text-left w-full lg:w-auto">All Records — Tricks</h2>
                     
                     <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto justify-center lg:justify-end shrink-0">
+                        <button id="btn-export-pdf" onclick="window.exportToPDF()" class="hidden fantasy-btn-alt px-4 py-2.5 rounded text-[10px] uppercase font-bold tracking-widest shadow-lg border-green-700 text-green-400 hover:text-white hover:border-green-400"><i class="fa-solid fa-file-pdf mr-2"></i>Export PDF</button>
                         <button id="btn-view-progression" onclick="window.openProgressionModal()" class="hidden fantasy-btn-alt px-4 py-2.5 rounded text-[10px] uppercase font-bold tracking-widest shadow-lg border-indigo-700 text-indigo-400 hover:text-white hover:border-indigo-400"><i class="fa-solid fa-list-ol mr-2"></i>Progression</button>
                         <button id="btn-import" onclick="window.openImportModal()" class="hidden fantasy-btn-alt px-4 py-2.5 rounded text-[10px] uppercase font-bold tracking-widest shadow-lg"><i class="fa-solid fa-download mr-2"></i>Codex Packs</button>
                         <button id="btn-publish-pack" onclick="window.openCreatePackModal()" class="hidden fantasy-btn-alt px-4 py-2.5 rounded text-[10px] uppercase font-bold tracking-widest shadow-lg border-indigo-700 text-indigo-400 hover:text-white hover:border-indigo-400"><i class="fa-solid fa-upload mr-2"></i>Publish Pack</button>
@@ -890,6 +895,136 @@
         window.showToast = (m) => { 
             const t = document.getElementById('toast'); 
             if(t){ t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 4000); } 
+        };
+
+        // --- PDF EXPORT LOGIC ---
+        window.exportToPDF = () => {
+            if (!scripts || scripts.length === 0) {
+                return window.showToast("Codex is empty. Nothing to export.");
+            }
+
+            window.showToast("Generating PDF...");
+            const { jsPDF } = window.jspdf;
+            
+            // Create PDF in portrait orientation
+            const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+            
+            // Filter to ONLY scriptcasting (no combat features)
+            let spellList = scripts.filter(s => s.entryType !== 'features');
+            
+            if (spellList.length === 0) {
+                return window.showToast("No spells found in the codex.");
+            }
+
+            // Sort spells alphabetically, then by level
+            spellList.sort((a, b) => {
+                const lvlA = parseInt(a.level) || 0;
+                const lvlB = parseInt(b.level) || 0;
+                if (lvlA !== lvlB) return lvlA - lvlB;
+                return (a.name || '').localeCompare(b.name || '');
+            });
+
+            const campaignName = document.title.split(' - ')[0] || "Campaign";
+
+            // Prepare table data
+            const tableColumns = [
+                { header: 'Spell Name', dataKey: 'name' },
+                { header: 'School', dataKey: 'school' },
+                { header: 'Casting Time', dataKey: 'time' },
+                { header: 'Range', dataKey: 'range' },
+                { header: 'Duration', dataKey: 'duration' },
+                { header: 'Components', dataKey: 'comp' }
+            ];
+
+            const tableData = spellList.map(s => {
+                let lvlTxt = s.level === '0' ? 'Trick' : `Level ${s.level}`;
+                
+                // Extract base components (V, S, M)
+                let compRaw = s.comp || '';
+                let compShort = [];
+                if (compRaw.toLowerCase().includes('v')) compShort.push('V');
+                if (compRaw.toLowerCase().includes('s')) compShort.push('S');
+                if (compRaw.toLowerCase().includes('m')) compShort.push('M');
+                let finalComp = compShort.length > 0 ? compShort.join(', ') : '';
+                
+                // Truncate casting time to fit table better
+                let shortTime = s.activation || '';
+                shortTime = shortTime.replace(/1 Action/gi, '1 Action');
+                shortTime = shortTime.replace(/1 Bonus Action/gi, '1 B.Action');
+                shortTime = shortTime.replace(/1 Reaction/gi, '1 Reaction');
+
+                // Add Ritual tag if present
+                let namePrefix = s.name || 'Unnamed';
+                if (s.sType && s.sType.toLowerCase().includes('ritual')) {
+                    namePrefix += ' (R)';
+                }
+
+                return {
+                    name: namePrefix,
+                    school: s.school || 'Universal',
+                    time: shortTime,
+                    range: s.range || '--',
+                    duration: s.duration || '--',
+                    comp: finalComp || '--'
+                };
+            });
+
+            // Set up document properties
+            doc.setProperties({
+                title: `${campaignName} - Spell Codex`,
+                subject: 'Exported Spells from Chronicles Nexus',
+                creator: 'Chronicles Nexus'
+            });
+
+            // Styling colors based on the image style request
+            const headerBgColor = [156, 126, 75]; // Gold/Brown
+            const rowAltBgColor = [245, 245, 245]; // Light gray zebra striping
+
+            // Generate Table
+            doc.autoTable({
+                columns: tableColumns,
+                body: tableData,
+                theme: 'grid',
+                headStyles: { 
+                    fillColor: headerBgColor, 
+                    textColor: [255, 255, 255], 
+                    fontStyle: 'bold', 
+                    fontSize: 9,
+                    halign: 'left',
+                    lineWidth: 0
+                },
+                bodyStyles: { 
+                    fontSize: 8, 
+                    textColor: [50, 50, 50],
+                    cellPadding: {top: 2, right: 2, bottom: 2, left: 2}
+                },
+                alternateRowStyles: { 
+                    fillColor: rowAltBgColor 
+                },
+                columnStyles: {
+                    name: { cellWidth: 40, fontStyle: 'bold' },
+                    school: { cellWidth: 25 },
+                    time: { cellWidth: 25 },
+                    range: { cellWidth: 25 },
+                    duration: { cellWidth: 40 },
+                    comp: { cellWidth: 'auto', halign: 'center' }
+                },
+                margin: { top: 15, left: 10, right: 10 },
+                didDrawPage: function (data) {
+                    // Header text on each page
+                    doc.setFontSize(14);
+                    doc.setTextColor(100, 100, 100);
+                    doc.text(`${campaignName} - Spell Codex`, data.settings.margin.left, 10);
+                    
+                    // Footer pagination
+                    doc.setFontSize(8);
+                    const str = 'Page ' + doc.internal.getNumberOfPages();
+                    doc.text(str, data.settings.margin.left, doc.internal.pageSize.height - 10);
+                }
+            });
+
+            // Download PDF
+            doc.save(`${campaignName.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_spells.pdf`);
         };
 
         window.routeTo = (page) => {
@@ -2305,7 +2440,7 @@
                             <p class="text-[8px] font-heading font-bold text-gray-500 uppercase tracking-widest mb-1">Included Archives:</p>
                             <div class="flex flex-wrap gap-1 mb-3">${getIncludedArchivesHTML(pack)}</div>
                             <div class="border-t border-gray-700 pt-2 flex justify-between items-center">
-                                <span class="text-[9px] text-gold font-bold uppercase tracking-widest">v${pack.version || 1} • Records: ${getTotalItems(pack)}</span>
+                                <span class="text-[9px] text-gold font-bold uppercase tracking-widest">v${pack.version || 1} • Records: ${(pack.scripts || []).length}</span>
                                 <span class="text-[9px] text-gray-500 font-bold uppercase tracking-widest flex items-center gap-1" title="Times Downloaded"><i class="fa-solid fa-download text-[8px]"></i>${pack.downloads || 0}</span>
                             </div>
                         </div>
@@ -2400,6 +2535,45 @@
             document.getElementById('pack-details-modal').classList.add('hidden');
             if (packMessagesUnsubscribe) { packMessagesUnsubscribe(); packMessagesUnsubscribe = null; }
             currentViewingPack = null;
+        };
+
+        window.postPackMessage = async () => {
+            const input = document.getElementById('pd-new-message');
+            const text = input.value.trim();
+            if (!text || !currentViewingPack || currentUser.role !== 'dm') return;
+            
+            input.value = '';
+            
+            const pathArgs = currentViewingPack.isPrivate
+                ? ['artifacts', 'global_codex', 'users', currentViewingPack.authorId, 'scriptPacks', currentViewingPack.id, 'messages']
+                : ['artifacts', 'global_codex', 'public', 'data', 'scriptPacks', currentViewingPack.id, 'messages'];
+                
+            try {
+                await addDoc(collection(db, ...pathArgs), {
+                    text: text, authorId: currentUser.uid, authorName: currentUser.username, timestamp: Date.now()
+                });
+            } catch (err) {
+                console.error("Failed to post message", err);
+                window.showToast("Failed to send message.");
+            }
+        };
+
+        window.deletePackMessage = async (msgId) => {
+            if (!currentViewingPack || !adminModeActive) return;
+            window.customConfirm("Erase this message from the archives?", async (confirmed) => {
+                if(!confirmed) return;
+                const pathArgs = currentViewingPack.isPrivate
+                    ? ['artifacts', 'global_codex', 'users', currentViewingPack.authorId, 'scriptPacks', currentViewingPack.id, 'messages', msgId]
+                    : ['artifacts', 'global_codex', 'public', 'data', 'scriptPacks', currentViewingPack.id, 'messages', msgId];
+                    
+                try {
+                    await deleteDoc(doc(db, ...pathArgs));
+                    window.showToast("Message erased.");
+                } catch(e) {
+                    console.error("Failed to delete message", e);
+                    window.showToast("Failed to erase message.");
+                }
+            });
         };
 
         window.confirmImportPack = () => {
@@ -2803,45 +2977,6 @@
             }
         };
 
-        window.postPackMessage = async () => {
-            const input = document.getElementById('pd-new-message');
-            const text = input.value.trim();
-            if (!text || !currentViewingPack || currentUser.role !== 'dm') return;
-            
-            input.value = '';
-            
-            const pathArgs = currentViewingPack.isPrivate
-                ? ['artifacts', 'global_codex', 'users', currentViewingPack.authorId, 'scriptPacks', currentViewingPack.id, 'messages']
-                : ['artifacts', 'global_codex', 'public', 'data', 'scriptPacks', currentViewingPack.id, 'messages'];
-                
-            try {
-                await addDoc(collection(db, ...pathArgs), {
-                    text: text, authorId: currentUser.uid, authorName: currentUser.username, timestamp: Date.now()
-                });
-            } catch (err) {
-                console.error("Failed to post message", err);
-                window.showToast("Failed to send message.");
-            }
-        };
-
-        window.deletePackMessage = async (msgId) => {
-            if (!currentViewingPack || !adminModeActive) return;
-            window.customConfirm("Erase this message from the archives?", async (confirmed) => {
-                if(!confirmed) return;
-                const pathArgs = currentViewingPack.isPrivate
-                    ? ['artifacts', 'global_codex', 'users', currentViewingPack.authorId, 'scriptPacks', currentViewingPack.id, 'messages', msgId]
-                    : ['artifacts', 'global_codex', 'public', 'data', 'scriptPacks', currentViewingPack.id, 'messages', msgId];
-                    
-                try {
-                    await deleteDoc(doc(db, ...pathArgs));
-                    window.showToast("Message erased.");
-                } catch(e) {
-                    console.error("Failed to delete message", e);
-                    window.showToast("Failed to erase message.");
-                }
-            });
-        };
-
         // --- AUTH & LISTENERS ---
         onAuthStateChanged(auth, async (u) => {
             if (!u) {
@@ -2884,6 +3019,9 @@
                 document.getElementById('btn-campaign-settings')?.classList.toggle('hidden', !isDM);
                 document.getElementById('btn-import')?.classList.toggle('hidden', !isDM);
                 document.getElementById('btn-publish-pack')?.classList.toggle('hidden', !isDM);
+                
+                // Show PDF export to DMs and Admins
+                document.getElementById('btn-export-pdf')?.classList.toggle('hidden', !(isDM || adminModeActive));
 
                 document.getElementById('initial-loading').classList.add('hidden');
                 document.getElementById('dashboard-screen').classList.remove('hidden');
