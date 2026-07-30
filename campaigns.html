@@ -69,7 +69,6 @@
         <h2 class="font-heading text-2xl text-parchment animate-pulse tracking-widest">Charting the Realms...</h2>
     </div>
 
-    <!-- MAIN DASHBOARD -->
     <div id="dashboard-screen" class="min-h-screen p-4 md:p-8 hidden w-full">
         <div class="max-w-6xl mx-auto">
             <!-- HEADER -->
@@ -183,7 +182,7 @@
                 <p class="text-[10px] text-gray-500 font-serif italic mb-2 text-center">Communicate privately. Find a user to begin.</p>
                 <div class="flex gap-2">
                     <input type="text" id="dm-search-input" class="form-input text-xs w-full py-1.5" placeholder="Search your contacts...">
-                    <button onclick="window.openCreateGroupModal()" class="bg-gray-800 hover:bg-gray-700 text-gold px-3 py-1.5 rounded text-xs border border-gray-600 w-full" title="Form Alliance"><i class="fa-solid fa-users mr-2"></i> Form Alliance</button>
+                    <button id="btn-form-alliance" onclick="window.openCreateGroupModal()" class="bg-gray-800 hover:bg-gray-700 text-gold px-3 py-1.5 rounded text-xs border border-gray-600 w-full" title="Form Alliance"><i class="fa-solid fa-users mr-2"></i> Form Alliance</button>
                 </div>
             </div>
             <div id="dm-contacts-list" class="flex-grow overflow-y-auto scrollbar-hide">
@@ -235,7 +234,20 @@
             <h2 class="font-heading text-2xl font-bold text-blood mb-2">Declare Thyself!</h2>
             <p id="username-modal-desc" class="text-sm font-serif text-ink mb-6 italic">The archives hold no record of your name, traveler. By what title shall the realm know you?</p>
             
-            <input type="text" id="missing-username-input" class="w-full bg-transparent border-b-2 border-gray-400 focus:border-blood text-ink py-2 text-lg font-serif outline-none placeholder-gray-500 mb-6 text-center" placeholder="e.g. Gandalf, Elara...">
+            <div class="space-y-4 mb-6 text-left">
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-widest text-ink mb-1 font-heading">Display Name</label>
+                    <input type="text" id="missing-username-input" class="w-full bg-transparent border-b-2 border-gray-400 focus:border-blood text-ink py-2 text-lg font-serif outline-none placeholder-gray-500 text-center" placeholder="e.g. Gandalf, Elara...">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-widest text-ink mb-1 font-heading">Age Verification</label>
+                    <select id="missing-age-input" class="w-full bg-white/50 border border-gray-400 p-2 text-ink rounded outline-none font-serif text-sm">
+                        <option value="">Select age group...</option>
+                        <option value="under_17">16 and under</option>
+                        <option value="17_plus">17 and older</option>
+                    </select>
+                </div>
+            </div>
             
             <button onclick="window.setUsername()" class="fantasy-btn w-full py-3 rounded text-sm font-bold">Save Identity</button>
         </div>
@@ -296,6 +308,9 @@
                     
                     <h3 class="font-heading text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Latest Update Notes</h3>
                     <p id="pd-notes" class="bg-black/30 p-3 rounded border border-gray-800 text-xs italic">Initial publication.</p>
+                    
+                    <h3 class="font-heading text-[10px] font-bold text-gold uppercase tracking-widest mb-1 mt-4">Included Archives</h3>
+                    <div id="pd-included-archives" class="flex flex-wrap gap-1.5 mb-6 bg-black/30 p-3 rounded border border-gray-800"></div>
                 </div>
 
                 <div class="flex-grow">
@@ -309,7 +324,6 @@
                     <div id="pd-admin-panel" class="hidden mb-4 border-b border-gray-700 pb-4">
                         <h3 class="font-heading text-xs font-bold text-red-500 uppercase tracking-widest mb-2"><i class="fa-solid fa-crown mr-1"></i> Author Management</h3>
                         <div class="flex gap-2">
-                            <button id="pd-btn-update" onclick="window.openUpdatePackModal()" class="flex-1 bg-indigo-900 hover:bg-indigo-800 text-white py-2 rounded text-[10px] uppercase tracking-widest font-heading font-bold transition-colors border border-indigo-700">Edit / Update</button>
                             <button id="pd-btn-archive" onclick="window.deleteCurrentPack(false)" class="flex-1 bg-gray-800 hover:bg-gray-700 text-white py-2 rounded text-[10px] uppercase tracking-widest font-heading font-bold transition-colors border border-gray-600">Archive</button>
                             <button id="pd-btn-unarchive" onclick="window.unarchiveCurrentPack()" class="hidden flex-1 bg-green-900 hover:bg-green-800 text-white py-2 rounded text-[10px] uppercase tracking-widest font-heading font-bold transition-colors border border-green-700">Unarchive</button>
                             <button id="pd-admin-perm-delete" onclick="window.deleteCurrentPack(true)" class="flex-1 bg-red-900 hover:bg-red-800 text-white py-2 rounded text-[10px] uppercase tracking-widest font-heading font-bold transition-colors border border-red-700">Full Delete</button>
@@ -605,13 +619,11 @@
             }
         });
 
-        // --- CORE UI FUNCTIONS ---
         window.showToast = (m) => { 
             const t = document.getElementById('toast'); 
             if(t){ t.textContent=m; t.style.opacity=1; setTimeout(()=>t.style.opacity=0, 4000); } 
         };
 
-        // --- FIREBASE SETUP ---
         const firebaseConfig = {
             apiKey: "AIzaSyCKRN5dfi4og69_D8ZAvV1BQfwCK_f2uis",
             authDomain: "dndcampaigns-f3d48.firebaseapp.com",
@@ -621,7 +633,6 @@
             appId: "1:1074491536795:web:56211729489be776d79d3e"
         };
 
-        // ** REPLACE THIS WITH YOUR EMAIL TO GAIN ADMIN OVERRIDE **
         const ADMIN_OWNER_EMAIL = "admin@chronicles.com";
 
         let app, auth, db;
@@ -658,7 +669,7 @@
         window.myDmContactIds = [];
         let dmUnreadCounts = {};
         window.globalMessages = [];
-        window.myMessageLog = []; // Rate limiting log
+        window.myMessageLog = []; 
         
         // Friends State
         window.myFriends = [];
@@ -666,56 +677,53 @@
         let friendsUnsub = null;
         let reqsUnsub = null;
 
-        // Rate Limiter / Safety Check
         const checkRateLimit = (text) => {
             const now = Date.now();
-            
-            // Clean log of old messages (older than 10s)
             window.myMessageLog = window.myMessageLog.filter(t => now - t.time < 10000);
 
-            // Spam Check (5 msgs in 10s)
             if (window.myMessageLog.length >= 5) {
                 window.showToast("You are speaking too quickly. Please wait a moment.");
                 return false;
             }
-            
-            // Duplicate Check
             if (window.myMessageLog.length > 0 && window.myMessageLog[window.myMessageLog.length - 1].text === text) {
                 window.showToast("Do not repeat yourself, traveler.");
                 return false;
             }
-            
-            // Mute Check
             if (currentUser.mutedUntil && currentUser.mutedUntil > now) {
                 const minLeft = Math.ceil((currentUser.mutedUntil - now) / 60000);
                 window.showToast(`You have been silenced for ${minLeft} more minutes.`);
                 return false;
             }
-
-            // Ban Check
             if (currentUser.isBanned) {
                 window.showToast("You are banished. Action denied.");
                 return false;
             }
-
             window.myMessageLog.push({time: now, text: text});
             return true;
         }
 
-        // Check if user is blocked
         const isUserBlocked = (uid) => {
             return (currentUser.blockedUsers || []).includes(uid);
         };
 
-        // Generate Random Invite Code
+        // Check if minor is allowed to contact this UID
+        window.isAllowedContact = (targetUid) => {
+            if (!currentUser) return false;
+            if (currentUser.ageCategory !== 'under_17') return true; // Adults have no age restrictions
+            if (targetUid === ADMIN_OWNER_EMAIL || (adminModeActive && targetUid === currentUser.uid)) return true; 
+            
+            // Minors can only contact the DM of a campaign they are in
+            const myCampaigns = allCampaigns.filter(c => (currentUser.joinedCampaigns || []).includes(c.id));
+            const allowedDmIds = myCampaigns.map(c => c.dmId);
+            return allowedDmIds.includes(targetUid);
+        };
+
         function generateCode() {
             return Math.random().toString(36).substring(2, 8).toUpperCase();
         }
 
-        // Toggle Admin Mode
         window.toggleAdminMode = () => {
             adminModeActive = !adminModeActive;
-            
             const btn = document.getElementById('btn-admin-terminal');
             const clearTavernBtn = document.getElementById('btn-clear-tavern');
             if (adminModeActive) {
@@ -727,23 +735,19 @@
                 if (clearTavernBtn) clearTavernBtn.classList.add('hidden');
                 window.showToast("Admin Override Deactivated.");
             }
-            renderCampaigns(); // Re-render to show everything
-            if (window.renderGlobalChat) window.renderGlobalChat(); // Re-render chat to show/hide mod tools
+            renderCampaigns(); 
+            if (window.renderGlobalChat) window.renderGlobalChat(); 
             if (window.activeChatTargetId) {
-                // If currently viewing a DM, trigger a re-render to show/hide mod tools there too
                 window.openDirectMessage(window.activeChatTargetId, window.activeChatTargetName, window.activeChatIsGroup, window.activeChatMembers.join(','));
             }
         };
 
-        // Generate Card HTML
         function createCampaignCard(camp, isMine) {
             const d = document.createElement('div');
             d.className = "bg-black bg-opacity-60 rounded-lg card p-5 flex flex-col justify-between group";
             
-            // Check real ownership OR if Admin Mode is active
             const isDM = (currentUser && camp.dmId === currentUser.uid) || adminModeActive;
             
-            // Interaction logic based on Role
             d.onclick = () => {
                 if (isMine || adminModeActive) {
                     try { window.location.href = `characters.html?id=${camp.id}`; } 
@@ -765,14 +769,12 @@
 
             if (camp.packName && camp.packName !== 'Blank Slate') badges += `<span class="bg-indigo-900 text-indigo-200 border border-indigo-700 px-2 py-0.5 rounded text-[8px] uppercase tracking-widest font-heading shadow-md mt-1 block w-fit"><i class="fa-solid fa-book-journal-whills text-[7px] mr-1"></i>${camp.packName}</span>`;
 
-            // DM TOOLS (Edit & Delete) AND PLAYER TOOLS (Leave)
             const editBtn = isDM ? `<button onclick="event.stopPropagation(); window.openEditCampaign('${camp.id}')" class="text-gold hover:text-yellow-400 transition-colors" title="Edit Realm"><i class="fa-solid fa-pen"></i></button>` : '';
             const deleteBtn = isDM ? `<button onclick="event.stopPropagation(); window.deleteCampaign('${camp.id}', '${camp.name.replace(/'/g, "\\'")}', '${camp.dmId}')" class="text-blood hover:text-red-400 transition-colors" title="Delete Realm"><i class="fa-solid fa-trash-can"></i></button>` : '';
             const leaveBtn = (!isDM && isMine && !adminModeActive) ? `<button onclick="event.stopPropagation(); window.leaveCampaign('${camp.id}', '${camp.name.replace(/'/g, "\\'")}')" class="text-gray-400 hover:text-parchment transition-colors" title="Leave Realm"><i class="fa-solid fa-right-from-bracket"></i></button>` : '';
 
             const descText = camp.description ? `<p class="text-xs text-gray-400 font-serif mb-4 line-clamp-2">${camp.description}</p>` : '';
 
-            // Footer Text logic
             let footerText = 'Click to enter realm';
             if (isDM || adminModeActive) footerText = `Code: <span class="text-white bg-gray-800 px-1 rounded">${camp.inviteCode}</span>`;
             else if (!isMine && currentUser.role === 'player') footerText = '<span class="text-gold group-hover:text-yellow-300 transition-colors"><i class="fa-solid fa-door-open mr-1"></i> Click to Join Realm</span>';
@@ -804,7 +806,6 @@
             return d;
         }
 
-        // Render Grids
         function renderCampaigns() {
             const myGrid = document.getElementById('my-adventures-grid');
             const pubGrid = document.getElementById('public-realms-grid');
@@ -815,17 +816,14 @@
             const joinedIds = currentUser?.joinedCampaigns || [];
 
             if (adminModeActive) {
-                // ADMIN MODE: Throw EVERYTHING into the top grid so they can manage it
                 document.getElementById('grid-title-1').innerHTML = '<i class="fa-solid fa-triangle-exclamation text-red-500 mr-2"></i> Owner Archive Override (All Realms)';
                 document.getElementById('grid-title-2').classList.add('hidden');
                 pubGrid.classList.add('hidden');
 
                 allCampaigns.forEach(camp => {
-                    myGrid.appendChild(createCampaignCard(camp, false)); // Force false so it shows Admin badge
+                    myGrid.appendChild(createCampaignCard(camp, false)); 
                 });
-
             } else {
-                // NORMAL MODE
                 document.getElementById('grid-title-1').innerText = 'My Adventures';
                 document.getElementById('grid-title-2').classList.remove('hidden');
                 pubGrid.classList.remove('hidden');
@@ -849,7 +847,6 @@
             }
         }
 
-        // --- CHAT LOGIC ---
         window.toggleChatPanel = () => {
             const panel = document.getElementById('global-chat-panel');
             panel.classList.toggle('open');
@@ -881,7 +878,6 @@
             } else if (tab === 'dms') {
                 document.getElementById('chat-view-dms').classList.remove('hidden');
                 window.activeChatTargetId = null;
-                // Clear DM badge when opening the tab
                 document.getElementById('dm-tab-badge').classList.add('hidden');
             } else if (tab === 'reports') {
                 if(reportsView) reportsView.classList.remove('hidden');
@@ -894,18 +890,16 @@
             return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         };
 
-        // GLOBAL CHAT
         window.initGlobalChat = () => {
             if (globalChatUnsub) globalChatUnsub();
             
-            // Limit to last 50 messages to prevent massive load
             const q = query(collection(db, 'artifacts', 'global_chat', 'public', 'data', 'messages'));
             
             globalChatUnsub = onSnapshot(q, (snap) => {
                 const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
                 window.globalMessages = snap.docs
                     .map(d => ({id: d.id, ...d.data()}))
-                    .filter(m => m.timestamp > oneDayAgo) // 24 Hour sweeping filter
+                    .filter(m => m.timestamp > oneDayAgo) 
                     .sort((a, b) => a.timestamp - b.timestamp)
                     .slice(-50);
                 window.renderGlobalChat();
@@ -913,9 +907,23 @@
         };
 
         window.renderGlobalChat = () => {
-            const msgs = window.globalMessages || [];
             const container = document.getElementById('global-chat-messages');
             
+            // Apply Age Restriction to the Tavern
+            if (currentUser && currentUser.ageCategory === 'under_17') {
+                container.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full text-center p-6 opacity-70">
+                        <i class="fa-solid fa-shield-halved text-4xl text-gray-600 mb-4 mt-10"></i>
+                        <p class="text-xs text-gray-400 font-serif italic mb-2">The Tavern is restricted to travelers 17 and older.</p>
+                        <p class="text-[10px] text-gray-500 font-serif italic">You may only communicate privately with your Dungeon Master in the Whispers tab.</p>
+                    </div>
+                `;
+                document.getElementById('global-chat-input').disabled = true;
+                document.getElementById('global-chat-input').placeholder = "Chat disabled for your age group.";
+                return;
+            }
+
+            const msgs = window.globalMessages || [];
             const searchTerm = (document.getElementById('global-search-input')?.value || '').toLowerCase().trim();
             const filteredMsgs = searchTerm ? msgs.filter(m => m.text.toLowerCase().includes(searchTerm) || m.authorName.toLowerCase().includes(searchTerm)) : msgs;
 
@@ -923,7 +931,6 @@
                 container.innerHTML = searchTerm ? `<p class="text-xs text-gray-500 italic text-center py-4">No matching messages...</p>` : `<p class="text-xs text-gray-500 italic text-center py-4">The tavern is quiet...</p>`;
             } else {
                 container.innerHTML = filteredMsgs.map(m => {
-                    // Filter out blocked users
                     if (isUserBlocked(m.authorId)) return '';
 
                     const isMe = m.authorId === currentUser.uid;
@@ -966,12 +973,10 @@
                     `;
                 }).join('');
                 
-                // Scroll to bottom only if not searching
                 if (!searchTerm) {
                     container.scrollTop = container.scrollHeight;
                 }
                 
-                // Show badge if panel is closed
                 const panel = document.getElementById('global-chat-panel');
                 if (!panel.classList.contains('open') && msgs.length > 0) {
                     const lastMsg = msgs[msgs.length - 1];
@@ -985,7 +990,6 @@
         window.deleteChatMessage = async (msgId) => {
             if (!adminModeActive) return;
             try {
-                // Soft delete
                 await updateDoc(doc(db, 'artifacts', 'global_chat', 'public', 'data', 'messages', msgId), {
                     isDeleted: true,
                     deletedBy: currentUser.username,
@@ -1018,6 +1022,7 @@
             const text = input.value.trim();
             if (!text || !currentUser) return;
             
+            if (currentUser.ageCategory === 'under_17') return window.showToast("Minors cannot post in the Tavern.");
             if (!checkRateLimit(text)) return;
             
             input.value = '';
@@ -1034,13 +1039,11 @@
                 window.showToast("Failed to send message.");
             }
             
-            // Re-attach Enter key
             document.getElementById('global-chat-input').addEventListener('keypress', function (e) {
                 if (e.key === 'Enter') window.sendGlobalMessage();
             });
         };
 
-        // PRIVACY SETTINGS
         window.openChatSettings = () => {
             document.getElementById('setting-block-strangers').checked = currentUser.blockStrangers || false;
             document.getElementById('chat-settings-modal').classList.remove('hidden');
@@ -1058,11 +1061,9 @@
             }
         };
 
-        // DIRECT MESSAGING (WHISPERS)
         window.initDirectMessaging = () => {
             if (dmContactsUnsub) dmContactsUnsub();
             
-            // We store contact lists dynamically in public data to bypass cross-user write restrictions
             dmContactsUnsub = onSnapshot(collection(db, 'artifacts', 'global_chat', 'public', 'data', `dm_contacts_${currentUser.uid}`), (snap) => {
                 window.myDmContactIds = snap.docs.map(d => d.id);
                 const contacts = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a, b) => b.lastUpdated - a.lastUpdated);
@@ -1076,6 +1077,7 @@
                 } else {
                     list.innerHTML = contacts.map(c => {
                         if (!c.isGroup && isUserBlocked(c.id)) return ''; // Hide blocked users from list
+                        if (!c.isGroup && !window.isAllowedContact(c.id)) return ''; // Hide disallowed contacts for minors
 
                         const hasUnread = c.unreadCount > 0;
                         if (hasUnread) totalUnread = true;
@@ -1098,7 +1100,6 @@
                     }).join('');
                 }
                 
-                // Update Tab Badge
                 if (totalUnread && document.getElementById('chat-view-dms').classList.contains('hidden') && document.getElementById('chat-view-active-dm').classList.contains('hidden')) {
                     document.getElementById('dm-tab-badge').classList.remove('hidden');
                     if (!document.getElementById('global-chat-panel').classList.contains('open')) {
@@ -1113,11 +1114,10 @@
             if (!queryText) return window.showToast("Enter a name to search.");
             
             try {
-                // In a real app, this should be a cloud function. We pull all and filter locally due to Firebase limitations.
                 const snap = await getDocs(collection(db, 'users'));
                 const results = snap.docs
                     .map(d => ({id: d.id, ...d.data()}))
-                    .filter(u => u.uid !== currentUser.uid && u.username && u.username.toLowerCase().includes(queryText) && !isUserBlocked(u.uid));
+                    .filter(u => u.uid !== currentUser.uid && u.username && u.username.toLowerCase().includes(queryText) && !isUserBlocked(u.uid) && window.isAllowedContact(u.uid));
                     
                 const list = document.getElementById('dm-contacts-list');
                 
@@ -1150,8 +1150,10 @@
             if (isUserBlocked(uid)) {
                 return window.showToast("This user is blocked.");
             }
+            if (!window.isAllowedContact(uid)) {
+                return window.showToast("Safety Restriction: You may only whisper your Dungeon Master.");
+            }
 
-            // Bypass modal if already an active contact
             if (window.myDmContactIds && window.myDmContactIds.includes(uid)) {
                 window.switchChatTab('dms');
                 window.openDirectMessage(uid, username);
@@ -1161,7 +1163,6 @@
             window.pendingDmTarget = { id: uid, name: username };
             document.getElementById('dm-confirm-name').innerText = username;
             
-            // Show/Hide Add Friend Button
             const addBtn = document.getElementById('btn-add-friend');
             const isFriend = window.myFriends.some(f => f.id === uid);
             if (isFriend) {
@@ -1176,10 +1177,7 @@
         window.confirmDirectMessage = () => {
             if (!window.pendingDmTarget) return;
             document.getElementById('dm-confirm-modal').classList.add('hidden');
-            
-            // Switch to the Whispers tab if we aren't there already
             window.switchChatTab('dms');
-            
             window.openDirectMessage(window.pendingDmTarget.id, window.pendingDmTarget.name);
             window.pendingDmTarget = null;
         };
@@ -1259,7 +1257,6 @@
             document.getElementById('active-dm-name').innerText = targetName;
             if(document.getElementById('dm-search-message-input')) document.getElementById('dm-search-message-input').value = '';
 
-            // Build Contextual Tools UI
             const toolsContainer = document.getElementById('active-dm-tools');
             if (window.activeChatIsGroup) {
                 let toolsHTML = `<button onclick="window.clearDMConversation()" class="text-gray-500 hover:text-orange-500 transition-colors" title="Leave Group"><i class="fa-solid fa-right-from-bracket"></i></button>`;
@@ -1277,12 +1274,10 @@
                 `;
             }
             
-            // Clear unread count for this contact
             try {
                 await updateDoc(doc(db, 'artifacts', 'global_chat', 'public', 'data', `dm_contacts_${currentUser.uid}`, targetId), { unreadCount: 0 });
             } catch(e) {} 
 
-            // Determine Conversation ID
             const convId = window.activeChatIsGroup ? targetId : [currentUser.uid, targetId].sort().join('_');
             
             if (activeDmUnsub) activeDmUnsub();
@@ -1309,14 +1304,12 @@
             
             try {
                 if (window.activeChatIsGroup) {
-                     // Remove self from the members array in the group document
                      try {
                          const groupDocRef = doc(db, 'artifacts', 'global_chat', 'public', 'data', 'groups', window.activeChatTargetId);
                          await updateDoc(groupDocRef, {
                              members: arrayRemove(currentUser.uid)
                          });
                          
-                         // Announce departure
                          await addDoc(collection(db, 'artifacts', 'global_chat', 'public', 'data', `dm_messages_${window.activeChatTargetId}`), {
                             text: `${currentUser.username} has left the alliance.`,
                             authorId: 'system',
@@ -1341,7 +1334,6 @@
             
             if (!checkRateLimit(text)) return;
             
-            // Check if target allows strangers (Only applies to 1-on-1)
             if (!window.activeChatIsGroup) {
                 try {
                     const targetDoc = await getDoc(doc(db, 'users', window.activeChatTargetId));
@@ -1353,7 +1345,7 @@
                             return window.showToast("This user is not accepting whispers from strangers.");
                         }
                     }
-                } catch(e) {} // Proceed if lookup fails
+                } catch(e) {} 
             }
             
             input.value = '';
@@ -1369,7 +1361,6 @@
                 });
 
                 if (window.activeChatIsGroup) {
-                    // Pull the fresh member list in case people joined/left
                     let freshMembers = window.activeChatMembers;
                     try {
                         const gSnap = await getDoc(doc(db, 'artifacts', 'global_chat', 'public', 'data', 'groups', window.activeChatTargetId));
@@ -1431,7 +1422,6 @@
             }
         };
 
-        // BLOCK USER
         window.promptBlockUser = (uid, name) => {
             if (confirm(`Block ${name}? You will no longer see their messages or receive whispers from them.`)) {
                 executeBlockUser(uid);
@@ -1455,25 +1445,67 @@
                 
                 if (window.activeChatTargetId === uid) window.closeActiveDM();
                 window.showToast("User blocked.");
-                if (window.renderGlobalChat) window.renderGlobalChat(); // refresh chat to hide their msgs
+                if (window.renderGlobalChat) window.renderGlobalChat();
             } catch(e) {
                 window.showToast("Failed to block user.");
             }
         }
 
-        // --- FRIENDS SYSTEM LOGIC ---
+        window.openUsernameModal = () => {
+            const isForced = !currentUser.username || currentUser.username.trim() === '' || !currentUser.ageCategory;
+            document.getElementById('missing-username-input').value = currentUser.username || '';
+            
+            if (currentUser.ageCategory) {
+                document.getElementById('missing-age-input').value = currentUser.ageCategory;
+            }
+            
+            document.getElementById('close-username-modal').classList.toggle('hidden', isForced);
+            document.getElementById('username-modal-desc').innerText = isForced 
+                ? "The archives require your identity and age verification, traveler. Please complete your profile."
+                : "By what new title shall the realm know you?";
+            document.getElementById('username-prompt-modal').classList.remove('hidden');
+        };
+
+        window.setUsername = async () => {
+            const newName = document.getElementById('missing-username-input').value.trim();
+            const ageCat = document.getElementById('missing-age-input').value;
+            
+            if (!newName) return window.showToast("Please enter a name.");
+            if (!ageCat) return window.showToast("Please verify your age group.");
+            
+            try {
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    username: newName,
+                    ageCategory: ageCat
+                });
+                currentUser.username = newName;
+                currentUser.ageCategory = ageCat;
+                document.getElementById('user-display-name').innerText = newName;
+                document.getElementById('username-prompt-modal').classList.add('hidden');
+                
+                if (ageCat === 'under_17') {
+                    const allianceBtn = document.getElementById('btn-form-alliance');
+                    if(allianceBtn) allianceBtn.classList.add('hidden');
+                }
+                
+                if (window.renderGlobalChat) window.renderGlobalChat();
+                if (window.initDirectMessaging) window.initDirectMessaging();
+                window.showToast("Profile updated!");
+            } catch (err) {
+                console.error(err);
+                window.showToast("Failed to save profile.");
+            }
+        };
 
         window.initFriendsSync = () => {
             if (friendsUnsub) friendsUnsub();
             if (reqsUnsub) reqsUnsub();
 
-            // Sync Approved Friends
             friendsUnsub = onSnapshot(collection(db, 'artifacts', 'global_chat', 'public', 'data', `friends_of_${currentUser.uid}`), (snap) => {
                 window.myFriends = snap.docs.map(d => ({id: d.id, ...d.data()}));
                 if(!document.getElementById('friends-modal').classList.contains('hidden')) window.renderFriendsList();
             });
 
-            // Sync Pending Incoming Requests
             reqsUnsub = onSnapshot(collection(db, 'artifacts', 'global_chat', 'public', 'data', `friend_reqs_for_${currentUser.uid}`), (snap) => {
                 window.myFriendRequests = snap.docs.map(d => ({id: d.id, ...d.data()}));
                 
@@ -1564,7 +1596,7 @@
                 const snap = await getDocs(collection(db, 'users'));
                 const results = snap.docs
                     .map(d => ({id: d.id, ...d.data()}))
-                    .filter(u => u.uid !== currentUser.uid && u.username && u.username.toLowerCase().includes(queryText) && !isUserBlocked(u.uid));
+                    .filter(u => u.uid !== currentUser.uid && u.username && u.username.toLowerCase().includes(queryText) && !isUserBlocked(u.uid) && window.isAllowedContact(u.uid));
                     
                 const list = document.getElementById('friend-search-results');
                 
@@ -1597,6 +1629,7 @@
 
         window.sendFriendRequest = async (targetUid, targetName) => {
             if (isUserBlocked(targetUid)) return window.showToast("Cannot add blocked user.");
+            if (!window.isAllowedContact(targetUid)) return window.showToast("Safety Restriction: You may only friend your Dungeon Master.");
             if (window.myFriends.some(f => f.id === targetUid)) return window.showToast("Already on your ledger.");
             
             window.showToast("Sending request...");
@@ -1614,13 +1647,9 @@
 
         window.acceptFriendRequest = async (targetUid, targetName) => {
             try {
-                // Delete the request
                 await deleteDoc(doc(db, 'artifacts', 'global_chat', 'public', 'data', `friend_reqs_for_${currentUser.uid}`, targetUid));
-                
-                // Add to both friends lists
                 await setDoc(doc(db, 'artifacts', 'global_chat', 'public', 'data', `friends_of_${currentUser.uid}`, targetUid), { name: targetName });
                 await setDoc(doc(db, 'artifacts', 'global_chat', 'public', 'data', `friends_of_${targetUid}`, currentUser.uid), { name: currentUser.username });
-                
                 window.showToast("Added to Ledger.");
             } catch(e) {
                 console.error(e);
@@ -1643,10 +1672,12 @@
             } catch(e) {}
         };
 
-        // --- GROUP CHAT LOGIC ---
         window.pendingGroupMembers = [];
 
         window.openCreateGroupModal = () => {
+            if (currentUser && currentUser.ageCategory === 'under_17') {
+                return window.showToast("Safety Restriction: Alliances are disabled for your age group.");
+            }
             window.pendingGroupMembers = [];
             document.getElementById('new-group-name').value = '';
             
@@ -1722,7 +1753,6 @@
             window.showToast("Forming alliance...");
             
             try {
-                // 1. Create the global group document
                 await setDoc(groupDocRef, {
                     name: groupName,
                     members: members,
@@ -1730,7 +1760,6 @@
                     createdBy: currentUser.uid
                 });
 
-                // 2. Write to each member's contacts array
                 for (const uid of members) {
                     await setDoc(doc(db, 'artifacts', 'global_chat', 'public', 'data', `dm_contacts_${uid}`, groupId), {
                         name: groupName,
@@ -1742,7 +1771,6 @@
                     });
                 }
                 
-                // 3. Add initial system message
                 await addDoc(collection(db, 'artifacts', 'global_chat', 'public', 'data', `dm_messages_${groupId}`), {
                     text: `${currentUser.username} established the alliance.`,
                     authorId: 'system',
@@ -1773,10 +1801,8 @@
             
             window.showToast("Renaming group...");
             try {
-                // Update global registry
                 await updateDoc(doc(db, 'artifacts', 'global_chat', 'public', 'data', 'groups', window.activeChatTargetId), { name: newName.trim() });
 
-                // Try to update for everyone (May fail if they left, but we catch it)
                 const promises = window.activeChatMembers.map(async (uid) => {
                      try {
                         await updateDoc(doc(db, 'artifacts', 'global_chat', 'public', 'data', `dm_contacts_${uid}`, window.activeChatTargetId), {
@@ -1807,7 +1833,6 @@
             
             window.showToast("Destroying alliance...");
             try {
-                // Delete from global registry
                 await deleteDoc(doc(db, 'artifacts', 'global_chat', 'public', 'data', 'groups', window.activeChatTargetId));
 
                 const promises = window.activeChatMembers.map(async (uid) => {
@@ -1825,7 +1850,6 @@
             }
         };
 
-        // REPORTS
         window.pendingReportData = null;
 
         window.promptReportUser = (uid, username, msgSnippet) => {
@@ -1911,7 +1935,6 @@
             }
         };
 
-        // ADMIN ESCALATION SYSTEM
         window.promptEscalation = (reportId, uid, username) => {
             document.getElementById('escalation-report-id').value = reportId;
             document.getElementById('escalation-uid').value = uid;
@@ -1967,15 +1990,36 @@
         window.issueMute = (hours) => executePenalty('mute', hours);
         window.issueBan = () => executePenalty('ban');
 
-        // Attach Enter key for DMs
-        document.getElementById('global-chat-input').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') window.sendGlobalMessage();
-        });
-        document.getElementById('active-dm-input').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') window.sendDirectMessage();
-        });
+        const getIncludedArchivesHTML = (pack) => {
+            const included = [];
+            if (pack.scripts?.length > 0) included.push('Script Codex');
+            if (pack.vocations?.length > 0) included.push('Vocations');
+            if (pack.subvocations?.length > 0) included.push('Sub-Vocations');
+            if (pack.lineages?.length > 0) included.push('Lineages');
+            if (pack.backgrounds?.length > 0) included.push('Backgrounds');
+            if (pack.bestiary?.length > 0) included.push('Bestiary');
+            if (pack.npcs?.length > 0) included.push('NPCs');
+            if (pack.gearArtifacts?.length > 0) included.push('Artifacts');
+            if (pack.worldlore?.length > 0) included.push('World Lore');
+            if (pack.howtoplay?.length > 0) included.push('How to Play');
+            if (pack.archivistLibrary?.length > 0) included.push('Archivist Lib.');
+            if (pack.custodiansAthenaeum?.length > 0) included.push('Custodian Lib.');
+            if (pack.maps?.length > 0) included.push('Maps');
+            if (pack.landmarks?.length > 0) included.push('Landmarks');
 
-        // --- CODEX PACKS LOGIC ---
+            if (included.length === 0) return '<span class="text-gray-500 italic text-[10px]">None selected.</span>';
+            
+            return included.map(item => `<span class="inline-block bg-wood text-gray-400 border border-gray-600 px-2 py-0.5 rounded text-[8px] uppercase tracking-widest font-heading shadow-sm">${item}</span>`).join(' ');
+        };
+
+        const getTotalItems = (p) => {
+            return (p.scripts?.length||0) + (p.landmarks?.length||0) + (p.archivistLibrary?.length||0) + 
+                   (p.backgrounds?.length||0) + (p.worldlore?.length||0) + (p.bestiary?.length||0) + 
+                   (p.npcs?.length||0) + (p.vocations?.length||0) + (p.lineages?.length||0) + 
+                   (p.howtoplay?.length||0) + (p.gearArtifacts?.length||0) + (p.custodiansAthenaeum?.length||0) +
+                   (p.maps?.length||0);
+        };
+
         window.openPacksModal = () => {
             const grid = document.getElementById('packs-grid');
             grid.innerHTML = '';
@@ -1995,7 +2039,7 @@
                         <p class="text-xs text-gray-400 mb-3 line-clamp-3 font-serif">${pack.description || 'No description provided.'}</p>
                         <div class="border-t border-gray-700 pt-2 flex flex-col mt-auto gap-1">
                             <div class="flex justify-between items-center">
-                                <span class="text-[9px] text-gold font-bold uppercase tracking-widest">v${pack.version || 1} • ${(pack.scripts || []).length} Records</span>
+                                <span class="text-[9px] text-gold font-bold uppercase tracking-widest">v${pack.version || 1} • Records: ${getTotalItems(pack)}</span>
                                 <span class="text-[9px] text-gray-500 italic">By ${pack.authorName || 'Unknown'}</span>
                             </div>
                             <div class="flex justify-start items-center text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-1">
@@ -2025,6 +2069,9 @@
             document.getElementById('pd-desc').innerText = currentViewingPack.description || 'No description provided.';
             document.getElementById('pd-notes').innerText = currentViewingPack.updateNotes || 'Initial publication.';
             
+            const archivesContainer = document.getElementById('pd-included-archives');
+            if (archivesContainer) archivesContainer.innerHTML = getIncludedArchivesHTML(currentViewingPack);
+
             const pdOwnerPanel = document.getElementById('pd-owner-panel');
             if (pdOwnerPanel) {
                 pdOwnerPanel.classList.toggle('hidden', !adminModeActive);
@@ -2038,12 +2085,10 @@
                 
                 const isArchived = currentViewingPack.isDeleted;
                 
-                const updateBtn = document.getElementById('pd-btn-update');
                 const archiveBtn = document.getElementById('pd-btn-archive');
                 const unarchiveBtn = document.getElementById('pd-btn-unarchive');
                 const permDelBtn = document.getElementById('pd-admin-perm-delete');
                 
-                if (updateBtn) updateBtn.classList.toggle('hidden', isArchived);
                 if (archiveBtn) archiveBtn.classList.toggle('hidden', isArchived);
                 if (unarchiveBtn) unarchiveBtn.classList.toggle('hidden', !isArchived);
                 if (permDelBtn) permDelBtn.classList.remove('hidden');
@@ -2052,7 +2097,6 @@
                 if (adminPanel) adminPanel.classList.add('hidden');
             }
 
-            // Populate Campaigns
             const campaignsList = document.getElementById('pd-campaigns-list');
             const relatedCamps = allCampaigns.filter(c => c.packName === currentViewingPack.name && c.visibility === 'public');
             
@@ -2084,12 +2128,10 @@
                 }).join('');
             }
 
-            // Role-based view switching for messaging
             if (currentUser.role === 'dm') {
                 document.getElementById('pd-right-col').classList.remove('hidden');
                 document.getElementById('pd-right-col-player').classList.add('hidden');
                 
-                // Subscribe to Messages
                 const pathArgs = currentViewingPack.isPrivate
                     ? ['artifacts', 'global_codex', 'users', currentViewingPack.authorId, 'scriptPacks', id, 'messages']
                     : ['artifacts', 'global_codex', 'public', 'data', 'scriptPacks', id, 'messages'];
@@ -2177,27 +2219,20 @@
 
         window.deletePackMessage = async (msgId) => {
             if (!currentViewingPack || !adminModeActive) return;
-            
-            const pathArgs = currentViewingPack.isPrivate
-                ? ['artifacts', 'global_codex', 'users', currentViewingPack.authorId, 'scriptPacks', currentViewingPack.id, 'messages', msgId]
-                : ['artifacts', 'global_codex', 'public', 'data', 'scriptPacks', currentViewingPack.id, 'messages', msgId];
-                
-            try {
-                await updateDoc(doc(db, ...pathArgs), {
-                    name: name,
-                    description: desc,
-                    icon: icon,
-                    version: newVersion,
-                    updateNotes: notes,
-                    updatedAt: Date.now()
-                });
-                window.showToast(`Pack updated to v${newVersion}!`);
-                window.closePackDetails();
-                window.openPacksModal(); // Refresh the grid
-            } catch (e) {
-                console.error(e);
-                window.showToast("Failed to update pack.");
-            }
+            window.customConfirm("Erase this message from the archives?", async (confirmed) => {
+                if(!confirmed) return;
+                const pathArgs = currentViewingPack.isPrivate
+                    ? ['artifacts', 'global_codex', 'users', currentViewingPack.authorId, 'scriptPacks', currentViewingPack.id, 'messages', msgId]
+                    : ['artifacts', 'global_codex', 'public', 'data', 'scriptPacks', currentViewingPack.id, 'messages', msgId];
+                    
+                try {
+                    await deleteDoc(doc(db, ...pathArgs));
+                    window.showToast("Message erased.");
+                } catch(e) {
+                    console.error("Failed to delete message", e);
+                    window.showToast("Failed to erase message.");
+                }
+            });
         };
 
         window.deleteCurrentPack = async (permanent = false) => {
@@ -2275,7 +2310,6 @@
             window.showToast("Executing Admin Override...");
 
             try {
-                // Send Notification to original DM if a reason is provided
                 if (reason && targetUserId) {
                     await updateDoc(doc(db, 'users', targetUserId), {
                         notifications: arrayUnion({
@@ -2287,7 +2321,6 @@
                     });
                 }
 
-                // Actually Delete the Resource
                 if (type === 'campaign') {
                     await deleteDoc(doc(db, 'campaigns', id));
                     window.showToast("Realm destroyed.");
@@ -2313,38 +2346,6 @@
                 document.getElementById('user-notifications-modal').classList.add('hidden');
             } catch(e) {
                 window.showToast("Failed to dismiss notifications.");
-            }
-        };
-
-        // --- ACTIONS ---
-
-        // Open Username Modal
-        window.openUsernameModal = () => {
-            const isForced = !currentUser.username || currentUser.username.trim() === '';
-            document.getElementById('missing-username-input').value = currentUser.username || '';
-            document.getElementById('close-username-modal').classList.toggle('hidden', isForced);
-            document.getElementById('username-modal-desc').innerText = isForced 
-                ? "The archives hold no record of your name, traveler. By what title shall the realm know you?"
-                : "By what new title shall the realm know you?";
-            document.getElementById('username-prompt-modal').classList.remove('hidden');
-        };
-
-        // Fix missing username
-        window.setUsername = async () => {
-            const newName = document.getElementById('missing-username-input').value.trim();
-            if (!newName) return window.showToast("Please enter a name.");
-            
-            try {
-                await updateDoc(doc(db, 'users', currentUser.uid), {
-                    username: newName
-                });
-                currentUser.username = newName;
-                document.getElementById('user-display-name').innerText = newName;
-                document.getElementById('username-prompt-modal').classList.add('hidden');
-                window.showToast("Identity updated!");
-            } catch (err) {
-                console.error(err);
-                window.showToast("Failed to save name.");
             }
         };
 
@@ -2383,7 +2384,6 @@
             }
         };
 
-        // Quick join for public campaigns
         window.joinPublicCampaign = async (id, name) => {
             if (currentUser?.isBanned) return window.showToast("You are banished. Action denied.");
             if (!currentUser || currentUser.role !== 'player') return;
@@ -2402,7 +2402,7 @@
                 });
                 window.showToast(`Joined the realm of ${name}!`);
                 if (document.getElementById('pack-details-modal').classList.contains('hidden') === false) {
-                    window.closePackDetails(); // Close details if joining from packs view
+                    window.closePackDetails(); 
                 }
             } catch(e) {
                 console.error(e);
@@ -2450,9 +2450,7 @@
                     createdAt: Date.now()
                 });
 
-                // Batch inject scripts if a pack was selected
                 if (selectedPack) {
-                    // Update download count on the pack
                     const pathArgs = selectedPack.isPrivate 
                         ? ['artifacts', 'global_codex', 'users', selectedPack.authorId, 'scriptPacks', selectedPack.id]
                         : ['artifacts', 'global_codex', 'public', 'data', 'scriptPacks', selectedPack.id];
@@ -2491,7 +2489,6 @@
             }
         };
 
-        // Open Edit Modal
         window.openEditCampaign = (id) => {
             const camp = allCampaigns.find(c => c.id === id);
             if (!camp) return;
@@ -2514,7 +2511,6 @@
             document.getElementById('edit-campaign-modal').classList.remove('hidden');
         };
 
-        // Save Edit Changes
         window.saveCampaignEdit = async () => {
             const id = document.getElementById('edit-campaign-id').value;
             const name = document.getElementById('edit-campaign-name').value.trim();
@@ -2549,7 +2545,6 @@
                     if (selectedPack) {
                         updates.packName = selectedPack.name; 
                         
-                        // Update download count on the pack
                         const pathArgs = selectedPack.isPrivate 
                             ? ['artifacts', 'global_codex', 'users', selectedPack.authorId, 'scriptPacks', selectedPack.id]
                             : ['artifacts', 'global_codex', 'public', 'data', 'scriptPacks', selectedPack.id];
@@ -2557,7 +2552,6 @@
                         const currentDownloads = selectedPack.downloads || 0;
                         await updateDoc(doc(db, ...pathArgs), { downloads: currentDownloads + 1 });
                         
-                        // Batch inject the new scripts if selected
                         if (selectedPack.scripts && selectedPack.scripts.length > 0) {
                             window.showToast("Injecting scripts...");
                             const batch = writeBatch(db);
@@ -2580,7 +2574,6 @@
             }
         };
 
-        // Delete Campaign
         window.deleteCampaign = async (id, name, dmId) => {
             if (adminModeActive && dmId !== currentUser.uid) {
                 window.pendingAdminDelete = { type: 'campaign', id, name, targetUserId: dmId };
@@ -2601,7 +2594,6 @@
             }
         };
 
-        // Leave Campaign (Players Only)
         window.leaveCampaign = async (id, name) => {
             if (!confirm(`Are you sure you want to leave the realm of "${name}"? You will need the invite code to return.`)) return;
             
@@ -2622,7 +2614,6 @@
             });
         };
 
-        // --- AUTH & DATA SYNC ---
         onAuthStateChanged(auth, async (u) => {
             if (!u) {
                 try { window.location.href = "index.html"; } catch(e) {
@@ -2651,32 +2642,26 @@
                 if (!currentUser.joinedCampaigns) currentUser.joinedCampaigns = [];
                 if (!currentUser.blockedUsers) currentUser.blockedUsers = [];
 
-                // --- SMART USERNAME RESOLUTION & UI ENFORCEMENT ---
-                
-                // 1. If username is literally empty (old account), trigger the prompt
-                if (!currentUser.username || currentUser.username.trim() === '') {
+                if (!currentUser.username || currentUser.username.trim() === '' || !currentUser.ageCategory) {
                     window.openUsernameModal();
                 }
 
-                // 2. Set display text. If empty, fallback to email prefix so it doesn't just say "Traveler"
                 let display = currentUser.username;
                 if (!display && u.email) {
-                    display = u.email.split('@')[0]; // Grabs 'rub.wa00'
+                    display = u.email.split('@')[0]; 
                 } else if (!display) {
                     display = 'Traveler';
                 }
                 document.getElementById('user-display-name').innerText = display;
 
-                // 3. UI Toggles based on Role
                 const roleBadge = document.getElementById('user-role-badge');
                 const createBtn = document.getElementById('btn-create-campaign');
                 const playerActions = document.getElementById('player-actions');
                 const adminBtn = document.getElementById('btn-admin-terminal');
 
-                // Reveal the Admin Owner Button if email matches
                 if (u.email === ADMIN_OWNER_EMAIL) {
                     adminBtn.classList.remove('hidden');
-                    playerActions.classList.remove('hidden'); // Ensure Admin can always see invite input
+                    playerActions.classList.remove('hidden'); 
                     const reportTab = document.getElementById('chat-tab-reports');
                     if(reportTab) reportTab.classList.remove('hidden');
                     window.initAdminReports();
@@ -2693,10 +2678,9 @@
                     createBtn.classList.remove('hidden');
                     
                     if (u.email !== ADMIN_OWNER_EMAIL) {
-                        playerActions.classList.add('hidden'); // Hide for normal DMs
+                        playerActions.classList.add('hidden'); 
                     }
                     
-                    // Fetch Packs for the dropdown
                     try {
                         const pubSnap = await getDocs(collection(db, 'artifacts', 'global_codex', 'public', 'data', 'scriptPacks'));
                         const privSnap = await getDocs(collection(db, 'artifacts', 'global_codex', 'users', currentUser.uid, 'scriptPacks'));
@@ -2744,7 +2728,6 @@
                     playerActions.classList.remove('hidden');
                 }
                 
-                // Fetch Packs for everyone to browse
                 try {
                     const pubSnap = await getDocs(collection(db, 'artifacts', 'global_codex', 'public', 'data', 'scriptPacks'));
                     let privSnap = { docs: [] };
@@ -2760,28 +2743,28 @@
                     console.error("Error fetching generic packs:", err);
                 }
 
-                // Hide loading overlay
                 document.getElementById('initial-loading').classList.add('hidden');
                 document.getElementById('dashboard-screen').classList.remove('hidden');
 
-                // Listen for Campaign updates
                 onSnapshot(collection(db, 'campaigns'), (snap) => {
                     allCampaigns = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                     renderCampaigns();
                 });
 
-                // Listen for User Profile updates
                 onSnapshot(userDocRef, (userSnap) => {
                     if (userSnap.exists()) {
                         currentUser = { uid: u.uid, ...userSnap.data() };
                         if (!currentUser.joinedCampaigns) currentUser.joinedCampaigns = [];
                         if (!currentUser.blockedUsers) currentUser.blockedUsers = [];
                         
-                        // Keep display name actively updated in case they just saved it in the modal
                         let updatedDisplay = currentUser.username || (u.email ? u.email.split('@')[0] : 'Traveler');
                         document.getElementById('user-display-name').innerText = updatedDisplay;
                         
-                        // Check Ban Status
+                        if (currentUser.ageCategory === 'under_17') {
+                            const allianceBtn = document.getElementById('btn-form-alliance');
+                            if(allianceBtn) allianceBtn.classList.add('hidden');
+                        }
+
                         const banBanner = document.getElementById('banned-banner');
                         if (currentUser.isBanned) {
                             if (banBanner) banBanner.classList.remove('hidden');
@@ -2789,7 +2772,6 @@
                             if (banBanner) banBanner.classList.add('hidden');
                         }
                         
-                        // Check Mute Status
                         const muteBanner = document.getElementById('muted-banner');
                         if (currentUser.mutedUntil && currentUser.mutedUntil > Date.now()) {
                             if (muteBanner) muteBanner.classList.remove('hidden');
@@ -2797,7 +2779,6 @@
                             if (muteBanner) muteBanner.classList.add('hidden');
                         }
 
-                        // Check for Admin Notifications
                         if (currentUser.notifications && currentUser.notifications.length > 0) {
                             const notifContainer = document.getElementById('notifications-list');
                             notifContainer.innerHTML = currentUser.notifications.map(n => `
@@ -2811,7 +2792,7 @@
                         }
 
                         renderCampaigns();
-                        if(window.renderGlobalChat) window.renderGlobalChat(); // Re-render chat if blocks changed
+                        if(window.renderGlobalChat) window.renderGlobalChat(); 
                     }
                 });
 
