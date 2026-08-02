@@ -206,7 +206,14 @@
                 <!-- Headings inject here -->
             </div>
             
-            <div class="p-4 mt-auto border-t border-gray-700/50">
+            <!-- DM SECRET HANDBOOK BUTTON (HIDDEN BY DEFAULT) -->
+            <div id="dm-secret-nav" class="hidden p-4 mt-auto border-t border-gray-700/50 pb-0">
+                <button onclick="window.goToDMHandbook()" class="w-full text-center py-3 bg-[#7a1b1b] text-[#f1e5c5] border border-[#c5a059] rounded font-heading font-black text-xs uppercase tracking-widest shadow hover:bg-red-800 transition-colors">
+                    <i class="fa-solid fa-eye mr-2"></i> DM's Handbook
+                </button>
+            </div>
+            
+            <div class="p-4 border-t border-gray-700/50">
                 <button onclick="window.returnToDash()" class="w-full text-center py-3 text-gold border border-gold rounded font-heading font-black text-xs uppercase tracking-widest hover:bg-gold hover:text-ink transition-colors">← Return to Handbook</button>
             </div>
         </div>
@@ -273,9 +280,16 @@
             catch(e) { window.showToast("Redirects disabled in preview."); }
         };
 
+        window.goToDMHandbook = () => {
+            try { window.location.href = `DMshandbook.html?id=${appId}`; } 
+            catch(e) { window.showToast("Redirects disabled in preview."); }
+        };
+
         // --- HANDBOOK STATE & LOGIC ---
+        const ADMIN_OWNER_EMAIL = "admin@chronicles.com";
         let currentUser = null;
         let activeRole = 'player';
+        let isSuperAdmin = false;
         
         window.aeonState = {
             sections: [],
@@ -304,10 +318,17 @@
         };
 
         window.updateRoleUI = () => {
-            const isDM = activeRole === 'dm';
+            const isDM = activeRole === 'dm' || isSuperAdmin;
             document.body.classList.toggle('dm-mode-active', isDM);
             const controls = document.getElementById('dm-global-controls');
             if (controls) controls.classList.toggle('dm-active', isDM);
+            
+            const dmNav = document.getElementById('dm-secret-nav');
+            if (dmNav) {
+                if (isDM) dmNav.classList.remove('hidden');
+                else dmNav.classList.add('hidden');
+            }
+
             window.renderManual();
         };
 
@@ -635,6 +656,7 @@
                     }
                 }
 
+                isSuperAdmin = (u.email === ADMIN_OWNER_EMAIL);
                 activeRole = currentUser.role || 'player';
 
                 // Fetch campaign name
