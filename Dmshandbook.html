@@ -234,6 +234,8 @@
                 <button onmousedown="event.preventDefault(); document.getElementById('file-upload-input').click()" class="arch-btn bg-amber-900/50 hover:bg-amber-600"><i class="fa-solid fa-file-upload mr-1"></i> Upload</button>
                 <input type="file" id="file-upload-input" multiple accept=".txt,.md,.html,.css,.js,.json,.csv" class="hidden" onchange="window.handleFileUpload(event)">
                 <div class="w-px h-6 bg-gold mx-1"></div>
+                <button onmousedown="event.preventDefault(); window.promptPurgePage()" class="arch-btn !bg-red-900/50 hover:!bg-red-700 !text-red-200 !border-red-900" title="Wipe Entire Page"><i class="fa-solid fa-skull mr-1"></i> Purge All</button>
+                <div class="w-px h-6 bg-gold mx-1"></div>
                 <button onmousedown="event.preventDefault(); window.forceSync()" class="arch-btn sync-btn"><i class="fa-solid fa-bolt mr-1"></i> SYNC</button>
             </div>
         </div>
@@ -744,6 +746,30 @@
         };
 
         window.closePurgeModal = () => { document.getElementById('purge-modal').classList.add('hidden'); };
+        
+        window.promptPurgePage = () => {
+            if (activeRole !== 'dm' && !isSuperAdmin) return;
+            if (window.aeonState.sections.length === 0) { window.showToast("Page is already empty."); return; }
+            
+            const modal = document.getElementById('purge-modal'); 
+            const confirmBtn = document.getElementById('purge-confirm'); 
+            const promptText = document.getElementById('purge-text');
+            
+            modal.classList.remove('hidden');
+            promptText.innerHTML = `Purge ENTIRE Page?<br><span class="text-[10px] text-blood font-bold mt-2 block">This will erase ALL ${window.aeonState.sections.length} blocks on this page forever.</span>`;
+            
+            confirmBtn.onmousedown = async (e) => { 
+                e.preventDefault(); 
+                const b = writeBatch(db); 
+                window.aeonState.sections.forEach(sec => {
+                    b.delete(doc(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION, sec.id));
+                });
+                await b.commit(); 
+                window.closePurgeModal(); 
+                window.showToast("Page Purged");
+            };
+        };
+
         window.applyStyle = (prop, val) => { if (!val) return; const sel = window.getSelection(); if (window.aeonState.lockedSelection) { sel.removeAllRanges(); sel.addRange(window.aeonState.lockedSelection); } if (!sel.rangeCount || sel.toString().length === 0) return; const range = sel.getRangeAt(0); const span = document.createElement('span'); span.className = 'aeon-style-span'; if (prop === 'fontSize') span.style.fontSize = val + 'px'; if (prop === 'fontFamily') span.style.fontFamily = val; try { span.appendChild(range.extractContents()); range.insertNode(span); const nr = document.createRange(); nr.selectNodeContents(span); sel.removeAllRanges(); sel.addRange(nr); if (window.aeonState.lockedSelection) window.aeonState.lockedSelection = nr.cloneRange(); } catch (e) {} window.saveActiveContent(); };
         window.execFormat = (cmd, val = null) => { const sel = window.getSelection(); if (window.aeonState.lockedSelection) { sel.removeAllRanges(); sel.addRange(window.aeonState.lockedSelection); } document.execCommand(cmd, false, val); window.saveActiveContent(); };
         window.insertTemplate = (type) => { window.execFormat('insertHTML', type === 'img' ? '{{URL | Caption}}' : type === 'def' ? '[[Word | definition]]' : '((Text | URL))'); };
