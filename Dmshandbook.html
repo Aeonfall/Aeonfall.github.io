@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Lora:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
     <script>
         tailwind.config = {
@@ -96,7 +97,7 @@
         /* DM Editing Modes */
         .dm-editable { outline: none; min-height: 1.2em; transition: background 0.2s ease; }
         .dm-mode-active .dm-editable:hover { background: rgba(255, 255, 255, 0.3); border-radius: 4px; }
-        .dm-editable:focus { background: rgba(255, 255, 255, 0.7) !important; box-shadow: inset 0 0 0 2px #c5a059; border-radius: 8px; padding: 8px; }
+        .dm-mode-active .dm-editable:focus { background: rgba(255, 255, 255, 0.7) !important; box-shadow: inset 0 0 0 2px #c5a059; border-radius: 8px; padding: 8px; }
         .aeon-style-span { display: inline; line-height: 1.4; }
 
         /* Interactive Elements */
@@ -108,7 +109,6 @@
         .arch-link { text-decoration: underline; text-decoration-style: double; text-decoration-color: #c5a059; font-weight: 700; transition: 0.2s; color: #7a1b1b; }
         .arch-link:hover { background: rgba(197, 160, 89, 0.2); }
 
-        /* Media & Carousels */
         .inline-img-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; margin: 40px 0; }
         .inline-img-container { position: relative; display: inline-block; max-width: 100%; }
         .img-del-btn { position: absolute; top: -10px; right: -10px; background: #7a1b1b; color: white !important; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; cursor: pointer; border: 2px solid #c5a059; box-shadow: 0 4px 10px rgba(0,0,0,0.5); z-index: 50; transition: 0.2s; }
@@ -136,8 +136,14 @@
         .arch-btn { font-family: 'Cinzel', serif; font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 10px 18px; border-radius: 4px; cursor: pointer; border: 1px solid #c5a059; background: #2c1e16; color: #c5a059 !important; transition: 0.2s; }
         .arch-btn:hover { background: #7a1b1b; color: #f1e5c5 !important; border-color: #f1e5c5; }
         .sync-btn { background: #7a1b1b !important; color: #f1e5c5 !important; border-color: #f1e5c5 !important; }
+        .upload-btn { background: #1d4ed8 !important; color: #ffffff !important; border-color: #60a5fa !important; }
+        .upload-btn:hover { background: #2563eb !important; }
+        .purge-all-btn { background: #991b1b !important; color: #fecaca !important; border-color: #f87171 !important; }
+        .purge-all-btn:hover { background: #dc2626 !important; color: #ffffff !important; }
 
-        .tuner-panel { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; padding: 10px; background: #1a110b; border-radius: 8px; border: 1px solid #c5a059; box-shadow: 0 10px 25px rgba(0,0,0,0.5); position: relative; z-index: 10; }
+        .tuner-panel { display: none; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; padding: 10px; background: #1a110b; border-radius: 8px; border: 1px solid #c5a059; box-shadow: 0 10px 25px rgba(0,0,0,0.5); position: relative; z-index: 10; }
+        .dm-mode-active .tuner-panel { display: flex; }
+        
         .format-btn { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-weight: bold; cursor: pointer; background: #2c1e16; color: #c5a059; border: 1px solid transparent; }
         .format-btn:hover { background: #3d2a1f; border-color: #c5a059; }
         .format-btn.active { background: #7a1b1b !important; color: #f1e5c5 !important; }
@@ -154,11 +160,6 @@
         /* Modals & UI */
         .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #2c1e16; border: 1px solid #c5a059; color: #f1e5c5; padding: 12px 24px; border-radius: 4px; z-index: 200000; pointer-events: none; opacity: 0; transition: opacity 0.3s; font-family: 'Cinzel', serif; box-shadow: 0 10px 20px rgba(0,0,0,0.8); }
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 150000; padding: 20px; backdrop-filter: blur(4px); }
-        
-        .fantasy-btn { background: linear-gradient(to bottom, #8a2b2b, #5a1111); color: #f1e5c5 !important; border: 2px solid #c5a059 !important; font-family: 'Cinzel', serif; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.5); }
-        .fantasy-btn:hover { background: linear-gradient(to bottom, #a33232, #7a1b1b); border-color: #f1e5c5 !important; }
-        .fantasy-btn-alt { background: transparent; color: #2c1e16 !important; border: 2px solid #2c1e16 !important; font-family: 'Cinzel', serif; text-transform: uppercase; font-weight: bold; transition: all 0.2s ease; }
-        .fantasy-btn-alt:hover { background: #2c1e16; color: #f1e5c5 !important; }
 
         @media (max-width: 1024px) {
             .tome-container { flex-direction: column; }
@@ -172,10 +173,19 @@
 
     <div id="toast" class="toast">Message</div>
 
+    <input type="file" id="file-uploader" multiple accept=".txt,.md,.html,.css,.js,.json" class="hidden" onchange="window.handleFileUpload(event)">
+
     <div id="initial-loading" class="fixed inset-0 bg-[#1a110b] flex flex-col items-center justify-center z-[200000] transition-opacity duration-500">
         <i class="fa-solid fa-lock fa-bounce text-6xl text-blood mb-6"></i>
         <h2 class="font-heading font-bold text-2xl text-parchment uppercase tracking-widest">Unlocking Secret Archives...</h2>
         <p class="text-xs text-gray-500 font-heading tracking-widest mt-2 uppercase">Verifying Dungeon Master Credentials</p>
+    </div>
+
+    <div id="access-denied-modal" class="fixed inset-0 bg-black/95 flex flex-col items-center justify-center z-[250000] hidden p-6 text-center">
+        <i class="fa-solid fa-shield-halved text-6xl text-blood mb-6 drop-shadow-[0_0_15px_rgba(122,27,27,0.8)]"></i>
+        <h2 class="font-heading text-3xl font-black tracking-widest text-blood uppercase drop-shadow-md">Access Denied</h2>
+        <p class="text-parchment font-serif italic mt-4 text-center max-w-md mb-6">Your eyes burn as you attempt to read the cursed script. Only Dungeon Masters may decipher this tome.</p>
+        <button onclick="window.returnToPublicHandbook()" class="bg-[#7a1b1b] text-[#f1e5c5] px-6 py-3 rounded border border-[#c5a059] font-heading font-bold uppercase text-xs tracking-widest hover:bg-red-800 transition-colors">Flee to Safety</button>
     </div>
 
     <div id="lightbox-modal" class="hidden fixed inset-0 z-[120000] bg-black/95 flex items-center justify-center cursor-zoom-out" onclick="this.classList.add('hidden')">
@@ -198,8 +208,8 @@
         <!-- SIDEBAR -->
         <div class="tome-sidebar">
             <div class="text-center p-8 pb-4">
-                <h1 id="campaign-title-display" class="font-heading font-black text-3xl text-blood uppercase leading-none tracking-widest drop-shadow-md">DM Secrets</h1>
-                <p class="font-heading text-[10px] uppercase font-bold tracking-[0.2em] text-gray-400 mt-2">Restricted Knowledge</p>
+                <h1 id="campaign-title-display" class="font-heading font-black text-3xl text-gold uppercase leading-none tracking-widest drop-shadow-md">DM Archives</h1>
+                <p class="font-heading text-[10px] uppercase font-bold tracking-[0.2em] text-blood mt-2"><i class="fa-solid fa-eye-slash mr-1"></i> Confidential Vault</p>
             </div>
             
             <div id="nav-list" class="flex-grow overflow-y-auto mt-4 px-2">
@@ -207,7 +217,8 @@
             </div>
             
             <div class="p-4 mt-auto border-t border-gray-700/50 flex flex-col gap-2">
-                <button id="edit-mode-toggle-btn" onclick="window.toggleEditMode()" class="hidden w-full text-center py-3 text-gold border border-gold rounded font-heading font-black text-xs uppercase tracking-widest hover:bg-gold hover:text-ink transition-colors"><i class="fa-solid fa-pen-nib mr-2"></i> Edit Mode: ON</button>
+                <button id="edit-mode-toggle-btn" onclick="window.toggleEditMode()" class="w-full text-center py-3 text-gold border border-gold rounded font-heading font-black text-xs uppercase tracking-widest hover:bg-gold hover:text-ink transition-colors"><i class="fa-solid fa-pen-nib mr-2"></i> Edit Mode: ON</button>
+                <button onclick="window.exportToPDF()" class="w-full text-center py-3 text-[#f1e5c5] bg-[#1a110b] border border-[#c5a059] rounded font-heading font-black text-xs uppercase tracking-widest shadow-[0_0_10px_rgba(197,160,89,0.2)] hover:bg-[#c5a059] hover:text-[#1a110b] transition-colors"><i class="fa-solid fa-file-pdf mr-2"></i> Export PDF</button>
                 <button onclick="window.returnToPublicHandbook()" class="w-full text-center py-3 text-gray-400 border border-gray-600 rounded font-heading font-black text-xs uppercase tracking-widest hover:bg-gray-800 hover:text-white transition-colors">← Player Handbook</button>
             </div>
         </div>
@@ -226,12 +237,10 @@
                 <button onmousedown="event.preventDefault(); window.addManualSection('note')" class="arch-btn"><i class="fa-solid fa-quote-right mr-1"></i> Note</button>
                 <button onmousedown="event.preventDefault(); window.addManualSection('info')" class="arch-btn"><i class="fa-solid fa-scroll mr-1"></i> Info</button>
                 <button onmousedown="event.preventDefault(); window.addManualSection('media')" class="arch-btn"><i class="fa-solid fa-image mr-1"></i> Image</button>
-                <button onmousedown="event.preventDefault(); document.getElementById('file-upload-input').click()" class="arch-btn bg-amber-900/50 hover:bg-amber-600"><i class="fa-solid fa-file-upload mr-1"></i> Upload</button>
-                <input type="file" id="file-upload-input" multiple accept=".txt,.md,.html,.css,.js,.json,.csv" class="hidden" onchange="window.handleFileUpload(event)">
-                <div class="w-px h-6 bg-gold mx-1"></div>
-                <button onmousedown="event.preventDefault(); window.promptPurgePage()" class="arch-btn !bg-red-900/50 hover:!bg-red-700 !text-red-200 !border-red-900" title="Wipe Entire Page"><i class="fa-solid fa-skull mr-1"></i> Purge All</button>
+                <button onmousedown="event.preventDefault(); window.triggerFileUpload()" class="arch-btn upload-btn"><i class="fa-solid fa-file-arrow-up mr-1"></i> Import</button>
                 <div class="w-px h-6 bg-gold mx-1"></div>
                 <button onmousedown="event.preventDefault(); window.forceSync()" class="arch-btn sync-btn"><i class="fa-solid fa-bolt mr-1"></i> SYNC</button>
+                <button onmousedown="event.preventDefault(); window.purgeAllSections()" class="arch-btn purge-all-btn"><i class="fa-solid fa-skull mr-1"></i> PURGE ALL</button>
             </div>
         </div>
     </div>
@@ -241,7 +250,6 @@
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
         import { getFirestore, collection, doc, updateDoc, setDoc, onSnapshot, addDoc, deleteDoc, writeBatch, getDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
-        // --- FIREBASE SETUP ---
         const ADMIN_OWNER_EMAIL = "admin@chronicles.com";
 
         const firebaseConfig = {
@@ -257,7 +265,7 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // --- CAMPAIGN & PAGE SCOPING ---
+        // Setup Campaign Routing parameters
         const urlParams = new URLSearchParams(window.location.search);
         let appId = urlParams.get('id') || urlParams.get('campaignId');
         const isPreviewEnv = window.location.href.startsWith('blob:') || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
@@ -267,24 +275,13 @@
             else { try { window.location.href = "campaigns.html"; } catch(e) {} }
         }
 
-        let pageId = window.location.pathname.split('/').pop().replace('.html', '');
-        if (!pageId || pageId === "" || pageId === "index") pageId = "DMshandbook"; 
-        
+        const pageId = "DMshandbook";
         const DB_COLLECTION = `manualSections_${pageId}`;
 
-        window.returnToDash = () => {
-            try { window.location.href = `handbook.html?id=${appId}`; } 
-            catch(e) { window.showToast("Redirects disabled in preview."); }
-        };
-        
-        window.returnToPlayerHandbook = () => {
-            try { window.location.href = `howtoplay.html?id=${appId}`; } 
-            catch(e) { window.showToast("Redirects disabled in preview."); }
-        };
-
-        // --- HANDBOOK STATE & LOGIC ---
+        // Global State
         let currentUser = null;
         let activeRole = 'player';
+        let isSuperAdmin = false;
         
         window.aeonState = {
             sections: [],
@@ -298,6 +295,24 @@
             isInteracting: false,
             activeSlides: {},
             editMode: true
+        };
+
+        window.returnToPublicHandbook = () => {
+            try { window.location.href = `howtoplay.html?id=${appId}`; } 
+            catch(e) { window.showToast("Redirecting to Player Handbook..."); }
+        };
+
+        window.showToast = (msg) => {
+            const t = document.getElementById('toast');
+            if (t) { t.innerText = msg; t.style.opacity = 1; setTimeout(() => t.style.opacity = 0, 3000); }
+        };
+
+        window.renderNav = () => {
+            const nav = document.getElementById('nav-list');
+            if (!nav) return;
+            nav.innerHTML = window.aeonState.sections.filter(s => s.type === 'heading').map(s => `
+                <div class="shelf-item" onclick="const el=document.getElementById('section-${s.id}'); if(el) el.scrollIntoView({behavior:'smooth'})">${s.title}</div>
+            `).join('');
         };
 
         window.toggleEditMode = () => {
@@ -317,19 +332,6 @@
             window.showToast(window.aeonState.editMode ? "Editing Enabled" : "Reading Mode Active");
         };
 
-        window.showToast = (msg) => {
-            const t = document.getElementById('toast');
-            if (t) { t.innerText = msg; t.style.opacity = 1; setTimeout(() => t.style.opacity = 0, 3000); }
-        };
-
-        window.renderNav = () => {
-            const nav = document.getElementById('nav-list');
-            if (!nav) return;
-            nav.innerHTML = window.aeonState.sections.filter(s => s.type === 'heading').map(s => `
-                <div class="shelf-item" onclick="const el=document.getElementById('section-${s.id}'); if(el) el.scrollIntoView({behavior:'smooth'})">${s.title}</div>
-            `).join('');
-        };
-
         window.updateRoleUI = () => {
             const isDM = activeRole === 'dm';
             const showEditUI = isDM && window.aeonState.editMode;
@@ -338,9 +340,6 @@
             const controls = document.getElementById('dm-global-controls');
             if (controls) controls.classList.toggle('dm-active', showEditUI);
             
-            const toggleBtn = document.getElementById('edit-mode-toggle-btn');
-            if (toggleBtn && isDM) toggleBtn.classList.remove('hidden');
-
             window.renderManual();
         };
 
@@ -348,6 +347,338 @@
             e.preventDefault();
             const text = (e.originalEvent || e).clipboardData.getData('text/plain');
             document.execCommand('insertText', false, text);
+        };
+
+        window.exportToPDF = () => {
+            window.showToast("Scribing ancient scrolls... (Generating PDF)");
+            
+            // Create a pristine clone for PDF Generation
+            const printArea = document.createElement('div');
+            printArea.style.width = '800px'; 
+            printArea.style.padding = '40px 60px'; 
+            printArea.style.backgroundColor = '#f1e5c5'; 
+            printArea.style.color = '#2c1e16';
+            printArea.style.border = '12px double #c5a059';
+            printArea.style.boxSizing = 'border-box';
+            printArea.style.position = 'absolute';
+            printArea.style.left = '-9999px';
+            printArea.style.top = '0';
+            
+            const headerClone = document.getElementById('manual-header').cloneNode(true);
+            const contentClone = document.getElementById('manual-sections-container').cloneNode(true);
+            
+            printArea.appendChild(headerClone);
+            printArea.appendChild(contentClone);
+            
+            // Strip out all DM Editing UI elements from the clone
+            printArea.querySelectorAll('.tuner-panel, .img-del-btn, .table-tool-btn, .carousel-nav').forEach(e => e.remove());
+            
+            printArea.querySelectorAll('[contenteditable]').forEach(e => {
+                e.removeAttribute('contenteditable');
+                e.classList.remove('dm-editable');
+            });
+            
+            // Expand carousels so they stack nicely in PDF
+            printArea.querySelectorAll('.adaptive-carousel').forEach(carousel => {
+                carousel.style.border = 'none';
+                carousel.style.boxShadow = 'none';
+                carousel.style.background = 'transparent';
+                const slides = carousel.querySelectorAll('.carousel-slide');
+                slides.forEach(slide => {
+                    slide.style.display = 'flex';
+                    slide.style.opacity = '1';
+                    slide.style.marginBottom = '20px';
+                });
+                carousel.querySelectorAll('.absolute').forEach(e => e.remove());
+            });
+
+            document.body.appendChild(printArea);
+
+            // Trigger html2pdf
+            const opt = {
+                margin:       [0.5, 0.5],
+                filename:     `${window.aeonState.header.title.replace(/[^a-z0-9]/gi, '_')}_Vault.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(printArea).save().then(() => {
+                document.body.removeChild(printArea);
+                window.showToast("Scrolls archived successfully!");
+            }).catch(err => {
+                console.error("PDF Error: ", err);
+                window.showToast("Failed to scribe scrolls.");
+                if(printArea.parentNode) document.body.removeChild(printArea);
+            });
+        };
+
+        window.triggerFileUpload = () => { document.getElementById('file-uploader').click(); };
+
+        window.handleFileUpload = async (e) => {
+            if (activeRole !== 'dm') return;
+            const files = Array.from(e.target.files);
+            if (!files.length) return;
+
+            window.showToast("Parsing Documents...");
+
+            for (const file of files) {
+                const text = await file.text();
+                
+                if (file.name.endsWith('.md')) {
+                    await window.parseHomebreweryMd(text);
+                } else {
+                    const cleanName = file.name.replace(/\.[^/.]+$/, "").replace(/_/g, " ");
+                    const batch = writeBatch(db);
+                    
+                    const headRef = doc(collection(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION));
+                    const textRef = doc(collection(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION));
+                    
+                    let newOrder = window.aeonState.sections.length ? Math.max(...window.aeonState.sections.map(s => s.order || 0)) + 1 : 0;
+                    
+                    batch.set(headRef, {
+                        type: 'heading', order: newOrder, width: 100, align: 'left',
+                        title: cleanName.toUpperCase(), content: cleanName.toUpperCase(),
+                        tableHeaders: null, tableRows: null, mediaUrl: "", mediaDescription: ""
+                    });
+
+                    let formattedContent = text;
+                    if (file.name.endsWith('.html') || file.name.endsWith('.css') || file.name.endsWith('.js') || file.name.endsWith('.json')) {
+                        const safeText = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                        formattedContent = `<pre class="bg-wood text-gold p-4 rounded text-xs font-mono overflow-x-auto"><code>${safeText}</code></pre>`;
+                    } else {
+                        formattedContent = text.split('\n\n').map(p => `<p class="mb-4">${p.replace(/\n/g, '<br>')}</p>`).join('');
+                    }
+
+                    batch.set(textRef, {
+                        type: 'text', order: newOrder + 1, width: 100, align: 'left',
+                        title: 'TEXT', content: formattedContent,
+                        tableHeaders: null, tableRows: null, mediaUrl: "", mediaDescription: ""
+                    });
+
+                    await batch.commit();
+                }
+            }
+
+            window.showToast("Import Complete");
+            e.target.value = '';
+        };
+
+        window.parseHomebreweryMd = async (mdText) => {
+            const pages = mdText.split(/\\page/gi);
+            let currentOrder = window.aeonState.sections.length ? Math.max(...window.aeonState.sections.map(s => s.order || 0)) + 1 : 0;
+            
+            for (let pageContent of pages) {
+                const lines = pageContent.split('\n');
+                let batch = writeBatch(db);
+                let batchCount = 0;
+                
+                let currentNoteBuffer = null;
+                let currentNoteType = null;
+                let currentTableRows = [];
+                let inTable = false;
+
+                const commitBatchIfNeeded = async () => {
+                    if (batchCount >= 400) {
+                        await batch.commit();
+                        batch = writeBatch(db);
+                        batchCount = 0;
+                    }
+                };
+
+                for (let i = 0; i < lines.length; i++) {
+                    let line = lines[i].trim();
+                    if (!line || line.startsWith('<!--')) continue;
+
+                    // Handling Notes and Info Boxes
+                    if (line.startsWith('{{') || currentNoteBuffer !== null) {
+                        if (line.startsWith('{{note')) { currentNoteBuffer = []; currentNoteType = 'note'; continue; }
+                        else if (line.startsWith('{{descriptive') || line.startsWith('{{info')) { currentNoteBuffer = []; currentNoteType = 'info'; continue; }
+                        
+                        if (line.includes('}}')) {
+                            const noteRef = doc(collection(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION));
+                            batch.set(noteRef, {
+                                type: currentNoteType, order: currentOrder++, width: 100, align: 'left',
+                                title: currentNoteType.toUpperCase(), content: currentNoteBuffer.join('<br>'),
+                                tableHeaders: null, tableRows: null, mediaUrl: "", mediaDescription: ""
+                            });
+                            batchCount++;
+                            currentNoteBuffer = null;
+                            await commitBatchIfNeeded();
+                            continue;
+                        } else if (currentNoteBuffer) {
+                            currentNoteBuffer.push(line);
+                            continue;
+                        }
+                    }
+
+                    // Handling Tables
+                    if (line.startsWith('|')) {
+                        inTable = true;
+                        currentTableRows.push(line);
+                        // If it's the last line OR the next line is NOT a table line, build it
+                        if (i === lines.length - 1 || !lines[i + 1].trim().startsWith('|')) {
+                            const tableRef = doc(collection(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION));
+                            const parsedHeaders = currentTableRows[0].split('|').map(x => x.trim()).filter(x => x);
+                            
+                            // Skip index 1 because it's usually the `|---|---|` markdown spacer
+                            const parsedRows = currentTableRows.slice(2).map(r => r.split('|').map(x => x.trim()).filter(x => x));
+
+                            batch.set(tableRef, {
+                                type: 'table', order: currentOrder++, width: 100, align: 'left',
+                                title: 'TABLE', content: '',
+                                tableHeaders: parsedHeaders, tableRows: JSON.stringify(parsedRows),
+                                mediaUrl: "", mediaDescription: ""
+                            });
+                            batchCount++;
+                            currentTableRows = [];
+                            inTable = false;
+                            await commitBatchIfNeeded();
+                        }
+                        continue;
+                    }
+
+                    // Handling Headings
+                    if (line.startsWith('# ')) {
+                        const title = line.replace('# ', '').trim();
+                        const ref = doc(collection(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION));
+                        batch.set(ref, {
+                            type: 'heading', order: currentOrder++, width: 100, align: 'left',
+                            title: title, content: title,
+                            tableHeaders: null, tableRows: null, mediaUrl: "", mediaDescription: ""
+                        });
+                        batchCount++;
+                    } 
+                    // Handling Subheadings
+                    else if (line.startsWith('## ') || line.startsWith('### ')) {
+                        const title = line.replace(/#/g, '').trim();
+                        const ref = doc(collection(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION));
+                        batch.set(ref, {
+                            type: 'subheading', order: currentOrder++, width: 100, align: 'left',
+                            title: title, content: title,
+                            tableHeaders: null, tableRows: null, mediaUrl: "", mediaDescription: ""
+                        });
+                        batchCount++;
+                    } 
+                    // Handling Standard Text
+                    else {
+                        let htmlText = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                                          .replace(/\*(.*?)\*/g, '<em>$1</em>');
+                        
+                        const ref = doc(collection(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION));
+                        batch.set(ref, {
+                            type: 'text', order: currentOrder++, width: 100, align: 'left',
+                            title: 'TEXT', content: `<p>${htmlText}</p>`,
+                            tableHeaders: null, tableRows: null, mediaUrl: "", mediaDescription: ""
+                        });
+                        batchCount++;
+                    }
+                    await commitBatchIfNeeded();
+                }
+                if (batchCount > 0) await batch.commit();
+            }
+        };
+
+        window.purgeAllSections = () => {
+            if (activeRole !== 'dm') return;
+            const modal = document.getElementById('purge-modal');
+            const confirmBtn = document.getElementById('purge-confirm');
+            const promptText = document.getElementById('purge-text');
+
+            promptText.innerHTML = `PURGE ENTIRE PAGE?<br><span class="text-[11px] text-blood font-bold mt-2 block">This will permanently delete all ${window.aeonState.sections.length} blocks in this DM Handbook!</span>`;
+            modal.classList.remove('hidden');
+
+            confirmBtn.onmousedown = async (e) => {
+                e.preventDefault();
+                const batch = writeBatch(db);
+                window.aeonState.sections.forEach(s => {
+                    batch.delete(doc(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION, s.id));
+                });
+                await batch.commit();
+                window.closePurgeModal();
+                window.showToast("ALL SECTIONS PURGED");
+            };
+        };
+
+        window.deleteSection = (id) => {
+            if (activeRole !== 'dm') return;
+            const section = window.aeonState.sections.find(s => s.id === id); if (!section) return;
+            const modal = document.getElementById('purge-modal'); 
+            const confirmBtn = document.getElementById('purge-confirm'); 
+            const promptText = document.getElementById('purge-text');
+            
+            modal.classList.remove('hidden');
+            if (section.type === 'heading') {
+                const group = []; const idx = window.aeonState.sections.indexOf(section);
+                for (let i = idx + 1; i < window.aeonState.sections.length; i++) { 
+                    if (window.aeonState.sections[i].type === 'heading') break; 
+                    group.push(window.aeonState.sections[i].id); 
+                }
+                if (group.length > 0) {
+                    promptText.innerHTML = `Purge Header & Attachments?<br><span class="text-[10px] text-blood font-bold mt-2 block">This erases ${group.length} attached items below it.</span>`;
+                    confirmBtn.onmousedown = async (e) => { e.preventDefault(); const b = writeBatch(db); [id, ...group].forEach(did => b.delete(doc(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION, did))); await b.commit(); window.closePurgeModal(); };
+                } else { 
+                    promptText.innerHTML = "Purge this heading?";
+                    confirmBtn.onmousedown = async (e) => { e.preventDefault(); await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION, id)); window.closePurgeModal(); }; 
+                }
+            } else { 
+                promptText.innerHTML = "Purge this block?";
+                confirmBtn.onmousedown = async (e) => { e.preventDefault(); await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION, id)); window.closePurgeModal(); }; 
+            }
+        };
+
+        window.closePurgeModal = () => { document.getElementById('purge-modal').classList.add('hidden'); };
+
+        window.initDrag = (e, id) => { 
+            if (activeRole === 'dm' && window.aeonState.editMode) { 
+                window.aeonState.draggedId = id; 
+                e.currentTarget.classList.add('unit-dragging'); 
+            } 
+        };
+
+        window.dragOver = (e) => {
+            if (!window.aeonState.draggedId) return; 
+            e.preventDefault();
+            const el = e.currentTarget; 
+            const rect = el.getBoundingClientRect();
+            const relY = e.clientY - rect.top;
+            el.classList.remove('drop-zone-top', 'drop-zone-bottom');
+            
+            const hT = rect.height * 0.50; 
+            if (relY < hT) { window.aeonState.dropSide = 'top'; el.classList.add('drop-zone-top'); }
+            else { window.aeonState.dropSide = 'bottom'; el.classList.add('drop-zone-bottom'); }
+        };
+
+        window.handleDrop = async (e, tid) => {
+            if (activeRole !== 'dm') return;
+            e.preventDefault(); 
+            const did = window.aeonState.draggedId; 
+            const side = window.aeonState.dropSide; 
+            if (!did || did === tid) return;
+            
+            const sections = [...window.aeonState.sections]; 
+            const di = sections.findIndex(x => x.id === did);
+            let toM = [sections[di]]; 
+            
+            if (sections[di].type === 'heading') { 
+                for (let i = di + 1; i < sections.length; i++) { 
+                    if (sections[i].type === 'heading') break; 
+                    toM.push(sections[i]); 
+                } 
+            }
+            
+            const rem = sections.filter(x => !toM.map(m => m.id).includes(x.id)); 
+            let ti = rem.findIndex(x => x.id === tid); 
+            if (side === 'bottom') ti++; 
+            
+            rem.splice(ti, 0, ...toM);
+            const b = writeBatch(db); 
+            
+            toM.forEach(m => b.update(doc(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION, m.id), { width: 100 })); 
+            rem.forEach((x, i) => b.update(doc(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION, x.id), { order: i })); 
+            
+            await b.commit(); 
+            window.aeonState.draggedId = null;
         };
 
         window.parseContent = (text, isDM, id) => {
@@ -359,16 +690,7 @@
                 return `data-definition="${cleanDef}"`;
             });
 
-            p = p.replace(/(<span[^>]*class="definition-word"[^>]*)\btitle="([^"]*)"/gi, (match, p1, p2) => {
-                let clean = p2.replace(/&lt;.*?&gt;|<[^>]+>/g, '').replace(/&nbsp;/g, ' ').trim();
-                return p1 + 'data-definition="' + clean + '"';
-            });
-            p = p.replace(/(<span[^>]*)\btitle="([^"]*)"([^>]*class="definition-word"[^>]*>)/gi, (match, p1, p2, p3) => {
-                let clean = p2.replace(/&lt;.*?&gt;|<[^>]+>/g, '').replace(/&nbsp;/g, ' ').trim();
-                return p1 + 'data-definition="' + clean + '"' + p3;
-            });
-
-            if (isDM && window.aeonState.activeEditId === id) return p;
+            if (isDM && window.aeonState.activeEditId === id && window.aeonState.editMode) return p;
             
             p = p.replace(/\[\[([^|\]]+)\|([^\]]+)\]\]/g, (match, word, def) => {
                 const cleanWord = word.replace(/<[^>]+>/g, '').trim();
@@ -379,7 +701,7 @@
             p = p.replace(/\(\(([^|)]+)\|([^)]+)\)\)/g, '<a href="$2" target="_blank" class="arch-link">$1</a>');
             p = p.replace(/\{\{([^}|]+)(?:\|([^}]+))?\}\}/g, (m, url, desc) => {
                 const trimmedUrl = url.trim();
-                return `<div class="inline-img-wrapper"><div class="inline-img-container">${isDM ? `<div class="img-del-btn" onmousedown="event.preventDefault(); window.removeInlineImage('${id}', '${trimmedUrl}')"><i class="fa-solid fa-times"></i></div>` : ''}<img src="${trimmedUrl}" class="inline-block max-w-full rounded border-2 border-gold shadow-lg cursor-zoom-in" onclick="window.openZoom('${trimmedUrl}')"></div>${desc ? `<div class="text-[12px] italic text-ink mt-3 text-center font-serif">${desc}</div>` : ''}</div>`;
+                return `<div class="inline-img-wrapper"><div class="inline-img-container">${(isDM && window.aeonState.editMode) ? `<div class="img-del-btn" onmousedown="event.preventDefault(); window.removeInlineImage('${id}', '${trimmedUrl}')"><i class="fa-solid fa-times"></i></div>` : ''}<img src="${trimmedUrl}" class="inline-block max-w-full rounded border-2 border-gold shadow-lg cursor-zoom-in" onclick="window.openZoom('${trimmedUrl}')"></div>${desc ? `<div class="text-[12px] italic text-ink mt-3 text-center font-serif">${desc}</div>` : ''}</div>`;
             });
             return p;
         };
@@ -392,7 +714,7 @@
         };
 
         window.dbUpdateHeader = (field, val) => {
-            if (activeRole !== 'dm' && !isSuperAdmin) return;
+            if (activeRole !== 'dm') return;
             clearTimeout(window.aeonState.saveTimer);
             window.aeonState.saveTimer = setTimeout(async () => {
                 await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', `header_${pageId}`), { [field]: val }, { merge: true });
@@ -400,7 +722,7 @@
         };
 
         window.dbUpdateSection = (id, field, val) => {
-            if (activeRole !== 'dm' && !isSuperAdmin) return;
+            if (activeRole !== 'dm') return;
             clearTimeout(window.aeonState.saveTimer);
             window.aeonState.saveTimer = setTimeout(async () => {
                 const updateData = typeof field === 'object' ? field : { [field]: val };
@@ -409,56 +731,27 @@
             }, 500);
         };
 
-        window.addRow = async (id) => {
-            if (activeRole !== 'dm' && !isSuperAdmin) return;
-            const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
-            const rows = JSON.parse(s.tableRows || '[]');
-            const hCount = (s.tableHeaders || ['H1', 'H2']).length;
-            rows.push(new Array(hCount).fill("..."));
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION, id), { tableRows: JSON.stringify(rows) });
-        };
-        
-        window.remRow = async (id) => {
-            if (activeRole !== 'dm' && !isSuperAdmin) return;
-            const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
-            const rows = JSON.parse(s.tableRows || '[]'); if (rows.length <= 1) return;
-            rows.pop();
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION, id), { tableRows: JSON.stringify(rows) });
-        };
-        
-        window.addCol = async (id) => {
-            if (activeRole !== 'dm' && !isSuperAdmin) return;
-            const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
-            const h = [...(s.tableHeaders || ['H1', 'H2'])]; h.push("NEW COL");
-            const r = JSON.parse(s.tableRows || '[]');
-            const updatedRows = r.map(row => [...row, "..."]);
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION, id), { tableHeaders: h, tableRows: JSON.stringify(updatedRows) });
-        };
-        
-        window.remCol = async (id) => {
-            if (activeRole !== 'dm' && !isSuperAdmin) return;
-            const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
-            const h = [...(s.tableHeaders || ['H1', 'H2'])]; if (h.length <= 1) return;
-            h.pop();
-            const r = JSON.parse(s.tableRows || '[]');
-            const updatedRows = r.map(row => { const nr = [...row]; nr.pop(); return nr; });
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION, id), { tableHeaders: h, tableRows: JSON.stringify(updatedRows) });
-        };
-
-        window.updateTableCell = (id, type, r, val, c = 0) => {
-            if (activeRole !== 'dm' && !isSuperAdmin) return;
-            const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
-            if (type === 'h') {
-                const h = [...s.tableHeaders]; h[r] = val;
-                window.dbUpdateSection(id, 'tableHeaders', h);
-            } else {
-                const rows = JSON.parse(s.tableRows); rows[r][c] = val;
-                window.dbUpdateSection(id, 'tableRows', JSON.stringify(rows));
+        window.forceSync = async () => {
+            if (activeRole !== 'dm') return;
+            clearTimeout(window.aeonState.saveTimer);
+            window.aeonState.isInteracting = false; 
+            const activeEl = document.querySelector(`[data-id="${window.aeonState.activeEditId}"]`);
+            if (activeEl) {
+                const val = activeEl.innerText;
+                const id = window.aeonState.activeEditId;
+                if (id === 'header-title' || id === 'header-subtitle') {
+                    await window.dbUpdateHeader(id === 'header-title' ? 'title' : 'subtitle', val);
+                } else {
+                    const section = window.aeonState.sections.find(x => x.id === id);
+                    if (section?.type === 'heading') await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION, id), { content: activeEl.innerHTML, title: val });
+                    else await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION, id), { content: activeEl.innerHTML });
+                }
             }
+            window.aeonState.activeEditId = null; window.renderManual(); window.showToast("SYNC COMPLETE");
         };
 
         window.addManualSection = async (type, afterIdOverride = null) => {
-            if (activeRole !== 'dm' && !isSuperAdmin) return;
+            if (activeRole !== 'dm') return;
             const afterId = afterIdOverride || window.aeonState.lastActiveId;
             const sections = [...window.aeonState.sections];
             const batch = writeBatch(db);
@@ -488,189 +781,64 @@
             window.showToast("Section Added");
         };
 
-        window.forceSync = async () => {
-            if (activeRole !== 'dm' && !isSuperAdmin) return;
-            clearTimeout(window.aeonState.saveTimer);
-            window.aeonState.isInteracting = false; 
-            const activeEl = document.querySelector(`[data-id="${window.aeonState.activeEditId}"]`);
-            if (activeEl) {
-                const val = activeEl.innerText;
-                const id = window.aeonState.activeEditId;
-                if (id === 'header-title' || id === 'header-subtitle') {
-                    await window.dbUpdateHeader(id === 'header-title' ? 'title' : 'subtitle', val);
-                } else {
-                    const section = window.aeonState.sections.find(x => x.id === id);
-                    if (section?.type === 'heading') await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION, id), { content: activeEl.innerHTML, title: val });
-                    else await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION, id), { content: activeEl.innerHTML });
-                }
-            }
-            window.aeonState.activeEditId = null; window.renderManual(); window.showToast("SYNC COMPLETE");
+        window.addRow = async (id) => {
+            if (activeRole !== 'dm') return;
+            const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
+            const rows = JSON.parse(s.tableRows || '[]');
+            const hCount = (s.tableHeaders || ['H1', 'H2']).length;
+            rows.push(new Array(hCount).fill("..."));
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION, id), { tableRows: JSON.stringify(rows) });
+        };
+        
+        window.remRow = async (id) => {
+            if (activeRole !== 'dm') return;
+            const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
+            const rows = JSON.parse(s.tableRows || '[]'); if (rows.length <= 1) return;
+            rows.pop();
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION, id), { tableRows: JSON.stringify(rows) });
+        };
+        
+        window.addCol = async (id) => {
+            if (activeRole !== 'dm') return;
+            const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
+            const h = [...(s.tableHeaders || ['H1', 'H2'])]; h.push("NEW COL");
+            const r = JSON.parse(s.tableRows || '[]');
+            const updatedRows = r.map(row => [...row, "..."]);
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION, id), { tableHeaders: h, tableRows: JSON.stringify(updatedRows) });
+        };
+        
+        window.remCol = async (id) => {
+            if (activeRole !== 'dm') return;
+            const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
+            const h = [...(s.tableHeaders || ['H1', 'H2'])]; if (h.length <= 1) return;
+            h.pop();
+            const r = JSON.parse(s.tableRows || '[]');
+            const updatedRows = r.map(row => { const nr = [...row]; nr.pop(); return nr; });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION, id), { tableHeaders: h, tableRows: JSON.stringify(updatedRows) });
         };
 
-        // Handle Bulk File Uploads & Markdown (Homebrewery) parsing
-        window.handleFileUpload = async (event) => {
-            if (activeRole !== 'dm' && !isSuperAdmin) return;
-            const files = event.target.files;
-            if (!files || files.length === 0) return;
-
-            window.showToast(`Processing ${files.length} file(s)...`);
-            const batch = writeBatch(db);
-            let currentOrder = window.aeonState.sections.length ? Math.max(...window.aeonState.sections.map(s => s.order || 0)) + 1 : 0;
-
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                if (file.size > 800000) { 
-                    window.showToast(`Skipped ${file.name} (too large)`);
-                    continue;
-                }
-                
-                try {
-                    const content = await file.text();
-                    const ext = file.name.split('.').pop().toLowerCase();
-                    
-                    if (ext === 'md') {
-                        // --- HOMEBREWERY PARSER ---
-                        // Split content by \page to treat them as section breaks
-                        const pages = content.split(/\\page/g);
-                        
-                        for (const page of pages) {
-                            // Clean out columns/formatting markers that interfere with block parsing
-                            let cleanPage = page.replace(/\\column/g, '');
-                            const blocks = cleanPage.split(/\n\s*\n/);
-                            
-                            for (let block of blocks) {
-                                block = block.trim();
-                                if (!block) continue;
-                                
-                                // Ignore raw HTML comments and style tags from Homebrewery
-                                if (block.startsWith('<!--') || block.startsWith('<style>')) continue;
-                                
-                                const id = doc(collection(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION)).id;
-                                const ref = doc(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION, id);
-                                
-                                // 1. Heading 1
-                                if (block.startsWith('# ')) {
-                                    const title = block.replace(/^#\s*/, '');
-                                    batch.set(ref, { type: 'heading', order: currentOrder++, width: 100, align: 'left', title: title, content: title, tableHeaders: null, tableRows: null, mediaUrl: "", mediaDescription: "" });
-                                }
-                                // 2. Subheadings
-                                else if (block.startsWith('## ') || block.startsWith('### ') || block.startsWith('#### ')) {
-                                    const title = block.replace(/^#+\s*/, '');
-                                    batch.set(ref, { type: 'subheading', order: currentOrder++, width: 100, align: 'left', title: title, content: title, tableHeaders: null, tableRows: null, mediaUrl: "", mediaDescription: "" });
-                                }
-                                // 3. Tables (Markdown standard)
-                                else if (block.includes('|') && block.includes('\n|')) {
-                                    const lines = block.split('\n').map(l => l.trim()).filter(l => l.startsWith('|'));
-                                    if (lines.length > 2) {
-                                        const headers = lines[0].split('|').map(c => c.trim()).filter(c => c);
-                                        const rows = [];
-                                        // Skip the layout line that has '---'
-                                        for (let j = 1; j < lines.length; j++) {
-                                            if (lines[j].includes('---')) continue;
-                                            const rowData = lines[j].split('|').map(c => c.trim()).filter(c => c);
-                                            while (rowData.length < headers.length) rowData.push(""); // pad
-                                            rows.push(rowData);
-                                        }
-                                        batch.set(ref, { type: 'table', order: currentOrder++, width: 100, align: 'left', title: 'TABLE', content: '', tableHeaders: headers, tableRows: JSON.stringify(rows), mediaUrl: "", mediaDescription: "" });
-                                    }
-                                }
-                                // 4. Special Homebrewery Notes
-                                else if (block.startsWith('{{note') || block.startsWith('{{descriptive')) {
-                                    // Remove the {{type and }} markers
-                                    const text = block.replace(/^{{\w+\s*/, '').replace(/}}$/, '').trim().replace(/\n/g, '<br>');
-                                    const type = block.startsWith('{{note') ? 'note' : 'info';
-                                    batch.set(ref, { type: type, order: currentOrder++, width: 100, align: 'left', title: type.toUpperCase(), content: text, tableHeaders: null, tableRows: null, mediaUrl: "", mediaDescription: "" });
-                                }
-                                // 5. Standard text 
-                                else {
-                                    // Format simple bold/italics
-                                    let htmlText = block
-                                        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-                                        .replace(/\*([^*]+)\*/g, '<em>$1</em>')
-                                        .replace(/\n/g, '<br>');
-                                    
-                                    batch.set(ref, { type: 'text', order: currentOrder++, width: 100, align: 'left', title: 'TEXT', content: htmlText, tableHeaders: null, tableRows: null, mediaUrl: "", mediaDescription: "" });
-                                }
-                            }
-                        }
-                    } 
-                    else {
-                        // --- STANDARD FILE (HTML, CSS, JS, TXT) ---
-                        const headingRef = doc(collection(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION));
-                        batch.set(headingRef, { 
-                            type: 'heading', order: currentOrder++, width: 100, align: 'left', 
-                            title: file.name.toUpperCase(), content: file.name, 
-                            tableHeaders: null, tableRows: null, mediaUrl: "", mediaDescription: "" 
-                        });
-
-                        const textRef = doc(collection(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION));
-                        let processedContent = '';
-                        
-                        if (['html', 'css', 'js', 'json'].includes(ext)) {
-                            const escaped = content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                            processedContent = `<pre style="white-space: pre-wrap; font-family: monospace; font-size: 13px; background: rgba(122,27,27,0.05); padding: 16px; border-radius: 8px; border: 1px solid #c5a059; overflow-x: auto;">${escaped}</pre>`;
-                        } else {
-                            processedContent = `<div style="white-space: pre-wrap;">${content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>`;
-                        }
-                        
-                        batch.set(textRef, { 
-                            type: 'text', order: currentOrder++, width: 100, align: 'left', 
-                            content: processedContent, 
-                            tableHeaders: null, tableRows: null, mediaUrl: "", mediaDescription: "" 
-                        });
-                    }
-                } catch (err) {
-                    console.error("Error reading file", file.name, err);
-                }
+        window.updateTableCell = (id, type, r, val, c = 0) => {
+            if (activeRole !== 'dm') return;
+            const s = window.aeonState.sections.find(x => x.id === id); if (!s) return;
+            if (type === 'h') {
+                const h = [...s.tableHeaders]; h[r] = val;
+                window.dbUpdateSection(id, 'tableHeaders', h);
+            } else {
+                const rows = JSON.parse(s.tableRows); rows[r][c] = val;
+                window.dbUpdateSection(id, 'tableRows', JSON.stringify(rows));
             }
-
-            try {
-                await batch.commit();
-                window.showToast("Files processed & uploaded successfully!");
-            } catch (err) {
-                console.error("Batch upload failed", err);
-                window.showToast("Upload failed. Check console.");
-            }
-            
-            event.target.value = '';
-        };
-
-        window.initDrag = (e, id) => { if (activeRole === 'dm' || isSuperAdmin) { window.aeonState.draggedId = id; e.currentTarget.classList.add('unit-dragging'); } };
-        window.dragOver = (e) => {
-            if (!window.aeonState.draggedId) return; e.preventDefault();
-            const el = e.currentTarget; const rect = el.getBoundingClientRect();
-            const relX = e.clientX - rect.left; const relY = e.clientY - rect.top;
-            el.classList.remove('drop-zone-top', 'drop-zone-bottom');
-            
-            const hT = rect.height * 0.50; 
-            if (relY < hT) { window.aeonState.dropSide = 'top'; el.classList.add('drop-zone-top'); }
-            else { window.aeonState.dropSide = 'bottom'; el.classList.add('drop-zone-bottom'); }
-        };
-
-        window.handleDrop = async (e, tid) => {
-            if (activeRole !== 'dm' && !isSuperAdmin) return;
-            e.preventDefault(); const did = window.aeonState.draggedId; const side = window.aeonState.dropSide; if (!did || did === tid) return;
-            const sections = [...window.aeonState.sections]; const di = sections.findIndex(x => x.id === did);
-            let toM = [sections[di]]; 
-            if (sections[di].type === 'heading') { for (let i = di + 1; i < sections.length; i++) { if (sections[i].type === 'heading') break; toM.push(sections[i]); } }
-            const rem = sections.filter(x => !toM.map(m => m.id).includes(x.id)); 
-            let ti = rem.findIndex(x => x.id === tid); if (side === 'bottom') ti++; 
-            rem.splice(ti, 0, ...toM);
-            const b = writeBatch(db); 
-            toM.forEach(m => b.update(doc(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION, m.id), { width: 100 })); 
-            rem.forEach((x, i) => b.update(doc(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION, x.id), { order: i })); 
-            await b.commit(); window.aeonState.draggedId = null;
         };
 
         window.renderManual = () => {
             const isDM = activeRole === 'dm' && window.aeonState.editMode;
+            const isEditMode = window.aeonState.editMode;
             const container = document.getElementById('manual-sections-container');
             const header = document.getElementById('manual-header');
             if (!header || !container) return;
 
             header.innerHTML = `
-                <h1 class="manual-h1 dm-editable" contenteditable="${isDM}" data-id="header-title" onfocus="window.aeonState.activeEditId='header-title'; window.aeonState.lastActiveId='header'" oninput="window.dbUpdateHeader('title', this.innerText)" onpaste="window.handlePaste(event)">${window.aeonState.header.title}</h1>
-                <p class="manual-subtitle dm-editable" contenteditable="${isDM}" data-id="header-subtitle" onfocus="window.aeonState.activeEditId='header-subtitle'; window.aeonState.lastActiveId='header'" oninput="window.dbUpdateHeader('subtitle', this.innerText)" onpaste="window.handlePaste(event)">${window.aeonState.header.subtitle}</p>
+                <h1 class="manual-h1 ${isEditMode ? 'dm-editable' : ''}" ${isEditMode ? 'contenteditable="true"' : ''} data-id="header-title" onfocus="window.aeonState.activeEditId='header-title'; window.aeonState.lastActiveId='header'" oninput="window.dbUpdateHeader('title', this.innerText)" onpaste="window.handlePaste(event)">${window.aeonState.header.title}</h1>
+                <p class="manual-subtitle ${isEditMode ? 'dm-editable' : ''}" ${isEditMode ? 'contenteditable="true"' : ''} data-id="header-subtitle" onfocus="window.aeonState.activeEditId='header-subtitle'; window.aeonState.lastActiveId='header'" oninput="window.dbUpdateHeader('subtitle', this.innerText)" onpaste="window.handlePaste(event)">${window.aeonState.header.subtitle}</p>
             `;
             
             window.renderNav();
@@ -681,34 +849,35 @@
                 
                 if (s.type === 'table') {
                     const rows = JSON.parse(s.tableRows || '[["...","..."]]');
-                    body = `<div class="table-wrap">${isDM ? `<div class="bg-[rgba(139,90,43,0.1)] border-b border-gold flex gap-2 p-2 justify-center"><button onmousedown="event.preventDefault(); window.addRow('${s.id}')" class="table-tool-btn">+Row</button><button onmousedown="event.preventDefault(); window.remRow('${s.id}')" class="table-tool-btn">-Row</button><button onmousedown="event.preventDefault(); window.addCol('${s.id}')" class="table-tool-btn">+Col</button><button onmousedown="event.preventDefault(); window.remCol('${s.id}')" class="table-tool-btn">-Col</button></div>` : ''}<table class="manual-table"><thead><tr>${(s.tableHeaders || ['H1', 'H2']).map((h, i) => `<th contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}','h',${i},this.innerText)" onpaste="window.handlePaste(event)">${h}</th>`).join('')}</tr></thead><tbody>${rows.map((r, ri) => `<tr>${r.map((c, ci) => `<td contenteditable="${isDM}" oninput="window.updateTableCell('${s.id}','r',${ri},this.innerText,${ci})" onpaste="window.handlePaste(event)">${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+                    body = `<div class="table-wrap">${isDM ? `<div class="bg-[rgba(139,90,43,0.1)] border-b border-gold flex gap-2 p-2 justify-center"><button onmousedown="event.preventDefault(); window.addRow('${s.id}')" class="table-tool-btn font-bold text-xs">+ Row</button><button onmousedown="event.preventDefault(); window.remRow('${s.id}')" class="table-tool-btn font-bold text-xs">- Row</button><button onmousedown="event.preventDefault(); window.addCol('${s.id}')" class="table-tool-btn font-bold text-xs">+ Col</button><button onmousedown="event.preventDefault(); window.remCol('${s.id}')" class="table-tool-btn font-bold text-xs">- Col</button></div>` : ''}<table class="manual-table"><thead><tr>${(s.tableHeaders || ['H1', 'H2']).map((h, i) => `<th ${isEditMode ? 'contenteditable="true"' : ''} oninput="window.updateTableCell('${s.id}','h',${i},this.innerText)" onpaste="window.handlePaste(event)">${h}</th>`).join('')}</tr></thead><tbody>${rows.map((r, ri) => `<tr>${r.map((c, ci) => `<td ${isEditMode ? 'contenteditable="true"' : ''} oninput="window.updateTableCell('${s.id}','r',${ri},this.innerText,${ci})" onpaste="window.handlePaste(event)">${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
                 } 
                 else if (s.type === 'media') {
                     const urls = (s.mediaUrl || "").split(',').filter(x => x.trim());
                     const descs = (s.mediaDescription || "").split(',');
                     const activeIdx = window.aeonState.activeSlides[s.id] || 0;
-                    body = `<div class="adaptive-carousel" onmousedown="window.aeonState.lastActiveId='${s.id}'"><div class="carousel-viewport">${urls.length > 1 ? `<div class="carousel-nav" style="left: 15px;" onmousedown="event.preventDefault(); window.changeSlide('${s.id}', -1)"><i class="fa-solid fa-chevron-left"></i></div><div class="carousel-nav" style="right: 15px;" onmousedown="event.preventDefault(); window.changeSlide('${s.id}', 1)"><i class="fa-solid fa-chevron-right"></i></div>` : ''}${urls.map((url, idx) => `<div class="carousel-slide ${idx === activeIdx ? 'active' : ''}">${isDM ? `<div class="absolute top-4 right-4 bg-blood text-white w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs cursor-pointer z-30 shadow" onmousedown="event.preventDefault(); window.removeSlide('${s.id}', ${idx})">✕</div>` : ''}<img src="${url.trim()}" class="carousel-img" onclick="window.openZoom('${url.trim()}')"><div class="carousel-caption">${(descs[idx] || "").trim()}</div></div>`).join('')}</div>${urls.length > 1 ? `<div class="absolute bottom-4 right-4 text-[10px] font-bold text-ink opacity-50 pointer-events-none">${activeIdx + 1} / ${urls.length}</div>` : ''}</div>${isDM ? `<div class="flex flex-col gap-2 mt-4 bg-[rgba(255,255,255,0.4)] p-4 rounded border border-gold"><input class="w-full text-xs p-2 bg-transparent border-b border-gray-400 outline-none text-ink placeholder-gray-500" placeholder="Slide URLs (comma separated)" value="${s.mediaUrl}" oninput="window.dbUpdateSection('${s.id}', 'mediaUrl', this.value)"><input class="w-full text-xs p-2 bg-transparent border-b border-gray-400 outline-none text-ink placeholder-gray-500" placeholder="Slide Captions (comma separated)" value="${s.mediaDescription}" oninput="window.dbUpdateSection('${s.id}', 'mediaDescription', this.value)"></div>` : ''}`;
+                    body = `<div class="adaptive-carousel" onmousedown="window.aeonState.lastActiveId='${s.id}'"><div class="carousel-viewport">${urls.length > 1 ? `<div class="carousel-nav absolute cursor-pointer bg-black/50 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-blood z-40 transition-colors" style="left: 15px;" onmousedown="event.preventDefault(); window.changeSlide('${s.id}', -1)"><i class="fa-solid fa-chevron-left"></i></div><div class="carousel-nav absolute cursor-pointer bg-black/50 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-blood z-40 transition-colors" style="right: 15px;" onmousedown="event.preventDefault(); window.changeSlide('${s.id}', 1)"><i class="fa-solid fa-chevron-right"></i></div>` : ''}${urls.map((url, idx) => `<div class="carousel-slide ${idx === activeIdx ? 'active' : ''}">${isDM ? `<div class="absolute top-4 right-4 bg-blood text-white w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs cursor-pointer z-30 shadow" onmousedown="event.preventDefault(); window.removeSlide('${s.id}', ${idx})">✕</div>` : ''}<img src="${url.trim()}" class="carousel-img" onclick="window.openZoom('${url.trim()}')"><div class="carousel-caption">${(descs[idx] || "").trim()}</div></div>`).join('')}</div>${urls.length > 1 ? `<div class="absolute bottom-4 right-4 text-[10px] font-bold text-ink opacity-50 pointer-events-none">${activeIdx + 1} / ${urls.length}</div>` : ''}</div>${isDM ? `<div class="flex flex-col gap-2 mt-4 bg-[rgba(255,255,255,0.4)] p-4 rounded border border-gold"><input class="w-full text-xs p-2 bg-transparent border-b border-gray-400 outline-none text-ink placeholder-gray-500" placeholder="Slide URLs (comma separated)" value="${s.mediaUrl}" oninput="window.dbUpdateSection('${s.id}', 'mediaUrl', this.value)"><input class="w-full text-xs p-2 bg-transparent border-b border-gray-400 outline-none text-ink placeholder-gray-500" placeholder="Slide Captions (comma separated)" value="${s.mediaDescription}" oninput="window.dbUpdateSection('${s.id}', 'mediaDescription', this.value)"></div>` : ''}`;
                 } 
                 else if (s.type === 'heading' || s.type === 'subheading') { 
                     const tag = s.type === 'heading' ? 'h2' : 'h3';
                     const cls = s.type === 'heading' ? 'manual-h2' : 'manual-h3';
-                    body = `<${tag} class="${cls} dm-editable" data-id="${s.id}" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}'; window.aeonState.lastActiveId='${s.id}'" onblur="window.aeonState.activeEditId=null" onpaste="window.handlePaste(event)" oninput="const val=this.innerText; if('${s.type}'==='heading'){ window.aeonState.sections.find(x=>x.id==='${s.id}').title=val; window.renderNav(); window.dbUpdateSection('${s.id}', {content: this.innerHTML, title: val}); } else { window.dbUpdateSection('${s.id}', 'content', this.innerHTML); }">${window.parseContent(s.content, isDM, s.id)}</${tag}>`; 
+                    body = `<${tag} class="${cls} ${isEditMode ? 'dm-editable' : ''}" data-id="${s.id}" ${isEditMode ? 'contenteditable="true"' : ''} onfocus="window.aeonState.activeEditId='${s.id}'; window.aeonState.lastActiveId='${s.id}'" onblur="window.aeonState.activeEditId=null" onpaste="window.handlePaste(event)" oninput="const val=this.innerText; if('${s.type}'==='heading'){ window.aeonState.sections.find(x=>x.id==='${s.id}').title=val; window.renderNav(); window.dbUpdateSection('${s.id}', {content: this.innerHTML, title: val}); } else { window.dbUpdateSection('${s.id}', 'content', this.innerHTML); }">${window.parseContent(s.content, isDM, s.id)}</${tag}>`; 
                 } 
                 else {
                     const boxClass = s.type === 'note' ? 'manual-note-box' : s.type === 'info' ? 'manual-info-box' : '';
-                    body = `<div class="${boxClass}"><div class="dm-editable text-block" data-id="${s.id}" contenteditable="${isDM}" onfocus="window.aeonState.activeEditId='${s.id}'; window.aeonState.lastActiveId='${s.id}'" onblur="window.aeonState.activeEditId=null" onpaste="window.handlePaste(event)" oninput="window.dbUpdateSection('${s.id}','content',this.innerHTML)">${window.parseContent(s.content, isDM, s.id)}</div></div>`;
+                    body = `<div class="${boxClass}"><div class="${isEditMode ? 'dm-editable' : ''} text-block" data-id="${s.id}" ${isEditMode ? 'contenteditable="true"' : ''} onfocus="window.aeonState.activeEditId='${s.id}'; window.aeonState.lastActiveId='${s.id}'" onblur="window.aeonState.activeEditId=null" onpaste="window.handlePaste(event)" oninput="window.dbUpdateSection('${s.id}','content',this.innerHTML)">${window.parseContent(s.content, isDM, s.id)}</div></div>`;
                 }
                 
                 return `<section id="section-${s.id}" class="manual-section-unit relative transition-all duration-300 py-2" 
                     style="width: calc(${width}% - 1rem); text-align: ${s.align || 'left'}" 
-                    draggable="false" 
+                    ${isDM ? `draggable="true"` : ''}
                     ondragstart="window.initDrag(event, '${s.id}')" 
                     ondragover="window.dragOver(event)" 
                     ondragleave="this.classList.remove('drop-zone-top','drop-zone-bottom')" 
-                    ondragend="this.setAttribute('draggable', 'false'); this.classList.remove('unit-dragging')" 
+                    ondragend="this.classList.remove('unit-dragging')" 
                     ondrop="window.handleDrop(event, '${s.id}')">
-                    ${isDM ? `<div class="tuner-panel" onmousedown="window.aeonState.isInteracting=true" onmouseup="window.aeonState.isInteracting=false">
-                        <div class="cursor-grab p-1 text-gold hover:text-blood transition-colors" onmousedown="this.closest('section').setAttribute('draggable', 'true')"><i class="fa-solid fa-grip-vertical"></i></div>
+                    
+                    <div class="tuner-panel" onmousedown="window.aeonState.isInteracting=true" onmouseup="window.aeonState.isInteracting=false">
+                        <div class="cursor-grab p-1 text-gold hover:text-blood transition-colors"><i class="fa-solid fa-grip-vertical"></i></div>
                         
                         <div class="insert-menu-btn" onmousedown="window.aeonState.lastActiveId='${s.id}'"><i class="fa-solid fa-plus"></i><div class="insert-dropdown">
                             <div class="insert-option" onmousedown="event.preventDefault(); window.addManualSection('heading', '${s.id}')">Heading</div>
@@ -737,76 +906,61 @@
                         </div>
                         <div class="h-6 w-px bg-gold mx-2 ml-auto"></div>
                         <button class="w-7 h-7 flex items-center justify-center text-blood hover:text-red-400 transition-colors" onmousedown="event.preventDefault(); event.stopPropagation(); window.deleteSection('${s.id}')"><i class="fa-solid fa-trash-can"></i></button>
-                    </div>` : ''}${body}</section>`;
+                    </div>${body}</section>`;
             }).join('');
         };
 
-        window.deleteSection = (id) => {
-            if (activeRole !== 'dm' && !isSuperAdmin) return;
-            const section = window.aeonState.sections.find(s => s.id === id); if (!section) return;
-            const modal = document.getElementById('purge-modal'); const confirmBtn = document.getElementById('purge-confirm'); const promptText = document.getElementById('purge-text');
-            modal.classList.remove('hidden');
-            if (section.type === 'heading') {
-                const group = []; const idx = window.aeonState.sections.indexOf(section);
-                for (let i = idx + 1; i < window.aeonState.sections.length; i++) { if (window.aeonState.sections[i].type === 'heading') break; group.push(window.aeonState.sections[i].id); }
-                if (group.length > 0) {
-                    promptText.innerHTML = `Purge Header & Attachments?<br><span class="text-[10px] text-blood font-bold mt-2 block">This erases ${group.length} attached items below it.</span>`;
-                    confirmBtn.onmousedown = async (e) => { e.preventDefault(); const b = writeBatch(db); [id, ...group].forEach(did => b.delete(doc(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION, did))); await b.commit(); window.closePurgeModal(); };
-                } else { 
-                    promptText.innerHTML = "Purge this heading?";
-                    confirmBtn.onmousedown = async (e) => { e.preventDefault(); await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION, id)); window.closePurgeModal(); }; 
-                }
-            } else { 
-                promptText.innerHTML = "Purge this block?";
-                confirmBtn.onmousedown = async (e) => { e.preventDefault(); await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION, id)); window.closePurgeModal(); }; 
-            }
+        // Formatting Helper Functions
+        window.execFormat = (cmd, val = null) => { 
+            const sel = window.getSelection(); 
+            document.execCommand(cmd, false, val); 
+            window.saveActiveContent(); 
         };
-
-        window.closePurgeModal = () => { document.getElementById('purge-modal').classList.add('hidden'); };
         
-        window.promptPurgePage = () => {
-            if (activeRole !== 'dm' && !isSuperAdmin) return;
-            if (window.aeonState.sections.length === 0) { window.showToast("Page is already empty."); return; }
-            
-            const modal = document.getElementById('purge-modal'); 
-            const confirmBtn = document.getElementById('purge-confirm'); 
-            const promptText = document.getElementById('purge-text');
-            
-            modal.classList.remove('hidden');
-            promptText.innerHTML = `Purge ENTIRE Page?<br><span class="text-[10px] text-blood font-bold mt-2 block">This will erase ALL ${window.aeonState.sections.length} blocks on this page forever.</span>`;
-            
-            confirmBtn.onmousedown = async (e) => { 
-                e.preventDefault(); 
-                const b = writeBatch(db); 
-                window.aeonState.sections.forEach(sec => {
-                    b.delete(doc(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION, sec.id));
-                });
-                await b.commit(); 
-                window.closePurgeModal(); 
-                window.showToast("Page Purged");
-            };
+        window.insertTemplate = (type) => { 
+            window.execFormat('insertHTML', type === 'img' ? '{{URL | Caption}}' : type === 'def' ? '[[Word | definition]]' : '((Text | URL))'); 
+        };
+        
+        window.changeSlide = (sid, d) => { 
+            const s = window.aeonState.sections.find(x => x.id === sid); 
+            const u = (s.mediaUrl || "").split(',').filter(x => x.trim()); 
+            window.aeonState.activeSlides[sid] = ((window.aeonState.activeSlides[sid] || 0) + d + u.length) % u.length; 
+            window.renderManual(); 
+        };
+        
+        window.removeSlide = async (sid, i) => { 
+            if (activeRole !== 'dm') return; 
+            const s = window.aeonState.sections.find(x => x.id === sid); 
+            let u = (s.mediaUrl || "").split(',').filter(x => x.trim()); 
+            let ds = (s.mediaDescription || "").split(','); 
+            u.splice(i,1); ds.splice(i,1); 
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION, sid), { mediaUrl: u.join(','), mediaDescription: ds.join(',') }); 
+        };
+        
+        window.removeInlineImage = (sid, url) => { 
+            if (activeRole !== 'dm') return; 
+            const s = window.aeonState.sections.find(x => x.id === sid); 
+            const reg = new RegExp(`\\{\\{\\s*${url.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}\\s*(\\|[^}]*)?\\}\\}`, 'g'); 
+            window.dbUpdateSection(sid, 'content', s.content.replace(reg, '')); 
+        };
+        
+        window.openZoom = (url) => { 
+            const modal = document.getElementById('lightbox-modal'); 
+            const content = document.getElementById('lightbox-content'); 
+            content.innerHTML = `<img src="${url}" class="max-w-[95vw] max-h-[90vh] object-contain shadow-2xl border-2 border-gold rounded">`; 
+            modal.classList.remove('hidden'); 
         };
 
-        window.applyStyle = (prop, val) => { if (!val) return; const sel = window.getSelection(); if (window.aeonState.lockedSelection) { sel.removeAllRanges(); sel.addRange(window.aeonState.lockedSelection); } if (!sel.rangeCount || sel.toString().length === 0) return; const range = sel.getRangeAt(0); const span = document.createElement('span'); span.className = 'aeon-style-span'; if (prop === 'fontSize') span.style.fontSize = val + 'px'; if (prop === 'fontFamily') span.style.fontFamily = val; try { span.appendChild(range.extractContents()); range.insertNode(span); const nr = document.createRange(); nr.selectNodeContents(span); sel.removeAllRanges(); sel.addRange(nr); if (window.aeonState.lockedSelection) window.aeonState.lockedSelection = nr.cloneRange(); } catch (e) {} window.saveActiveContent(); };
-        window.execFormat = (cmd, val = null) => { const sel = window.getSelection(); if (window.aeonState.lockedSelection) { sel.removeAllRanges(); sel.addRange(window.aeonState.lockedSelection); } document.execCommand(cmd, false, val); window.saveActiveContent(); };
-        window.insertTemplate = (type) => { window.execFormat('insertHTML', type === 'img' ? '{{URL | Caption}}' : type === 'def' ? '[[Word | definition]]' : '((Text | URL))'); };
-        window.changeSlide = (sid, d) => { const s = window.aeonState.sections.find(x => x.id === sid); const u = (s.mediaUrl || "").split(',').filter(x => x.trim()); window.aeonState.activeSlides[sid] = ((window.aeonState.activeSlides[sid] || 0) + d + u.length) % u.length; window.renderManual(); };
-        window.removeSlide = async (sid, i) => { if (activeRole !== 'dm' && !isSuperAdmin) return; const s = window.aeonState.sections.find(x => x.id === sid); let u = (s.mediaUrl || "").split(',').filter(x => x.trim()); let ds = (s.mediaDescription || "").split(','); u.splice(i,1); ds.splice(i,1); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION, sid), { mediaUrl: u.join(','), mediaDescription: ds.join(',') }); };
-        window.removeInlineImage = (sid, url) => { if (activeRole !== 'dm' && !isSuperAdmin) return; const s = window.aeonState.sections.find(x => x.id === sid); const reg = new RegExp(`\\{\\{\\s*${url.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}\\s*(\\|[^}]*)?\\}\\}`, 'g'); window.dbUpdateSection(sid, 'content', s.content.replace(reg, '')); };
-        window.openZoom = (url) => { const modal = document.getElementById('lightbox-modal'); const content = document.getElementById('lightbox-content'); content.innerHTML = `<img src="${url}" class="max-w-[95vw] max-h-[90vh] object-contain shadow-2xl border-2 border-gold rounded">`; modal.classList.remove('hidden'); };
-
-        // --- AUTHENTICATION SYNC ---
         onAuthStateChanged(auth, async (u) => {
             if (!u) {
-                try { window.location.href = "index.html"; } catch(e) {
-                    document.getElementById('initial-loading').innerHTML = `<h2 class="font-heading text-2xl text-blood">Authentication Required</h2>`;
-                }
+                document.getElementById('initial-loading').classList.add('hidden');
+                document.getElementById('access-denied-modal').classList.remove('hidden');
                 return;
             }
             
             try {
                 if (u.isAnonymous) {
-                    currentUser = { uid: u.uid, username: "Guest Traveler", role: 'player' };
+                    currentUser = { uid: u.uid, username: "Guest", role: 'player' };
                 } else {
                     const userDoc = await getDoc(doc(db, 'users', u.uid));
                     if (userDoc.exists()) {
@@ -816,46 +970,35 @@
                     }
                 }
 
-                isSuperAdmin = (u.email === ADMIN_OWNER_EMAIL);
+                isSuperAdmin = (currentUser.email === ADMIN_OWNER_EMAIL);
                 activeRole = currentUser.role || 'player';
-                const isDM = activeRole === 'dm' || isSuperAdmin;
 
-                // GATEWAY LOCK: Kick out normal players immediately.
-                if (!isDM) {
-                    const initLoad = document.getElementById('initial-loading');
-                    if (initLoad) {
-                        initLoad.innerHTML = `
-                            <i class="fa-solid fa-shield-halved text-6xl text-blood mb-6 drop-shadow-[0_0_15px_rgba(122,27,27,0.8)]"></i>
-                            <h2 class="font-heading text-3xl font-black tracking-widest text-blood uppercase drop-shadow-md">Access Denied</h2>
-                            <p class="text-parchment font-serif italic mt-4 text-center max-w-md">Your eyes burn as you attempt to read the cursed script. Only Dungeon Masters may decipher this tome.</p>
-                            <button onclick="window.returnToPlayerHandbook()" class="mt-8 px-6 py-3 bg-wood border-2 border-gold text-gold font-heading font-black text-xs uppercase tracking-widest rounded hover:bg-gold hover:text-wood transition-colors shadow-[0_0_20px_rgba(197,160,89,0.3)]">Flee to Safety</button>
-                        `;
-                    }
-                    return; // Halt all further execution
+                if (isSuperAdmin) activeRole = 'dm';
+
+                if (activeRole !== 'dm') {
+                    document.getElementById('initial-loading').classList.add('hidden');
+                    document.getElementById('access-denied-modal').classList.remove('hidden');
+                    return;
                 }
 
-                // Fetch campaign name
                 if (appId !== "demo_campaign") {
                     const campDoc = await getDoc(doc(db, 'campaigns', appId));
                     if (campDoc.exists() && campDoc.data().name) {
                         const titleEl = document.getElementById('campaign-title-display');
-                        if (titleEl) titleEl.innerText = campDoc.data().name;
-                        document.title = `${campDoc.data().name} - DM's Secrets`;
+                        if (titleEl) titleEl.innerText = `${campDoc.data().name} Vault`;
+                        document.title = `${campDoc.data().name} - DM Handbook`;
                     }
                 }
                 
-                // Toggle DM Features & UI
                 window.updateRoleUI();
 
                 const initLoad = document.getElementById('initial-loading');
                 if (initLoad) initLoad.classList.add('hidden');
                 
-                // Listen for manual configuration (Title/Subtitle)
                 onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'manualConfig', `header_${pageId}`), d => {
                     if (d.exists()) { window.aeonState.header = d.data(); window.renderManual(); }
                 }, err => console.error("Header Listen Error:", err));
 
-                // Listen for manual sections for THIS specific page
                 onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION), snap => {
                     window.aeonState.sections = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (a.order||0) - (b.order||0));
                     if (!window.aeonState.activeEditId && !window.aeonState.isInteracting) {
