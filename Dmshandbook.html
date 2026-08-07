@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -231,6 +231,8 @@
                 <button onmousedown="event.preventDefault(); window.addManualSection('note')" class="arch-btn"><i class="fa-solid fa-quote-right mr-1"></i> Note</button>
                 <button onmousedown="event.preventDefault(); window.addManualSection('info')" class="arch-btn"><i class="fa-solid fa-scroll mr-1"></i> Info</button>
                 <button onmousedown="event.preventDefault(); window.addManualSection('media')" class="arch-btn"><i class="fa-solid fa-image mr-1"></i> Image</button>
+                <button onmousedown="event.preventDefault(); document.getElementById('file-upload-input').click()" class="arch-btn"><i class="fa-solid fa-file-upload mr-1"></i> Upload</button>
+                <input type="file" id="file-upload-input" multiple accept=".txt,.md,.html,.css,.js,.json,.csv" class="hidden" onchange="window.handleFileUpload(event)">
                 <div class="w-px h-6 bg-gold mx-1"></div>
                 <button onmousedown="event.preventDefault(); window.forceSync()" class="arch-btn sync-btn"><i class="fa-solid fa-bolt mr-1"></i> SYNC</button>
             </div>
@@ -630,6 +632,72 @@
         window.removeSlide = async (sid, i) => { if (activeRole !== 'dm' && !isSuperAdmin) return; const s = window.aeonState.sections.find(x => x.id === sid); let u = (s.mediaUrl || "").split(',').filter(x => x.trim()); let ds = (s.mediaDescription || "").split(','); u.splice(i,1); ds.splice(i,1); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION, sid), { mediaUrl: u.join(','), mediaDescription: ds.join(',') }); };
         window.removeInlineImage = (sid, url) => { if (activeRole !== 'dm' && !isSuperAdmin) return; const s = window.aeonState.sections.find(x => x.id === sid); const reg = new RegExp(`\\{\\{\\s*${url.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}\\s*(\\|[^}]*)?\\}\\}`, 'g'); window.dbUpdateSection(sid, 'content', s.content.replace(reg, '')); };
         window.openZoom = (url) => { const modal = document.getElementById('lightbox-modal'); const content = document.getElementById('lightbox-content'); content.innerHTML = `<img src="${url}" class="max-w-[95vw] max-h-[90vh] object-contain shadow-2xl border-2 border-gold rounded">`; modal.classList.remove('hidden'); };
+
+        // Handle Bulk File Uploads
+        window.handleFileUpload = async (event) => {
+            if (activeRole !== 'dm' && !isSuperAdmin) return;
+            const files = event.target.files;
+            if (!files || files.length === 0) return;
+
+            window.showToast(`Uploading ${files.length} file(s)...`);
+            const batch = writeBatch(db);
+            let currentOrder = window.aeonState.sections.length ? Math.max(...window.aeonState.sections.map(s => s.order || 0)) + 1 : 0;
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                
+                // Firestore limit is 1MB per document; keep it safe
+                if (file.size > 800000) { 
+                    window.showToast(`Skipped ${file.name} (too large)`);
+                    continue;
+                }
+                
+                try {
+                    const content = await file.text();
+                    const ext = file.name.split('.').pop().toLowerCase();
+                    
+                    // 1. Create a Header for the file
+                    const headingRef = doc(collection(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION));
+                    batch.set(headingRef, { 
+                        type: 'heading', order: currentOrder++, width: 100, align: 'left', 
+                        title: file.name.toUpperCase(), content: file.name, 
+                        tableHeaders: null, tableRows: null, mediaUrl: "", mediaDescription: "" 
+                    });
+
+                    // 2. Create the body text/code block
+                    const textRef = doc(collection(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION));
+                    let processedContent = '';
+                    
+                    if (['html', 'css', 'js', 'json'].includes(ext)) {
+                        // Prevent code execution and layout breakage by wrapping it safely
+                        const escaped = content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                        processedContent = `<pre style="white-space: pre-wrap; font-family: monospace; font-size: 13px; background: rgba(122,27,27,0.05); padding: 16px; border-radius: 8px; border: 1px solid #c5a059; overflow-x: auto;">${escaped}</pre>`;
+                    } else {
+                        // Regular text & markdown respect line breaks natively
+                        processedContent = `<div style="white-space: pre-wrap;">${content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>`;
+                    }
+                    
+                    batch.set(textRef, { 
+                        type: 'text', order: currentOrder++, width: 100, align: 'left', 
+                        content: processedContent, 
+                        tableHeaders: null, tableRows: null, mediaUrl: "", mediaDescription: "" 
+                    });
+                } catch (err) {
+                    console.error("Error reading file", file.name, err);
+                }
+            }
+
+            try {
+                await batch.commit();
+                window.showToast("Files uploaded successfully!");
+            } catch (err) {
+                console.error("Batch upload failed", err);
+                window.showToast("Upload failed.");
+            }
+            
+            // Clear input so the same files can be re-uploaded if necessary
+            event.target.value = '';
+        };
 
         // --- AUTHENTICATION SYNC ---
         onAuthStateChanged(auth, async (u) => {
