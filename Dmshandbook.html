@@ -970,7 +970,7 @@
                     }
                 }
 
-                isSuperAdmin = (currentUser.email === ADMIN_OWNER_EMAIL);
+                isSuperAdmin = (currentUser?.email === ADMIN_OWNER_EMAIL);
                 activeRole = currentUser.role || 'player';
 
                 if (isSuperAdmin) activeRole = 'dm';
