@@ -231,7 +231,7 @@
                 <button onmousedown="event.preventDefault(); window.addManualSection('note')" class="arch-btn"><i class="fa-solid fa-quote-right mr-1"></i> Note</button>
                 <button onmousedown="event.preventDefault(); window.addManualSection('info')" class="arch-btn"><i class="fa-solid fa-scroll mr-1"></i> Info</button>
                 <button onmousedown="event.preventDefault(); window.addManualSection('media')" class="arch-btn"><i class="fa-solid fa-image mr-1"></i> Image</button>
-                <button onmousedown="event.preventDefault(); document.getElementById('file-upload-input').click()" class="arch-btn"><i class="fa-solid fa-file-upload mr-1"></i> Upload</button>
+                <button onmousedown="event.preventDefault(); document.getElementById('file-upload-input').click()" class="arch-btn bg-amber-900/50 hover:bg-amber-600"><i class="fa-solid fa-file-upload mr-1"></i> Upload</button>
                 <input type="file" id="file-upload-input" multiple accept=".txt,.md,.html,.css,.js,.json,.csv" class="hidden" onchange="window.handleFileUpload(event)">
                 <div class="w-px h-6 bg-gold mx-1"></div>
                 <button onmousedown="event.preventDefault(); window.forceSync()" class="arch-btn sync-btn"><i class="fa-solid fa-bolt mr-1"></i> SYNC</button>
@@ -270,21 +270,17 @@
             else { try { window.location.href = "campaigns.html"; } catch(e) {} }
         }
 
-        // Determine which specific handbook page we are on based on the filename!
-        // This isolates the DM data to a specific collection (e.g., manualSections_DMshandbook)
         let pageId = window.location.pathname.split('/').pop().replace('.html', '');
         if (!pageId || pageId === "" || pageId === "index") pageId = "DMshandbook"; 
         
         const DB_COLLECTION = `manualSections_${pageId}`;
 
-        // Return to Navigation logic
         window.returnToDash = () => {
             try { window.location.href = `handbook.html?id=${appId}`; } 
             catch(e) { window.showToast("Redirects disabled in preview."); }
         };
         
         window.returnToPlayerHandbook = () => {
-            // Sends the DM back to the general How To Play page
             try { window.location.href = `howtoplay.html?id=${appId}`; } 
             catch(e) { window.showToast("Redirects disabled in preview."); }
         };
@@ -296,7 +292,6 @@
         
         window.aeonState = {
             sections: [],
-            // Default header customized for the DM's eyes
             header: { title: "DM'S ARCHIVES", subtitle: "RESTRICTED CAMPAIGN LORE - FOR YOUR EYES ONLY" },
             activeEditId: null,
             lastActiveId: null,
@@ -338,16 +333,13 @@
 
         window.parseContent = (text, isDM, id) => {
             if (!text) return '';
-            
             let p = text;
             
-            // Clean up existing data-definitions that might have inherited hidden HTML tags
             p = p.replace(/data-definition="([^"]*)"/gi, (match, defVal) => {
                 let cleanDef = defVal.replace(/&lt;.*?&gt;|<[^>]+>/g, '').replace(/&nbsp;/g, ' ').trim();
                 return `data-definition="${cleanDef}"`;
             });
 
-            // Self-healing for old titles, stripping out tags just in case
             p = p.replace(/(<span[^>]*class="definition-word"[^>]*)\btitle="([^"]*)"/gi, (match, p1, p2) => {
                 let clean = p2.replace(/&lt;.*?&gt;|<[^>]+>/g, '').replace(/&nbsp;/g, ' ').trim();
                 return p1 + 'data-definition="' + clean + '"';
@@ -359,7 +351,6 @@
 
             if (isDM && window.aeonState.activeEditId === id) return p;
             
-            // For newly written [[Word | Definition]] elements, strip accidental HTML
             p = p.replace(/\[\[([^|\]]+)\|([^\]]+)\]\]/g, (match, word, def) => {
                 const cleanWord = word.replace(/<[^>]+>/g, '').trim();
                 const cleanDef = def.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').trim();
@@ -497,6 +488,134 @@
             window.aeonState.activeEditId = null; window.renderManual(); window.showToast("SYNC COMPLETE");
         };
 
+        // Handle Bulk File Uploads & Markdown (Homebrewery) parsing
+        window.handleFileUpload = async (event) => {
+            if (activeRole !== 'dm' && !isSuperAdmin) return;
+            const files = event.target.files;
+            if (!files || files.length === 0) return;
+
+            window.showToast(`Processing ${files.length} file(s)...`);
+            const batch = writeBatch(db);
+            let currentOrder = window.aeonState.sections.length ? Math.max(...window.aeonState.sections.map(s => s.order || 0)) + 1 : 0;
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                if (file.size > 800000) { 
+                    window.showToast(`Skipped ${file.name} (too large)`);
+                    continue;
+                }
+                
+                try {
+                    const content = await file.text();
+                    const ext = file.name.split('.').pop().toLowerCase();
+                    
+                    if (ext === 'md') {
+                        // --- HOMEBREWERY PARSER ---
+                        // Split content by \page to treat them as section breaks
+                        const pages = content.split(/\\page/g);
+                        
+                        for (const page of pages) {
+                            // Clean out columns/formatting markers that interfere with block parsing
+                            let cleanPage = page.replace(/\\column/g, '');
+                            const blocks = cleanPage.split(/\n\s*\n/);
+                            
+                            for (let block of blocks) {
+                                block = block.trim();
+                                if (!block) continue;
+                                
+                                // Ignore raw HTML comments and style tags from Homebrewery
+                                if (block.startsWith('<!--') || block.startsWith('<style>')) continue;
+                                
+                                const id = doc(collection(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION)).id;
+                                const ref = doc(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION, id);
+                                
+                                // 1. Heading 1
+                                if (block.startsWith('# ')) {
+                                    const title = block.replace(/^#\s*/, '');
+                                    batch.set(ref, { type: 'heading', order: currentOrder++, width: 100, align: 'left', title: title, content: title, tableHeaders: null, tableRows: null, mediaUrl: "", mediaDescription: "" });
+                                }
+                                // 2. Subheadings
+                                else if (block.startsWith('## ') || block.startsWith('### ') || block.startsWith('#### ')) {
+                                    const title = block.replace(/^#+\s*/, '');
+                                    batch.set(ref, { type: 'subheading', order: currentOrder++, width: 100, align: 'left', title: title, content: title, tableHeaders: null, tableRows: null, mediaUrl: "", mediaDescription: "" });
+                                }
+                                // 3. Tables (Markdown standard)
+                                else if (block.includes('|') && block.includes('\n|')) {
+                                    const lines = block.split('\n').map(l => l.trim()).filter(l => l.startsWith('|'));
+                                    if (lines.length > 2) {
+                                        const headers = lines[0].split('|').map(c => c.trim()).filter(c => c);
+                                        const rows = [];
+                                        // Skip the layout line that has '---'
+                                        for (let j = 1; j < lines.length; j++) {
+                                            if (lines[j].includes('---')) continue;
+                                            const rowData = lines[j].split('|').map(c => c.trim()).filter(c => c);
+                                            while (rowData.length < headers.length) rowData.push(""); // pad
+                                            rows.push(rowData);
+                                        }
+                                        batch.set(ref, { type: 'table', order: currentOrder++, width: 100, align: 'left', title: 'TABLE', content: '', tableHeaders: headers, tableRows: JSON.stringify(rows), mediaUrl: "", mediaDescription: "" });
+                                    }
+                                }
+                                // 4. Special Homebrewery Notes
+                                else if (block.startsWith('{{note') || block.startsWith('{{descriptive')) {
+                                    // Remove the {{type and }} markers
+                                    const text = block.replace(/^{{\w+\s*/, '').replace(/}}$/, '').trim().replace(/\n/g, '<br>');
+                                    const type = block.startsWith('{{note') ? 'note' : 'info';
+                                    batch.set(ref, { type: type, order: currentOrder++, width: 100, align: 'left', title: type.toUpperCase(), content: text, tableHeaders: null, tableRows: null, mediaUrl: "", mediaDescription: "" });
+                                }
+                                // 5. Standard text 
+                                else {
+                                    // Format simple bold/italics
+                                    let htmlText = block
+                                        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+                                        .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+                                        .replace(/\n/g, '<br>');
+                                    
+                                    batch.set(ref, { type: 'text', order: currentOrder++, width: 100, align: 'left', title: 'TEXT', content: htmlText, tableHeaders: null, tableRows: null, mediaUrl: "", mediaDescription: "" });
+                                }
+                            }
+                        }
+                    } 
+                    else {
+                        // --- STANDARD FILE (HTML, CSS, JS, TXT) ---
+                        const headingRef = doc(collection(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION));
+                        batch.set(headingRef, { 
+                            type: 'heading', order: currentOrder++, width: 100, align: 'left', 
+                            title: file.name.toUpperCase(), content: file.name, 
+                            tableHeaders: null, tableRows: null, mediaUrl: "", mediaDescription: "" 
+                        });
+
+                        const textRef = doc(collection(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION));
+                        let processedContent = '';
+                        
+                        if (['html', 'css', 'js', 'json'].includes(ext)) {
+                            const escaped = content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                            processedContent = `<pre style="white-space: pre-wrap; font-family: monospace; font-size: 13px; background: rgba(122,27,27,0.05); padding: 16px; border-radius: 8px; border: 1px solid #c5a059; overflow-x: auto;">${escaped}</pre>`;
+                        } else {
+                            processedContent = `<div style="white-space: pre-wrap;">${content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>`;
+                        }
+                        
+                        batch.set(textRef, { 
+                            type: 'text', order: currentOrder++, width: 100, align: 'left', 
+                            content: processedContent, 
+                            tableHeaders: null, tableRows: null, mediaUrl: "", mediaDescription: "" 
+                        });
+                    }
+                } catch (err) {
+                    console.error("Error reading file", file.name, err);
+                }
+            }
+
+            try {
+                await batch.commit();
+                window.showToast("Files processed & uploaded successfully!");
+            } catch (err) {
+                console.error("Batch upload failed", err);
+                window.showToast("Upload failed. Check console.");
+            }
+            
+            event.target.value = '';
+        };
+
         window.initDrag = (e, id) => { if (activeRole === 'dm' || isSuperAdmin) { window.aeonState.draggedId = id; e.currentTarget.classList.add('unit-dragging'); } };
         window.dragOver = (e) => {
             if (!window.aeonState.draggedId) return; e.preventDefault();
@@ -632,72 +751,6 @@
         window.removeSlide = async (sid, i) => { if (activeRole !== 'dm' && !isSuperAdmin) return; const s = window.aeonState.sections.find(x => x.id === sid); let u = (s.mediaUrl || "").split(',').filter(x => x.trim()); let ds = (s.mediaDescription || "").split(','); u.splice(i,1); ds.splice(i,1); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION, sid), { mediaUrl: u.join(','), mediaDescription: ds.join(',') }); };
         window.removeInlineImage = (sid, url) => { if (activeRole !== 'dm' && !isSuperAdmin) return; const s = window.aeonState.sections.find(x => x.id === sid); const reg = new RegExp(`\\{\\{\\s*${url.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}\\s*(\\|[^}]*)?\\}\\}`, 'g'); window.dbUpdateSection(sid, 'content', s.content.replace(reg, '')); };
         window.openZoom = (url) => { const modal = document.getElementById('lightbox-modal'); const content = document.getElementById('lightbox-content'); content.innerHTML = `<img src="${url}" class="max-w-[95vw] max-h-[90vh] object-contain shadow-2xl border-2 border-gold rounded">`; modal.classList.remove('hidden'); };
-
-        // Handle Bulk File Uploads
-        window.handleFileUpload = async (event) => {
-            if (activeRole !== 'dm' && !isSuperAdmin) return;
-            const files = event.target.files;
-            if (!files || files.length === 0) return;
-
-            window.showToast(`Uploading ${files.length} file(s)...`);
-            const batch = writeBatch(db);
-            let currentOrder = window.aeonState.sections.length ? Math.max(...window.aeonState.sections.map(s => s.order || 0)) + 1 : 0;
-
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                
-                // Firestore limit is 1MB per document; keep it safe
-                if (file.size > 800000) { 
-                    window.showToast(`Skipped ${file.name} (too large)`);
-                    continue;
-                }
-                
-                try {
-                    const content = await file.text();
-                    const ext = file.name.split('.').pop().toLowerCase();
-                    
-                    // 1. Create a Header for the file
-                    const headingRef = doc(collection(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION));
-                    batch.set(headingRef, { 
-                        type: 'heading', order: currentOrder++, width: 100, align: 'left', 
-                        title: file.name.toUpperCase(), content: file.name, 
-                        tableHeaders: null, tableRows: null, mediaUrl: "", mediaDescription: "" 
-                    });
-
-                    // 2. Create the body text/code block
-                    const textRef = doc(collection(db, 'artifacts', appId, 'public', 'data', DB_COLLECTION));
-                    let processedContent = '';
-                    
-                    if (['html', 'css', 'js', 'json'].includes(ext)) {
-                        // Prevent code execution and layout breakage by wrapping it safely
-                        const escaped = content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                        processedContent = `<pre style="white-space: pre-wrap; font-family: monospace; font-size: 13px; background: rgba(122,27,27,0.05); padding: 16px; border-radius: 8px; border: 1px solid #c5a059; overflow-x: auto;">${escaped}</pre>`;
-                    } else {
-                        // Regular text & markdown respect line breaks natively
-                        processedContent = `<div style="white-space: pre-wrap;">${content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>`;
-                    }
-                    
-                    batch.set(textRef, { 
-                        type: 'text', order: currentOrder++, width: 100, align: 'left', 
-                        content: processedContent, 
-                        tableHeaders: null, tableRows: null, mediaUrl: "", mediaDescription: "" 
-                    });
-                } catch (err) {
-                    console.error("Error reading file", file.name, err);
-                }
-            }
-
-            try {
-                await batch.commit();
-                window.showToast("Files uploaded successfully!");
-            } catch (err) {
-                console.error("Batch upload failed", err);
-                window.showToast("Upload failed.");
-            }
-            
-            // Clear input so the same files can be re-uploaded if necessary
-            event.target.value = '';
-        };
 
         // --- AUTHENTICATION SYNC ---
         onAuthStateChanged(auth, async (u) => {
