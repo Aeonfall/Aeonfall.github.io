@@ -206,14 +206,9 @@
                 <!-- Headings inject here -->
             </div>
             
-            <!-- We are in the DM Handbook, so navigation returns to the standard Handbook -->
-            <div class="p-4 border-t border-gray-700/50 mt-auto">
-                <button onclick="window.returnToPlayerHandbook()" class="w-full text-center py-3 bg-wood text-gold border border-gold rounded font-heading font-black text-xs uppercase tracking-widest hover:bg-gold hover:text-ink transition-colors">
-                    <i class="fa-solid fa-users mr-2"></i> Player Handbook
-                </button>
-            </div>
-            <div class="p-4 border-t border-gray-700/50 pt-0">
-                <button onclick="window.returnToDash()" class="w-full text-center py-3 text-gray-400 border border-gray-600 rounded font-heading font-black text-xs uppercase tracking-widest hover:bg-gray-800 hover:text-white transition-colors">← Campaign Dashboard</button>
+            <div class="p-4 mt-auto border-t border-gray-700/50 flex flex-col gap-2">
+                <button id="edit-mode-toggle-btn" onclick="window.toggleEditMode()" class="hidden w-full text-center py-3 text-gold border border-gold rounded font-heading font-black text-xs uppercase tracking-widest hover:bg-gold hover:text-ink transition-colors"><i class="fa-solid fa-pen-nib mr-2"></i> Edit Mode: ON</button>
+                <button onclick="window.returnToPublicHandbook()" class="w-full text-center py-3 text-gray-400 border border-gray-600 rounded font-heading font-black text-xs uppercase tracking-widest hover:bg-gray-800 hover:text-white transition-colors">← Player Handbook</button>
             </div>
         </div>
 
@@ -290,11 +285,10 @@
         // --- HANDBOOK STATE & LOGIC ---
         let currentUser = null;
         let activeRole = 'player';
-        let isSuperAdmin = false;
         
         window.aeonState = {
             sections: [],
-            header: { title: "DM'S ARCHIVES", subtitle: "RESTRICTED CAMPAIGN LORE - FOR YOUR EYES ONLY" },
+            header: { title: "DM VAULT", subtitle: "Confidential Campaign Notes" },
             activeEditId: null,
             lastActiveId: null,
             lockedSelection: null,
@@ -302,7 +296,25 @@
             draggedId: null,
             dropSide: null,
             isInteracting: false,
-            activeSlides: {}
+            activeSlides: {},
+            editMode: true
+        };
+
+        window.toggleEditMode = () => {
+            if (activeRole !== 'dm') return;
+            window.aeonState.editMode = !window.aeonState.editMode;
+            const btn = document.getElementById('edit-mode-toggle-btn');
+            if (btn) {
+                if (window.aeonState.editMode) {
+                    btn.innerHTML = '<i class="fa-solid fa-pen-nib mr-2"></i> Edit Mode: ON';
+                    btn.className = 'w-full text-center py-3 text-gold border border-gold rounded font-heading font-black text-xs uppercase tracking-widest hover:bg-gold hover:text-ink transition-colors';
+                } else {
+                    btn.innerHTML = '<i class="fa-solid fa-eye mr-2"></i> Edit Mode: OFF';
+                    btn.className = 'w-full text-center py-3 text-gray-400 border border-gray-600 rounded font-heading font-black text-xs uppercase tracking-widest hover:bg-gray-800 hover:text-white transition-colors';
+                }
+            }
+            window.updateRoleUI();
+            window.showToast(window.aeonState.editMode ? "Editing Enabled" : "Reading Mode Active");
         };
 
         window.showToast = (msg) => {
@@ -319,11 +331,16 @@
         };
 
         window.updateRoleUI = () => {
-            const isDM = activeRole === 'dm' || isSuperAdmin;
-            document.body.classList.toggle('dm-mode-active', isDM);
-            const controls = document.getElementById('dm-global-controls');
-            if (controls) controls.classList.toggle('dm-active', isDM);
+            const isDM = activeRole === 'dm';
+            const showEditUI = isDM && window.aeonState.editMode;
             
+            document.body.classList.toggle('dm-mode-active', showEditUI);
+            const controls = document.getElementById('dm-global-controls');
+            if (controls) controls.classList.toggle('dm-active', showEditUI);
+            
+            const toggleBtn = document.getElementById('edit-mode-toggle-btn');
+            if (toggleBtn && isDM) toggleBtn.classList.remove('hidden');
+
             window.renderManual();
         };
 
@@ -646,7 +663,7 @@
         };
 
         window.renderManual = () => {
-            const isDM = activeRole === 'dm' || isSuperAdmin;
+            const isDM = activeRole === 'dm' && window.aeonState.editMode;
             const container = document.getElementById('manual-sections-container');
             const header = document.getElementById('manual-header');
             if (!header || !container) return;
